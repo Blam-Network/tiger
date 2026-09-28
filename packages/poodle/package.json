@@ -1,0 +1,34 @@
+{
+  "name": "@blamnetwork/poodle",
+  "version": "0.1.0",
+  "description": "Pure TypeScript decoder for the legacy Oodle LZ codecs used by early Destiny builds",
+  "type": "module",
+  "files": [
+    "dist",
+    "dist-cjs"
+  ],
+  "scripts": {
+    "build": "node ../../scripts/clean-dist.mjs && tsc -p tsconfig.build.json && tsc -p tsconfig.build.cjs.json && node ../../scripts/write-cjs-package-json.mjs",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "prepack": "npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Blam-Network/tiger.git",
+    "directory": "packages/poodle"
+  },
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
+  "main": "./dist-cjs/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist-cjs/index.js",
+      "default": "./dist/index.js"
+    }
+  }
+}

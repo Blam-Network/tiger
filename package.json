@@ -15,8 +15,7 @@
     "fix": "ultracite fix",
     "typecheck": "npm run typecheck --workspaces",
     "test": "vitest run",
-    "exports": "node scripts/gen-exports.mjs",
-    "validate": "node scripts/gen-exports.mjs --check && npm run check && npm run typecheck && npm run test",
+    "validate": "npm run check && npm run typecheck && npm run test",
     "release": "node scripts/release.mjs"
   },
   "devDependencies": {

@@ -1,0 +1,8 @@
+{
+  "compilerOptions": {
+    "paths": {
+      "@blamnetwork/poodle": ["./src/index.ts"],
+      "@blamnetwork/poodle/*": ["./src/*"]
+    }
+  }
+}
