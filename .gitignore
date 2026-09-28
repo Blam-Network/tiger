@@ -1,0 +1,10 @@
+node_modules
+dist
+dist-cjs
+*.tsbuildinfo
+*.pkg
+*.dll
+.vitepress/cache
+bullshcript/
+gibbon/
+poodle/
