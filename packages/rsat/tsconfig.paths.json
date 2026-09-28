@@ -1,0 +1,8 @@
+{
+  "compilerOptions": {
+    "paths": {
+      "@blamnetwork/rsat": ["./src/index.ts"],
+      "@blamnetwork/rsat/*": ["./src/*"]
+    }
+  }
+}

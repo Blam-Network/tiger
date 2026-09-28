@@ -1,0 +1,29 @@
+{
+  "name": "tiger",
+  "private": true,
+  "type": "module",
+  "description": "TypeScript libraries for Destiny's Tiger engine data",
+  "workspaces": [
+    "packages/poodle",
+    "packages/rsat",
+    "packages/gibbon",
+    "packages/bullshcript"
+  ],
+  "scripts": {
+    "build": "npm run build --workspaces",
+    "check": "ultracite check",
+    "fix": "ultracite fix",
+    "typecheck": "npm run typecheck --workspaces",
+    "test": "vitest run",
+    "exports": "node scripts/gen-exports.mjs",
+    "validate": "node scripts/gen-exports.mjs --check && npm run check && npm run typecheck && npm run test",
+    "release": "node scripts/release.mjs"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.4.15",
+    "@types/node": "^22",
+    "typescript": "^5",
+    "ultracite": "7.7.0",
+    "vitest": "^3.2.4"
+  }
+}
