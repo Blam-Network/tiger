@@ -1,5 +1,5 @@
-import type { c_bit_reader } from "./bit_reader.js";
-import { PoodleError } from "./poodle_error.js";
+import type { c_bit_reader } from "./bit_reader.ts";
+import { PoodleError } from "./poodle_error.ts";
 
 const k_max_code_length = 16;
 

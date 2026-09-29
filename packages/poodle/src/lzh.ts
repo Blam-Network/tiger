@@ -1,6 +1,6 @@
-import type { c_bit_reader } from "./bit_reader.js";
-import type { c_huffman_table } from "./huffman.js";
-import { PoodleError } from "./poodle_error.js";
+import type { c_bit_reader } from "./bit_reader.ts";
+import type { c_huffman_table } from "./huffman.ts";
+import { PoodleError } from "./poodle_error.ts";
 
 // LZH: one Huffman alphabet covers literals and match packets. Symbols below
 // 256 are literal bytes; the rest pick a length slot and, unless the packet

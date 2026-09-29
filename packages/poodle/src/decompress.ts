@@ -1,12 +1,12 @@
-import { c_bit_reader } from "./bit_reader.js";
+import { c_bit_reader } from "./bit_reader.ts";
 import {
   k_codec_lzh,
   k_codec_names,
   read_block_header,
-} from "./block_header.js";
-import { type c_huffman_table, read_huffman_table } from "./huffman.js";
-import { decode_lzh, k_lzh_symbol_count } from "./lzh.js";
-import { PoodleError } from "./poodle_error.js";
+} from "./block_header.ts";
+import { type c_huffman_table, read_huffman_table } from "./huffman.ts";
+import { decode_lzh, k_lzh_symbol_count } from "./lzh.ts";
+import { PoodleError } from "./poodle_error.ts";
 
 const k_block_size = 0x4_0000;
 // LZH codes each block as independent 16 KiB quanta, apart from sharing the

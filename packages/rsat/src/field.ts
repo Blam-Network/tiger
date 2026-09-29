@@ -1,4 +1,4 @@
-import type { BitReader, BitWriter } from "./bits/bitstream.js";
+import type { BitReader, BitWriter } from "./bits/bitstream.ts";
 
 /** Runtime field codec. */
 export interface RsatField<T> {

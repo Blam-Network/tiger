@@ -1,4 +1,4 @@
-export type { QueuezObject } from "./api.js";
+export type { QueuezObject } from "./api.ts";
 export {
   decode,
   decodeServerMessage,
@@ -6,13 +6,13 @@ export {
   encodeQueuezFamily,
   encodeServerMessage,
   rsat,
-} from "./api.js";
-export { BitReader, BitWriter } from "./bits/bitstream.js";
+} from "./api.ts";
+export { BitReader, BitWriter } from "./bits/bitstream.ts";
 export type {
   InferField,
   InferSchema,
   IntOpts,
   RsatField,
   RsatSchema,
-} from "./field.js";
-export { findByHash } from "./field.js";
+} from "./field.ts";
+export { findByHash } from "./field.ts";

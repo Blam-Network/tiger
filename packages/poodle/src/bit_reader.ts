@@ -1,4 +1,4 @@
-import { PoodleError } from "./poodle_error.js";
+import { PoodleError } from "./poodle_error.ts";
 
 // MSB-first bit reader over data[start, end), refilled from big-endian
 // loads. Past the end it shifts in zeros, and callers compare

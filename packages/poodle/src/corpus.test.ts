@@ -3,7 +3,7 @@ import { readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import digests from "../test/corpus_digests.json" with { type: "json" };
-import { decompress } from "./index.js";
+import { decompress } from "./index.ts";
 
 // The alpha's packages aren't redistributable, so this only runs locally.
 // Each package's decoded blocks must hash to the digests recorded when every

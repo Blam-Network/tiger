@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { c_bit_reader } from "./bit_reader.js";
-import { PoodleError } from "./poodle_error.js";
+import { c_bit_reader } from "./bit_reader.ts";
+import { PoodleError } from "./poodle_error.ts";
 
 describe("c_bit_reader", () => {
   it("reads MSB first across bytes", () => {

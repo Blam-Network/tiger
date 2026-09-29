@@ -1,4 +1,4 @@
-import { PoodleError } from "./poodle_error.js";
+import { PoodleError } from "./poodle_error.ts";
 
 // The codec ids block headers carry, which aren't the public
 // OodleLZ_Compressor values (LZH is 0 there).

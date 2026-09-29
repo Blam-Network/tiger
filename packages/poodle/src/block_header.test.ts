@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { read_block_header } from "./block_header.js";
-import { PoodleError } from "./poodle_error.js";
+import { read_block_header } from "./block_header.ts";
+import { PoodleError } from "./poodle_error.ts";
 
 const read = (...bytes: number[]) =>
   read_block_header(Uint8Array.from(bytes), 0);

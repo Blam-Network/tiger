@@ -1,5 +1,5 @@
-import { BitReader, BitWriter } from "./bits/bitstream.js";
-import type { InferSchema, RsatSchema } from "./field.js";
+import { BitReader, BitWriter } from "./bits/bitstream.ts";
+import type { InferSchema, RsatSchema } from "./field.ts";
 import {
   array,
   bool,
@@ -21,7 +21,7 @@ import {
   u16,
   u32,
   u64,
-} from "./field.js";
+} from "./field.ts";
 
 export function encode<T extends Record<string, unknown>>(
   s: RsatSchema<T>,
@@ -154,13 +154,13 @@ export namespace rsat {
   export type Infer<S> = InferSchema<S>;
 }
 
-export { BitReader, BitWriter } from "./bits/bitstream.js";
+export { BitReader, BitWriter } from "./bits/bitstream.ts";
 export type {
   InferField,
   InferSchema,
   RsatField,
   RsatSchema,
-} from "./field.js";
+} from "./field.ts";
 export {
   array,
   bool,
@@ -182,4 +182,4 @@ export {
   u16,
   u32,
   u64,
-} from "./field.js";
+} from "./field.ts";

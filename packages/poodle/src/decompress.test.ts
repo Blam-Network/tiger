@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
-import { c_lzh_quantum, quantum_header } from "../test/lzh_writer.js";
-import { synthetic_cases } from "../test/synthetic.js";
-import { decompress, PoodleError } from "./index.js";
+import { c_lzh_quantum, quantum_header } from "../test/lzh_writer.ts";
+import { synthetic_cases } from "../test/synthetic.ts";
+import { decompress, PoodleError } from "./index.ts";
 
 const k_header_lzh = 0x32;
 

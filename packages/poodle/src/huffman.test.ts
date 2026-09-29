@@ -1,9 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { c_bit_writer, write_sparse_table } from "../test/lzh_writer.js";
-import { c_bit_reader } from "./bit_reader.js";
-import { read_huffman_table } from "./huffman.js";
-import { k_lzh_symbol_count } from "./lzh.js";
-import { PoodleError } from "./poodle_error.js";
+import { c_bit_writer, write_sparse_table } from "../test/lzh_writer.ts";
+import { c_bit_reader } from "./bit_reader.ts";
+import { read_huffman_table } from "./huffman.ts";
+import { k_lzh_symbol_count } from "./lzh.ts";
+import { PoodleError } from "./poodle_error.ts";
 
 function reader_of(writer: c_bit_writer): c_bit_reader {
   const bytes = Uint8Array.from(writer.bytes());

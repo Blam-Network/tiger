@@ -1,2 +1,2 @@
-export { decompress } from "./decompress.js";
-export { PoodleError } from "./poodle_error.js";
+export { decompress } from "./decompress.ts";
+export { PoodleError } from "./poodle_error.ts";
