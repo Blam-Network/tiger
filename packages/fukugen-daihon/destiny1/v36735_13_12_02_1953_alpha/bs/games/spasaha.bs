@@ -1,7 +1,7 @@
 class c_game_manager : c_game_manager_base:  # true name unknown
-    static c_common_reference abilities_configuration
-    static static_array<c_common_reference, 3> perks_configuration  # true name unknown
     static c_blueprint_handle sobject_blueprint_reference  # true name unknown
+
+
 
 
 

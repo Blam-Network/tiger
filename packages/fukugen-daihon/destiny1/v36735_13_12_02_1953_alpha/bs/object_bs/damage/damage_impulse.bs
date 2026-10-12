@@ -8,15 +8,6 @@ struct s_custom_routing_behavior : s_damage_impulse_behavior:  # true name unkno
     bool force_area_routing_check
 
 class c_damage_impulse : c_damage_impulse_base:  # true name unknown
-    static c_damage_impulse_description_pointer description_pointer  # true name unknown
-    static c_damage_impulse_exemptions_pointer exemptions_pointer  # true name unknown
-    static dynamic_array<s_damage_impulse_behavior_element> runtime_behaviors  # true name unknown
-    static c_damage_impulse_victim_response_pointer impulse_victim_response_pointer  # true name unknown
-    static c_damage_impulse_attacker_responses_pointer impulse_attacker_responses_pointer  # true name unknown
-    static s_damage_scalar_values damage_scalar_values  # true name unknown
-    static dynamic_array<s_damage_scalar_modifier> damage_scalar_modifiers  # true name unknown
-    static bool force_area_routing_check
-    static bool is_intercept_only
     static s_damage_impulse_description description  # true name unknown
     static e_damage_type damage_type
     static s_damage_labels_spec damage_labels_spec  # true name unknown
@@ -24,6 +15,15 @@ class c_damage_impulse : c_damage_impulse_base:  # true name unknown
     static dynamic_array<s_damage_impulse_behavior_element> behaviors  # true name unknown
     static s_damage_impulse_victim_response impulse_victim_response  # true name unknown
     static s_damage_impulse_attacker_responses impulse_attacker_responses  # true name unknown
+
+
+
+
+
+
+
+
+
 
 
 
