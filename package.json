@@ -7,7 +7,9 @@
     "packages/poodle",
     "packages/rsat",
     "packages/gibbon",
-    "packages/bullshcript"
+    "packages/bullshcript",
+    "packages/fukugen-daihon",
+    "packages/dictionary"
   ],
   "scripts": {
     "build": "npm run build --workspaces",

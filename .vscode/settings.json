@@ -1,0 +1,8 @@
+{
+  "files.associations": {
+    "*.bs": "bungiescript",
+    "*.es": "bungiescript",
+    "*.esu": "bungiescript",
+    "*.esp": "bungiescript"
+  }
+}

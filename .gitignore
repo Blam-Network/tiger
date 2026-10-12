@@ -5,5 +5,9 @@ dist-cjs
 *.pkg
 *.dll
 .vitepress/cache
-bullshcript/
-gibbon/
+.local/
+packages/bullshcript/
+packages/gibbon/
+packages/dictionary/
+packages/fukugen-daihon/
+scratch/

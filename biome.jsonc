@@ -7,7 +7,8 @@
       "!**/dist-cjs",
       "!**/node_modules",
       "!**/test/corpus",
-      "!**/docs/.vitepress"
+      "!**/docs/.vitepress",
+      "!**/*.generated.ts"
     ]
   },
   "linter": {
@@ -25,7 +26,11 @@
   "overrides": [
     {
       // Binary formats and the Lua VM are bit twiddling all the way down.
-      "includes": ["packages/*/src/**"],
+      "includes": [
+        "packages/*/src/**",
+        "packages/dictionary/tools/**",
+        "packages/dictionary/test/**"
+      ],
       "linter": {
         "rules": {
           "suspicious": {
@@ -62,6 +67,20 @@
       }
     },
     {
+      // Name hash cracking: FNV run forwards and backwards.
+      "includes": ["scripts/names/**"],
+      "linter": {
+        "rules": {
+          "suspicious": {
+            "noBitwiseOperators": "off"
+          },
+          "complexity": {
+            "noExcessiveCognitiveComplexity": "off"
+          }
+        }
+      }
+    },
+    {
       "includes": ["**/*.test.ts"],
       "linter": {
         "rules": {
@@ -72,7 +91,11 @@
       }
     },
     {
-      "includes": ["scripts/**", "packages/*/scripts/**"],
+      "includes": [
+        "scripts/**",
+        "packages/*/scripts/**",
+        "packages/*/tools/**"
+      ],
       "linter": {
         "rules": {
           "suspicious": {

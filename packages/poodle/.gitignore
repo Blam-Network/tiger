@@ -1,0 +1,3 @@
+# Corpus tests need non-redistributable packages
+src/*corpus.test.ts
+test/*corpus_digests.json
