@@ -201,5 +201,3 @@ class c_damage_component : c_damage_component_base:  # true name unknown
 
 # Decompiled from 36735.13.12.02.1953.alpha script tags
 # See tag 82100008
-# schema only: c_damage_component.definition localized_flash_effect (tag_reference 8080013B): single derived schema, unused by the code, so native or declared is undecidable
-# schema only: c_damage_component.instance localized_flash_effect (c_array 8080063B): single derived schema, unused by the code, so native or declared is undecidable
