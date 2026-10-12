@@ -1,3 +1,6 @@
 # BungieScript: borrow Python highlighting on GitHub (Linguist has no grammar for it)
 # as close as were getting for now.
 *.bs linguist-language=Python
+*.es linguist-language=Python
+*.esu linguist-language=Python
+*.esp linguist-language=Python
