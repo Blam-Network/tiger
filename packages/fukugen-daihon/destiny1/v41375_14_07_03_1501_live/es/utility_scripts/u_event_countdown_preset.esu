@@ -1,0 +1,32 @@
+# es\utility_scripts\u_event_countdown_preset.esu
+#
+# The countdown (Warsat) events' presentation (their pf_preset): the public
+# event objective, and the dialogue and music the event plays as it goes.
+# Day0's is the alpha's with its sequences renamed and the pre-engage volume
+# moved out to the event; the bindings are the alpha's.
+
+c_player_objective_sensor_host po_event_countdown
+c_sequence_host seq_intro_behavior
+c_sequence_host seq_warsat_announce bind(po_event_countdown, e_sequence_suppression_behavior.postpone)
+c_sequence_host seq_warsat_announce_generic
+c_sequence_host seq_warsat_start bind(po_event_countdown, e_sequence_suppression_behavior.skip)
+c_sequence_host seq_warsat_engage
+c_sequence_host seq_warsat_engage_generic
+c_sequence_host seq_warsat_update_time bind(po_event_countdown, e_sequence_suppression_behavior.skip)
+c_sequence_host seq_warsat_update_time_generic
+c_sequence_host seq_warsat_update_progress bind(po_event_countdown, e_sequence_suppression_behavior.skip)
+c_sequence_host seq_warsat_update_progress_generic
+c_sequence_host seq_warsat_ending_time bind(po_event_countdown, e_sequence_suppression_behavior.skip)
+c_sequence_host seq_warsat_ending_time_generic
+c_sequence_host seq_warsat_ending_progress bind(po_event_countdown, e_sequence_suppression_behavior.skip)
+c_sequence_host seq_warsat_ending_progress_generic
+c_sequence_host seq_warsat_complete_gold bind(po_event_countdown, e_sequence_suppression_behavior.skip)
+c_sequence_host seq_warsat_complete_gold_generic
+c_sequence_host seq_warsat_complete_silver bind(po_event_countdown, e_sequence_suppression_behavior.skip)
+c_sequence_host seq_warsat_complete_silver_generic
+c_sequence_host seq_warsat_complete_bronze bind(po_event_countdown, e_sequence_suppression_behavior.skip)
+c_sequence_host seq_warsat_complete_bronze_generic
+c_sequence_host seq_warsat_complete_failure bind(po_event_countdown, e_sequence_suppression_behavior.skip)
+c_sequence_host seq_warsat_complete_failure_generic
+c_sequence_host seq_warsat_music1 bind(po_event_countdown, e_sequence_suppression_behavior.postpone)
+c_trigger_volume_slot_host tv_warsat_start_audio
