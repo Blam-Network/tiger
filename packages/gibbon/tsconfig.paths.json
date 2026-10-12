@@ -1,0 +1,9 @@
+{
+  "compilerOptions": {
+    "paths": {
+      "@blamnetwork/gibbon/destiny1/*": ["./src/versions/destiny1/*"],
+      "@blamnetwork/poodle": ["../poodle/src/index.ts"],
+      "@blamnetwork/poodle/*": ["../poodle/src/*"]
+    }
+  }
+}

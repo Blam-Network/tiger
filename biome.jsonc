@@ -29,7 +29,8 @@
       "includes": [
         "packages/*/src/**",
         "packages/dictionary/tools/**",
-        "packages/dictionary/test/**"
+        "packages/dictionary/test/**",
+        "packages/gibbon/test/**"
       ],
       "linter": {
         "rules": {

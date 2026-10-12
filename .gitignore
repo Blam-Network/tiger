@@ -7,6 +7,5 @@ dist-cjs
 .vitepress/cache
 .local/
 packages/bullshcript/
-packages/gibbon/
 packages/dictionary/
 scratch/

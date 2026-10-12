@@ -1,0 +1,6 @@
+# Tests that read the game's own packages, which aren't redistributable
+test/game_data/
+dist/
+dist-cjs/
+*.tsbuildinfo
+node_modules/

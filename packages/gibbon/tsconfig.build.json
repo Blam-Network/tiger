@@ -1,0 +1,16 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": false,
+    "declaration": true,
+    "declarationMap": true,
+    "outDir": "dist",
+    "rootDir": "src",
+    "paths": {},
+    // The c.struct schemas' types live in cstruct modules its exports map
+    // doesn't expose; node10 resolution lets the declarations name them.
+    "moduleResolution": "node10"
+  },
+  "include": ["src/**/*.ts"],
+  "exclude": ["src/**/*.test.ts"]
+}

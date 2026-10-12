@@ -1,0 +1,44 @@
+{
+  "name": "@blamnetwork/gibbon",
+  "version": "0.1.0",
+  "description": "Tag package reader and tag definitions for Destiny builds",
+  "private": true,
+  "type": "module",
+  "files": [
+    "dist",
+    "dist-cjs"
+  ],
+  "scripts": {
+    "build": "node ../../scripts/clean-dist.mjs && tsc -p tsconfig.build.json && tsc -p tsconfig.build.cjs.json && node ../../scripts/write-cjs-package-json.mjs",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "prepack": "npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Blam-Network/tiger.git",
+    "directory": "packages/gibbon"
+  },
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "@blamnetwork/poodle": "^0.1.0",
+    "@craftycodie/cstruct": "^2.0.0-alpha.3"
+  },
+  "exports": {
+    "./destiny1/*": {
+      "types": "./dist/versions/destiny1/*.d.ts",
+      "import": "./dist/versions/destiny1/*.js",
+      "require": "./dist-cjs/versions/destiny1/*.js",
+      "default": "./dist/versions/destiny1/*.js"
+    }
+  },
+  "typesVersions": {
+    "*": {
+      "destiny1/*": [
+        "./dist/versions/destiny1/*"
+      ]
+    }
+  }
+}
