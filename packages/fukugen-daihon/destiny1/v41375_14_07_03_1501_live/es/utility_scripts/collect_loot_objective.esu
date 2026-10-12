@@ -2,7 +2,7 @@
 #
 # An objective that completes once the players pick up enough of a squad's
 # loot (the Last Array's codes from the Fallen captain). Ported from the
-# alpha's; day0's rows have no activity flag, so it is the script's own.
+# alpha's; TU0's rows have no activity flag, so it is the script's own.
 
 c_player_objective_sensor_host _player_objective
 c_sequence_host _incoming_sequence

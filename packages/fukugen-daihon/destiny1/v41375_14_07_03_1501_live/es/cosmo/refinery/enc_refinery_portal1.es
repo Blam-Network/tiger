@@ -23,7 +23,7 @@ c_object_sensor_host o_laserweb_behavior0202
 c_object_sensor_host o_laserweb_behavior0203
 c_object_sensor_host o_laserweb_behavior0301
 c_object_sensor_host o_laserweb_behavior0302
-interactable_placement sp_placement_array  # archetype not authored on day0
+interactable_placement sp_placement_array  # archetype not authored on TU0
 c_squad_sensor_host sq_trash01_hive01
 c_objective_sensor_host obj_trash  # true name unknown
 c_squad_sensor_host sq_trash01_hive02

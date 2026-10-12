@@ -1,7 +1,7 @@
 # es\utility_scripts\interactable_objective.esu
 #
 # An objective on something the player uses once (the Last Array's console).
-# Ported from the alpha's; day0's rows have no activity flag or incident
+# Ported from the alpha's; TU0's rows have no activity flag or incident
 # listener, so both are the script's own. The flag is what lets the player
 # use the object.
 

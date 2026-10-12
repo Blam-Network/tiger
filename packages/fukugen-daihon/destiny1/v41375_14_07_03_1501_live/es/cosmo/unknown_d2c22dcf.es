@@ -2,7 +2,7 @@
 #
 # The public events of the Array's bubble (public bubble 0), loaded with the
 # Cosmodrome's ambient layer by cosmo_portal_1, patrol_deltas_com01,
-# act_cosmo_m4_dome_c and the other Cosmodrome activities. Day0 carries a
+# act_cosmo_m4_dome_c and the other Cosmodrome activities. TU0 carries a
 # skirmish, two Warsat Down countdowns and a two-faction countdown; one runs
 # at a time, picked at random, with a quiet spell before each.
 #

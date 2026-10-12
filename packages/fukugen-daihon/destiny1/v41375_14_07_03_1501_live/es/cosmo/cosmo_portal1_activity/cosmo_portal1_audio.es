@@ -9,7 +9,7 @@ c_player_trigger_sensor_host pt_wake_trash01  # true name unknown
 c_sequence_host s01_xx40  # true name unknown
 trigger_volume_objective obj_s1_phase01_m1
 c_sequence_host s01_xx45  # true name unknown
-interactable_placement sp_placement_array  # archetype not authored on day0
+interactable_placement sp_placement_array  # archetype not authored on TU0
 c_sequence_host cue1  # true name unknown
 c_sequence_host s01_xx50  # true name unknown
 c_squad_sensor_host sq_objective_fallen01d

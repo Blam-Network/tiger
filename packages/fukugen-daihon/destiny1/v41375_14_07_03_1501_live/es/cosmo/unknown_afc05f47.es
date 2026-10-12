@@ -2,7 +2,7 @@
 #
 # Thorium, the Array's resource nodes, loaded with the
 # Cosmodrome's ambient layer (cosmo_portal_1, patrol_deltas_com01,
-# act_cosmo_m4_dome_c and the rest). Day0 has one node per traffic level
+# act_cosmo_m4_dome_c and the rest). TU0 has one node per traffic level
 # where 2.3.1 has six named by place.
 # From one capture (act_cosmo_m4_dome_c's public host): nodes appeared one by
 # one between 65s and 139s, two never in the three minutes recorded. None was

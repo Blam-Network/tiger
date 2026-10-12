@@ -45,7 +45,7 @@ startup thread ss_main_thread:
     for beacon in patrol_beacons:
         beacon.create()
 
-    # day0's table runs no script for the placement, so its object goes in here
+    # TU0's table runs no script for the placement, so its object goes in here
     obj_placement_m2_o1._object.create()
     obj_placement_m2_o1._object_filter.add_players_with_activity_flag(obj_placement_m2_o1._object.import_identifier())
 
@@ -65,7 +65,7 @@ startup thread ss_encounter_controller_thread:
     encounters.add_ambient_encounter(amb_smpl_lonemid_deltas01, 3, 100, 20, 300, 0)
     encounters.add_ambient_encounter(amb_smpl_cluster_mid01, 3, 100, 20, 300, 0)
 
-# Day0's squads carry no objective of their own, so each takes its encounter's
+# TU0's squads carry no objective of their own, so each takes its encounter's
 # objective and task once the encounter has placed it: the tasks retail gave
 # them, and the cluster's "inside" for the four never seen up.
 startup thread sc_domea01_tasks:

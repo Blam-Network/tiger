@@ -2,7 +2,7 @@
 #
 # The countdown (Warsat) events' presentation (their pf_preset): the public
 # event objective, and the dialogue and music the event plays as it goes.
-# Day0's is the alpha's with its sequences renamed and the pre-engage volume
+# TU0's is the alpha's with its sequences renamed and the pre-engage volume
 # moved out to the event; the bindings are the alpha's.
 
 c_player_objective_sensor_host po_event_countdown

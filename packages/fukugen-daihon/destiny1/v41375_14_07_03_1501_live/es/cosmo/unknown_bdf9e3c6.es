@@ -2,7 +2,7 @@
 #
 # Thorium, the resource nodes around dome A, the road and the planes,
 # loaded with the Cosmodrome's ambient layer (cosmo_portal_1,
-# patrol_deltas_com01, act_cosmo_m4_dome_c and the rest). Day0 has four nodes
+# patrol_deltas_com01, act_cosmo_m4_dome_c and the rest). TU0 has four nodes
 # where 2.3.1 has seven named by place.
 # From one capture (act_cosmo_m4_dome_c's public host): nodes appeared one by
 # one 46 s to 143 s after the first player spawned. None was harvested on the

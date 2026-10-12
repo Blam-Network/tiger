@@ -7,7 +7,7 @@
 c_object_sensor_host o_hangar_gating_exit
 c_object_sensor_host o_ship
 c_object_sensor_host o_ship_wires
-interactable_placement obj_placement_m0_m05  # archetype not authored on day0
+interactable_placement obj_placement_m0_m05  # archetype not authored on TU0
 c_squad_sensor_host sq_m0_fallen_init
 c_objective_sensor_host obj_m0_hangar_fallen  # true name unknown
 c_squad_sensor_host sq_m0_fallen_init_b
