@@ -38,18 +38,18 @@ startup thread sc_blast_main:
     sq_fallen_door01.set_objective(obj_ground)
     sq_fallen_shanks01.set_objective(obj_shanks)
     sq_fallen_shanks02.set_objective(obj_shanks)
-    hold_ground(sq_fallen_mid01, 6)
-    hold_ground(sq_fallen_mid02, 5)
-    hold_ground(sq_fallen_mid03, 7)
-    hold_ground(sq_fallen_mid04, 8)
-    hold_ground(sq_fallen_mid05, 9)
+    hold_ground(sq_fallen_mid01, "mid02")
+    hold_ground(sq_fallen_mid02, "retreat_point")
+    hold_ground(sq_fallen_mid03, "mid01")
+    hold_ground(sq_fallen_mid04, "mid_high")
+    hold_ground(sq_fallen_mid05, "mid03")
     sc_walker.wake()
 
 thread sc_walker:
     sleep_until(pt_play_s01_x100_s01_x110.is_triggered())
     sleep(1)
     sq_tank.set_objective(obj_tank)
-    sq_tank.set_task(0)
+    sq_tank.set_task("tank")
     sq_tank.place()
     sleep(1)
     skiff_enter()
@@ -59,19 +59,19 @@ thread sc_walker:
     skiff_leave()
     sleep_until(sq_tank.alive_count() == 0)
     sleep(3)
-    place_on_task(sq_fallen_door01, 14)
+    place_on_task(sq_fallen_door01, "0xA422EB12")
 
 thread sc_reinforcements:
     sleep(42)
-    place_on_task(sq_fallen_rear01, 10)
+    place_on_task(sq_fallen_rear01, "mid04")
     sleep(27)
-    sq_fallen_mid01.set_task(4)
+    sq_fallen_mid01.set_task("mid_pit")
 
 thread sc_shanks:
     sleep(45)
     while sq_tank.alive_count() > 0:
-        sq_fallen_shanks01.set_task(1)
-        sq_fallen_shanks02.set_task(0)
+        sq_fallen_shanks01.set_task("ammo")
+        sq_fallen_shanks02.set_task("shank_gate")
         sq_tank__tank.drop_squad(sq_fallen_shanks01)
         sq_tank__tank.drop_squad(sq_fallen_shanks02)
         sleep(10)
@@ -95,8 +95,8 @@ def skiff_leave():
     sq_dropship_tank__dropship.execute(__cs)
 
 def hold_ground(sq, task):
-    sq.set_task(task)
     sq.set_objective(obj_ground)
+    sq.set_task(task)
     sq.place()
 
 def place_on_task(sq, task):
