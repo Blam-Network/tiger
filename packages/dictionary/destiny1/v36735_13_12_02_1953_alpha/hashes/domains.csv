@@ -1,0 +1,9 @@
+domain,function,bits,description
+alpha_bundle_rows,fnv1,32,alpha activity bundle row names (80800533 rows)
+alpha_script_fields,fnv1,32,"alpha host field bindings (80801281), <row>.<field> or a root script field"
+alpha_import_identifiers,fnv1,32,"alpha import_only_bind labels: sensor identifiers, 8080128D/8080128E named handles"
+alpha_squads,fnv1,32,"alpha squad template, space and member archetype names (80801603)"
+alpha_bundles,fnv1,32,"alpha bundle names, lookup declarations and non-row lookup records"
+alpha_server_messages,fnv1,32,"alpha server message names (investment SharedDef 808E206C), keyed by the row's name hash"
+alpha_tag_names,fnv1,32,"strings the alpha packages spell out that look like real names (whole strings only, hi trust)"
+alpha_string_hashes,fnv1,32,"alpha string_hash constants in scripts (music states, scoreboard notifications, weapon channels)"

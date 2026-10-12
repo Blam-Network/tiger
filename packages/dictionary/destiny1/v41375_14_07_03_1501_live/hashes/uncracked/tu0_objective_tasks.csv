@@ -1,0 +1,97 @@
+hash,context
+0F9F26EE,cosmo_portal_1 obj_fallen_dome_a01 task 3
+0FE07016,act_cosmo_m4_dome_c amb_smpl_fallen_domec01._objective task 0; cosmo_portal_1 amb_smpl_fallen_domec01._objective task 0
+139B5C1F,act_cosmo_m4_dome_c obj_fallen_command task 5; cosmo_portal_1 obj_fallen_command task 5
+14B1CAF6,venus_portal_1 pf_boss_pillar._ai_objective task 0; venus_portal_1 left_switch_pillar._ai_objective task 0; venus_portal_1 right_switch_pillar._ai_objective task 0; venus_portal_1 center_switch_pillar._ai_objective task 0
+158BC3D8,act_cosmo_m4_dome_c pf_event_countdown_2factions[0].obj_event task 5; cosmo_portal_1 pf_event_countdown_2factions[0].obj_event task 5
+185D6C4D,act_cosmo_m4_dome_c obj_dome_a_hive_m4 task 0
+1DF35898,act_cosmo_m4_dome_c pf_event_countdown_2factions[0].obj_event task 2; cosmo_portal_1 pf_event_countdown_2factions[0].obj_event task 2
+1DF3589B,act_cosmo_m4_dome_c pf_event_countdown_2factions[0].obj_event task 4; cosmo_portal_1 pf_event_countdown_2factions[0].obj_event task 4
+1FDEEE16,act_cosmo_m4_dome_c pf_event_tank_drop[0].obj_tank task 0; act_cosmo_m4_dome_c pf_event_tank_drop[1].obj_tank task 0; act_cosmo_m4_dome_c pf_event_tank_drop[2].obj_tank task 0; cosmo_portal_1 pf_event_tank_drop[0].obj_tank task 0; cosmo_portal_1 pf_event_tank_drop[1].obj_tank task 0; cosmo_portal_1 pf_event_tank_drop[2].obj_tank task 0; venus_portal_1 pf_event_tank_drop[0].obj_tank task 0
+210D2BE1,cosmo_portal_1 obj_fallen_dome_c task 6
+24ABC9BC,venus_portal_1 obj_lower_tower_amb task 3
+275BE67F,venus_portal_1 simple_pocket._objective task 1
+2914685B,act_cosmo_m4_dome_c amb_smpl_hive_helipad01._objective task 0; cosmo_portal_1 amb_smpl_hive_helipad01._objective task 0
+2C03BDD4,venus_portal_1 obj_engineering_strike task 2
+2C1CABF0,venus_portal_1 engineering_phase.obj_engineering_strike_phase task 0
+2C1DFB56,act_cosmo_m4_dome_c pf_event_skirmish[0].obj_skirmish task 0; cosmo_portal_1 pf_event_skirmish[0].obj_skirmish task 0; venus_portal_1 pf_event_skirmish[0].obj_skirmish task 0
+335CBA0B,act_cosmo_m4_dome_c pf_event_tank_drop[0].obj_tank task 2; act_cosmo_m4_dome_c pf_event_tank_drop[1].obj_tank task 2; act_cosmo_m4_dome_c pf_event_tank_drop[2].obj_tank task 2; cosmo_portal_1 pf_event_tank_drop[0].obj_tank task 2; cosmo_portal_1 pf_event_tank_drop[1].obj_tank task 2; cosmo_portal_1 pf_event_tank_drop[2].obj_tank task 2; venus_portal_1 pf_event_tank_drop[0].obj_tank task 2
+339BB6A8,cosmo_portal_1 obj_fallen_dome_c task 9
+34A3D66D,act_cosmo_m4_dome_c amb_smpl_transit01._objective task 2; cosmo_portal_1 amb_smpl_transit01._objective task 2
+36677A5B,venus_portal_1 simple_thieves_hold._objective task 2
+3798DDE2,venus_portal_1 simple_thieves._objective task 0
+3C7C73C1,act_cosmo_m4_dome_c obj_dome_c_m4_fallen task 7
+3E5F5842,cosmo_portal_1 obj_fallen_dome_c task 4
+3E6D6DE2,act_cosmo_m4_dome_c obj_fallen_command task 8; cosmo_portal_1 obj_fallen_command task 8
+3FB06BC8,act_cosmo_m4_dome_c obj_dome_c_m4_fallen task 11
+4043307D,cosmo_portal_1 obj_fallen_dome_c task 0
+4043307E,cosmo_portal_1 obj_fallen_dome_c task 1
+414331D3,cosmo_portal_1 obj_fallen_dome_c task 2
+42EAF1D2,act_cosmo_m4_dome_c amb_smpl_transit01._objective task 0; cosmo_portal_1 amb_smpl_transit01._objective task 0
+44F6FE73,venus_portal_1 pf_event_vex_block[0].obj_vex_block task 0; venus_portal_1 pf_event_vex_block[1].obj_vex_block task 0; venus_portal_1 pf_event_vex_block[2].obj_vex_block task 0
+4911A367,venus_portal_1 obj_dig_site task 6
+4EAF20BE,cosmo_portal_1 obj_hive_dome_a01 task 4
+54B63915,cosmo_portal_1 obj_refinery_objective task 8
+564B7348,act_cosmo_m4_dome_c obj_fallen_command task 6; cosmo_portal_1 obj_fallen_command task 6
+56D7ABC2,act_cosmo_m4_dome_c obj_dome_c_m4_hive task 5
+5BEEE037,act_cosmo_m4_dome_c pf_event_skirmish[0].obj_skirmish task 5; cosmo_portal_1 pf_event_skirmish[0].obj_skirmish task 5; venus_portal_1 pf_event_skirmish[0].obj_skirmish task 5
+62573E8E,venus_portal_1 ruins_phase.obj_ruins_strike task 1
+6B5D2EA6,cosmo_portal_1 obj_hive_dome_a01 task 0
+6CA06FA2,venus_portal_1 obj_lower_tower_amb task 0
+70687F79,act_cosmo_m4_dome_c amb_smpl_hive_basement02._objective task 0; cosmo_portal_1 amb_smpl_hive_basement02._objective task 0
+72BDCAF8,act_cosmo_m4_dome_c pf_event_countdown_2factions[0].obj_event task 3; cosmo_portal_1 pf_event_countdown_2factions[0].obj_event task 3
+72BDCAFB,act_cosmo_m4_dome_c pf_event_countdown_2factions[0].obj_event task 1; cosmo_portal_1 pf_event_countdown_2factions[0].obj_event task 1
+73F23A3F,cosmo_portal_1 obj_refinery_objective task 3
+77FFBFED,cosmo_portal_1 obj_fallen_dome_c task 3
+7B0A0B67,cosmo_portal_1 obj_trash task 6
+82903A2F,cosmo_portal_1 obj_bossbattle_fallen task 2
+82A9E954,cosmo_portal_1 obj_trash task 5
+84875680,cosmo_portal_1 obj_fallen_dome_c task 5
+86F5772D,cosmo_portal_1 obj_refinery_trash task 0
+9F721936,act_cosmo_m4_dome_c obj_fallen_command task 7; cosmo_portal_1 obj_fallen_command task 7
+A055F32B,act_cosmo_m4_dome_c pf_event_skirmish[0].obj_skirmish task 2; cosmo_portal_1 pf_event_skirmish[0].obj_skirmish task 2; venus_portal_1 pf_event_skirmish[0].obj_skirmish task 2
+A24EFBCF,venus_portal_1 obj_entrance_amb1 task 3
+A3A9C6AD,act_cosmo_m4_dome_c pf_event_skirmish[0].obj_skirmish task 1; cosmo_portal_1 pf_event_skirmish[0].obj_skirmish task 1; venus_portal_1 pf_event_skirmish[0].obj_skirmish task 1
+AAB66DD7,act_cosmo_m4_dome_c pf_event_countdown_2factions[0].obj_event task 0; cosmo_portal_1 pf_event_countdown_2factions[0].obj_event task 0
+AB777E04,act_cosmo_m0_highway obj_breach_fallen01 task 19
+AB7A7F89,cosmo_portal_1 obj_trash task 2
+AE2DC12E,act_cosmo_m0_highway obj_breach_fallen01 task 8
+B17E52FB,act_cosmo_m4_dome_c pf_event_tank_drop[0].obj_tank task 1; act_cosmo_m4_dome_c pf_event_tank_drop[1].obj_tank task 1; act_cosmo_m4_dome_c pf_event_tank_drop[2].obj_tank task 1; cosmo_portal_1 pf_event_tank_drop[0].obj_tank task 1; cosmo_portal_1 pf_event_tank_drop[1].obj_tank task 1; cosmo_portal_1 pf_event_tank_drop[2].obj_tank task 1; venus_portal_1 pf_event_tank_drop[0].obj_tank task 1
+B3499BFE,venus_portal_1 obj_entrance_amb1 task 4
+B43AE5DB,act_cosmo_m0_highway obj_fallen_m0 task 6
+B8BE4FE2,venus_portal_1 simple_pocket._objective task 0
+B9200D21,venus_portal_1 engineering_phase.obj_engineering_strike_phase task 4
+B9200D24,venus_portal_1 engineering_phase.obj_engineering_strike_phase task 7
+B9200D27,venus_portal_1 engineering_phase.obj_engineering_strike_phase task 3
+BA28BF7E,act_cosmo_m4_dome_c obj_dome_a_hive_m4 task 1
+BCEA0E1A,venus_portal_1 ruins_phase.obj_ruins_strike task 4
+BF966620,venus_portal_1 obj_engineering_strike task 3
+C294CFBB,venus_portal_1 ruins_phase.obj_ruins_strike task 0
+C2BCD7F6,cosmo_portal_1 obj_bossbattle_fallen task 17
+C68F32D4,venus_portal_1 obj_north_tides_amb1 task 3
+C7BE4A3A,venus_portal_1 simple_thieves_hold._objective task 1
+C8389513,cosmo_portal_1 obj_refinery_objective task 0
+C8966C10,cosmo_portal_1 obj_refinery_trash task 2
+C8966C13,cosmo_portal_1 obj_refinery_trash task 1
+CC129335,cosmo_portal_1 obj_fallen_dome_c task 8
+CC129336,cosmo_portal_1 obj_fallen_dome_c task 7
+CF82FECC,venus_portal_1 obj_north_tides_amb1 task 1
+D3F4E85D,cosmo_portal_1 obj_hive_dome_a01 task 3
+D5414754,act_cosmo_m4_dome_c pf_event_skirmish[0].obj_skirmish task 3; cosmo_portal_1 pf_event_skirmish[0].obj_skirmish task 3; venus_portal_1 pf_event_skirmish[0].obj_skirmish task 3
+D5E1347B,act_cosmo_m4_dome_c obj_fallen_command task 2; cosmo_portal_1 obj_fallen_command task 2
+D80387BB,act_cosmo_m4_dome_c obj_fallen_command task 9; cosmo_portal_1 obj_fallen_command task 9
+DC76F350,cosmo_portal_1 obj_trash task 3
+DD7116C3,cosmo_portal_1 obj_trash task 4
+DF8D9332,act_cosmo_m4_dome_c amb_ptrl_south01._objective[0] task 1; act_cosmo_m4_dome_c amb_ptrl_south01._objective[1] task 1; act_cosmo_m4_dome_c amb_ptrl_pikes01._objective[0] task 1; act_cosmo_m4_dome_c amb_ptrl_pikes01._objective[1] task 1; act_cosmo_m4_dome_c amb_ptrl_pikes01._objective[2] task 1; act_cosmo_m4_dome_c amb_ptrl_pikes01._objective[3] task 1; act_cosmo_m4_dome_c amb_ptrl_hiveshore01._objective[0] task 1; act_cosmo_m4_dome_c amb_ptrl_hiveshore01._objective[1] task 1; cosmo_portal_1 amb_ptrl_south01._objective[0] task 1; cosmo_portal_1 amb_ptrl_south01._objective[1] task 1; cosmo_portal_1 amb_ptrl_pikes01._objective[0] task 1; cosmo_portal_1 amb_ptrl_pikes01._objective[1] task 1; cosmo_portal_1 amb_ptrl_pikes01._objective[2] task 1; cosmo_portal_1 amb_ptrl_pikes01._objective[3] task 1; cosmo_portal_1 amb_ptrl_hiveshore01._objective[0] task 1; cosmo_portal_1 amb_ptrl_hiveshore01._objective[1] task 1
+E242D0AB,act_cosmo_m4_dome_c obj_dome_a_fallen_m4 task 4; cosmo_portal_1 obj_fallen_dome_a01 task 1
+E2851A9A,cosmo_portal_1 obj_shanks task 2
+E29F13DE,act_cosmo_m4_dome_c amb_smpl_transit01._objective task 1; cosmo_portal_1 amb_smpl_transit01._objective task 1
+E476AD7D,cosmo_portal_1 obj_fallen_dome_a01 task 2
+E52F741B,act_cosmo_m4_dome_c obj_dome_a_fallen_m4 task 5
+E85AA53A,cosmo_portal_1 obj_refinery_objective task 9
+EE61CD64,act_cosmo_m4_dome_c pf_event_skirmish[0].obj_skirmish task 4; cosmo_portal_1 pf_event_skirmish[0].obj_skirmish task 4; venus_portal_1 pf_event_skirmish[0].obj_skirmish task 4
+F0D387EA,act_cosmo_m4_dome_c obj_dome_c_m4_hive task 8
+F19C6A8B,act_cosmo_m4_dome_c obj_fallen_command task 10; cosmo_portal_1 obj_fallen_command task 10
+F4A42E4F,venus_portal_1 simple_thieves._objective task 1
+FA33A175,cosmo_portal_1 obj_bossbattle_fallen task 1
+FE049731,cosmo_portal_1 obj_trash task 1

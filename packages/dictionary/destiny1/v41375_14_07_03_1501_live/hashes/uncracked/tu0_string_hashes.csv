@@ -1,0 +1,51 @@
+hash,context
+037CF2E9,"performance?: the Fallen perch/bridge performance lists (cosmo 808013F3 80CB9955, 80CCA31D; race 80802B37 809E0490)"
+070B662F,"performance?: the Fallen perch/bridge performance lists (cosmo 808013F3 80CB9955, 80CCA31D; race 80802B37 809E0490)"
+08FA2D16,"performance?: the Fallen perch/bridge performance lists (cosmo 808013F3 80CB9955, 80CCA31D; race 80802B37 809E0490)"
+0E1A42D4,"dropship ability (race 809DDD71, enter-like)"
+100E2B1D,"cue: act_cosmo_m0_highway mission3 Ghost, wall objective clears; performance nux_breach_test (globals 80802B37 80AA8219)"
+1AECBA14,"performance?: the Fallen perch/bridge performance lists (cosmo 808013F3 80CB9955, 80CCA31D; race 80802B37 809E0490)"
+1E35DF11,"dropship ability: act_cosmo_m0_highway graveyard dropship leave (race 809DDD71, exit-like)"
+2B1C55EB,"performance?: the Fallen perch/bridge performance lists (cosmo 808013F3 80CB9955, 80CCA31D; race 80802B37 809E0490)"
+3272051D,"performance?: the Fallen perch/bridge performance lists (cosmo 808013F3 80CB9955, 80CCA31D; race 80802B37 809E0490)"
+3D34BC6E,"performance?: the Fallen perch/bridge performance lists (cosmo 808013F3 80CB9955, 80CCA31D; race 80802B37 809E0490)"
+428EDE3C,"performance?: the Fallen perch/bridge performance lists (cosmo 808013F3 80CB9955, 80CCA31D; race 80802B37 809E0490)"
+47E79124,state of performance nux_breach_test (globals 80802B37 80AA8219)
+5429FB79,"cue: act_cosmo_m0_highway mission3 Ghost, weapon objective begins; performance nux_breach_test (globals 80802B37 80AA8219)"
+63C56F3B,"dropship ability (race 809DDD71, exit-like)"
+68295F6D,action: after act_fallen_vault_right (cosmo 80801485 list in 80CCB451)
+6B8F4159,"performance?: the Fallen perch/bridge performance lists (cosmo 808013F3 80CB9955, 80CCA31D; race 80802B37 809E0490)"
+6BD49A79,state of performance nux_breach_test (globals 80802B37 80AA8219)
+6D706330,"performance?: the Fallen perch/bridge performance lists (cosmo 808013F3 80CB9955, 80CCA31D; race 80802B37 809E0490)"
+71BE30AE,"performance?: the Fallen perch/bridge performance lists (cosmo 808013F3 80CB9955, 80CCA31D; race 80802B37 809E0490)"
+74E80629,"performance: act_cosmo_m0_highway breach crawler wall climb; the Fallen perch/bridge performance lists (cosmo 808013F3 80CB9955, 80CCA31D; race 80802B37 809E0490)"
+7818E8BB,state of the nest performance with idle and cue begin_action (cosmo 80802B37 80CCB64A)
+78F150B6,state of performance nux_breach_test (globals 80802B37 80AA8219)
+7A3E66D9,cue: act_cosmo_m0_highway breach Ghost light-up; performance nux_breach_test (globals 80802B37 80AA8219)
+87DC489D,"performance?: the Fallen perch/bridge performance lists (cosmo 808013F3 80CB9955, 80CCA31D; race 80802B37 809E0490)"
+8AEFBA10,temperament?: next to 8AEFBA13 in 808013F3 tables
+8AEFBA11,temperament?: next to 8AEFBA13 in 808013F3 tables
+8AEFBA13,"temperament: act_cosmo_m0_highway hangar sq_m0_fallen_init_b; 47 808013F3 tables, with 8AEFBA10 and 8AEFBA11 (name ends in 1 or a)"
+8C1236AF,"performance?: the Fallen perch/bridge performance lists (cosmo 808013F3 80CB9955, 80CCA31D; race 80802B37 809E0490)"
+9B5BD08E,state of performance nux_breach_test (globals 80802B37 80AA8219)
+9BFC6789,"performance?: the Fallen perch/bridge performance lists (cosmo 808013F3 80CB9955, 80CCA31D; race 80802B37 809E0490)"
+9EC63259,state of performance nux_breach_test (globals 80802B37 80AA8219)
+A018C07E,state of performance nux_breach_test (globals 80802B37 80AA8219)
+BE2A0C94,"performance?: the Fallen perch/bridge performance lists (cosmo 808013F3 80CB9955, 80CCA31D; race 80802B37 809E0490)"
+C2E53049,"performance?: the Fallen perch/bridge performance lists (cosmo 808013F3 80CB9955, 80CCA31D; race 80802B37 809E0490)"
+C4A39B97,"performance?: the Fallen perch/bridge performance lists (cosmo 808013F3 80CB9955, 80CCA31D; race 80802B37 809E0490)"
+C7BD951C,"performance?: the Fallen perch/bridge performance lists (cosmo 808013F3 80CB9955, 80CCA31D; race 80802B37 809E0490)"
+C8827171,"performance?: the Fallen perch/bridge performance lists (cosmo 808013F3 80CB9955, 80CCA31D; race 80802B37 809E0490)"
+C88E5DC7,temperament: act_cosmo_m0_highway hangar sq_ch1_fallen_on_playership_2 (cosmo 80CCA31D)
+C9730C60,temperament: act_cosmo_m0_highway hangar sq_ch1_fallen_on_playership_3 (race 809E0774)
+CFE34DA9,"performance?: the Fallen perch/bridge performance lists (cosmo 808013F3 80CB9955, 80CCA31D; race 80802B37 809E0490)"
+D4666DDE,state of performance nux_breach_test (globals 80802B37 80AA8219)
+D9E71959,"performance?: the Fallen perch/bridge performance lists (cosmo 808013F3 80CB9955, 80CCA31D; race 80802B37 809E0490)"
+E460C9D5,state of performance nux_breach_test (globals 80802B37 80AA8219)
+E6060CD5,"performance?: the Fallen perch/bridge performance lists (cosmo 808013F3 80CB9955, 80CCA31D; race 80802B37 809E0490)"
+E82B81FC,state of performance nux_breach_test (globals 80802B37 80AA8219)
+EB9C8584,paired with performance F45284BA (cosmo 80800861 80CCB5E9)
+EB9C8587,paired with performance F45284B9 (cosmo 80800861 80CCB5E9)
+F45284B9,"performance: act_cosmo_m0_highway breach nest shank 2 (cosmo 80800861 80CCB5E9, paired with EB9C8587)"
+F45284BA,"performance: act_cosmo_m0_highway breach nest shank 1 (cosmo 80800861 80CCB5E9, paired with EB9C8584)"
+FD455938,temperament: act_cosmo_m0_highway hangar sq_ch1_fallen_on_playership_1 (cosmo 80CCA31D)

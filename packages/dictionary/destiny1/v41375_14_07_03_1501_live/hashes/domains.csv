@@ -1,0 +1,8 @@
+domain,function,bits,description
+tu0_flags,fnv1,32,TU0 unlock flag names (80A58067)
+tu0_import_identifiers,fnv1,32,TU0 sensor identifiers (import_only_bind labels)
+tu0_squads,fnv1,32,"TU0 squad template, space and member archetype names (808012D9)"
+tu0_bundles,fnv1,32,TU0 bundle names and lookup group names
+tu0_server_messages,fnv1,32,"TU0 server message names (investment SharedDef 80A5806B), keyed by the row's name hash"
+tu0_objective_tasks,fnv1,32,TU0 Objective task names (808015F0 task list; a squad's task is an index into it)
+tu0_string_hashes,fnv1,32,"TU0 string_hash constants scripts hand to natives: performances, cues and states, temperaments, actions, dropship abilities, incident names"

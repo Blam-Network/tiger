@@ -1,0 +1,410 @@
+hash,context
+001D99CF,row patrol_sighting_array._audio_pt
+013EB5EA,row sq_bridge_a_a__leg3; row sq_bridge_a_b__leg3
+013EB5ED,row sq_bridge_a_a__leg4; row sq_bridge_a_b__leg4
+01556B0C,row sq_cave_entry_center_support2__legionary_2
+01556B0F,row sq_cave_entry_center_support2__legionary_1
+01556B5C,row sq_road_front_legionary__legionary_b
+01556B5D,row sq_road_front_legionary__legionary_c
+01556B5F,row sq_road_front_legionary__legionary_a
+01F5A1C9,row sq_patrol_vip_centurion_atr._squad[0]; row patrol_kill_vip_centurion_atrium._squad
+03E65E8D,row sq_overlook_anchor1__knight_boomer
+075ADFE9,row sq_objective_fallen01d__shank01; row sq_objective_fallen01e__shank01
+075ADFEA,row sq_objective_fallen01d__shank02; row sq_objective_fallen01e__shank02
+075ADFEB,row sq_objective_fallen01d__shank03; row sq_objective_fallen01e__shank03
+075ADFEC,row sq_objective_fallen01d__shank04; row sq_objective_fallen01e__shank04
+0882B95C,row phase_8_warbase.pf_placement_button_c._object; row phase_8_warbase.pf_objective_button_c._object
+0882B95D,row phase_8_warbase.pf_placement_button_b._object; row phase_8_warbase.pf_objective_button_b._object
+090D5431,row pf_event_patrol[0].sq_boss; row pf_event_patrol[1].sq_boss; row pf_event_patrol[2].sq_boss
+092E8C15,row phase_m03_downtown.pf_objective_downtown_interact._object; row pf_placement_m03_button._object
+0A3F22D8,row sq_fallen_garage_vandals_2__vandal_2
+0A3F22D9,row sq_fallen_garage_vandals_3__vandal_3
+0A65287E,row patrol_sighting_chkpt._audio_pt
+0A6F29F5,row sq_wave_1_a__psion1
+0A6F29F6,row sq_wave_1_a__psion2
+0AA54CC0,row phase_strength_complete.pf_placement_button_a._object; row phase_strength_complete.pf_objective_button_a._object
+0BA615B2,row phase_boss.pf_placement_tank._object; row phase_boss.pf_objective_tank._object
+0CD4D5F7,row sq_boss; row phase_checkpoint_boss.sp_objective_loot._squad
+0D746C08,row sq_core_trooper_a__trooper_c; row sq_core_trooper_b__trooper_c; row sq_gate_knights__trooper_c
+0D746C09,row sq_core_trooper_a__trooper_b; row sq_core_trooper_b__trooper_b; row sq_minions_a_trooper_a__trooper_b
+0D746C0A,row sq_core_trooper_a__trooper_a; row sq_core_trooper_b__trooper_a; row sq_minions_a_trooper_a__trooper_a
+0D746C58,row sq_m3_guard_front__trooper_3
+0D746C59,row sq_m3_guard_front__trooper_2
+0D746C5A,row sq_m3_guard_front__trooper_1; row sq_m3_guard_rear__trooper_1
+0DCC2066,row patrol_sighting_refinery._audio_pt
+0DE3B3DD,row sq_fallen_upper_anchors01
+0DFD84CA,row sq_patrol_vip_hobgob_eng._squad[0]; row patrol_kill_vip_hobgob_eng._squad
+0E217238,row hunter_clubhouse_keyboarders1__keyboarder1
+0E4FC089,row pf_placement_m02_interact._object
+0F3E7FBF,row patrol_sighting_delta_n._player_objective; row patrol_sighting_delta_s._player_objective; row patrol_sighting_array._player_objective
+0F93E94C,row phase_1_accelerator.pf_placement_button_a._object; row phase_1_accelerator.pf_objective_button_a._object
+0FA2587F,row sq_hive_boss
+10D71F67,row patrol_sighting_warpruins._audio_pt
+110752D2,row obj_placement_m5_o2._object; row cosmo_m5_phase01_refinery.obj_m5_o2._object
+11FE8ED6,row pf_destroy_psionai._object
+14464224,row sq_patrol_vip_wizard._squad[0]; row patrol_kill_vip_wizard._squad
+1505C84E,row phase_m4_uppercitadel_darkness.pf_objective_uppercitadel_kill._player_objective
+18942DC0,row sq_patrol_vip_wizard_upper._squad[0]; row patrol_kill_vip_wizard_upper._squad
+18B9DF36,row pf_encounter_simple_henge_wave1_b._squad[1]
+1A40F1FA,row sq_room3_wave3_major1__major_centurion
+1A58BFCD,row phase_m06_battleground.pf_objective_battleground_interact._object; row pf_placement_m06_interact._object
+1C450A3D,row sp_placement_array._object; row phase02.obj_s1_phase02_m1._object
+1E42FB90,row patrol_scan_nm_1._placement._object; row patrol_scan_nm_1._object
+1E42FB91,row patrol_scan_nm._placement._object; row patrol_scan_nm._object
+2112ABDE,row sq_boulevard_vendor_black_market__vendor_rail
+214E96D4,row patrol_sighting_hellmouth._audio_pt
+2195C3B5,row sq_outpost_platform_anchor; row sq_outpost_drop_anchor1; row sq_outpost_push_anchor1
+22BE7D14,row pf_encounter_simple_patrols_vip._squad[0]
+243999A0,row cosmo_m0_5_phase01_hangar.obj_m0_5_loot._squad
+2493C57C,row patrol_terminal._terminal
+2493C57D,row patrol_terminal_1._terminal
+2493C57E,row patrol_terminal_2._terminal
+24ECFD0F,row pf_event_skirmish[0].pf_preset.po_event_skirmish_intro; row pf_event_skirmish[0].pf_preset.po_event_skirmish_mid; row pf_event_skirmish[0].pf_preset.po_event_skirmish_end
+271E0080,row sq_gate_thrall_intro__thrall_c; row sq_m3_thrall_a__thrall_c
+271E0081,row sq_gate_thrall_intro__thrall_b; row sq_m3_thrall_a__thrall_b; row sq_chainroom_wave0_melee3__thrall_b
+271E0082,row sq_gate_thrall_intro__thrall_a; row sq_m3_thrall_a__thrall_a; row sq_chainroom_wave0_melee3__thrall_a
+271E0087,row sq_m3_thrall_a__thrall_d
+271E00D1,row sq_bossbattle_hive03__thrall_2; row sq_bossbattle_hive04__thrall_2
+271E00D2,row sq_bossbattle_hive03__thrall_1; row sq_bossbattle_hive04__thrall_1
+277F778A,row sq_arena_major; row sq_arena_dropship; row phase03_gatehouse_outer_tank.pf_obj_gatehouse_outer_kill._squad
+27C686D5,row sq_dark_ritual; row phase_4_strength.pf_objective_kill._squad
+27EBAA35,row sq_underwatch_artcite__artcite
+2916CD9F,row patrol_sighting_dry_sea._audio_pt
+29CF1E32,row pf_event_vex_block[0].pf_preset.po_event_vex_block; row pf_event_vex_block[1].pf_preset.po_event_vex_block; row pf_event_vex_block[2].pf_preset.po_event_vex_block
+2A17E6CD,row phase_vault_objective02.pf_ia_vault_repair2._object; row phase_vault_objective02.pf_po_vault_repair2._object
+2A17E6CE,row phase_vault_objective02.pf_ia_vault_repair1._object; row phase_vault_objective02.pf_po_vault_repair1._object
+2D8F17DF,row sp_placement_glyphs._objects[0]; row phase_lowergarden.sp_objective_glyphs._objects[0]
+2EFFDAE2,row sq_turret; row phase_upper_uppergarden.pf_objective_kill._squad
+3064D17C,row sq_boulevard_civ_walkers1__walker1; row sq_boulevard_civ_walkers2__walker1
+30B0A1C9,row sq_m01_major
+30BAD518,row sq_hive_basement_thrall01__thrall6
+30BAD519,row sq_hive_basement_thrall01__thrall7
+30BAD51A,row sq_hive_basement_thrall01__thrall4
+30BAD51B,row sq_hive_basement_thrall01__thrall5
+30BAD51C,row sq_hive_basement_thrall01__thrall2; row sq_court_high_b_melee__thrall2
+30BAD51D,row sq_hive_basement_thrall01__thrall3; row sq_court_high_b_melee__thrall3
+30BAD51F,row sq_hive_basement_thrall01__thrall1; row sq_court_high_b_melee__thrall1
+3139BC63,row sq_m3_exploder1__thrall_exploder_4; row sq_m3_exploder2__thrall_exploder_4; row sq_m3_exploder3__thrall_exploder_4
+3139BC64,row sq_m3_exploder1__thrall_exploder_3; row sq_m3_exploder2__thrall_exploder_3; row sq_m3_exploder3__thrall_exploder_3
+3139BC65,row sq_m3_exploder1__thrall_exploder_2; row sq_m3_exploder2__thrall_exploder_2; row sq_m3_exploder3__thrall_exploder_2
+3139BC66,row sq_m3_exploder1__thrall_exploder_1; row sq_m3_exploder2__thrall_exploder_1; row sq_m3_exploder3__thrall_exploder_1
+31AA62BC,row sq_patrol_vip_shank._squad[0]; row patrol_kill_vip_shank._squad
+34EAA816,row sp_placement_control._object; row phase_launchtubes_arena.sp_objective_control._object
+351865E1,row sq_patrol_vip_ogre_launch._squad[0]; row patrol_kill_vip_ogre_launch._squad
+351FF17B,row sq_gate04_flayer1__arc_flayer
+365FAC19,row obj_placement_m2_o4b._object; row cosmo_m2_phase04_dome_c.obj_m2_o4b._object
+36FB6B78,row sq_room3_wave3_major1
+376B6E44,row patrol_terminal_1._terminal
+376B6E45,row patrol_terminal._terminal
+376B6E47,row patrol_terminal_2._terminal
+37DE1D4D,row sq_boulevard_civ_railing_outward1__leaner1_alt
+3935C9D2,row sq_gate01_miniboss__psion_major; row sq_gate02_miniboss__psion_major; row sq_gate03_miniboss__psion_major
+3B5C49FC,row patrol_terminal._terminal
+3B5C49FD,row patrol_terminal_1._terminal
+3B5C49FE,row patrol_terminal_2._terminal
+3B5C49FF,row patrol_terminal_3._terminal
+3BBF838D,row sq_patrol_vip_wizard_launch._squad[0]; row patrol_kill_vip_wizard_launch._squad
+3C3B3108,row sp_specops_heart.sq_bg_mino_b__ultra_mino_b; row phase_lowergarden_cinematic.sp_specops_heart.sq_bg_mino_b__ultra_mino_b
+3C3B3109,row sp_specops_heart.sq_bg_mino_c__ultra_mino_c; row phase_lowergarden_cinematic.sp_specops_heart.sq_bg_mino_c__ultra_mino_c
+3C3B310B,row sp_specops_heart.sq_bg_mino_a__ultra_mino_a; row phase_lowergarden_cinematic.sp_specops_heart.sq_bg_mino_a__ultra_mino_a
+3C60AEC5,row sq_vip_kill_vand_sou._squad[0]; row patrol_kill_vip_vand_sou._squad
+3C86C168,row sq_patrol_vip_centurion_gatehs._squad[0]; row patrol_kill_vip_centurion_gatehs._squad
+3C947D55,row sq_fallen_garage_obj; row sq_fallen_garage_melee; row sq_fallen_garage_vandals_2
+3C97D375,row obj_placement_m4_finish._object
+3DFAFA17,row sq_court_high_b; row phase_5_launchtubes.pf_objective_kill._squad
+3E30921F,row phase_launchtubes_interior.pf_placement_button_a._object; row phase_launchtubes_interior.pf_objective_button_a._object
+3E6B48D2,row sq_boulevard_civ_railing_outward1__leaner2
+3EA60D3D,row obj_placement_m1_o1b._object; row cosmo_m1_phase00_dome_a.obj_m1_o1b._object
+3F823AF5,row sq_objective_fallen03c__captain_major; row sq_hall_captain__captain_major; row sq_anchor_vault01__captain_major
+3F954BE7,row sq_vip_kill_mino0_ent._squad[0]; row patrol_kill_vip_mino_ent._squad
+3F954BF4,row sq_patrol_vip_minotaur_eng._squad[0]; row patrol_kill_vip_mino_eng._squad
+40B96A1D,row sq_patrol_vip_wizard_wisdom._squad[0]; row patrol_kill_vip_wizard_wisdom._squad
+40C04930,row patrol_sighting_plaza._audio_pt
+430EDB89,row pf_event_skirmish[0].sq_a_intro_wave[0]; row pf_event_skirmish[0].sq_a_mid_wave[0]; row pf_event_skirmish[0].sq_a_mid_wave[1]
+442324CF,row sq_iron_banner_vendor__lothar; row sq_plaza_temp__lothar
+44649C06,row sq_vip_kill_serv0_ent._squad[0]; row patrol_kill_vip_serv_ent._squad
+4741F8D8,row patrol_terminal._terminal
+4741F8D9,row patrol_terminal_1._terminal
+4741F8DA,row patrol_terminal_2._terminal
+47DCE9B0,row sp_placement_console._object; row phase_checkpoint.sp_objective_console._object
+481977E3,row phase_4_mesa.pf_objective_button._object; row pf_placement_button._object
+4A7E10A4,row sq_hive_basement_troopers01__trooper2; row sq_m3_push_a_b__trooper2; row sq_arena_minions__trooper2
+4A7E10A5,row sq_hive_basement_troopers01__trooper3
+4A7E10A7,row sq_hive_basement_troopers01__trooper1; row sq_m3_push_a_b__trooper1; row sq_arena_minions__trooper1
+4B221234,row patrol_sighting_atrium._audio_pt
+4B48642C,row pf_cabal_drill[0].pf_preset.po_event_dropship_multipoint; row pf_event_cabal_drill[0].pf_preset.po_event_dropship_multipoint; row pf_event_cabal_drill[1].pf_preset.po_event_dropship_multipoint
+4B868608,row vendor_weapons_helpers1__helper3
+4B868609,row vendor_ships_helpers1__helper2; row vendor_weapons_helpers1__helper2
+4B86860A,row vendor_ships_helpers1__helper1; row vendor_weapons_helpers1__helper1
+4CA95E9F,row pf_event_patrol[0].sq_boss__cell_boss; row pf_event_patrol[1].sq_boss__cell_boss; row pf_event_patrol[2].sq_boss__cell_boss
+4CBCA57B,row obj_placement_m4_o2._object; row cosmo_m4_phase01_dome_c.obj_m4_o2._object
+4DB44A8F,row sq_repair_ultra_gladiator__ultra_gladiator
+4DC4EE04,row obj_placement_ch4_m03._object
+4E5E5D4C,row dropships__cutter_a
+4E5E5D4E,row dropships__cutter_c
+4E5E5D4F,row dropships__cutter_b
+50070F9C,row sq_boulevard_civ_standers_arms_at_sides1__stander2_alt
+50453B6C,row patrol_sighting_caldera._audio_pt
+506F3CD1,row sq_vip_kill_serv0_arc._squad[0]; row patrol_kill_vip_serv_arc._squad
+51CB2A87,row patrol_sighting_dome_c._audio_pt
+52ECE273,row sq_underwatch_vendor_guardian_mentor__vendor_table1; row sq_underwatch_vendor_hunter_mentor__vendor_table1; row sq_underwatch_vendor_warlock_mentor__vendor_table1
+54B573E2,row sq_boss_devils; row sq_boss_kings; row sq_boss_wolves
+54B8D9F7,row phase_goto_vault.pf_ia_vault_core._object; row phase_goto_vault.pf_po_vault_core._object
+5555F141,row pf_placement_button_b._object
+5555F142,row pf_placement_button_a._object
+556BB739,row sq_outpost_drop_ship__harvester; row sq_arena_dropship__harvester
+561160DA,row patrol_sighting_rocketyard._audio_pt
+56ECE29D,row sq_major_vandals_blade__vandal_blades02
+56ECE29E,row sq_major_vandals_blade__vandal_blades01
+5871B7B5,row sq_patrol_vip_dreg._squad[0]; row patrol_kill_vip_dreg0._squad
+58A7319C,row sq_underwatch_vendor_black_market__vendor_shaxx
+5B54C09C,row phase_6_gatehouse.pf_placement_button_door._object; row phase_6_gatehouse.pf_objective_button_door._object
+5C34EF98,row patrol_terminal._terminal
+5C34EF99,row patrol_terminal_1._terminal
+5C34EF9A,row patrol_terminal_2._terminal
+5EA6C5F6,row sq_vip_kill_mino0_low._squad[0]; row patrol_kill_vip_mino_low._squad
+5F084BA1,row sp_simple_loot_hab._squad[0]; row sp_simple_loot_tower._squad[0]
+5F62CC37,row sp_placement_vent._object; row phase_plains_intro.sp_objective_vent._object
+616193A4,row phase_thieves_den_kill_fallen.pf_ia_interactable_loot._objects[0]; row phase_thieves_den_kill_fallen.pf_ia_interactable_loot._objects[1]; row phase_thieves_den_kill_fallen.pf_po_interactable_loot._object_reference
+638C423F,row pf_event_dropship_multipoint_fallen[0].pf_preset.po_event_dropship_multipoint; row pf_event_dropship_multipoint_fallen[1].pf_preset.po_event_dropship_multipoint; row pf_event_dropship_multipoint_fallen[2].pf_preset.po_event_dropship_multipoint
+639A4977,row sq_bossbattle_boss02__doppleganger; row sq_bossbattle_boss03__doppleganger; row sq_bossbattle_boss04__doppleganger
+6431ECB7,row sq_patrol_vip_phalanx_chkpt._squad[0]; row patrol_kill_vip_phalanx_chkpt._squad
+6491B9A9,row sq_boss__hydra_major
+64D1C429,row cosmo_m5_phase00_rocketyard.obj_m5_o1b._squad; row amb_smpl_hive_front01._squad[1]; row amb_smpl_hive_center01._squad[1]
+650B840C,row sq_hall_captain
+6607D3FA,row cosmo_m0_5_phase00_delta_s.obj_m0_5_o1._object; row obj_placement_m0_5_o1._object
+67F881AD,row sq_repair_ultra_gladiator; row phase05_tank_commander.pf_obj_tank_commander._squad
+67FB6149,row phase_launchtubes_complete.pf_placement_button_ghost._object; row phase_launchtubes_complete.pf_objective_button_ghost._object
+68AF0526,row sq_patrol_vip_centurion_rubicon._squad[0]; row patrol_kill_vip_centurion_rubi._squad
+6A6058E0,row sq_interior_back__dreg_pistol_2; row sq_interior_front__dreg_pistol_2
+6A6058E3,row sq_interior_back__dreg_pistol_1; row sq_interior_front__dreg_pistol_1
+6B5C8454,row sq_patrol_vip_ogre_upper._squad[0]; row patrol_kill_vip_ogre_upper._squad
+6BEACAAE,row sq_patrol_vip_minotaur_lobby._squad[0]; row patrol_kill_vip_minotaur_lobby._squad
+6BEC7F5D,row pf_placement_ch3_button._object
+6BF19088,row dropships__harvester_d
+6BF19089,row dropships__harvester_e
+6BF1908A,row dropships__harvester_f
+6BF1908D,row dropships__harvester_a
+6BF1908E,row dropships__harvester_b
+6BF1908F,row dropships__harvester_c
+6D107630,row sq_fallen_2__dreg_b
+6D107631,row sq_fallen_2__dreg_c
+6D107633,row sq_fallen_2__dreg_a; row sq_fallen_m0_dropdown__dreg_a
+6D237039,row sq_bridge_lvl0_f_right; row sq_bridge_lvl1_f_right; row sq_bridge_lvl2_f_right
+6D50F128,row patrol_terminal_1._terminal
+6D50F129,row patrol_terminal._terminal
+6D63F125,row sq_tank; row phase_boss.pf_kill_boss._squad
+6F75442B,row phase02.pf_ia_analyze._object; row phase02.pf_po_analyze._object
+71F25F64,row sq_hall_goblin_a__goblin_a; row sq_hall_goblin_b__goblin_a
+71F25F67,row sq_hall_goblin_a__goblin_b; row sq_hall_goblin_b__goblin_b
+721945F6,row sq_boulevard_vendor_black_market__vendor_door
+72E7BBCC,row sq_underwatch_cannon_workers__worker1; row sq_underwatch_welder_workers__worker1; row sq_underwatch_crate_workers__worker1
+72E7BBCF,row sq_underwatch_cannon_workers__worker2; row sq_underwatch_crate_workers__worker2
+7439EA1C,row pf_cabal_drill[0].pf_waves[0].sq_wave_a; row pf_cabal_drill[0].pf_waves[0].sq_wave_b; row pf_cabal_drill[0].pf_waves[0].sq_wave_leader
+74972524,row sq_gate04_flayer2__thermal_flayer
+74CDB565,row sq_patrol_vip_legionary_rubicon._squad[0]; row patrol_kill_vip_legionary_rubi._squad
+753CDBBF,row sq_fallen_guards01; row sq_t2_fallen_guards01
+756493CB,row sq_boss
+77AC10E6,row phase_m03_penthouse_close.pf_placement_penthouse_interact._object; row phase_m03_penthouse_close.pf_objective_penthouse_interact._object
+7807701F,row pf_event_skirmish[0].sq_a_end_wave[0]; row pf_event_skirmish[0].sq_a_end_anchor; row pf_event_skirmish[0].sq_b_end_wave[0]
+79C212AA,row reward_entrance
+7B3122FF,row sq_fallen_lookout_mboss01
+7B705EA8,row sq_tube_obj_fallen01
+7C5D6BC8,row sq_fallen_dropdown_f__dreg1; row sq_fallen_garage_obj__dreg1; row sq_fallen_garage_melee__dreg1
+7C5D6BCA,row sq_fallen_garage_obj__dreg3; row sq_fallen_garage_melee__dreg3
+7C5D6BCB,row sq_fallen_garage_obj__dreg2; row sq_fallen_garage_melee__dreg2
+7D07F360,row vexcloud_bridge_guardians._squad[0]
+80296303,row pf_io_door4._object; row phase06.pf_io_door4._object
+80296304,row pf_io_door3._object; row phase04.pf_io_door3._object
+80296305,row pf_io_door2._object; row phase02.pf_io_door2._object
+80296306,row pf_io_door1._object; row phase01.pf_io_door1._object; row pf_i_door_placement._object
+81EC6F87,row sq_wave4_f1__servitor_major
+82A62511,row pf_event_patrol[0].pf_preset.po_event_patrol; row pf_event_patrol[1].pf_preset.po_event_patrol; row pf_event_patrol[2].pf_preset.po_event_patrol
+831EA919,row sq_patrol_vip_ogre_wisdom._squad[0]; row patrol_kill_vip_ogre_wisdom._squad
+8362596D,row phase_moonbase.pf_obj_moonbase_m1_terminal._object; row pf_placement_m1_terminal._object
+84CFE314,row patrol_terminal_1._terminal
+84CFE315,row patrol_terminal._terminal
+84CFE317,row patrol_terminal_2._terminal
+84E95B7C,row sq_fallen_bouncedown_a__vandal_blade; row sq_fallen_bouncedown_c__vandal_blade
+85C53DB7,row sp_placement_door._object; row phase_rasputin_vendor_main.sp_objective_door._object
+8875610B,row pf_door_hack._object
+88F281DA,row patrol_sighting_accel._audio_pt
+8D170E76,row phase00_mesa_garage.pf_obj_mesa_garage._object; row pf_obj_mesa_garage_placement._object
+8D1B9891,row sq_boulevard_civ_box_sitters1__sitter1_alt
+8E434238,row sq_underwatch_welder_workers__supervisor1; row sq_underwatch_crate_workers__supervisor1
+8E97CD23,row sq_outpost_drop_anchor1__major_phalanx; row sq_outpost_push_anchor2__major_phalanx
+8ED9F019,row sp_placement_control._object; row phase_plains_intro.sp_objective_control._object
+938AA37F,row phase_plaza_defend_ghost.pf_po_interact._object; row pf_ia_interact._object
+94E1FB45,row sq_bridge_lvl0_f_left; row sq_bridge_lvl1_f_left; row sq_bridge_lvl2_f_left
+960B8C16,row patrol_scan_ship._placement._object; row patrol_scan_ship._object
+960B8C17,row patrol_scan_ship_1._placement._object; row patrol_scan_ship_1._object
+9737BF52,row phase_lowercitadel.pf_objective_loot._squad; row sq_arena
+9742D95D,row cosmo_m2_phase01_dry_sea.obj_m2_o2b._objects[1]; row obj_m2_o2b_placement._objects[1]
+990085DD,row ship_signalers__signaler1
+998D2C7E,row patrol_sighting_moonbase._audio_pt
+998D2C7F,row patrol_sighting_moonbase_1._audio_pt
+99AABC80,row patrol_scan_crypt._placement._object; row patrol_scan_crypt._object
+99AABC81,row patrol_scan_crypt_1._placement._object; row patrol_scan_crypt_1._object
+9C044C39,row sq_interior_melee__dreg_knife
+9C3619C3,row sq_bridge_lvl2_c_left; row sq_bridge_lvl1_c_left; row sq_bridge_lvl0_c_left
+9C8F6CF6,row sq_anchor_vault01
+9D0AD7E7,row phase_strength_b.pf_obj_strength_interact_place._object; row phase_strength_b.pf_obj_strength_interact._object
+9D2326DA,row patrol_terminal._terminal
+9D2326DB,row patrol_terminal_1._terminal
+9DF3A02E,row obj_placement_m2_o3a._object; row cosmo_m2_phase02_dome_c.obj_m2_o3._object
+9E2B935B,row cosmo_m0_phase02_graveyard.obj_m0_m04._object
+9EB591CC,row patrol_terminal_1._terminal
+9EB591CD,row patrol_terminal._terminal
+9EF3847C,row sq_dark_ritual__wizard_a
+9EF3847E,row sq_dark_ritual__wizard_c
+9EF3847F,row sq_dark_ritual__wizard_b
+A068B4DE,row sq_boulevard_civ_kneelers1__kneeler1
+A0BC9D6D,row patrol_terminal_2._terminal
+A0BC9D6E,row patrol_terminal_1._terminal
+A0BC9D6F,row patrol_terminal._terminal
+A1053935,row patrol_terminal_2._terminal
+A1053936,row patrol_terminal_1._terminal
+A1053937,row patrol_terminal._terminal
+A359D97A,row sq_vip_kill_capt_sou._squad[0]; row patrol_kill_vip_capt_sou._squad
+A5A426F3,row pf_event_tank_drop[0].pf_preset.po_event_tank; row pf_event_tank_drop[1].pf_preset.po_event_tank; row pf_event_tank_drop[2].pf_preset.po_event_tank
+AC665550,row sq_boulevard_civ_standers_arms_behind_back1__stander2; row sq_boulevard_civ_standers_arms_at_sides1__stander2; row dead_orbit_standers__stander2
+AC665553,row sq_boulevard_civ_standers_arms_behind_back1__stander1; row sq_boulevard_civ_standers_arms_at_sides1__stander1; row sq_boulevard_civ_standers_arms_folded1__stander1
+AC92BFF2,row phase_plaza_defend_ghost.pf_objective_countdown._object; row pf_placement_m03_countdown._object
+AD35C5A9,row patrol_scan_nm._player_objective; row patrol_scan_nm_1._player_objective; row patrol_scan_do._player_objective
+AF34B1E2,row patrol_terminal._terminal
+AF65BC8D,row pf_strike_ghost02._object; row phase04.obj_r1_s2_strike2_phase04_m2._object
+AF65BC8E,row pf_strike_ghost01._object; row phase01.obj_r1_s2_strike2_phase01_m1._object
+AF82B1E0,row phase_complex_scan_node.pf_vex_node01._object; row pf_vex_node01._object
+B0327A81,row phase_m06_subway_close.pf_placement_subway_interact._object; row phase_m06_subway_close.pf_objective_subway_interact._object
+B09C72CC,row patrol_scan_shader_1._placement._object; row patrol_scan_shader_1._object
+B09C72CD,row patrol_scan_shader._placement._object; row patrol_scan_shader._object
+B1162C08,row sq_underwatch_shaxx__shaxx_helper
+B2184BC0,row sq_int2_f5__vandal1
+B2184BC3,row sq_int2_f5__vandal2
+B24E89C0,row sq_major_vandals_rifle; row sq_major_vandals_blade
+B24EF049,row reward_hidden
+B24EF04A,row reward_obvious
+B24EF04B,row reward_vault
+B323C8C9,row sq_vip_fallen_ultra; row patrol_kill_vip_ultra._squad
+B3BCBB78,row patrol_terminal._terminal
+B3BCBB79,row patrol_terminal_1._terminal
+B3BCBB7A,row patrol_terminal_2._terminal
+B3C2CE3E,row sq_boulevard_civ_couch_sitters1__sitter2; row hunter_clubhouse_sitters1__sitter2; row hunter_clubhouse_sitters2__sitter2
+B3C2CE3F,row sq_boulevard_civ_couch_sitters1__sitter3; row hunter_clubhouse_sitters1__sitter3; row hunter_clubhouse_sitters2__sitter3
+B4A402FF,row patrol_sighting_graveyard._audio_pt
+B5C2FDD1,row phase_3_launchtubes.pf_placement_button_false._object; row phase_3_launchtubes.pf_objective_button_false._object
+B5D6EA47,row sq_droid_repair__repair1
+B6910E5C,row sq_underwatch_workstation_workers__worker_typist1
+B6910E5F,row sq_underwatch_workstation_workers__worker_typist2
+B6C5EB4C,row sq_bossbattle_boss01
+B81AADAF,row sq_boss
+B826371A,row patrol_terminal._terminal
+B826371B,row patrol_terminal_1._terminal
+BC579BA7,row phase_archive_objective01.pf_ia_open_door._object; row phase_archive_objective01.pf_po_open_door._object
+BD366786,row phase_valley.sp_objective_monitor._object; row scp_placement_monitor._object
+BFCE5690,row patrol_sighting_gatehs._audio_pt
+C2644C0A,row sq_hive_upper_wizard01
+C2A5C155,row sq_chainroom_wave1_major1; row sq_chainroom_wave2_major1; row sq_chainroom_wave3_major1
+C5BB3375,row phase04.obj_r1_s2_strike2_phase04_m1._player_objective; row phase04.obj_r1_s2_strike2_phase04_m1._squad; row sq_strike2_captain
+C5DB982F,row sp_placement_console._object; row phase_rasputin_final.sp_objective_console._object
+C637F92A,row pf_event_tank_drop[0].sq_tank; row pf_event_tank_drop[0].sq_tank_dropship; row pf_event_tank_drop[0].sq_fodder_dropship
+C6C68278,row sq_fallen_servitor
+C6C6827B,row sq_fallen_servitor
+C7427FDE,row sq_patrol_vip_knight._squad[0]; row patrol_kill_vip_knight._squad
+C7FB336D,row sq_boulevard_the_mask__mask_a
+C7FB336E,row sq_boulevard_the_mask__mask_b
+C7FB336F,row sq_boulevard_the_mask__mask_c
+C8500E5D,row sq_patrol_vip_legionary_chkpt._squad[0]; row patrol_kill_vip_legionary_chkpt._squad
+C8F4D55B,row sq_chainroom_wave1_major1__major_knight_cleaver; row sq_chainroom_wave2_major1__major_knight_cleaver; row sq_chainroom_wave3_major1__major_knight_cleaver
+C92D04D9,row sq_underwatch_workstation_workers__worker_monitor1
+C92D04DA,row sq_underwatch_workstation_workers__worker_monitor2
+C9A2CA78,row cosmo_m2_phase01_dry_sea.obj_m2_o2b._objects[0]; row obj_m2_o2b_placement._objects[0]
+C9E4EB88,row patrol_sighting_shat._audio_pt
+C9E4EB89,row patrol_sighting_shat_1._audio_pt
+CCE30769,row pf_tower_elevator._object; row phase_lower_tower_elevator.pf_tower_elevator._object
+CE845DAA,row patrol_terminal._terminal
+CE845DAB,row patrol_terminal_1._terminal
+CE965DDC,row pf_placement_m02_countdown._object
+CEBF1595,row ship_welders__welder1
+CEBF1596,row ship_welders__welder2
+CEE6A8C8,row patrol_terminal._terminal
+CEE6A8C9,row patrol_terminal_1._terminal
+CF64CC04,row sq_hive_cleavers01__knight02
+CF64CC07,row sq_hive_cleavers01__knight01
+D04758E3,row sq_m3_guard_front; row sq_m3_guard_rear; row phase_strength.pf_objective_kill._squad
+D1F03005,row phase_delta_s_main.sp_objective_cable._object; row obj_placement_cable._object
+D2DF9DC8,row sq_vip_kill_shank0_arc._squad[0]; row patrol_kill_vip_shank_arc._squad
+D2F2F789,row sq_march01__goblin01; row sq_march02__goblin01; row sq_march03__goblin01
+D2F2F78A,row sq_march01__goblin02; row sq_march02__goblin02; row sq_march03__goblin02
+D2F2F78B,row sq_march01__goblin03; row sq_march02__goblin03; row sq_march03__goblin03
+D2F2F78C,row sq_march01__goblin04; row sq_march02__goblin04; row sq_march03__goblin04
+D3FD4B1C,row patrol_terminal_1._terminal
+D3FD4B1D,row patrol_terminal._terminal
+D41D7E08,row sq_ground_hive01__thrall02; row sq_ground_hive02__thrall02; row sq_ground_hive03__thrall02
+D41D7E09,row sq_ground_hive01__thrall03; row sq_ground_hive02__thrall03; row sq_ground_hive03__thrall03
+D41D7E0B,row sq_ground_hive01__thrall01; row sq_ground_hive02__thrall01; row sq_ground_hive03__thrall01
+D41D7E0E,row sq_ground_hive01__thrall04; row sq_ground_hive02__thrall04; row sq_ground_hive03__thrall04
+D5BCB25F,row sq_boss
+D75F9E30,row patrol_sighting_launchtubes._audio_pt
+D8792983,row sq_garage_psion_major; row sq_garage_psion_a; row sq_garage_psion_b
+DA3D44B1,row patrol_sighting_valley._audio_pt
+DA728072,row cosmo_m4_phase00_array.obj_m4_o1b._squad
+DA7C2A8E,row patrol_kill_vip_shank._player_objective; row patrol_kill_vip_servitor1._player_objective; row patrol_kill_vip_servitor2._player_objective
+DA9317A4,row patrol_scan_weap_1._placement._object; row patrol_scan_weap_1._object
+DA9317A5,row patrol_scan_weap._placement._object; row patrol_scan_weap._object
+DB69B5BC,row patrol_terminal_2._terminal
+DB69B5BE,row patrol_terminal._terminal
+DB69B5BF,row patrol_terminal_1._terminal
+DBF27798,row sq_fallen_servitor
+DE0933DB,row cosmo_m0_5_phase00_delta_s.obj_m0_5_o2._object; row obj_placement_m0_5_o2._object
+DF98B8AD,row sq_patrol_vip_harpy_lobby._squad[0]; row patrol_kill_vip_harpy_lobby._squad
+E0022272,row patrol_sighting_headlands._audio_pt
+E088288D,row pf_obj_gatehouse_outer_outpost_placement._object; row phase02_gatehouse_outer_outpost.pf_obj_gatehouse_outer_outpost_interact._object
+E135AD95,row sq_boss__knight_ultra
+E1DD9C9C,row patrol_sighting_blast._audio_pt
+E2E80144,row sp_placement_kiosk._object; row phase_lowergarden.sp_objective_kiosk._object
+E3541DC3,row phase_2_hellmouth.obj_m5_multi_interact._objects[0]; row obj_m5_multi_placement._objects[0]
+E45BF920,row obj_placement_m0_m05._object
+E4A57978,row patrol_terminal_1._terminal
+E4A57979,row patrol_terminal._terminal
+E4BC9A28,row patrol_terminal._terminal
+E4BC9A29,row patrol_terminal_1._terminal
+E4BC9A2A,row patrol_terminal_2._terminal
+E4E25A4B,row sq_patrol_vip_phalanx_atrium._squad[0]; row patrol_kill_vip_phalanx_atrium._squad
+E5E38385,row patrol_terminal_2._terminal
+E5E38386,row patrol_terminal_1._terminal
+E5E38387,row patrol_terminal._terminal
+E72921B0,row patrol_loot_fallen_all_armor_a._player_objective; row patrol_loot_fallen_all_armor_b._player_objective; row patrol_loot_fallen_all_weapon._player_objective
+EA743560,row sq_hillside_hive02__trooper02; row sq_hillside_hive03__trooper02; row sq_hillside_hive04__trooper02
+EA743561,row sq_hillside_hive02__trooper03; row sq_hillside_hive03__trooper03; row sq_hillside_hive04__trooper03
+EA743563,row sq_hillside_hive02__trooper01; row sq_hillside_hive03__trooper01; row sq_hillside_hive04__trooper01
+EA95FB7D,row pf_event_countdown_dropship[0].pf_preset.po_event_countdown; row pf_event_countdown_dropship[1].pf_preset.po_event_countdown; row pf_event_countdown_2factions[0].pf_preset.po_event_countdown
+EAA339A4,row cosmo_m2_phase00_delta_n.obj_m2_o1._object; row obj_placement_m2_o1._object
+EB51F050,row patrol_terminal._terminal
+EB51F051,row patrol_terminal_1._terminal
+EB51F052,row patrol_terminal_2._terminal
+ECE78A1C,row sq_vip_kill_hobgob0_low._squad[0]; row patrol_kill_vip_hobgob_low._squad
+ED75F196,row sp_simple_crossroads_big._squad[0]; row sp_simple_crossroads_small._squad[0]; row sp_simple_dome._squad[0]
+EDB742FA,row patrol_sighting_rubicon._audio_pt
+EF6113DE,row phase_2_hellmouth.obj_m5_multi_interact._objects[1]; row obj_m5_multi_placement._objects[1]
+EFF40391,row sq_bossbattle_boss01__wizard01
+F01D2D0A,row sq_queen_vendor__queens_guard; row sq_plaza_temp__queens_guard
+F1F5294A,row sq_arena_a_wizard_a__major_wizard; row sq_arena_a_wizard_b__major_wizard; row sq_arena_a_wizard_c__major_wizard
+F29C2820,row sp_placement_button._object; row phase_reactor.sp_objective_button._object
+F348E09A,row sp_placement_glyphs._objects[1]; row phase_lowergarden.sp_objective_glyphs._objects[1]
+F388BE1A,row patrol_sighting_delta_s._audio_pt
+F4342B1B,row sq_gate04_flayer3__void_flayer
+F6457E44,row sq_boss; row phase_8_warbase.pf_kill_boss._squad
+F888C639,row patrol_sighting_delta_n._audio_pt
+F89ADEE0,row sq_underwatch_vendor_black_market__vendor_mentors
+F93FFC2A,row pf_warp_gate1._squad; row pf_warp_gate2._squad; row pf_warp_gate3._squad
+FA586061,row sq_m3_push_b_b__knight_cleaver2
+FA586062,row sq_m3_push_b_b__knight_cleaver1
+FA650FD6,row sq_m3_guard_rear__knight_1
+FB2B5117,row vendor_black_market__vendor_hangar
+FB4DD916,row patrol_sighting_uppercit._audio_pt
+FC188F58,row patrol_scan_fwc._placement._object; row patrol_scan_fwc._object
+FC188F59,row patrol_scan_fwc_1._placement._object; row patrol_scan_fwc_1._object
+FC51D094,row patrol_scan_do_1._placement._object; row patrol_scan_do_1._object
+FC51D095,row patrol_scan_do._placement._object; row patrol_scan_do._object
+FD95986E,row patrol_sighting_lobby._audio_pt
