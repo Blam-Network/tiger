@@ -3,7 +3,7 @@ class c_pvp_dominion : c_pvp_slayer:
     static string_hash participant_player_hash = "participant_player"
     static string_hash dominion_zone_captured_hash = "pvp_dominion_zone_captured"
     static string_hash all_players_hash = "all_players"
-    static string_hash domination_hash = 0x1333F055  # hash not cracked
+    static string_hash domination_hash = "domination"
     static string_hash domination_kill_hash = "pvp_domination_kill"
     static string_hash dominion_zones_hash = "dominion_zones"
     static string_hash domination_begin_hash = "pvp_team_domination_begin"

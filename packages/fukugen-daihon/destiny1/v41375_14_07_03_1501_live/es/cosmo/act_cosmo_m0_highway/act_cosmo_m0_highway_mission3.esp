@@ -14,7 +14,7 @@ trigger_volume_objective obj_get_weapon
 
 thread init:
     o_weapon.create()
-    il_weapon_pickup.bind_incident_name_hash("0xBD1FB418")
+    il_weapon_pickup.bind_incident_name_hash("inventory_item_added")
 
 thread complete: pass
 
@@ -32,6 +32,6 @@ thread main:
     sleep_until(obj_get_weapon.is_complete() or il_weapon_pickup.get_count() > 0)
     o_weapon.delete_object()
     obj_get_weapon.objective_end_silent()
-    nux_ghost.cue_performance("0x72F6A4A4")
+    nux_ghost.cue_performance("ghost_complete")
     sleep(1)
     tg_m0_gating.deactivate()

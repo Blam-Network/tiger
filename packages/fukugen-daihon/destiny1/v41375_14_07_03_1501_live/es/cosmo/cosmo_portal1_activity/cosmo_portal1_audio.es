@@ -90,7 +90,7 @@ startup thread sc_walker_line:
     s01_x100.stop()
 
 startup thread sc_ship:
-    il_loot_pickup.bind_incident_name_hash("0xBD1FB418")
+    il_loot_pickup.bind_incident_name_hash("inventory_item_added")
     sleep_until(pt_play_s01_x120.is_triggered())
     s01_x120.start()
     sleep_until(obj_s1_phase05_m1._player_trigger.is_triggered())

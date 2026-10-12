@@ -59,7 +59,7 @@ thread sc_walker:
     skiff_leave()
     sleep_until(sq_tank.alive_count() == 0)
     sleep(3)
-    place_on_task(sq_fallen_door01, "0xA422EB12")
+    place_on_task(sq_fallen_door01, "task")
 
 thread sc_reinforcements:
     sleep(42)
@@ -81,7 +81,7 @@ thread sc_shanks:
 def skiff_enter():
     __cs.clear()
     __cs.snap_to(dropship_entry_path, 0)
-    __cs.ability("dropship", "0x4482A76D")
+    __cs.ability("dropship", "enter_45")
     __cs.move_to(dropship_entry_path, 1, false)
     __cs.move_to(dropship_entry_path, 2, true)
     sq_dropship_tank__dropship.place()
@@ -91,7 +91,7 @@ def skiff_leave():
     __cs.clear()
     __cs.move_to(dropship_exit_path, 0, false)
     __cs.move_to(dropship_exit_path, 1, false)
-    __cs.ability("dropship", "0x7D0D39A9")
+    __cs.ability("dropship", "exit_45")
     sq_dropship_tank__dropship.execute(__cs)
 
 def hold_ground(sq, task):

@@ -5,7 +5,7 @@ class c_pvp_salvage : c_pvp_slayer:
     static string_hash salvage_zone_spawned_hash = "pvp_lockdown_zone_spawned"
     static string_hash salvage_zone_captured_hash = "pvp_salvage_zone_captured"
     static string_hash probe_complete_hash = "pvp_salvage_probe_complete"
-    static string_hash domination_hash = 0x1333F055  # hash not cracked
+    static string_hash domination_hash = "domination"
     static string_hash base_capture_score_hash = "pvp_salvage_base_capture_score"
     static string_hash captured_bonus_score_hash = "pvp_salvage_captured_bonus_score"
     static string_hash locked_bonus_score_hash = "pvp_salvage_locked_bonus_score"

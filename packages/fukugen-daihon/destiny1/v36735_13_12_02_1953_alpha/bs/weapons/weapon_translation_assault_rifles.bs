@@ -184,7 +184,7 @@ class c_weapon_translation_assault_rifles : c_weapon_translation_base:
     static real accuracy_scalar = 0.5
     static real recoil_scalar = 1
     static int zoom_level_count = 1
-    static string_hash ar_type_channel = 0xB59C4DFF  # hash not cracked
+    static string_hash ar_type_channel = "ar_type"
     static string_hash recoil_stability_channel = "recoil_stability"
     static string_hash zoom_amount_channel = "zoom_amount"
     static string_hash semi_auto_anim_mod = "semi_auto"

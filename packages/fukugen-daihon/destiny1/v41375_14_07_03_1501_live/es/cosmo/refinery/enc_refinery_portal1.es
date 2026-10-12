@@ -139,7 +139,7 @@ startup thread sc_refinery_main:
 
 thread sc_trash:
     sleep_until(pt_wake_trash01.is_triggered())
-    place_on_task(sq_trash01_hive01, "0xB4EF6164")
+    place_on_task(sq_trash01_hive01, "trash_encounter_hive")
     place_on_task(sq_trash01_hive02, "0xFE049731")
     place_on_task(sq_trash01_hive03, "0xAB7A7F89")
     place_on_task(sq_trash01_fallen01, "0x7B0A0B67")
@@ -203,12 +203,12 @@ thread sc_hack:
 
 thread sc_hack_waves:
     sleep(6)
-    place_on_task(sq_objective_suppressors01, "0x8BF42CC6")
+    place_on_task(sq_objective_suppressors01, "hive_disruptor04")
     place_on_task(sq_objective_suppressors02, "suppress05")
     place_on_task(sq_objective_suppressors03, "suppression")
     sleep(2)
     place_on_task(sq_objective_fallen01a, "wave01b")
-    place_on_task(sq_objective_fallen01b, "0x10F523DC")
+    place_on_task(sq_objective_fallen01b, "wave01e")
     sleep(33)
     place_on_task(sq_objective_fallen01c, "wave01a")
     sleep(20)
@@ -218,7 +218,7 @@ thread sc_hack_waves:
     sq_objective_fallen01d__shank03.place()
     sq_objective_fallen01d__shank04.place()
     sleep(1)
-    sq_objective_fallen01e.set_task("0x10F523DD")
+    sq_objective_fallen01e.set_task("wave01d")
     sq_objective_fallen01e__shank01.place()
     sq_objective_fallen01e__shank02.place()
     sq_objective_fallen01e__shank03.place()
@@ -241,8 +241,8 @@ thread sc_hack_waves:
     place_on_task(sq_objective_fallen03a, "rush_point")
     place_on_task(sq_objective_fallen03b, "wave03a")
     sleep(12)
-    place_on_task(sq_objective_hive03, "0x8BF42CC0")
-    place_on_task(sq_objective_hive04, "0x8BF42CC1")
+    place_on_task(sq_objective_hive03, "hive_disruptor02")
+    place_on_task(sq_objective_hive04, "hive_disruptor03")
     sleep(103)
     sq_objective_fallen03c.set_task("wave03b")
     sq_objective_fallen03c__captain_major.place()

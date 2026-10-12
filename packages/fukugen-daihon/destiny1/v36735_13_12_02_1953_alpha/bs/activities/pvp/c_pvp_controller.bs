@@ -17,7 +17,7 @@ class c_pvp_controller : c_activity_script:  # true name unknown
     static string_hash pvp_music_switch_hash = "pvp_music_switch"
     static string_hash pvp_music_close_game_hash = "close_game"
     static string_hash pvp_music_round_intro_hash = "round_intro"
-    static string_hash pvp_music_nothing_hash = 0xFD3EA900  # hash not cracked
+    static string_hash pvp_music_nothing_hash = "nothing"
     static string_hash pvp_music_combat_start_hash = "combat_start"
     static string_hash pvp_music_near_score_limit_hash = "near_score_limit"
     static string_hash pvp_music_one_minute_remaining_hash = "one_minute_remaining"

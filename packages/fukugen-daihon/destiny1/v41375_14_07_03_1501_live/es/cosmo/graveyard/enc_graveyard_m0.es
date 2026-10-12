@@ -91,12 +91,12 @@ thread sc_dropship_4:
 def dropship_enter(pilot, path, lands):
     __cs.clear()
     __cs.snap_to(path, 0)
-    __cs.ability("dropship", "0x4B6A2C60")
+    __cs.ability("dropship", "enter_25_long")
     __cs.move_to(path, 1, lands)
     if lands:
         __cs.set_channel_scalar("doors", 1)
     else:
-        __cs.ability("dropship", "0x7B0D3643")
+        __cs.ability("dropship", "exit_25")
     pilot.place()
     pilot.execute(__cs)
 
@@ -114,7 +114,7 @@ thread sc_sniper:
 
 thread sc_exit_shanks:
     sleep_until(pt_exit_shanks.is_triggered())
-    sq_fallen_m0_upgrade.set_task("0xC210AD17")
+    sq_fallen_m0_upgrade.set_task("upgrade_dregs")
     sq_fallen_m0_exit_shanks.set_task("exit_shanks")
     sq_fallen_m0_upgrade.place()
     sq_fallen_m0_exit_shanks.place()
