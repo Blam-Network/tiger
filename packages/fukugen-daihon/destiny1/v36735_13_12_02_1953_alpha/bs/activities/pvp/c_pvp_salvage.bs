@@ -1,0 +1,176 @@
+class c_pvp_salvage : c_pvp_slayer:
+    static string_hash incident_salvage_hash = "pvp_game_type_salvage"
+    static string_hash participant_player_hash = "participant_player"
+    static string_hash all_players_hash = "all_players"
+    static string_hash salvage_zone_spawned_hash = "pvp_lockdown_zone_spawned"
+    static string_hash salvage_zone_captured_hash = "pvp_salvage_zone_captured"
+    static string_hash probe_complete_hash = "pvp_salvage_probe_complete"
+    static string_hash domination_hash = 0x1333F055  # hash not cracked
+    static string_hash base_capture_score_hash = "pvp_salvage_base_capture_score"
+    static string_hash captured_bonus_score_hash = "pvp_salvage_captured_bonus_score"
+    static string_hash locked_bonus_score_hash = "pvp_salvage_locked_bonus_score"
+    static string_hash locked_bonus_duration_hash = "pvp_salvage_locked_bonus_duration"
+    static string_hash initial_spawn_delay_hash = "pvp_salvage_initial_spawn_delay"
+    static string_hash time_between_spawns_hash = "pvp_salvage_time_between_spawns"
+    static string_hash time_to_lock_hash = "pvp_salvage_time_to_lock"
+    static string_hash score_salvage_bonus_hash = "pvp_score_salvage_bonus"
+    static string_hash salvage_relics_gone_hash = "pvp_salvage_relics_gone"
+    int base_capture_score
+    int captured_bonus_score
+    int locked_bonus_score
+    int locked_bonus_duration
+    int initial_spawn_delay
+    int time_between_spawns
+    int time_to_lock
+    int captured_team = -1
+    int locked_team = -1
+    int relic_count = 7
+    c_incident_listener capture_incident_listener
+    c_object_sensor_host capture_zone
+    c_capturable_host capture_zone_capturable
+    c_object_sensor_host probe
+    c_faction_host probe_faction  # true name unknown
+    c_objective_timer_host probe_timer  # true name unknown
+    c_interactable_host probe_interactable  # true name unknown
+    c_object_filter_sensor_host probe_interaction_filter
+    dynamic_array<c_object_sensor_host> relics
+
+
+
+
+
+
+
+
+
+
+
+
+    thread game_loop:
+        for relic in relics:
+            relic.create()
+
+        print("sleeping for the initial spawn delay")
+        sleep(initial_spawn_delay)
+
+
+        while true:
+            if relic_count > 0:
+                print("spawning the capture zone")
+                captured_team = -1
+                locked_team = -1
+                capture_zone_capturable.reset()
+                capture_zone_capturable.unlock()
+                capture_zone.create()
+                c_incident_utilities.submit_incident_hash(salvage_zone_spawned_hash)
+
+            print("sleeping until the zone is captured")
+            while not capture_zone_capturable.is_captured():
+                sleep(0.5)
+
+
+            print("spawning the probe")
+            captured_team = capture_zone_capturable.get_owner_team_index()
+
+
+            probe.create()
+            probe_timer.activate(time_to_lock)
+            probe_timer.start()
+            probe_interaction_filter.clear()
+            probe_interaction_filter.add_players_on_team(captured_team)
+            probe_interactable.clear()
+            probe_interactable.set_disabled_player_filter(probe_interaction_filter)
+            probe_faction.set_team_index(captured_team)
+
+
+            while probe_faction.get_team_index() != captured_team:
+                sleep(0.5)
+
+            capture_zone.delete_object()
+
+            print("sleeping until the probe is canceled or completes")
+            while not probe_interactable.is_active() and not probe_timer.is_expired():
+                sleep(0.5)
+
+
+            if probe_timer.is_expired():
+                locked_team = captured_team
+                c_incident_utilities.submit_incident_with_team(probe_complete_hash, locked_team)
+                c_scoreboard_script_utilities.get_scoreboard().activate_notification_for_team(domination_hash, locked_team)
+                print("zone was locked, bonus is in effect for team %d".format(locked_team))
+
+
+                relic_count = relic_count - 1
+
+                if relic_count < 1:
+                    print("there are no relics on the map, submit incident")
+                    sleep(5)
+
+                    c_incident_utilities.submit_incident_hash(salvage_relics_gone_hash)
+
+            else:
+                probe.delete_object()
+
+            captured_team = -1
+
+            if locked_team != -1:
+                print("sleeping until the end of the bonus")
+                sleep(locked_bonus_duration)
+
+                c_scoreboard_script_utilities.get_scoreboard().clear_notifications()
+                locked_team = -1
+
+            print("sleeping until respawn")
+            sleep(time_between_spawns)
+
+
+    def import():
+        incident_game_type_hash = "pvp_game_type_salvage"
+        incident_game_start_hash = "pvp_game_start_salvage"
+        salvage_relics_gone_hash = "pvp_salvage_relics_gone"
+        probe_timer.import_only_bind(probe)
+        probe_interactable.import_only_bind(probe)
+        probe_faction.import_only_bind(probe)
+        capture_zone_capturable.import_only_bind(capture_zone)
+        return true
+
+    def d_slayer_handle_kill(character_id, incident_metadata):
+        team = c_player_script_utilities.get_player_sensor(character_id).get_team_index()
+        if team == captured_team:
+            print("captured bonus!")
+            add_player_score(score_salvage_bonus_hash, character_id, captured_bonus_score)
+        elif team == locked_team:
+            print("locked bonus!")
+            add_player_score(score_salvage_bonus_hash, character_id, locked_bonus_score)
+
+    def handle_capture(incident_name, incident_metadata):
+        if not game_over:
+            scoreboard = c_scoreboard_script_utilities.get_scoreboard()
+            incident_player_iterator.begin(incident_name, participant_player_hash, incident_metadata)
+            while incident_player_iterator.is_valid():
+                add_player_score(score_capture_hash, incident_player_iterator.get_character_id(), base_capture_score)
+                incident_player_iterator.next()
+
+    def d_slayer_init():
+        base_capture_score = get_outer().get_activity_option_integer(base_capture_score_hash)
+        captured_bonus_score = get_outer().get_activity_option_integer(captured_bonus_score_hash)
+        locked_bonus_score = get_outer().get_activity_option_integer(locked_bonus_score_hash)
+        locked_bonus_duration = get_outer().get_activity_option_integer(locked_bonus_duration_hash)
+        initial_spawn_delay = get_outer().get_activity_option_integer(initial_spawn_delay_hash)
+        time_between_spawns = get_outer().get_activity_option_integer(time_between_spawns_hash)
+        time_to_lock = get_outer().get_activity_option_integer(time_to_lock_hash)
+
+        capture_incident_listener.bind_hash(salvage_zone_captured_hash, all_players_hash)
+        capture_incident_listener.set_handler(handle_capture)
+
+    def d_slayer_start():
+        game_loop.wake()
+
+    def d_slayer_tick(timer):
+        if game_over:
+            game_loop.kill()
+            probe.delete_object()
+            capture_zone.delete_object()
+
+# Decompiled from 36735.13.12.02.1953.alpha script tags
+# See tags 8220C005, 82236005, 82260005

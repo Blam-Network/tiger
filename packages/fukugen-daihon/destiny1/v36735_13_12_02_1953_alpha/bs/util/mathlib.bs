@@ -1,0 +1,119 @@
+class mathlib : nativemathlib:
+    static int the_answer_to_everything = 42
+    static real epsilon = 0.00001
+    static vector3d up3 = (0, 0, 1)
+    static vector3d forward3 = (1, 0, 0)
+    static vector3d left3 = (0, 1, 0)
+    static vector2d forward2 = (1, 0)
+    static vector2d left2 = (0, 1)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    static def pow_simple(base, exponent):
+        value = 1
+        exponent = mathlib.abs(exponent)
+        for index in range(1, exponent):
+            value = value * base
+        return value
+
+    static def lerp(t, min, max):
+
+        if t < 0:
+            return min
+        if t > 1:
+            return max
+        return min + (max - min) * t
+
+    static def round(a):
+        return mathlib.floor(a + 0.5)
+
+    static def min(a, b):
+        if a < b:
+            return a
+        return b
+
+    static def max(a, b):
+        if b < a:
+            return a
+        return b
+
+    static def lerp2(t, min, max):
+        if t < 0:
+            return min
+        if t > 1:
+            return max
+        return min + (max - min) * t
+
+    static def lerp3(t, min, max):
+        if t < 0:
+            return min
+        if t > 1:
+            return max
+        return min + (max - min) * t
+
+    static def exerp(t, min, max, exp):
+        if t < 0:
+            return min
+        if t > 1:
+            return max
+        return min + (max - min) * t ** exp
+
+
+    static def random_int_never_highest_value(lower_bound, upper_bound):
+        return lower_bound + mathlib.random_int(upper_bound - lower_bound)
+
+
+    static def random_int_inclusive(lower_bound, upper_bound):
+        return lower_bound + mathlib.random_int(1 + (upper_bound - lower_bound))
+
+    static def nondeterministic_random_int_inclusive(lower_bound, upper_bound):
+        return lower_bound + mathlib.nondeterministic_random_int(1 + (upper_bound - lower_bound))
+
+    static def random_real_inclusive(lower_bound, upper_bound):
+        return lower_bound + nativemathlib.random_real(upper_bound - lower_bound)
+
+
+    static def scalify(t, min, max):
+
+        mini = min
+        maxi = max
+        ti = t
+        if maxi < mini:
+            ti = maxi + mini - t
+            old_maxi = maxi
+            maxi = mini
+            mini = old_maxi
+        if ti < mini:
+            return 0
+        if maxi < ti:
+            return 1
+        return (ti - mini) / (maxi - mini)
+
+
+    static def get_t_from_extents(value, min, max):
+        return scalify(value, min, max)
+
+
+
+    static def reflect3(vector, normal):
+        projection = mathlib.dot3(vector, normal)
+        return vector - 2 * projection * normal
+
+# Decompiled from 36735.13.12.02.1953.alpha script tags
+# See tags 82100010, 821B8053, 821E2007, 8228A00D

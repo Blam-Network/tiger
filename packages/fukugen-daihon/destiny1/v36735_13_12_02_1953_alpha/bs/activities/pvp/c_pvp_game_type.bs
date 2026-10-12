@@ -1,0 +1,85 @@
+class c_pvp_game_type : c_activity_script:  # true name unknown
+    static string_hash incident_game_type_hash
+    static string_hash incident_game_start_hash
+    static string_hash gained_the_lead_hash = "pvp_team_gained_the_lead"
+    static string_hash lost_the_lead_hash = "pvp_team_lost_the_lead"
+    static string_hash score_to_win_hash = "score_to_win"
+    static string_hash winning_score_hash = "pvp_winning_score"
+    static string_hash score_kill_hash = "pvp_score_kill"
+    static string_hash score_precision_kill_hash = "pvp_score_precision_kill"
+    static string_hash score_assist_hash = "pvp_score_assist"
+    static string_hash score_capture_hash = "pvp_score_capture"
+    static string_hash score_revive_hash = "pvp_score_revive"
+    static string_hash option_score_difference_to_win_imminent_hash = "score_difference_to_win_imminent"
+    int score_to_win
+    bool game_over
+    bool game_almost_over
+    int old_winning_team = -1
+    int score_difference_to_win_imminent = 1000
+    delegate d_init()
+    delegate d_start()
+    delegate d_tick(timer)
+    c_player_objective_sensor_host player_objective
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    def init():
+        print("in c_pvp_game_type.init")
+        score_to_win = get_outer().get_activity_option_integer(score_to_win_hash)
+        score_difference_to_win_imminent = get_outer().get_activity_option_integer(option_score_difference_to_win_imminent_hash)
+        d_init()
+
+    def tick(timer):
+
+        scoreboard = c_scoreboard_script_utilities.get_scoreboard()
+        tied = scoreboard.is_tied()
+        leading_team_score = scoreboard.get_leading_team_score()
+
+        if not game_almost_over and score_to_win - score_difference_to_win_imminent <= leading_team_score:
+            game_almost_over = true
+
+        if timer.is_expired() and not tied or score_to_win <= leading_team_score:
+            game_over = true
+
+        d_tick()
+
+    def start():
+        d_start()
+
+    def add_player_score(incident_name, character_id, score):
+        if score != 0:
+            scoreboard = c_scoreboard_script_utilities.get_scoreboard()
+
+            if not scoreboard.is_tied():
+                old_winning_team = scoreboard.get_leading_team_index()
+
+            player_team = -1
+            player_sensor = c_player_script_utilities.get_player_sensor(character_id)
+            if player_sensor:
+                player_team = player_sensor.get_team_index()
+                scoreboard.add_player_score(character_id, score, true)
+
+                c_incident_utilities.submit_score_incident(incident_name, character_id, score)
+
+                new_winning_team = scoreboard.get_leading_team_index()
+                if new_winning_team != -1 and new_winning_team != old_winning_team:
+                    c_incident_utilities.submit_incident_with_team(gained_the_lead_hash, new_winning_team)
+                    c_incident_utilities.submit_incident_with_team(lost_the_lead_hash, old_winning_team)
+
+                if player_team != -1 and not game_over and \
+                        scoreboard.get_team_score(player_team) >= score_to_win:
+                    c_incident_utilities.submit_incident_with_player(winning_score_hash, character_id)
+
+# Decompiled from 36735.13.12.02.1953.alpha script tags
+# See tags 8220C008, 82236008, 82260008

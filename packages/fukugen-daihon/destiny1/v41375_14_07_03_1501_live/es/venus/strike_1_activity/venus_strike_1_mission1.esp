@@ -1,0 +1,152 @@
+# es\venus\strike_1_activity\venus_strike_1_mission1.esp
+#
+# Mission 1, engineering: clear the Fallen, then open the portal end door
+# (by deleting its object).
+
+c_object_sensor_host o_portal_end_door
+c_squad_group_sensor_host gr_floor1  # true name unknown
+c_squad_sensor_host sq_floor1_fallen01
+c_squad_sensor_host sq_floor1_fallen02
+c_squad_group_sensor_host gr_floor2  # true name unknown
+c_squad_sensor_host sq_floor1_fallen03
+c_squad_sensor_host sq_floor1_fallen04
+c_squad_group_sensor_host gr_floor3  # true name unknown
+c_squad_sensor_host sq_floor1_fallen05
+c_squad_sensor_host sq_floor1_fallen06
+c_squad_group_sensor_host gr_floor4  # true name unknown
+c_squad_sensor_host sq_floor1_fallen07
+c_squad_sensor_host sq_floor1_fallen08
+c_squad_group_sensor_host gr_obj2  # true name unknown
+c_squad_sensor_host sq_floor1_fallen04a
+c_squad_group_sensor_host gr_obj3  # true name unknown
+c_squad_sensor_host sq_floor1_fallen06a
+c_squad_group_sensor_host gr_obj4  # true name unknown
+c_squad_sensor_host sq_floor1_fallen08a
+c_squad_group_sensor_host gr_obj1  # true name unknown
+c_squad_sensor_host sq_objective01
+c_squad_sensor_host sq_objective02
+c_squad_sensor_host sq_objective03
+c_squad_sensor_host sq_objective04
+c_squad_sensor_host sq_objective05
+c_squad_sensor_host sq_objective06
+c_squad_sensor_host sq_objective07
+c_squad_sensor_host sq_objective08
+c_squad_group_sensor_host gr_objective  # true name unknown
+c_squad_group_sensor_host gr_all  # true name unknown
+c_location_sensor_host engineering  # true name unknown
+c_player_monitor_sensor_host pm_bubble_engineering bind(engineering)  # true name unknown
+c_sequence_host md_s1_m1_d020  # true name unknown
+c_trigger_volume_slot_host tv_engineering_entrance01
+c_player_trigger_sensor_host pt_engineering_entrance01 bind(tv_engineering_entrance01)  # true name unknown
+c_encounter_handle enc_engineering_strike1  # true name unknown
+c_sequence_host md_s1_m1_d030  # true name unknown
+bool objective_complete
+c_sequence_host md_s1_m1_d010  # true name unknown
+trigger_bubble_objective engineering_bubble_objective bind(engineering)
+kill_squad_objective kill_squad_engineering bind("strike_kill_servitors", 4)
+
+thread init:
+    o_portal_end_door.create()
+
+thread complete:
+    o_portal_end_door.delete_object()
+
+thread main:
+    gr_floor1.add_child(sq_floor1_fallen01)
+    gr_floor1.add_child(sq_floor1_fallen02)
+    gr_floor2.add_child(sq_floor1_fallen03)
+    gr_floor2.add_child(sq_floor1_fallen04)
+    gr_floor3.add_child(sq_floor1_fallen05)
+    gr_floor3.add_child(sq_floor1_fallen06)
+    gr_floor4.add_child(sq_floor1_fallen07)
+    gr_floor4.add_child(sq_floor1_fallen08)
+    gr_obj2.add_child(sq_floor1_fallen04a)
+    gr_obj3.add_child(sq_floor1_fallen06a)
+    gr_obj4.add_child(sq_floor1_fallen08a)
+    gr_obj1.add_child(sq_objective01)
+    gr_obj1.add_child(sq_objective02)
+    gr_obj2.add_child(sq_objective03)
+    gr_obj2.add_child(sq_objective04)
+    gr_obj3.add_child(sq_objective05)
+    gr_obj3.add_child(sq_objective06)
+    gr_obj4.add_child(sq_objective07)
+    gr_obj4.add_child(sq_objective08)
+    gr_objective.add_child(gr_obj1)
+    gr_objective.add_child(gr_obj2)
+    gr_objective.add_child(gr_obj3)
+    gr_objective.add_child(gr_obj4)
+    gr_all.add_child(gr_floor1)
+    gr_all.add_child(gr_floor2)
+    gr_all.add_child(gr_floor3)
+    gr_all.add_child(gr_floor4)
+    venus_s1_m01_d10.wake()
+    engineering_bubble_objective.objective_begin()
+    sleep_until(engineering_bubble_objective.is_complete())
+    engineering_bubble_objective.objective_end_silent()
+    venus_s1_m01_d20.wake()
+    sleep_until(md_s1_m1_d020.is_done())
+    kill_squad_engineering.objective_begin()
+    sc_encounter_engineering.wake()
+    sleep_until(kill_squad_engineering.is_complete())
+    o_portal_end_door.delete_object()
+    enc_engineering_strike1.sc_engineering_trash.wake()
+    venus_s1_m01_d30.wake()
+    sleep_until(md_s1_m1_d030.is_done())
+    kill_squad_engineering.objective_end_silent()
+
+thread sc_encounter_engineering:
+    floor_encounter()
+    formation(3)
+    formation(1)
+    formation(2)
+    objective_complete = true
+
+def formation(rand_int):
+    if rand_int == 1:
+        print("From the SMALL Room")
+        floor_spawn(sq_floor1_fallen03, sq_floor1_fallen04)
+        sleep(5)
+        floor_spawn(sq_floor1_fallen04a, sq_objective04)
+        sleep_until(gr_floor2.alive_count() <= 3)
+        if sq_objective04.alive_count() > 0:
+            floor_spawn(sq_floor1_fallen03, sq_floor1_fallen04)
+        sleep_until(gr_floor2.alive_count() <= 4 and sq_objective04.alive_count() < 1)
+    if rand_int == 2:
+        print("From the CORNER Room")
+        floor_spawn(sq_floor1_fallen05, sq_objective05)
+        sleep(5)
+        floor_spawn(sq_floor1_fallen06a, sq_objective06)
+        sleep_until(gr_floor3.alive_count() <= 3)
+        if sq_objective06.alive_count() > 0 and sq_objective05.alive_count() > 0:
+            floor_spawn(sq_floor1_fallen05, sq_floor1_fallen06)
+        sleep_until(gr_floor3.alive_count() <= 4 and sq_objective06.alive_count() < 1 and sq_objective05.alive_count() < 1)
+    if rand_int == 3:
+        print("From the Big Room")
+        floor_spawn(sq_floor1_fallen07, sq_floor1_fallen08)
+        sleep(5)
+        floor_spawn(sq_floor1_fallen08a, sq_objective07)
+        sleep_until(gr_floor4.alive_count() <= 3)
+        if sq_objective07.alive_count() > 0:
+            floor_spawn(sq_floor1_fallen07, sq_floor1_fallen08)
+        sleep_until(gr_floor4.alive_count() <= 4 and sq_objective07.alive_count() < 1)
+
+def floor_encounter():
+    floor_spawn(sq_floor1_fallen01, sq_floor1_fallen02)
+    sleep_until(gr_floor1.alive_count() <= 3)
+
+def floor_spawn(sq1, sq2):
+    sq1.respawn()
+    sleep(mathlib.random_int_inclusive(3, 6))
+    sq2.respawn()
+
+thread venus_s1_m01_d10:
+    md_s1_m1_d010.start()
+    print("md_s1_m1_d010")
+
+thread venus_s1_m01_d20:
+    md_s1_m1_d020.start()
+    print("md_s1_m1_d020")
+
+thread venus_s1_m01_d30:
+    md_s1_m1_d030.start()
+    print("md_s1_m1_d030")

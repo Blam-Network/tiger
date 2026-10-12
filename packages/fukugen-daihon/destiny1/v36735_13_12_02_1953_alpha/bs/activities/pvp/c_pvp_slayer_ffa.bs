@@ -1,0 +1,13 @@
+class c_pvp_slayer_ffa : c_pvp_slayer:
+
+
+    def import():
+        incident_game_type_hash = "pvp_game_type_ffa"
+        incident_game_start_hash = "pvp_game_start_ffa"
+        return true
+
+    def d_slayer_init():
+        print("FFA")
+
+# Decompiled from 36735.13.12.02.1953.alpha script tags
+# See tags 8220C007, 82236007, 82260007

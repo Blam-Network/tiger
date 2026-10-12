@@ -1,0 +1,20 @@
+c_cinematic_sensor_host _cinematic
+bool _start
+bool _complete
+
+
+def is_complete():
+    return _complete
+
+def start():
+
+    play.restart()
+
+thread play:
+
+    _cinematic.start()
+    sleep_until(_cinematic.is_done())
+    _complete = true
+
+# Decompiled from 36735.13.12.02.1953.alpha script tags
+# See tag 821B8047

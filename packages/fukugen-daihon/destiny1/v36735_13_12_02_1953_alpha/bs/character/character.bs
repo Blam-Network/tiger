@@ -1,0 +1,3 @@
+# Decompiled from 36735.13.12.02.1953.alpha script tags
+# See tag 82100003 (c_character_component)
+# The tag names this decl but holds no compiled code, so nothing here can be recovered.

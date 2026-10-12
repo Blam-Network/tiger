@@ -1,0 +1,3 @@
+# Decompiled from 36735.13.12.02.1953.alpha script tags
+# See tag 8210006A (self_destructor_component)
+# The tag names this decl but holds no compiled code, so nothing here can be recovered.

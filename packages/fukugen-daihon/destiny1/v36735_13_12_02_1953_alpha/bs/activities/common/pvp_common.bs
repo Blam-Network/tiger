@@ -1,0 +1,16 @@
+class c_encounter__pvp_common : c_encounter:  # true name unknown
+    c_scoreboard_host scoreboard  # true name unknown
+    c_timer_sensor_host lifetime_timer  # true name unknown
+    c_lifetime_sensor_host lifetime  # true name unknown
+    c_team_picker_host team_picker  # true name unknown
+    static_array<c_activity_player_sensor_host, 12> players
+    static_array<c_fireteam_sensor_host, 12> fireteams
+
+
+
+    def import():
+        success = lifetime.import_only_bind(lifetime_timer)
+        return success
+
+# Decompiled from 36735.13.12.02.1953.alpha script tags
+# See tags 8220C000, 82236000, 82260000

@@ -1,0 +1,115 @@
+c_control_point_set_sensor_host cps_event_dropship_to_pt  # true name unknown
+c_objective_sensor_host obj_event_dropship_pt  # true name unknown
+c_objective_sensor_host obj_event_enemy_exit  # true name unknown
+c_object_sensor_host o_event_dropship_beacon_pt
+c_object_sensor_host o_event_fiction_device_temp
+c_device_host d_event_fiction_device bind(o_event_fiction_device_temp)
+dynamic_array<c_object_sensor_host> o_dropship_cov
+static_array<c_device_host, 10> dev_dropship_cov
+c_control_point_set_sensor_host cps_dropship_point_enter  # true name unknown
+c_control_point_set_sensor_host cps_dropship_point_exit  # true name unknown
+c_squad_sensor_host sq_event_dropship_wave0a
+c_squad_member_sensor_host sq_event_dropship_wave0a__cell_1  # true name unknown
+c_squad_member_sensor_host sq_event_dropship_wave0a__cell_2  # true name unknown
+c_squad_sensor_host sq_event_dropship_wave0b
+c_squad_member_sensor_host sq_event_dropship_wave0b__cell_1  # true name unknown
+c_squad_member_sensor_host sq_event_dropship_wave0b__cell_2  # true name unknown
+c_squad_member_sensor_host sq_event_dropship_wave0b__cell_3  # true name unknown
+c_squad_sensor_host sq_event_dropship_wave0_leader
+c_squad_member_sensor_host sq_event_dropship_wave0_leader__cell_1  # true name unknown
+c_trigger_volume_slot_host cv_event_dropship_pt
+c_player_trigger_sensor_host pt_event_dropship bind(cv_event_dropship_pt)  # true name unknown
+
+
+
+
+
+
+
+
+
+
+
+
+
+def user_import():
+    for i, obj in o_dropship_cov:
+        dev_dropship_cov[i].import_only_bind(o_dropship_cov[i])
+
+def get_all_data():
+
+    generated_ai_objective = get_objective()
+    generated_ai_exit_objective = get_exit_objective()
+    generated_beacon = get_object()
+    generated_fiction_object, generated_fiction_device = get_device()
+    generated_point_set = get_command_point_sequence()
+    generated_squad_wave0a = get_squad_a()
+    generated_squad_wave0b = get_squad_b()
+    generated_squad_wave0_leader = get_leader()
+    generated_player_trigger = get_player_trigger()
+
+    return generated_ai_objective, generated_ai_exit_objective, generated_beacon, generated_fiction_object, generated_fiction_device, generated_point_set, generated_squad_wave0a, generated_squad_wave0b, generated_player_trigger, generated_squad_wave0_leader
+
+def get_cell_data():
+
+    generated_squad_wave0a_cell_1 = get_squad_a_cell_1()
+    generated_squad_wave0a_cell_2 = get_squad_a_cell_2()
+
+    generated_squad_wave0b_cell_1 = get_squad_b_cell_1()
+    generated_squad_wave0b_cell_2 = get_squad_b_cell_2()
+    generated_squad_wave0b_cell_3 = get_squad_b_cell_3()
+
+    generated_leader_cell_1 = get_squad_leader_cell()
+
+    return generated_squad_wave0a_cell_1, generated_squad_wave0a_cell_2, generated_squad_wave0b_cell_1, generated_squad_wave0b_cell_2, generated_squad_wave0b_cell_3, generated_leader_cell_1
+
+def get_objective():
+    return obj_event_dropship_pt
+
+def get_exit_objective():
+    return obj_event_enemy_exit
+
+def get_command_point_sequence():
+    return cps_event_dropship_to_pt
+
+def get_object():
+    return o_event_dropship_beacon_pt
+
+def get_device():
+    return o_event_fiction_device_temp, d_event_fiction_device
+
+def get_squad_a():
+    return sq_event_dropship_wave0a
+
+def get_squad_b():
+    return sq_event_dropship_wave0b
+
+def get_leader():
+    return sq_event_dropship_wave0_leader
+
+def get_squad_a_cell_1():
+    return sq_event_dropship_wave0a__cell_1
+
+def get_squad_a_cell_2():
+    return sq_event_dropship_wave0a__cell_2
+
+def get_squad_b_cell_1():
+    return sq_event_dropship_wave0b__cell_1
+
+def get_squad_b_cell_2():
+    return sq_event_dropship_wave0b__cell_2
+
+def get_squad_b_cell_3():
+    return sq_event_dropship_wave0b__cell_3
+
+def get_squad_leader_cell():
+    return sq_event_dropship_wave0_leader__cell_1
+
+
+
+
+def get_player_trigger():
+    return pt_event_dropship
+
+# Decompiled from 36735.13.12.02.1953.alpha script tags
+# See tag 821B804B

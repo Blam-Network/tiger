@@ -1,0 +1,266 @@
+u_globals utils
+c_location_sensor_host southern_tides  # true name unknown
+c_player_monitor_sensor_host pm_bubble_southern_tides bind(southern_tides)  # true name unknown
+c_encounter_handle enc_south_tides_ch2m3  # true name unknown
+c_objective_sensor_host obj_south_tides_ch2m3_phase  # true name unknown
+c_trigger_volume_slot_host tv_southern_tides_md01
+c_player_trigger_sensor_host pt_southern_tides_md01 bind(tv_southern_tides_md01)  # true name unknown
+c_trigger_volume_slot_host tv_southern_tides_md02
+c_player_trigger_sensor_host pt_southern_tides_md02 bind(tv_southern_tides_md02)  # true name unknown
+c_squad_sensor_host sq_vex_reinf00
+c_squad_sensor_host sq_vex_reinf00a
+c_squad_sensor_host sq_vex_reinf01
+c_squad_sensor_host sq_vex_reinf01a
+c_squad_sensor_host sq_vex_reinf01b
+c_squad_sensor_host sq_vex_reinf01c
+c_squad_sensor_host sq_vex_reinf02
+c_squad_sensor_host sq_vex_reinf02a
+c_squad_sensor_host sq_vex_reinf02b
+c_squad_sensor_host sq_vex_reinf02c
+c_squad_sensor_host sq_vex_reinf03
+c_squad_sensor_host sq_vex_reinf03a
+c_squad_sensor_host sq_vex_reinf03b
+c_squad_sensor_host sq_vex_reinf03c
+c_squad_sensor_host sq_vex_sniper01
+c_squad_sensor_host sq_vex_sniper02
+c_squad_sensor_host sq_vex_sniper03
+c_squad_sensor_host sq_vex_sniper04
+c_squad_sensor_host sq_vex_sniper05
+c_squad_sensor_host sq_vex_sniper06
+c_squad_sensor_host sq_vex_sniper07
+c_control_point_sensor_host ps_snipe01  # true name unknown
+c_control_point_sensor_host ps_snipe02  # true name unknown
+c_squad_member_sensor_host sq_vex_sniper01__sniper  # true name unknown
+c_squad_member_sensor_host sq_vex_sniper02__sniper  # true name unknown
+c_squad_group_sensor_host sqg_vex_reinf00  # true name unknown
+c_squad_group_sensor_host sqg_vex_reinf01  # true name unknown
+c_squad_group_sensor_host sqg_vex_reinf03  # true name unknown
+c_squad_group_sensor_host sqg_vex_snipers  # true name unknown
+c_sequence_host md_c2_m3_d030  # true name unknown
+c_sequence_host md_c2_m3_d040  # true name unknown
+c_sequence_host md_c2_m4_d010  # true name unknown
+c_sequence_host md_c2_m4_d020  # true name unknown
+c_sequence_host md_c2_m4_d030  # true name unknown
+c_sequence_host md_c2_m4_d040  # true name unknown
+c_sequence_host md_c2_m4_d050  # true name unknown
+c_sequence_host minotaur_roar  # true name unknown
+c_trigger_volume_slot_host tv_vex_warpgate00
+c_player_monitor_sensor_host pm_vex_warpgate00 bind(tv_vex_warpgate00)  # true name unknown
+c_trigger_volume_slot_host tv_vex_warpgate01
+c_player_monitor_sensor_host pm_vex_warpgate01 bind(tv_vex_warpgate01)  # true name unknown
+c_trigger_volume_slot_host tv_vex_warpgate02
+c_player_monitor_sensor_host pm_vex_warpgate02 bind(tv_vex_warpgate02)  # true name unknown
+c_trigger_volume_slot_host tv_vex_warpgate03
+c_player_monitor_sensor_host pm_vex_warpgate03 bind(tv_vex_warpgate03)  # true name unknown
+bool gates_on
+bool text_dialog = true
+cinematic_midmission cine_ch2m3_midmission
+interactable_objective ch2m3_interactable bind("ch2m3_interactable")
+kill_squad_objective ch2m3_kill_warpgates bind("ch2m3_kill_warpgates", 4)
+trigger_bubble_objective ch2m3_enter_bubble bind(southern_tides)
+dialog_trigger md_c2_m3_d010_trigger
+dialog_trigger md_c2_m3_d020_trigger
+vex_warp_gate vex_warp_gate00
+vex_warp_gate vex_warp_gate01
+vex_warp_gate vex_warp_gate02
+vex_warp_gate vex_warp_gate03
+c_hop_on_sensor_host warpgate_invincible  # true name unknown
+c_object_filter_sensor_host warpgates
+string_hash vex_warpgate = "vex_warpgate"
+c_object_sensor_host minotaur_large_a_roar
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+startup thread startup:
+    warpgates.add_combatant_type(vex_warpgate)
+    warpgate_invincible.set_filter(warpgates)
+
+thread init: pass
+
+
+thread complete:
+    warpgate_invincible.clear_filter()
+
+thread main:
+    sqg_vex_reinf00.add_child(sq_vex_reinf00)
+    sqg_vex_reinf00.add_child(sq_vex_reinf00a)
+    sqg_vex_reinf01.add_child(sq_vex_reinf01)
+    sqg_vex_reinf01.add_child(sq_vex_reinf01a)
+    sqg_vex_reinf01.add_child(sq_vex_reinf01b)
+    sqg_vex_reinf03.add_child(sq_vex_reinf01c)
+    sqg_vex_reinf03.add_child(sq_vex_reinf02)
+    sqg_vex_reinf03.add_child(sq_vex_reinf02a)
+    sqg_vex_reinf03.add_child(sq_vex_reinf02b)
+    sqg_vex_reinf03.add_child(sq_vex_reinf02c)
+    sqg_vex_reinf03.add_child(sq_vex_reinf03)
+    sqg_vex_reinf03.add_child(sq_vex_reinf03a)
+    sqg_vex_reinf03.add_child(sq_vex_reinf03b)
+    sqg_vex_reinf03.add_child(sq_vex_reinf03c)
+    sqg_vex_snipers.add_child(sq_vex_sniper01)
+    sqg_vex_snipers.add_child(sq_vex_sniper02)
+    sqg_vex_snipers.add_child(sq_vex_sniper03)
+    sqg_vex_snipers.add_child(sq_vex_sniper04)
+    sqg_vex_snipers.add_child(sq_vex_sniper05)
+    sqg_vex_snipers.add_child(sq_vex_sniper06)
+    sqg_vex_snipers.add_child(sq_vex_sniper07)
+    print("script startup")
+    md_c2_m3_d010_trigger.enable()
+    md_c2_m3_d020_trigger.enable()
+
+    ch2m3_enter_bubble.objective_begin()
+    sleep_until(ch2m3_enter_bubble.is_complete())
+    ch2m3_enter_bubble.objective_end_silent()
+    ch2m3_interactable.objective_begin()
+    venus_c2_m03_d30.wake()
+    venus_c2_m03_d40.wake()
+    sleep_until(ch2m3_interactable.is_complete())
+    ch2m3_interactable.objective_end_silent()
+    venus_c2_m04_d10.wake()
+    ch2m3_kill_warpgates.objective_begin()
+    sc_gate00.wake()
+
+    venus_c2_m04_d20.wake()
+    venus_c2_m04_d40.wake()
+    sleep_until(ch2m3_kill_warpgates.get_count() == 1)
+
+    sc_gate01.wake()
+
+    sleep_until(ch2m3_kill_warpgates.get_count() == 2)
+    venus_c2_m04_d30.wake()
+    sc_snipers.wake()
+    sc_gate02.wake()
+    sc_gate03.wake()
+
+    sleep_until(ch2m3_kill_warpgates.is_complete())
+    venus_c2_m04_d50.wake()
+    ch2m3_kill_warpgates.objective_end()
+
+
+
+thread sc_gate00:
+    vex_warp_gate00.activate()
+    sleep_until(vex_warp_gate00.drop_cue == true)
+    warpgates.remove(vex_warp_gate00._squad)
+    vex_warp_gate00.drop_begin(sq_vex_reinf00)
+    sleep_until(sq_vex_reinf00.alive_count() < 2)
+    vex_warp_gate00.drop_begin(sq_vex_reinf00a)
+
+thread sc_gate01:
+    sleep(mathlib.random_int_inclusive(0.1, 2))
+    vex_warp_gate01.power_up()
+    sleep_until(vex_warp_gate01.drop_cue == true)
+    warpgates.remove(vex_warp_gate01._squad)
+    vex_warp_gate01.drop_begin(sq_vex_reinf01)
+    sleep(mathlib.random_int_inclusive(1, 2))
+    vex_warp_gate01.drop_begin(sq_vex_reinf01a)
+    sleep_until(pm_vex_warpgate01.test_any_inside())
+    vex_warp_gate01.reinforce(sq_vex_reinf01c)
+
+
+thread sc_gate02:
+    sleep(mathlib.random_int_inclusive(0.1, 2))
+    vex_warp_gate02.power_up()
+    sleep_until(vex_warp_gate02.drop_cue == true)
+    warpgates.remove(vex_warp_gate02._squad)
+    vex_warp_gate02.drop_begin(sq_vex_reinf02)
+    sleep_until(pm_vex_warpgate03.test_any_inside())
+    sleep(mathlib.random_int_inclusive(1, 2))
+    vex_warp_gate02.drop_begin(sq_vex_reinf02a)
+    sleep_until(pm_vex_warpgate03.test_any_inside())
+    sleep(mathlib.random_int_inclusive(3, 5))
+    vex_warp_gate02.drop_begin(sq_vex_reinf02b)
+    sleep_until(pm_vex_warpgate03.test_any_inside())
+    sleep(mathlib.random_int_inclusive(4, 6))
+    vex_warp_gate02.reinforce(sq_vex_reinf02c)
+
+thread sc_gate03:
+    sleep(mathlib.random_int_inclusive(0.1, 2))
+    vex_warp_gate03.power_up()
+    sleep_until(vex_warp_gate03.drop_cue == true)
+    warpgates.remove(vex_warp_gate03._squad)
+    vex_warp_gate03.drop_begin(sq_vex_reinf03)
+    sleep_until(pm_vex_warpgate03.test_any_inside())
+    sleep(mathlib.random_int_inclusive(1, 2))
+    vex_warp_gate03.drop_begin(sq_vex_reinf03a)
+    sleep_until(pm_vex_warpgate03.test_any_inside())
+    sleep(mathlib.random_int_inclusive(3, 5))
+    vex_warp_gate03.drop_begin(sq_vex_reinf03b)
+    sleep_until(pm_vex_warpgate03.test_any_inside())
+    sleep(mathlib.random_int_inclusive(4, 6))
+    vex_warp_gate03.reinforce(sq_vex_reinf03c)
+
+
+thread sc_snipers:
+    sq_vex_sniper01.place()
+    sq_vex_sniper02.place()
+    sq_vex_sniper03.place()
+    sq_vex_sniper04.place()
+    sq_vex_sniper05.place()
+    sq_vex_sniper06.place()
+    sq_vex_sniper07.place()
+
+
+    sq_vex_sniper01__sniper.execute(sniper_teleport(ps_snipe01)); sleep_until(sq_vex_sniper01__sniper.get_command_script_state() != e_command_script_state.executing)
+
+    sleep(1)
+
+
+    sq_vex_sniper02__sniper.execute(sniper_teleport(ps_snipe02)); sleep_until(sq_vex_sniper02__sniper.get_command_script_state() != e_command_script_state.executing)
+
+command_script sniper_teleport(path):
+    point_targeted_ability("teleport", "command_script", path, 0)
+
+
+
+thread venus_c2_m03_d30:
+    pt_southern_tides_md01.reset()
+    sleep_until(pt_southern_tides_md01.is_triggered())
+    md_c2_m3_d030.start()
+    print("md_c3_m3_d030")
+
+thread venus_c2_m03_d40:
+    pt_southern_tides_md02.reset()
+    sleep_until(pt_southern_tides_md02.is_triggered())
+    md_c2_m3_d040.start()
+    print("md_c3_m3_d040")
+
+thread venus_c2_m04_d10:
+    md_c2_m4_d010.start()
+    print("md_c2_m4_d010")
+
+thread venus_c2_m04_d20:
+    sleep_until(ch2m3_kill_warpgates.get_count() < 4)
+    sleep_until(pm_vex_warpgate01.test_any_inside() or pm_vex_warpgate03.test_any_inside())
+    md_c2_m4_d020.start()
+    print("md_c2_m4_d020")
+
+thread venus_c2_m04_d30:
+    sleep(8)
+    md_c2_m4_d030.start()
+    print("md_c2_m4_d030")
+
+thread venus_c2_m04_d40:
+    sleep_until(pm_vex_warpgate02.test_any_inside() and sqg_vex_snipers.alive_count() > 1 and ch2m3_kill_warpgates.get_count() == 2)
+    md_c2_m4_d040.start()
+    print("md_c2_m4_d040")
+
+thread venus_c2_m04_d50:
+    sleep(4)
+    md_c2_m4_d050.start()
+    print("md_c2_m4_d050")
+
+# Decompiled from 36735.13.12.02.1953.alpha script tags
+# See tag 821B801F

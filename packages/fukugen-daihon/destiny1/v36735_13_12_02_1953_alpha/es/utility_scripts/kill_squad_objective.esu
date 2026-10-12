@@ -1,0 +1,72 @@
+c_player_objective_sensor_host _player_objective
+c_sequence_host _incoming_sequence  # true name unknown
+c_sequence_host _completion_sequence  # true name unknown
+c_nav_point_host _nav_point  # true name unknown
+c_encounter_binding_host _squad  # true name unknown
+c_activity_flag _activity_flag  # true name unknown
+c_kill_incident_listener _incident_listener  # true name unknown
+string_hash _identifier
+string_hash _any_kill_hash = "any_kill"
+int _count
+
+
+
+
+
+
+
+def import_only_bind(identifier, count):
+    _identifier = identifier
+    _count = count
+    return _squad.import_only_bind_object(identifier) and _activity_flag.import_only_bind(identifier)
+
+
+def get_count():
+    return _incident_listener.get_count()
+
+def is_complete():
+    return _incident_listener.get_count() >= _count
+
+def objective_begin():
+    _player_objective.set_incoming()
+    sleep(2)
+    _incoming_sequence.start()
+    sleep_until_timeout(_incoming_sequence.is_done(), 10)
+    objective_begin_immediate()
+
+def objective_begin_immediate():
+    _player_objective.set_active()
+    _player_objective.nav_point_activate_with_fallback(_squad, _nav_point)
+    _player_objective.progress_activate(0, _count)
+    progress_watcher.restart()
+    objective_begin_silent()
+
+def objective_begin_silent():
+    _incident_listener.reset()
+    _incident_listener.bind_squad_identifier(_identifier)
+    _incident_listener.bind_incident_name_hash(_any_kill_hash)
+    _activity_flag.activate()
+
+thread progress_watcher:
+    while _player_objective.is_active() and not _player_objective.progress_is_complete():
+        _player_objective.progress_update(_incident_listener.get_count())
+        sleep(1)
+
+def cleanup():
+    _activity_flag.clear()
+
+def objective_end():
+    cleanup()
+    _player_objective.nav_point_clear()
+    _completion_sequence.start()
+    sleep_until_timeout(_completion_sequence.is_done(), 10)
+    _player_objective.set_complete()
+    sleep(2)
+    _player_objective.clear()
+
+def objective_end_silent():
+    cleanup()
+    _player_objective.clear()
+
+# Decompiled from 36735.13.12.02.1953.alpha script tags
+# See tags 821B8049, 8228A00A

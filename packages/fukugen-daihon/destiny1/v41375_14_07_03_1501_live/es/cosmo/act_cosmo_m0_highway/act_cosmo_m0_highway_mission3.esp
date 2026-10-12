@@ -1,0 +1,37 @@
+# es\cosmo\act_cosmo_m0_highway\act_cosmo_m0_highway_mission3.esp
+#
+# Mission 3, "Find a Weapon". The Ghost lights up the wall, then the player
+# picks up a weapon from the chest. The phase ends a moment after the pickup.
+# The gates ahead open when the phase ends.
+
+c_object_sensor_host o_weapon
+c_incident_listener il_weapon_pickup
+trigger_volume_objective obj_investigate_wall
+c_player_trigger_sensor_host pt_nux_ghost_light_up_start  # true name unknown
+c_trigger_group_host tg_m0_gating  # true name unknown
+c_performance_host nux_ghost  # true name unknown
+trigger_volume_objective obj_get_weapon
+
+thread init:
+    o_weapon.create()
+    il_weapon_pickup.bind_incident_name_hash("0xBD1FB418")
+
+thread complete: pass
+
+thread main:
+    sleep(3)
+    obj_investigate_wall.objective_begin()
+    sleep_until(pt_nux_ghost_light_up_start.is_triggered())
+    tg_m0_gating.activate()
+    sleep(5)
+    obj_investigate_wall.objective_end_silent()
+    nux_ghost.cue_performance("0x100E2B1D")
+    sleep(21)
+    obj_get_weapon.objective_begin()
+    nux_ghost.cue_performance("0x5429FB79")
+    sleep_until(obj_get_weapon.is_complete() or il_weapon_pickup.get_count() > 0)
+    o_weapon.delete_object()
+    obj_get_weapon.objective_end_silent()
+    nux_ghost.cue_performance("0x72F6A4A4")
+    sleep(1)
+    tg_m0_gating.deactivate()

@@ -1,0 +1,571 @@
+enum e_rocket_launcher_type:
+    rocket_launcher
+    count
+
+struct s_rocket_launcher : s_rocket_launcher_constants:
+    unknown_80802AA8 trigger_behavior  # true name unknown
+    real fire_mode
+    real rate_of_fire
+    real shots_per_fire
+    real rounds_fired_per_second
+    real fire_recovery_time
+    real soft_recovery_fraction
+    real minimum_respawn_rounds
+    real reload_full_time
+    real reload_empty_time
+    real ready_time
+    real put_away_duration
+    real ads_time
+    real zoom_amount
+    real ads_movement_penality_scale
+    real recoil_scale
+    real rocket_speed
+    real projectile_min_range
+    real projectile_max_range
+    real projectile_force_detonate_maximum_range_scale
+    real max_damage
+    real explosion_core_radius_scale
+    real explosion_radius_scale
+    real error_deceleration_duration
+    real error_angle_low
+    real error_angle_high
+
+struct s_rocket_launcher_constants:
+    real initial_rate_of_fire
+    real autoaim_angle
+    real magnetism_angle
+    real autoaim_falloff_distance
+    real autoaim_distance
+    real magnetism_falloff_distance
+    real magnetism_distance
+    real lowest_rounds_per_second
+    real highest_rounds_per_second
+    real base_damage
+
+struct s_rate_of_fire_stats:
+    real rocket_launcher_rate_of_fire
+    real rocket_launcher_shots_per_fire
+
+struct s_reload_stats:
+    real rocket_launcher_reload_full_time
+    real rocket_launcher_reload_empty_time
+
+struct s_rocket_speed_stats:
+    real rocket_launcher_rocket_speed
+
+struct s_blast_radius_stats:
+    real rocket_launcher_core_radius_scale
+    real rocket_launcher_radius_scale
+
+class c_weapon_translation_rocket_launchers : c_weapon_translation_base:
+    static s_rocket_launcher_constants constants
+    static static_stack<s_rate_of_fire_stats, 7> rate_of_fire
+    static static_stack<s_reload_stats, 7> reload
+    static static_stack<s_rocket_speed_stats, 7> rocket_speed
+    static static_stack<s_blast_radius_stats, 7> blast_radius
+    static real max_rof_impact_damage_scale = 1
+    static real force_detonate_range_multiplier = 2
+    static real movement_penality_scale
+    static real zoom_level_count = 1
+    static real projectile_initial_gravity_scale
+    static real projectile_final_gravity_scale
+    static real recoil_deceleration_time = 0.65
+    static int rounds_reloaded = 2
+    static int initial_ammo
+    static int total_ammo = 4
+    static string_hash fire_mode_channel = "fire_mode"
+    static string_hash recoil_stability_channel = "recoil_stability"
+    static string_hash zoom_amount_channel = "zoom_amount"
+    static string_hash det_occlusion_channel = "detonation_occlusion_scale"
+    static string_hash det_shape_channel = "detonation_shape_scale"
+    implements i_weapon_stats weapon_stats_interface  # true name unknown
+    c_interface_reference weapon_interface  # true name unknown
+    c_interface_reference weapon_barrel_interface  # true name unknown
+    c_interface_reference weapon_magazine_interface  # true name unknown
+    c_interface_reference weapon_reload_interface  # true name unknown
+    c_interface_reference weapon_trigger_interface  # true name unknown
+    c_interface_reference weapon_input_interface  # true name unknown
+    c_interface_reference channel_manager  # true name unknown
+    s_rocket_launcher rl
+    int investment_rate_of_fire
+    int investment_reload
+    int investment_rocket_speed
+    int investment_blast_radius
+    real highest_rounds_per_second
+    real lowest_rounds_per_second
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    static def recoil_kick_speed_calculation(kick_speed):
+        return mathlib.max(kick_speed * 2, 15) * nativemathlib.degrees_to_radians
+
+    static def initialize_constants():
+        set_group_count(e_rocket_launcher_type.count)
+        add_group("rocket_launcher", e_trigger_behavior._weapon_trigger_behavior_latch, e_trigger_behavior._weapon_trigger_behavior_latch)
+
+        constants.initial_rate_of_fire = 7.5
+        constants.autoaim_angle = 5 * nativemathlib.degrees_to_radians
+        constants.magnetism_angle = 10 * nativemathlib.degrees_to_radians
+        constants.autoaim_falloff_distance = 150
+        constants.autoaim_distance = 180
+        constants.magnetism_falloff_distance = 40
+        constants.magnetism_distance = 80
+        constants.lowest_rounds_per_second = weapon_utils.get_frame_bound_rounds_per_second(7.5, 0)
+        constants.highest_rounds_per_second = weapon_utils.get_frame_bound_rounds_per_second(15, 0)
+        constants.base_damage = 200
+
+    static def build_import_tables():
+        initialize_constants()
+
+
+
+
+
+        set_translation_copy(0, e_weapon_stat.pitch_speed_penalty_zoomed, 0)
+        set_translation_copy(0, e_weapon_stat.yaw_speed_penalty_zoomed, 0)
+        set_translation_copy(0, e_weapon_stat.zoom_level_count, zoom_level_count)
+        set_translation_copy(0, e_weapon_stat.autoaim_angle, constants.autoaim_angle)
+        set_translation_copy(0, e_weapon_stat.magnetism_angle, constants.magnetism_angle)
+        set_translation_copy(0, e_weapon_stat.autoaim_distance, constants.autoaim_distance)
+        set_translation_copy(0, e_weapon_stat.autoaim_falloff_distance, constants.autoaim_falloff_distance)
+        set_translation_copy(0, e_weapon_stat.magnetism_distance, constants.magnetism_distance)
+        set_translation_copy(0, e_weapon_stat.magnetism_falloff_distance, constants.magnetism_falloff_distance)
+        set_translation_copy(0, e_weapon_stat.forward_movement_penalty, movement_penality_scale)
+        set_translation_copy(0, e_weapon_stat.sideways_movement_penalty, movement_penality_scale)
+        set_translation_copy(0, e_weapon_magazine_stat.rounds_reloaded, rounds_reloaded)
+        set_translation_copy(0, e_weapon_magazine_stat.rounds_loaded_max, rounds_reloaded)
+        set_translation_copy(0, e_weapon_magazine_stat.rounds_total_initial, initial_ammo)
+        set_translation_copy(0, e_weapon_magazine_stat.rounds_total_max, total_ammo)
+
+
+
+
+
+        rate_of_fire_table = add_weapon_stats_table(e_investment_weapon_stats.rate_of_fire, 0, 6)
+        rate_of_fire_column = add_column_to_table(rate_of_fire_table, e_weapon_barrel_stat.normal_initial_rate_of_fire, e_weapon_barrel_stat.normal_final_rate_of_fire, e_weapon_barrel_stat.zoomed_initial_rate_of_fire, e_weapon_barrel_stat.zoomed_final_rate_of_fire)
+        shots_fired_column = add_column_to_table(rate_of_fire_table, e_weapon_barrel_stat.normal_shots_per_fire_minimum, e_weapon_barrel_stat.normal_shots_per_fire_maximum, e_weapon_barrel_stat.zoomed_shots_per_fire_minimum, e_weapon_barrel_stat.zoomed_shots_per_fire_maximum)
+
+
+        set_translation_row(rate_of_fire_table, 0, 0.5, 1)
+        set_translation_row(rate_of_fire_table, 1, 0.6, 1)
+        set_translation_row(rate_of_fire_table, 2, 0.7, 1)
+        set_translation_row(rate_of_fire_table, 3, 0.8, 1)
+        set_translation_row(rate_of_fire_table, 4, 0.9, 1)
+        set_translation_row(rate_of_fire_table, 5, 1.1, 1)
+        set_translation_row(rate_of_fire_table, 6, 1.2, 1)
+
+        fire_recovery_column = add_column_to_table(rate_of_fire_table, e_weapon_barrel_stat.normal_fire_recovery_time, e_weapon_barrel_stat.zoomed_fire_recovery_time)
+        set_translation_column(fire_recovery_column, weapon_utils.get_fire_recovery_time, 0, rate_of_fire_column, shots_fired_column)
+
+        soft_recovery_column = add_column_to_table(rate_of_fire_table, e_weapon_barrel_stat.normal_soft_recovery_fraction, e_weapon_barrel_stat.zoomed_soft_recovery_fraction)
+        set_translation_column(soft_recovery_column, weapon_utils.get_latched_soft_recovery_fraction, fire_recovery_column)
+
+
+
+
+
+        optics_table = add_weapon_stats_table(e_investment_weapon_stats.optics, 0, 6)
+        zoom_amount_column = add_column_to_table(optics_table, e_weapon_stat.zoom_magnification_minimum, e_weapon_stat.zoom_magnification_maximum)
+
+
+        set_translation_row(optics_table, 0, 1.5)
+        set_translation_row(optics_table, 1, 1.6)
+        set_translation_row(optics_table, 2, 1.7)
+        set_translation_row(optics_table, 3, 1.8)
+        set_translation_row(optics_table, 4, 1.9)
+        set_translation_row(optics_table, 5, 2)
+        set_translation_row(optics_table, 6, 2.1)
+
+        movement_penalty_zoomed_column = add_column_to_table(zoom_amount_column, e_weapon_stat.forward_movement_penalty_zoomed, e_weapon_stat.sideways_movement_penalty_zoomed)
+        set_translation_column(movement_penalty_zoomed_column, weapon_utils.get_movement_penality, zoom_amount_column, 0.25)
+
+
+
+
+
+        handling_table = add_weapon_stats_table(e_investment_weapon_stats.weapon_agility, 0, 6)
+        reload_full_column = add_column_to_table(handling_table, e_weapon_reload_stat.reload_duration)
+        reload_empty_column = add_column_to_table(handling_table, e_weapon_reload_stat.reload_empty_duration)
+        ready_column = add_column_to_table(handling_table, e_weapon_stat.ready_duration)
+        put_away_time_column = add_column_to_table(handling_table, e_weapon_stat.put_away_duration)
+        ads_time_column = add_column_to_table(handling_table, e_weapon_stat.aim_down_sights_time)
+
+
+        set_translation_row(handling_table, 0, 5.07, 5.07, 1.2, 0.433, 0.5)
+        set_translation_row(handling_table, 1, 4.68, 4.68, 1.1, 0.4, 0.466)
+        set_translation_row(handling_table, 2, 4.29, 4.29, 1, 0.367, 0.433)
+        set_translation_row(handling_table, 3, 3.9, 3.9, 0.9, 0.333, 0.4)
+        set_translation_row(handling_table, 4, 3.51, 3.51, 0.8, 0.3, 0.366)
+        set_translation_row(handling_table, 5, 3.12, 3.12, 0.7, 0.267, 0.333)
+        set_translation_row(handling_table, 6, 2.73, 2.73, 0.6, 0.233, 0.3)
+
+
+
+
+
+        accuracy_table = add_weapon_stats_table(e_investment_weapon_stats.initial_accuracy, 0, 6)
+        error_low_column = add_column_to_table(accuracy_table, e_weapon_barrel_stat.error_angle_low)
+        error_high_column = add_column_to_table(accuracy_table, e_weapon_barrel_stat.error_angle_high)
+        error_decel_column = add_column_to_table(accuracy_table, e_weapon_barrel_stat.error_deceleration_time)
+
+
+        set_translation_row(accuracy_table, 0, 0.6, 0.6, 1)
+        set_translation_row(accuracy_table, 1, 0.5, 0.5, 1)
+        set_translation_row(accuracy_table, 2, 0.4, 0.4, 1)
+        set_translation_row(accuracy_table, 3, 0.3, 0.3, 1)
+        set_translation_row(accuracy_table, 4, 0.2, 0.2, 1)
+        set_translation_row(accuracy_table, 5, 0.1, 0.1, 1)
+        set_translation_row(accuracy_table, 6, 0, 0, 1)
+
+        set_translation_column(error_low_column, weapon_utils.multiply_values, error_low_column, nativemathlib.degrees_to_radians)
+        set_translation_column(error_high_column, weapon_utils.multiply_values, error_high_column, nativemathlib.degrees_to_radians)
+
+
+
+
+
+        speed_table = add_weapon_stats_table(e_investment_weapon_stats.projectile_speed, 0, 6)
+        initial_speed_column = add_column_to_table(speed_table, e_weapon_barrel_stat.projectile_initial_speed_scale, e_weapon_barrel_stat.projectile_thrust_final_speed_scale)
+
+
+        set_translation_row(speed_table, 0, 40)
+        set_translation_row(speed_table, 1, 43.333)
+        set_translation_row(speed_table, 2, 46.667)
+        set_translation_row(speed_table, 3, 50)
+        set_translation_row(speed_table, 4, 53.333)
+        set_translation_row(speed_table, 5, 56.667)
+        set_translation_row(speed_table, 6, 60)
+
+
+
+
+
+        explosion_radius_table = add_weapon_stats_table(e_investment_weapon_stats.explosion_radius, 0, 6)
+        radius_core_column = add_column_to_table(explosion_radius_table)
+        radius_column = add_column_to_table(explosion_radius_table)
+
+
+        set_translation_row(explosion_radius_table, 0, 0.9, 0.9)
+        set_translation_row(explosion_radius_table, 1, 0.933, 0.933)
+        set_translation_row(explosion_radius_table, 2, 0.967, 0.967)
+        set_translation_row(explosion_radius_table, 3, 1, 1)
+        set_translation_row(explosion_radius_table, 4, 1.033, 1.033)
+        set_translation_row(explosion_radius_table, 5, 1.067, 1.067)
+        set_translation_row(explosion_radius_table, 6, 1.1, 1.1)
+
+
+
+
+
+        stability_table = add_weapon_stats_table(e_investment_weapon_stats.stability, 0, 6)
+        not_used_column = add_column_to_table(stability_table)
+        recoil_scale_column = add_column_to_table(stability_table)
+
+
+        set_translation_row(stability_table, 0, 0, 1.5)
+        set_translation_row(stability_table, 1, 0, 1.333)
+        set_translation_row(stability_table, 2, 0, 1.167)
+        set_translation_row(stability_table, 3, 0, 1)
+        set_translation_row(stability_table, 4, 0, 0.857)
+        set_translation_row(stability_table, 5, 0, 0.75)
+        set_translation_row(stability_table, 6, 0, 0.667)
+
+
+
+
+        set_translation_copy(0, e_weapon_barrel_stat.impact_damage_multiplier, constants.base_damage)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    def set_stat_indexes(weapon_sheet):
+        investment_rate_of_fire = get_stat_index(weapon_sheet, e_investment_weapon_stats.rate_of_fire)
+        investment_reload = get_stat_index(weapon_sheet, e_investment_weapon_stats.reload)
+        investment_rocket_speed = get_stat_index(weapon_sheet, e_investment_weapon_stats.projectile_speed)
+        investment_blast_radius = get_stat_index(weapon_sheet, e_investment_weapon_stats.explosion_radius)
+
+
+
+
+    def set_weapon_stat(stat, value):
+        weapon_interface.get_stat(stat).set_base_value(value)
+
+    def get_weapon_stat(stat):
+        return weapon_interface.get_stat(stat).get_base_value()
+
+
+
+
+    def set_barrel_stat(stat, value):
+        weapon_barrel_interface.get_stat(stat).set_base_value(value)
+
+    def get_barrel_stat(stat):
+        return weapon_barrel_interface.get_stat(stat).get_base_value()
+
+
+
+
+    def set_magazn_stat(stat, value):
+        weapon_magazine_interface.get_stat(stat).set_base_value(value)
+
+    def get_magazn_stat(stat):
+        return weapon_magazine_interface.get_stat(stat).get_base_value()
+
+
+
+
+    def set_reload_stat(stat, value):
+        weapon_reload_interface.get_stat(stat).set_base_value(value)
+
+    def get_reload_stat(stat):
+        return weapon_reload_interface.get_stat(stat).get_base_value()
+
+
+
+
+    def set_trigger_behavior(value):
+        weapon_trigger_interface.set_normal_trigger_behavior(value)
+        weapon_trigger_interface.set_zoomed_trigger_behavior(value)
+
+    def get_trigger_behavior():
+        return weapon_trigger_interface.get_normal_trigger_behavior()
+
+
+
+
+    def import_rate_of_fire_stats(index, rocket_launcher_rate_of_fire, rocket_launcher_shots_per_fire):
+        rate_of_fire[index].rocket_launcher_rate_of_fire = rocket_launcher_rate_of_fire
+        rate_of_fire[index].rocket_launcher_shots_per_fire = rocket_launcher_shots_per_fire
+
+    def import_reload_stats(index, rocket_launcher_reload_full_time, rocket_launcher_reload_empty_time):
+        reload[index].rocket_launcher_reload_full_time = rocket_launcher_reload_full_time
+        reload[index].rocket_launcher_reload_empty_time = rocket_launcher_reload_empty_time
+
+    def import_rocket_speed_stats(index, rocket_launcher_rocket_speed):
+        rocket_speed[index].rocket_launcher_rocket_speed = rocket_launcher_rocket_speed
+
+    def import_blast_radius_stats(index, rocket_launcher_core_radius_scale, rocket_launcher_radius_scale):
+        blast_radius[index].rocket_launcher_core_radius_scale = rocket_launcher_core_radius_scale
+        blast_radius[index].rocket_launcher_radius_scale = rocket_launcher_radius_scale
+
+
+
+
+
+
+    def weapon_stats_interface.translate_stats(weapon_sheet):
+        finalize_interfaces()
+
+        set_stat_indexes(weapon_sheet)
+
+        group_id = get_group_index(weapon_sheet)
+        if group_id == enum_to_int(e_rocket_launcher_type.rocket_launcher):
+            translate_rocket_launcher_stats(rl)
+
+        apply_stats(rl)
+
+
+    def finalize_interfaces():
+        weapon_interface = get_object().find_interface(i_weapon)
+        weapon_barrel_interface = get_object().find_interface(i_weapon_barrel)
+        weapon_magazine_interface = get_object().find_interface(i_weapon_magazine)
+        weapon_reload_interface = get_object().find_interface(i_weapon_reload)
+        weapon_trigger_interface = get_object().find_interface(i_weapon_trigger)
+        weapon_input_interface = find_interface(i_weapon_input)
+        channel_manager = find_interface(i_channel_manager)
+
+
+
+
+    def import():
+        build_import_tables()
+
+
+
+        for index in range(rate_of_fire.maximum_count()):
+            rate_of_fire.new()
+
+        import_rate_of_fire_stats(0, 0.5, 1)
+        import_rate_of_fire_stats(1, 0.6, 1)
+        import_rate_of_fire_stats(2, 0.7, 1)
+        import_rate_of_fire_stats(3, 0.8, 1)
+        import_rate_of_fire_stats(4, 0.9, 1)
+        import_rate_of_fire_stats(5, 1.1, 1)
+        import_rate_of_fire_stats(6, 1.2, 1)
+
+
+
+
+        for index in range(reload.maximum_count()):
+            reload.new()
+
+        import_reload_stats(0, 5.07, 5.07)
+        import_reload_stats(1, 4.68, 4.68)
+        import_reload_stats(2, 4.29, 4.29)
+        import_reload_stats(3, 3.9, 3.9)
+        import_reload_stats(4, 3.51, 3.51)
+        import_reload_stats(5, 3.12, 3.12)
+        import_reload_stats(6, 2.73, 2.73)
+
+
+
+
+        for index in range(rocket_speed.maximum_count()):
+            rocket_speed.new()
+
+        import_rocket_speed_stats(0, 40)
+        import_rocket_speed_stats(1, 43.333)
+        import_rocket_speed_stats(2, 46.667)
+        import_rocket_speed_stats(3, 50)
+        import_rocket_speed_stats(4, 53.333)
+        import_rocket_speed_stats(5, 56.667)
+        import_rocket_speed_stats(6, 60)
+
+
+
+
+        for index in range(blast_radius.maximum_count()):
+            blast_radius.new()
+
+        import_blast_radius_stats(0, 0.9, 0.9)
+        import_blast_radius_stats(1, 0.933, 0.933)
+        import_blast_radius_stats(2, 0.967, 0.967)
+        import_blast_radius_stats(3, 1, 1)
+        import_blast_radius_stats(4, 1.033, 1.033)
+        import_blast_radius_stats(5, 1.067, 1.067)
+        import_blast_radius_stats(6, 1.1, 1.1)
+
+
+        return true
+
+
+
+
+
+
+
+
+
+
+    def translate_rocket_launcher_stats(rl):
+
+        rl.rate_of_fire = rate_of_fire[investment_rate_of_fire].rocket_launcher_rate_of_fire
+        rl.shots_per_fire = rate_of_fire[investment_rate_of_fire].rocket_launcher_shots_per_fire
+        rl.reload_full_time = reload[investment_reload].rocket_launcher_reload_full_time
+        rl.reload_empty_time = reload[investment_reload].rocket_launcher_reload_empty_time
+        rl.rocket_speed = rocket_speed[investment_rocket_speed].rocket_launcher_rocket_speed
+        rl.explosion_core_radius_scale = blast_radius[investment_blast_radius].rocket_launcher_core_radius_scale
+        rl.explosion_radius_scale = blast_radius[investment_blast_radius].rocket_launcher_radius_scale
+
+        rl.trigger_behavior = e_trigger_behavior._weapon_trigger_behavior_latch
+        rl.zoom_amount = 2
+        rl.ready_time = 0.9
+        rl.put_away_duration = 0.333
+        rl.ads_time = 0.4
+        rl.error_angle_low = 0
+        rl.error_angle_high = 0
+        rl.error_deceleration_duration = 0
+        rl.ads_movement_penality_scale = weapon_utils.get_movement_penality(rl.zoom_amount, 0.25)
+        rl.max_damage = 200
+        rl.rounds_fired_per_second = weapon_utils.get_frame_bound_rounds_per_second(rl.rate_of_fire, rl.shots_per_fire)
+        rl.fire_recovery_time = weapon_utils.get_fire_recovery_time(0, rl.rate_of_fire, rl.shots_per_fire)
+        rl.soft_recovery_fraction = weapon_utils.get_soft_recovery_fraction(rl.trigger_behavior, rl.fire_recovery_time)
+        rl.autoaim_angle = 5 * nativemathlib.degrees_to_radians
+        rl.magnetism_angle = 10 * nativemathlib.degrees_to_radians
+        rl.autoaim_falloff_distance = 150
+        rl.autoaim_distance = 180
+        rl.magnetism_falloff_distance = 40
+        rl.magnetism_distance = 80
+
+
+
+
+    def apply_stats(rl):
+
+        set_trigger_behavior(rl.trigger_behavior)
+
+        set_barrel_stat(e_weapon_barrel_stat.normal_initial_rate_of_fire, rl.rate_of_fire)
+        set_barrel_stat(e_weapon_barrel_stat.normal_final_rate_of_fire, rl.rate_of_fire)
+        set_barrel_stat(e_weapon_barrel_stat.zoomed_initial_rate_of_fire, rl.rate_of_fire)
+        set_barrel_stat(e_weapon_barrel_stat.zoomed_final_rate_of_fire, rl.rate_of_fire)
+        set_barrel_stat(e_weapon_barrel_stat.normal_shots_per_fire_minimum, rl.shots_per_fire)
+        set_barrel_stat(e_weapon_barrel_stat.normal_shots_per_fire_maximum, rl.shots_per_fire)
+        set_barrel_stat(e_weapon_barrel_stat.zoomed_shots_per_fire_minimum, rl.shots_per_fire)
+        set_barrel_stat(e_weapon_barrel_stat.zoomed_shots_per_fire_maximum, rl.shots_per_fire)
+        set_barrel_stat(e_weapon_barrel_stat.normal_fire_recovery_time, rl.fire_recovery_time)
+        set_barrel_stat(e_weapon_barrel_stat.zoomed_fire_recovery_time, rl.fire_recovery_time)
+        set_barrel_stat(e_weapon_barrel_stat.normal_soft_recovery_fraction, rl.soft_recovery_fraction)
+        set_barrel_stat(e_weapon_barrel_stat.zoomed_soft_recovery_fraction, rl.soft_recovery_fraction)
+
+        set_magazn_stat(e_weapon_magazine_stat.rounds_reloaded, rounds_reloaded)
+        set_magazn_stat(e_weapon_magazine_stat.rounds_loaded_max, rounds_reloaded)
+        set_magazn_stat(e_weapon_magazine_stat.rounds_total_initial, initial_ammo)
+        set_magazn_stat(e_weapon_magazine_stat.rounds_total_max, total_ammo)
+        set_reload_stat(e_weapon_reload_stat.reload_duration, rl.reload_full_time)
+        set_reload_stat(e_weapon_reload_stat.reload_empty_duration, rl.reload_empty_time)
+        set_weapon_stat(e_weapon_stat.ready_duration, rl.ready_time)
+        set_weapon_stat(e_weapon_stat.put_away_duration, rl.put_away_duration)
+        set_weapon_stat(e_weapon_stat.aim_down_sights_time, rl.ads_time)
+
+        set_barrel_stat(e_weapon_barrel_stat.error_deceleration_time, rl.error_deceleration_duration)
+        set_barrel_stat(e_weapon_barrel_stat.error_angle_low, rl.error_angle_low)
+        set_barrel_stat(e_weapon_barrel_stat.error_angle_high, rl.error_angle_high)
+
+        set_weapon_stat(e_weapon_stat.forward_movement_penalty, movement_penality_scale)
+        set_weapon_stat(e_weapon_stat.sideways_movement_penalty, movement_penality_scale)
+        set_weapon_stat(e_weapon_stat.forward_movement_penalty_zoomed, rl.ads_movement_penality_scale)
+        set_weapon_stat(e_weapon_stat.sideways_movement_penalty_zoomed, rl.ads_movement_penality_scale)
+        set_weapon_stat(e_weapon_stat.pitch_speed_penalty_zoomed, 0)
+        set_weapon_stat(e_weapon_stat.yaw_speed_penalty_zoomed, 0)
+
+        set_weapon_stat(e_weapon_stat.autoaim_angle, rl.autoaim_angle)
+        set_weapon_stat(e_weapon_stat.magnetism_angle, rl.magnetism_angle)
+        set_weapon_stat(e_weapon_stat.autoaim_distance, rl.autoaim_distance)
+        set_weapon_stat(e_weapon_stat.autoaim_falloff_distance, rl.autoaim_falloff_distance)
+        set_weapon_stat(e_weapon_stat.magnetism_distance, rl.magnetism_distance)
+        set_weapon_stat(e_weapon_stat.magnetism_falloff_distance, rl.magnetism_falloff_distance)
+
+        set_weapon_stat(e_weapon_stat.zoom_level_count, zoom_level_count)
+        set_weapon_stat(e_weapon_stat.zoom_magnification_minimum, rl.zoom_amount)
+        set_weapon_stat(e_weapon_stat.zoom_magnification_maximum, rl.zoom_amount)
+        weapon_utils.set_channel_to_scale(channel_manager, zoom_amount_channel, rl.zoom_amount)
+
+        set_barrel_stat(e_weapon_barrel_stat.projectile_initial_speed_scale, rl.rocket_speed)
+        set_barrel_stat(e_weapon_barrel_stat.projectile_thrust_final_speed_scale, rl.rocket_speed)
+
+        set_barrel_stat(e_weapon_barrel_stat.impact_damage_multiplier, rl.max_damage)
+        weapon_utils.set_channel_to_scale(channel_manager, det_occlusion_channel, rl.explosion_core_radius_scale)
+        weapon_utils.set_channel_to_scale(channel_manager, det_shape_channel, rl.explosion_radius_scale)
+
+# Decompiled from 36735.13.12.02.1953.alpha script tags
+# See tag 82100025

@@ -1,0 +1,36 @@
+c_object_sensor_host _object
+real _minimum_time_to_reset = 10
+c_activity_flag _activity_flag  # true name unknown
+c_object_filter_sensor_host _object_filter
+c_capturable_host _capturable bind(_object)
+
+
+
+
+
+
+
+
+
+def import_only_bind(identifier):
+    return _object.import_only_bind(identifier) and _activity_flag.import_only_bind(identifier)
+
+
+startup thread main:
+    _object.create()
+    _object_filter.add_players_with_activity_flag(_activity_flag)
+    _capturable.set_filter(_object_filter)
+    _capturable.lock()
+
+    while true:
+        _capturable.reset()
+        while not _activity_flag.is_active():
+            sleep(1)
+        _capturable.unlock()
+        while not _capturable.is_captured():
+            sleep(1)
+        _capturable.lock()
+        sleep(_minimum_time_to_reset)
+
+# Decompiled from 36735.13.12.02.1953.alpha script tags
+# See tag 8228A005

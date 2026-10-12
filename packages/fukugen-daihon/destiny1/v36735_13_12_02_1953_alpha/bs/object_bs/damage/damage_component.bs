@@ -1,0 +1,205 @@
+struct s_cosmetic_garbage_response : s_damage_response:  # true name unknown
+    c_tag_reference transition_effect  # true name unknown
+    string region_scope
+    string damage_state
+    string ejection_marker_name
+    c_tag_reference garbage_pattern  # true name unknown
+
+class c_damage_component : c_damage_component_base:  # true name unknown
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    def import():
+        import_success = true
+
+        event_message("entering import for damage component.")
+
+
+        set_import_defaults()
+        if import_success: import_success = expand_script_behaviors()
+        expand_script_responses()
+        import_sections()
+        import_stats()
+        import_behaviors()
+        submit_parts()
+        if import_success: import_success = import_default_route()
+        event_message("exiting import for damage component.")
+
+        return import_success
+
+    def import_stats():
+
+        set_initial_stat_value(e_damageable_stat.shield_vitality, 66)
+        set_initial_stat_value(e_damageable_stat.shield_stun_time, 1.2)
+        set_initial_stat_value(e_damageable_stat.shield_recharge_time, 2.3)
+        set_initial_stat_value(e_damageable_stat.health_vitality, 55)
+        set_initial_stat_value(e_damageable_stat.health_stun_time, 3.4)
+        set_initial_stat_value(e_damageable_stat.health_recharge_time, 4.5)
+        set_initial_stat_value(e_damageable_stat.resist_kinetic, 1)
+        set_initial_stat_value(e_damageable_stat.resist_thermal, 1)
+        set_initial_stat_value(e_damageable_stat.resist_arc, 1)
+        set_initial_stat_value(e_damageable_stat.resist_void, 1)
+        set_initial_stat_value(e_damageable_stat.resist_raid, 1)
+
+    def get_section_index_by_name(name):
+        for section_index, section in damage_sections:
+            if "%s".format(section.name) == "%s".format(name):
+                return section_index
+        return -1
+
+    def import_default_route():
+        valid = true
+        if "%s".format(default_route_name) == "":
+            if damage_routings.size() == 0: pass
+
+            elif damage_routings.size() == 1:
+                default_route_name = damage_routings[0].section_name
+            else:
+                event_error("no default route name (and more than one section) - please initialize")
+                valid = false
+        else:
+            found = false
+            for route_index, route in damage_routings:
+                if "%s".format(route.section_name) == "%s".format(default_route_name):
+                    found = true
+                    break
+            if not found:
+                event_warning("defualt route name %s not present in routing list - object may not take damage", default_route_name)
+
+        return valid
+
+    def import_behaviors():
+
+
+        ping_bucket = ping_damage_memory_definition
+        ping_bucket.decay_delay = 0.1
+        ping_bucket.decay_half_life = 0.5
+        ping_bucket.hard_ping_threshold = 20
+        ping_bucket.spike_ping_threshold = 20
+        ping_bucket.hard_ping_suppression_duration = 1
+        ping_bucket.soft_ping_threshold = 20
+        custom_audio_found = false
+
+        for behavior_element in behaviors:
+            behavior = behavior_element.owner_pointer
+            if is_instance(behavior, s_damage_component_behavior_provides_game_channels):
+                alive_channel_name = behavior.alive_channel_name
+                if "%s".format(alive_channel_name) != "":
+                    channel_provider = damage_meter_channel_providers.new()
+                    channel_provider.configure(-1, alive_channel_name, false, false)
+                    channel_provider.type = e_damage_channel_provider_type.alive
+                    event_message("added an alive channel with name '%s'".format(alive_channel_name))
+
+            if is_instance(behavior, s_damage_component_behavior_tracks_recent_attackers):
+                event_message("trying to allocate recent attackers...")
+                attacker_list = allocate(s_damage_attacker_list)
+                attacker_list.recent_attackers.reserve(behavior.recent_attacker_max_count)
+                attacker_list.clear()
+
+            if is_instance(behavior, s_damage_component_behavior_shared_ping_bucket):
+                decay_delay = behavior.ping_damage_decay_delay
+                decay_half_life = behavior.ping_damage_decay_half_life
+                hard_ping_threshold = behavior.hard_ping_threshold
+                spike_ping_threshold = behavior.spike_ping_threshold
+                hard_ping_suppression_duration = behavior.hard_ping_suppression_duration
+                soft_ping_threshold = behavior.soft_ping_threshold
+
+                if decay_delay == 0 and decay_half_life == 0 and hard_ping_threshold == 0 and spike_ping_threshold == 0 and hard_ping_suppression_duration == 0 and soft_ping_threshold == 0:
+
+
+                    print("damage_component setting logical defaults for shared ping bucket")
+                    decay_delay = 1
+                    decay_half_life = 1
+                    hard_ping_threshold = 40
+                    spike_ping_threshold = 40
+                    hard_ping_suppression_duration = 2
+                    soft_ping_threshold = 20
+
+                ping_bucket.decay_delay = decay_delay
+                ping_bucket.decay_half_life = decay_half_life
+                ping_bucket.decay_constant = -mathlib.log2 / decay_half_life
+                ping_bucket.hard_ping_threshold = hard_ping_threshold
+                ping_bucket.spike_ping_threshold = spike_ping_threshold
+                ping_bucket.hard_ping_suppression_duration = hard_ping_suppression_duration
+                ping_bucket.soft_ping_threshold = soft_ping_threshold
+
+            if is_instance(behavior, s_damage_component_behavior_scaled_physics_response):
+                damage_accelerations_overriden = true
+                damage_acceleration_scale_alive.vertical_acceleration_scale = behavior.damage_acceleration_scale_alive.vertical_acceleration_scale
+                damage_acceleration_scale_alive.horizontal_acceleration_scale = behavior.damage_acceleration_scale_alive.horizontal_acceleration_scale
+                damage_acceleration_scale_dead.vertical_acceleration_scale = behavior.damage_acceleration_scale_dead.vertical_acceleration_scale
+                damage_acceleration_scale_dead.horizontal_acceleration_scale = behavior.damage_acceleration_scale_dead.horizontal_acceleration_scale
+
+            if is_instance(behavior, s_damage_component_behavior_hop_on):
+                hop_on_state = allocate(s_hop_on_instance_state)
+
+            if is_instance(behavior, s_damage_impulse_behavior_makes_custom_audio):
+                assert(not custom_audio_found, "damage impulse has two 'Makes Custom Audio' behaviors - we only support one")
+                custom_audio_found = true
+
+    def expand_cosmetic_garbage_response(responses, response):
+        cosmetic_response_element = responses.new()
+        cosmetic_response_element.owner_pointer = allocate(s_damage_response_cosmetic)
+        garbage_response_element = responses.new()
+        garbage_response_element.owner_pointer = allocate(s_damage_response_spawns_garbage)
+
+        cosmetic_response = cosmetic_response_element.owner_pointer
+        garbage_response = garbage_response_element.owner_pointer
+
+        cosmetic_response.region_scope = response.region_scope
+        cosmetic_response.damage_state = response.damage_state
+        cosmetic_response.transition_effect = response.transition_effect
+
+        garbage_response.region_name = response.region_scope
+        garbage_response.ejection_marker_name = response.ejection_marker_name
+        garbage_response.garbage_pattern = response.garbage_pattern
+
+    def expand_script_responses():
+
+
+        section_index = 0
+
+
+        while section_index < len(damage_sections):
+            section = damage_sections[section_index]
+            threshold_index = 0
+
+
+            while threshold_index < len(section.thresholds):
+                threshold = section.thresholds[threshold_index]
+                response_index = 0
+
+
+                while response_index < len(threshold.responses):
+                    response = threshold.responses[response_index].owner_pointer
+
+                    if is_instance(response, s_cosmetic_garbage_response):
+
+                        threshold.responses.reserve(len(threshold.responses) + 2)
+                        section = damage_sections[section_index]
+                        threshold = section.thresholds[threshold_index]
+                        response = threshold.responses[response_index].owner_pointer
+                        expand_cosmetic_garbage_response(threshold.responses, response)
+
+                    response_index = response_index + 1
+                threshold_index = threshold_index + 1
+            section_index = section_index + 1
+
+# Decompiled from 36735.13.12.02.1953.alpha script tags
+# See tag 82100008
+# schema only: c_damage_component.definition localized_flash_effect (tag_reference 8080013B): single derived schema, unused by the code, so native or declared is undecidable
+# schema only: c_damage_component.instance localized_flash_effect (c_array 8080063B): single derived schema, unused by the code, so native or declared is undecidable

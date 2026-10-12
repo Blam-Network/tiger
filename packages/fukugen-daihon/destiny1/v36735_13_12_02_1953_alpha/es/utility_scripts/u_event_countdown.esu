@@ -1,0 +1,509 @@
+u_event_globals event_globals
+u_event_countdown_preset pf_event_countdown_preset
+c_objective_sensor_host obj_event_enemy_enter  # true name unknown
+c_objective_sensor_host obj_event_enemy_exit  # true name unknown
+dynamic_array<c_squad_sensor_host> sq_event_countdown_wave
+c_object_sensor_host o_event_countdown_beacon
+c_object_sensor_host o_event_countdown_object_spawner
+c_object_sensor_host o_event_countdown_ghost_scan
+c_trigger_volume_slot_host tv_engagement_volume
+dynamic_array<c_object_sensor_host> o_warsat_cover
+static_array<c_device_host, 10> dev_warsat_cover
+c_capturable_host cz_event_countdown bind(o_event_countdown_object_spawner)
+c_player_monitor_sensor_host pm_event_countdown_sudden_death bind(o_event_countdown_object_spawner)  # true name unknown
+c_device_host dev_event_countdown_object bind(o_event_countdown_object_spawner)
+c_interactable_host int_event_countdown_object bind(o_event_countdown_object_spawner)  # true name unknown
+c_player_trigger_sensor_host pt_engagement_volume bind(tv_engagement_volume)  # true name unknown
+c_device_host dev_event_countdown_ghost bind(o_event_countdown_ghost_scan)
+c_squad_group_sensor_host sg_countdown_total  # true name unknown
+bool b_event_initiated
+bool b_zone_enemy_timeout
+bool b_zone_enemy_max_timeout
+int g_i_wave_iterator
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+def roll_countdown_initiate_timer():
+    for x in pick_random_count(1, 60):
+        return x
+    return 0
+
+def roll_countdown_event_timer():
+    for x in pick_random_count(1, 240):
+        return x
+    return 0
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+thread init:
+    sleep(30)
+    main.restart()
+
+
+
+
+
+
+
+
+
+
+thread main:
+    sq_current_countdown_wave_iterator = sq_event_countdown_wave[0]
+
+
+    i_setup_timer, i_main_timer = func_countdown_setup()
+
+
+    func_countdown_event_start(i_setup_timer)
+
+
+    sleep_until(pt_engagement_volume.is_triggered() or pf_event_countdown_preset.po_event_countdown.timer_is_complete())
+
+    sc_capture_dialogue.restart()
+
+
+    if func_test_countdown_engaged(i_main_timer):
+
+        print("ENGAGED")
+        sq_current_countdown_wave_iterator = func_countdown_enemy_waves()
+
+        if cz_event_countdown.is_captured():
+
+            print("$$$$$ FULL CREDIT $$$$$")
+            sc_seq_warsat_end_gold.restart()
+            pf_event_countdown_preset.po_event_countdown.set_public_event_tier(3)
+            pf_event_countdown_preset.po_event_countdown.set_complete()
+
+
+            dev_event_countdown_object.set_device_position(0.3)
+            o_event_countdown_object_spawner.delete_object()
+
+            for i in range(len(o_warsat_cover)):
+                dev_warsat_cover[i].set_device_position(0.3)
+                o_warsat_cover[i].delete_object()
+
+            sleep(1)
+            sc_seq_warsat_stop_music1.restart()
+            sleep(5)
+
+
+
+        else:
+            print("$$$$$ PARTIAL REWARDS $$$$$")
+            sc_seq_warsat_end_bronze.restart()
+
+            if cz_event_countdown.get_capture_progress() >= 0 and cz_event_countdown.get_capture_progress() < 0.33:
+                pf_event_countdown_preset.po_event_countdown.set_failed()
+            elif cz_event_countdown.get_capture_progress() >= 0.33 and cz_event_countdown.get_capture_progress() < 0.66:
+                pf_event_countdown_preset.po_event_countdown.set_public_event_tier(1)
+                pf_event_countdown_preset.po_event_countdown.set_complete()
+            elif cz_event_countdown.get_capture_progress() >= 0.66 and cz_event_countdown.get_capture_progress() < 1:
+                pf_event_countdown_preset.po_event_countdown.set_public_event_tier(2)
+                pf_event_countdown_preset.po_event_countdown.set_complete()
+
+            cz_event_countdown.lock()
+
+
+            dev_event_countdown_object.set_device_position(0.3)
+            o_event_countdown_object_spawner.delete_object()
+
+            for i in range(len(o_warsat_cover)):
+                dev_warsat_cover[i].set_device_position(0.3)
+                o_warsat_cover[i].delete_object()
+
+            sleep(1)
+            sc_seq_warsat_stop_music1.restart()
+            sleep(4)
+
+    else:
+        cz_event_countdown.unlock()
+        sleep(1)
+        cz_event_countdown.lock()
+
+
+        dev_event_countdown_object.set_device_position(0.3)
+        o_event_countdown_object_spawner.delete_object()
+
+        for i in range(len(o_warsat_cover)):
+            dev_warsat_cover[i].set_device_position(0.3)
+            o_warsat_cover[i].delete_object()
+
+        sleep(1)
+        sc_seq_warsat_stop_music1.restart()
+        sleep(4)
+
+
+    func_countdown_cleanup()
+
+
+
+
+
+
+
+def func_countdown_setup():
+
+
+    i_event_countdown_setup_timer = roll_countdown_initiate_timer()
+    i_event_countdown_main_timer = roll_countdown_event_timer()
+
+
+
+
+    return i_event_countdown_setup_timer, i_event_countdown_main_timer
+
+
+
+
+
+
+
+def func_countdown_event_start(i_setup_timer):
+    pt_engagement_volume.reset()
+    pt_engagement_volume.set_handler(pf_event_countdown_preset.po_event_countdown.d_handle_engagement_incident)
+    event_globals.bind_squad_engagement(sq_event_countdown_wave[0], pf_event_countdown_preset.po_event_countdown)
+
+    pf_event_countdown_preset.po_event_countdown.clear()
+    cz_event_countdown.lock()
+
+
+
+    sc_cover_creation.restart()
+
+    o_event_countdown_object_spawner.create()
+    dev_event_countdown_object.set_device_position(0)
+
+    pf_event_countdown_preset.po_event_countdown.set_incoming()
+
+
+    o_event_countdown_beacon.create()
+
+    sleep(2)
+
+    pf_event_countdown_preset.po_event_countdown.nav_point_activate(o_event_countdown_beacon)
+    pf_event_countdown_preset.po_event_countdown.timer_activate(i_setup_timer)
+    pf_event_countdown_preset.po_event_countdown.timer_start()
+    int_event_countdown_object.enable_all_players()
+
+    sc_seq_warsat_engage1.restart()
+
+thread sc_cover_creation:
+    for i in range(len(o_warsat_cover)):
+        o_warsat_cover[i].create()
+        dev_warsat_cover[i].set_device_position(0)
+
+
+
+
+
+
+def func_test_countdown_engaged(i_main_timer):
+
+    print("func_test_countdown_engaged")
+    cz_event_countdown.reset()
+
+    while not int_event_countdown_object.get_active() and not pf_event_countdown_preset.po_event_countdown.timer_is_complete():
+        sleep(1)
+
+    if pf_event_countdown_preset.po_event_countdown.timer_is_complete():
+        return false
+
+    print("INTERACTION DETECTED!")
+
+    dev_event_countdown_object.set_device_position(0.2)
+
+    b_event_initiated = true
+
+    sc_ghost_scan_start.restart()
+    sc_ghost_scan_start.restart()
+
+    sc_seq_warsat_start.restart()
+
+    sleep(1)
+
+    pt_engagement_volume.reset()
+    pf_event_countdown_preset.po_event_countdown.set_active()
+    pf_event_countdown_preset.po_event_countdown.progress_bind(o_event_countdown_object_spawner)
+    cz_event_countdown.unlock()
+    sleep(1)
+
+    pf_event_countdown_preset.po_event_countdown.timer_activate(i_main_timer)
+    pf_event_countdown_preset.po_event_countdown.timer_start()
+
+
+
+    return true
+
+
+
+
+
+
+
+def func_countdown_enemy_waves():
+
+    i = 1
+    sq_current_countdown_wave_iterator = sq_event_countdown_wave[0]
+    sudden_death_mode = true
+
+
+    while not func_get_timer_complete() or func_in_zone():
+
+        print("Wave: " + i)
+        sq_current_countdown_wave_iterator = sq_event_countdown_wave[i]
+        sq_event_countdown_wave[i].place()
+        sg_countdown_total.add_child(sq_event_countdown_wave[i])
+        g_i_wave_iterator = i
+
+
+        obj_event_enemy_enter.add_squad(sq_current_countdown_wave_iterator)
+
+        b_zone_enemy_max_timeout = false
+        b_zone_enemy_timeout = false
+
+        sc_zone_enemy_timeout.kill()
+        sc_zone_enemy_max_timeout.kill()
+
+        sc_zone_enemy_timeout.restart()
+        sc_zone_enemy_max_timeout.restart()
+
+
+
+
+
+
+
+
+        sleep_until(sg_countdown_total.alive_count() <= 0 or cz_event_countdown.is_captured() or func_get_timer_complete() and not func_in_zone() or sg_countdown_total.alive_count() <= 2 and b_zone_enemy_timeout == true or b_zone_enemy_max_timeout == true)
+
+        if cz_event_countdown.is_captured() or func_get_timer_complete() and not func_in_zone():
+            return sq_current_countdown_wave_iterator
+
+        if i == 0 or b_zone_enemy_max_timeout == true:
+            i = 0
+            for i in range(len(sq_event_countdown_wave)):
+                sq_event_countdown_wave[i].activate_temperament("temper_despawn")
+                obj_event_enemy_exit.add_squad(sq_event_countdown_wave[i])
+        else:
+            i = i + 1
+
+
+        if len(sq_event_countdown_wave) <= i:
+            if i > 3:
+                i = i - 3
+                print("wave resetting")
+            else:
+                i = 1
+                print("wave resetting to 1")
+    return sq_current_countdown_wave_iterator
+
+thread sc_zone_enemy_timeout:
+    i_enemy_timeout = 30
+
+    if g_i_wave_iterator == 1 or g_i_wave_iterator == 2:
+        i_enemy_timeout = 30
+    elif g_i_wave_iterator == 3:
+        i_enemy_timeout = 35
+    elif g_i_wave_iterator >= 4:
+        i_enemy_timeout = 45
+
+    sleep_until_timeout(1 == 0, i_enemy_timeout)
+    b_zone_enemy_timeout = true
+
+thread sc_zone_enemy_max_timeout:
+    print("########## BOSS WAVE TIMEOUT")
+    sleep_until_timeout(1 == 0, 90)
+    b_zone_enemy_max_timeout = true
+    print("########## BOSS WAVE HIT")
+
+thread pm_working:
+    while true:
+        print("pm working: ", func_in_zone())
+        sleep(1)
+
+def func_in_zone():
+    return pm_event_countdown_sudden_death.test_any_inside()
+
+def func_get_timer_complete():
+    return pf_event_countdown_preset.po_event_countdown.timer_is_complete()
+
+
+
+
+
+
+def func_countdown_cleanup():
+
+    o_event_countdown_beacon.delete_object()
+
+    for i in range(len(sq_event_countdown_wave)):
+        sq_event_countdown_wave[i].activate_temperament("temper_despawn")
+        obj_event_enemy_exit.add_squad(sq_event_countdown_wave[i])
+
+
+
+
+
+
+
+
+
+    pf_event_countdown_preset.po_event_countdown.clear()
+    cz_event_countdown.lock()
+    pt_engagement_volume.disable()
+    int_event_countdown_object.clear()
+
+    sleep_until_timeout(sg_countdown_total.count_at_firing_area() >= sg_countdown_total.alive_count(), 8)
+
+    for i in range(len(sq_event_countdown_wave)):
+        sq_event_countdown_wave[i].deactivate_temperament("temper_despawn")
+        sq_event_countdown_wave[i].remove()
+    sc_ghost_scan_start.sleep_forever()
+
+
+
+
+
+
+
+
+thread complete:
+
+    func_countdown_cleanup()
+
+
+
+
+
+
+thread sc_ghost_scan_start:
+    o_event_countdown_ghost_scan.create()
+    dev_event_countdown_ghost.set_device_position(1)
+    sleep(5)
+    o_event_countdown_ghost_scan.delete_object()
+
+
+
+
+
+
+thread sc_capture_dialogue:
+    sleep_until(cz_event_countdown.get_capture_progress() >= 0.25 or pf_event_countdown_preset.po_event_countdown.timer_is_complete())
+    if cz_event_countdown.get_capture_progress() >= 0.25:
+        print("play 25% dialogue")
+        sc_seq_warsat_25_progress.restart()
+    else:
+        print("timer ran out, bypassing 25% dialogue")
+
+    sleep_until(cz_event_countdown.get_capture_progress() >= 0.50 or pf_event_countdown_preset.po_event_countdown.timer_is_complete())
+    if cz_event_countdown.get_capture_progress() >= 0.5:
+        print("play 50% dialogue")
+        sc_seq_warsat_50_progress.restart()
+    else:
+        print("timer ran out, bypassing 50% dialogue")
+
+    sleep_until(cz_event_countdown.get_capture_progress() >= 0.75 or pf_event_countdown_preset.po_event_countdown.timer_is_complete())
+    if cz_event_countdown.get_capture_progress() >= 0.75:
+        print("play 75% dialogue")
+        sc_seq_warsat_75_progress.restart()
+    else:
+        print("timer ran out, bypassing 75% dialogue")
+
+thread sc_seq_warsat_start:
+    sleep_until(pf_event_countdown_preset.seq_warsat_engage1.is_done())
+    sc_seq_warsat_music1.restart()
+    sleep(1)
+    pf_event_countdown_preset.seq_warsat_start.start()
+
+
+thread sc_seq_warsat_engage1:
+    sleep_until(pf_event_countdown_preset.pt_warsat_pre_engage.is_triggered() or b_event_initiated == true)
+    if b_event_initiated == false:
+        pf_event_countdown_preset.seq_warsat_engage1.start()
+
+
+thread sc_seq_warsat_engage2:
+    pf_event_countdown_preset.seq_warsat_engage2.start()
+
+
+thread sc_seq_warsat_25_progress:
+    pf_event_countdown_preset.seq_warsat_25_progress.start()
+
+
+thread sc_seq_warsat_50_progress:
+    pf_event_countdown_preset.seq_warsat_50_progress.start()
+
+
+thread sc_seq_warsat_75_progress:
+    pf_event_countdown_preset.seq_warsat_75_progress.start()
+
+
+thread sc_seq_warsat_75_timeleft:
+    pf_event_countdown_preset.seq_warsat_75_timeleft.start()
+
+
+thread sc_seq_warsat_50_timeleft:
+    pf_event_countdown_preset.seq_warsat_50_timeleft.start()
+
+
+thread sc_seq_warsat_25_timeleft:
+    pf_event_countdown_preset.seq_warsat_25_timeleft.start()
+
+
+thread sc_seq_warsat_end_gold:
+    pf_event_countdown_preset.seq_warsat_end_gold.start()
+
+
+thread sc_seq_warsat_end_silver:
+    pf_event_countdown_preset.seq_warsat_end_silver.start()
+
+
+thread sc_seq_warsat_end_bronze:
+    pf_event_countdown_preset.seq_warsat_end_bronze.start()
+
+
+thread sc_seq_warsat_music1:
+    pf_event_countdown_preset.seq_warsat_music1.start()
+
+
+thread sc_seq_warsat_stop_music1:
+    pf_event_countdown_preset.seq_warsat_music1.stop()
+
+
+thread sc_seq_warsat_incoming:
+    pf_event_countdown_preset.seq_warsat_incoming.start()
+
+# Decompiled from 36735.13.12.02.1953.alpha script tags
+# See tag 821B8031

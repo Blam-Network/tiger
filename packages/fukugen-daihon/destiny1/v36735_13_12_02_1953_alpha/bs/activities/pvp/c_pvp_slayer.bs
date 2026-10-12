@@ -1,0 +1,110 @@
+class c_pvp_slayer : c_pvp_game_type:
+    static string_hash base_kill_score_hash = "base_kill_score"
+    static string_hash base_damage_assist_score_hash = "base_damage_assist_score"
+    static string_hash base_proximity_target_assist_score_hash = "base_proximity_target_assist_score"
+    static string_hash base_proximity_killer_assist_score_hash = "base_proximity_killer_assist_score"
+    static string_hash killing_object_player_hash = "killing_object_player"
+    static string_hash assisting_object_damage_player_hash = "assisting_object_damage_player"
+    static string_hash assisting_object_proximity_target_player_hash = "assisting_object_proximity_target_player"
+    static string_hash assisting_object_proximity_killer_hash = "assisting_object_proximity_killer"
+    static string_hash assisting_object_proximity_killer_player_hash = "assisting_object_proximity_killer_player"
+    static string_hash incident_player_resurrected_hash = "player_resurrected"
+    static string_hash incident_score_revive_hash = "pvp_score_revive"
+    static string_hash audience_all_players_hash = "all_players"
+    static string_hash audience_resurrecting_player_hash = "resurrecting_player"
+    static string_hash option_base_revive_score_hash = "base_revive_score"
+    int base_kill_score
+    int base_damage_assist_score
+    int base_proximity_target_assist_score
+    int base_proximity_killer_assist_score
+    int base_revive_score
+    c_kill_incident_listener kill_incident_listener  # true name unknown
+    c_incident_listener revive_incident_listener
+    c_incident_player_iterator incident_player_iterator  # true name unknown
+    delegate d_slayer_init()
+    delegate d_slayer_start()
+    delegate d_slayer_tick(timer)
+    delegate d_slayer_handle_kill(character_id, incident_metadata)
+    delegate d_slayer_handle_assist(character_id, incident_metadata)
+
+
+
+
+
+
+
+
+
+
+    def import():
+        incident_game_type_hash = "pvp_game_type_deathmatch"
+        incident_game_start_hash = "pvp_game_start_deathmatch"
+        return true
+
+    def handle_kill(incident_name, incident_metadata):
+        if not game_over:
+            incident_player_iterator.begin(incident_name, killing_object_player_hash, incident_metadata)
+            while incident_player_iterator.is_valid():
+                add_player_score(score_kill_hash, incident_player_iterator.get_character_id(), base_kill_score)
+                d_slayer_handle_kill(incident_player_iterator.get_character_id(), incident_metadata)
+                incident_player_iterator.next()
+
+            incident_player_iterator.begin(incident_name, assisting_object_damage_player_hash, incident_metadata)
+            while incident_player_iterator.is_valid():
+                add_player_score(score_assist_hash, incident_player_iterator.get_character_id(), base_damage_assist_score)
+                d_slayer_handle_assist(incident_player_iterator.get_character_id(), incident_metadata)
+                incident_player_iterator.next()
+
+            incident_player_iterator.begin(incident_name, assisting_object_proximity_target_player_hash, incident_metadata)
+            while incident_player_iterator.is_valid():
+                add_player_score(score_assist_hash, incident_player_iterator.get_character_id(), base_proximity_target_assist_score)
+                d_slayer_handle_assist(incident_player_iterator.get_character_id(), incident_metadata)
+                incident_player_iterator.next()
+
+            incident_player_iterator.begin(incident_name, assisting_object_proximity_killer_player_hash, incident_metadata)
+            while incident_player_iterator.is_valid():
+                add_player_score(score_assist_hash, incident_player_iterator.get_character_id(), base_proximity_killer_assist_score)
+                d_slayer_handle_assist(incident_player_iterator.get_character_id(), incident_metadata)
+                incident_player_iterator.next()
+
+    def handle_revive(incident_name, incident_metadata):
+        if not game_over:
+            incident_player_iterator.begin(incident_name, audience_resurrecting_player_hash, incident_metadata)
+            while incident_player_iterator.is_valid():
+                add_player_score(incident_score_revive_hash, incident_player_iterator.get_character_id(), base_revive_score)
+                incident_player_iterator.next()
+
+    def d_init():
+        print("in c_pvp_slayer.d_init")
+        base_kill_score = get_outer().get_activity_option_integer(base_kill_score_hash)
+        base_revive_score = get_outer().get_activity_option_integer(option_base_revive_score_hash)
+        base_damage_assist_score = get_outer().get_activity_option_integer(base_damage_assist_score_hash)
+        base_proximity_target_assist_score = get_outer().get_activity_option_integer(base_proximity_target_assist_score_hash)
+        base_proximity_killer_assist_score = get_outer().get_activity_option_integer(base_proximity_killer_assist_score_hash)
+        kill_incident_listener.set_handler(handle_kill)
+        revive_incident_listener.bind_hash(incident_player_resurrected_hash, audience_all_players_hash)
+        revive_incident_listener.set_handler(handle_revive)
+        d_slayer_init()
+
+    def d_start():
+        d_slayer_start()
+
+    def d_tick(timer):
+        d_slayer_tick()
+
+    def d_slayer_init(): pass
+
+
+    def d_slayer_start(): pass
+
+
+    def d_slayer_tick(): pass
+
+
+    def d_slayer_handle_kill(character_id, incident_metadata): pass
+
+
+    def d_slayer_handle_assist(character_id, incident_metadata): pass
+
+# Decompiled from 36735.13.12.02.1953.alpha script tags
+# See tags 8220C006, 82236006, 82260006

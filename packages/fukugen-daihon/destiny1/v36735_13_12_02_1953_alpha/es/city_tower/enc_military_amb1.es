@@ -1,0 +1,357 @@
+bool debug_military
+c_squad_sensor_host sq_military_droid_flight
+c_squad_sensor_host sq_military_droid_floor1
+c_squad_sensor_host sq_military_droid_floor2
+c_squad_sensor_host sq_military_droid_floor3
+c_squad_sensor_host sq_military_droid_floor4
+c_squad_sensor_host sq_military_droid_guard1
+c_squad_sensor_host sq_military_droid_guard2
+c_squad_sensor_host sq_military_civ_talkers1
+c_squad_sensor_host sq_military_civ_talkers2
+c_squad_sensor_host sq_military_civ_talkers3
+c_squad_sensor_host sq_military_civ_do1
+c_squad_sensor_host sq_military_civ_do2
+c_squad_sensor_host sq_military_civ_fwc1
+c_squad_sensor_host sq_military_civ_fwc2
+c_squad_sensor_host sq_military_hunter_talkers1
+c_squad_sensor_host sq_military_hunter_talkers2
+c_squad_sensor_host sq_military_hunter_talkers3
+c_squad_sensor_host sq_military_hunter_talkers4
+c_squad_sensor_host sq_military_vendor_ships
+c_squad_sensor_host sq_military_vendor_weapons
+c_squad_sensor_host sq_military_vendor_hunter_mentor
+c_squad_sensor_host sq_military_vendor_hunter_quartermaster
+c_squad_sensor_host sq_military_vendor_hunter_outfitter
+c_squad_sensor_host sq_military_vendor_do
+c_squad_sensor_host sq_military_vendor_fwc
+c_squad_member_sensor_host sq_military_civ_do1__leaner1  # true name unknown
+c_squad_member_sensor_host sq_military_civ_do1__sitter1  # true name unknown
+c_squad_member_sensor_host sq_military_civ_do2__leaner1  # true name unknown
+c_squad_member_sensor_host sq_military_civ_do2__sitter1  # true name unknown
+c_squad_member_sensor_host sq_military_civ_fwc1__talker1  # true name unknown
+c_squad_member_sensor_host sq_military_civ_fwc1__talker2  # true name unknown
+c_squad_member_sensor_host sq_military_civ_fwc1__talker3  # true name unknown
+c_squad_member_sensor_host sq_military_civ_fwc2__leaner1  # true name unknown
+c_squad_member_sensor_host sq_military_civ_talkers1__talker1  # true name unknown
+c_squad_member_sensor_host sq_military_civ_talkers1__talker2  # true name unknown
+c_squad_member_sensor_host sq_military_civ_talkers1__talker3  # true name unknown
+c_squad_member_sensor_host sq_military_civ_talkers2__talker1  # true name unknown
+c_squad_member_sensor_host sq_military_civ_talkers2__talker2  # true name unknown
+c_squad_member_sensor_host sq_military_civ_talkers3__talker1  # true name unknown
+c_squad_member_sensor_host sq_military_civ_talkers3__talker2  # true name unknown
+c_squad_member_sensor_host sq_military_civ_talkers3__talker3  # true name unknown
+c_squad_member_sensor_host sq_military_droid_guard2__patrol1  # true name unknown
+c_squad_member_sensor_host sq_military_hunter_talkers1__talker1  # true name unknown
+c_squad_member_sensor_host sq_military_hunter_talkers1__talker2  # true name unknown
+c_squad_member_sensor_host sq_military_hunter_talkers1__sitter1  # true name unknown
+c_squad_member_sensor_host sq_military_hunter_talkers2__talker1  # true name unknown
+c_squad_member_sensor_host sq_military_hunter_talkers2__talker2  # true name unknown
+c_squad_member_sensor_host sq_military_hunter_talkers2__sitter1  # true name unknown
+c_squad_member_sensor_host sq_military_hunter_talkers3__talker1  # true name unknown
+c_squad_member_sensor_host sq_military_hunter_talkers3__sitter1  # true name unknown
+c_squad_member_sensor_host sq_military_hunter_talkers4__watcher1  # true name unknown
+c_squad_member_sensor_host sq_military_hunter_talkers4__watcher2  # true name unknown
+c_control_point_set_sensor_host cps_military_droid_guard2_patrol  # true name unknown
+string_hash sh_player_joined = "player_joined"
+string_hash sh_player_left = "player_left"
+string_hash sh_all_players = "all_players"
+c_incident_listener il_player_joined
+c_incident_listener il_player_left
+c_incident_player_iterator player_iterator  # true name unknown
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+startup thread sc_main_military_thread:
+
+
+    sc_military_npcs_flight.wake()
+    sc_military_npcs_guards.wake()
+    sc_military_npcs_hangar_floor.wake()
+    sc_military_npcs_civ_talkers.wake()
+    sc_military_npcs_hunter_talkers.wake()
+    sc_military_npcs_do.wake()
+    sc_military_npcs_fwc.wake()
+
+
+    sc_military_vendors_hunter_mentor.wake()
+    sc_military_vendors_hunter_outfitter.wake()
+    sc_military_vendors_hunter_quartermaster.wake()
+    sc_military_vendors_ships.wake()
+    sc_military_vendors_weapons.wake()
+    sc_military_vendors_fwc.wake()
+    sc_military_vendors_do.wake()
+
+
+    il_player_joined.bind_hash(sh_player_joined, sh_all_players)
+    il_player_joined.set_handler(player_joined)
+
+
+    il_player_left.bind_hash(sh_player_left, sh_all_players)
+    il_player_left.set_handler(player_left)
+
+
+
+
+thread sc_military_npcs_flight:
+    if debug_military:
+        print("sc_military_npcs_flight")
+
+
+    sq_military_droid_flight.place()
+    sq_military_droid_flight.activate_temperament("temper_tower_guard")
+
+
+thread sc_military_npcs_guards:
+    if debug_military:
+        print("sc_military_npcs_guards")
+
+
+    sq_military_droid_guard1.place()
+    sq_military_droid_guard1.activate_temperament("temper_tower_guard")
+
+
+    sq_military_droid_guard2.place()
+    sq_military_droid_guard2.activate_temperament("temper_tower_guard")
+
+
+    while true:
+        sq_military_droid_guard2__patrol1.execute(cps_military_droid_guard2_patrol); sleep_until(sq_military_droid_guard2__patrol1.get_command_script_state() != e_command_script_state.executing)
+
+
+thread sc_military_npcs_hangar_floor:
+    if debug_military:
+        print("sc_military_npcs_floor")
+
+
+    sq_military_droid_floor1.place()
+    sq_military_droid_floor1.activate_temperament("temper_tower_pushbroom")
+
+
+    sq_military_droid_floor2.place()
+    sq_military_droid_floor2.activate_temperament("temper_tower_scrubbrush")
+
+
+    if random_chance(1):
+        sq_military_droid_floor3.place()
+        sq_military_droid_floor3.activate_temperament("temper_tower_wrench")
+
+
+    sq_military_droid_floor4.place()
+    sq_military_droid_floor4.activate_temperament("temper_tower_weld_standing")
+
+
+thread sc_military_npcs_civ_talkers:
+    if debug_military:
+        print("sc_military_npcs_civ_talkers")
+
+
+    if random_chance(0.4):
+
+
+        sq_military_civ_talkers1__talker1.place()
+        sq_military_civ_talkers1__talker1.activate_temperament("temper_tower_guard")
+        sq_military_civ_talkers1__talker2.place()
+        sq_military_civ_talkers1__talker2.activate_temperament("temper_tower_guard")
+
+
+        if random_chance(0.25):
+            sq_military_civ_talkers1__talker3.place()
+            sq_military_civ_talkers1__talker3.activate_temperament("temper_tower_guard")
+
+
+
+    else:
+        sq_military_civ_talkers2__talker1.place()
+        sq_military_civ_talkers2__talker1.activate_temperament("temper_tower_guard")
+        sq_military_civ_talkers2__talker2.place()
+        sq_military_civ_talkers2__talker2.activate_temperament("temper_tower_guard")
+
+
+    if random_chance(0.65):
+
+        sq_military_civ_talkers3__talker1.place()
+        sq_military_civ_talkers3__talker1.activate_temperament("temper_tower_guard")
+        sq_military_civ_talkers3__talker2.place()
+        sq_military_civ_talkers3__talker2.activate_temperament("temper_tower_guard")
+
+
+        if random_chance(0.25):
+            sq_military_civ_talkers3__talker3.place()
+            sq_military_civ_talkers3__talker3.activate_temperament("temper_tower_guard")
+
+
+thread sc_military_npcs_hunter_talkers:
+    if debug_military:
+        print("sc_military_npcs_hunter_talkers")
+
+
+    if random_chance(1):
+
+        sq_military_hunter_talkers1__talker1.place()
+        sq_military_hunter_talkers1__talker1.activate_temperament("temper_tower_civ_ledgesit")
+        sq_military_hunter_talkers1__talker2.place()
+        sq_military_hunter_talkers1__talker2.activate_temperament("temper_tower_civ_ledgesit")
+
+
+        if random_chance(0.33):
+            sq_military_hunter_talkers1__sitter1.place()
+            sq_military_hunter_talkers1__sitter1.activate_temperament("temper_tower_civ_ledgesit")
+
+
+
+    else:
+        sq_military_hunter_talkers2__talker1.place()
+        sq_military_hunter_talkers2__talker1.activate_temperament("temper_tower_guard")
+        sq_military_hunter_talkers2__talker2.place()
+        sq_military_hunter_talkers2__talker2.activate_temperament("temper_tower_guard")
+
+
+        if random_chance(0.33):
+            sq_military_hunter_talkers2__sitter1.place()
+            sq_military_hunter_talkers2__sitter1.activate_temperament("temper_tower_civ_ledgesit")
+
+
+    if random_chance(0.5):
+
+        sq_military_hunter_talkers3__talker1.place()
+        sq_military_hunter_talkers3__talker1.activate_temperament("temper_tower_guard")
+
+
+        sq_military_hunter_talkers3__sitter1.place()
+        sq_military_hunter_talkers3__sitter1.activate_temperament("temper_tower_civ_ledgesit")
+
+
+    if random_chance(0.5):
+
+        sq_military_hunter_talkers4__watcher1.place()
+        sq_military_hunter_talkers4__watcher1.activate_temperament("temper_tower_guard")
+
+
+        if random_chance(0.2):
+            sq_military_hunter_talkers4__watcher2.place()
+            sq_military_hunter_talkers4__watcher2.activate_temperament("temper_tower_guard")
+
+
+thread sc_military_npcs_do:
+    if debug_military:
+        print("sc_military_npcs_do")
+
+
+    sq_military_civ_do1.place()
+    sq_military_civ_do1__sitter1.activate_temperament("temper_tower_civ_ledgesit")
+    sq_military_civ_do1__leaner1.activate_temperament("temper_tower_civ_raillean")
+
+
+    sq_military_civ_do2.place()
+    sq_military_civ_do2__sitter1.activate_temperament("temper_tower_civ_ledgesit")
+    sq_military_civ_do2__leaner1.activate_temperament("temper_tower_civ_raillean")
+
+
+thread sc_military_npcs_fwc:
+    if debug_military:
+        print("sc_military_npcs_fwc")
+
+
+    sq_military_civ_fwc1__talker1.place()
+    sq_military_civ_fwc1__talker1.activate_temperament("temper_tower_civ_ledgesit")
+    sq_military_civ_fwc1__talker2.place()
+    sq_military_civ_fwc1__talker2.activate_temperament("temper_tower_civ_ledgesit")
+
+
+    if random_chance(1):
+        sq_military_civ_fwc1__talker3.place()
+        sq_military_civ_fwc1__talker3.activate_temperament("temper_tower_guard")
+
+
+    if random_chance(1):
+        sq_military_civ_fwc2__leaner1.place()
+        sq_military_civ_fwc2__leaner1.activate_temperament("temper_tower_civ_raillean")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+thread sc_military_vendors_hunter_mentor:
+    sq_military_vendor_hunter_mentor.place()
+    sq_military_vendor_hunter_mentor.activate_temperament("temper_tower_guard")
+
+thread sc_military_vendors_hunter_outfitter:
+    sq_military_vendor_hunter_outfitter.place()
+    sq_military_vendor_hunter_outfitter.activate_temperament("temper_tower_guard")
+
+thread sc_military_vendors_hunter_quartermaster:
+    sq_military_vendor_hunter_quartermaster.place()
+    sq_military_vendor_hunter_quartermaster.activate_temperament("temper_tower_vendor")
+
+thread sc_military_vendors_ships:
+    sq_military_vendor_ships.place()
+    sq_military_vendor_ships.activate_temperament("temper_tower_vendor")
+
+thread sc_military_vendors_weapons:
+    sq_military_vendor_weapons.place()
+    sq_military_vendor_weapons.activate_temperament("temper_tower_vendor")
+
+thread sc_military_vendors_fwc:
+    sq_military_vendor_fwc.place()
+    sq_military_vendor_fwc.activate_temperament("temper_tower_guard")
+
+thread sc_military_vendors_do:
+    sq_military_vendor_do.place()
+    sq_military_vendor_do.activate_temperament("temper_tower_guard")
+
+
+
+def player_joined(incident_name, incident_metadata):
+    player_iterator.begin(incident_name, sh_all_players, incident_metadata)
+    while player_iterator.is_valid():
+        print("Player joined")
+
+
+def player_left(incident_name, incident_metadata):
+    player_iterator.begin(incident_name, sh_all_players, incident_metadata)
+    while player_iterator.is_valid():
+        print("Player left")
+
+
+
+
+def random_chance(chance):
+
+    return mathlib.random_real(1) <= chance
+
+# Decompiled from 36735.13.12.02.1953.alpha script tags
+# See tag 821E2003

@@ -8,7 +8,6 @@
     "packages/rsat",
     "packages/gibbon",
     "packages/bullshcript",
-    "packages/fukugen-daihon",
     "packages/dictionary"
   ],
   "scripts": {

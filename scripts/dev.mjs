@@ -5,7 +5,7 @@ import { mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 
 // Dependencies first: gibbon reads poodle's build.
-const packages = ["poodle", "rsat", "gibbon", "bullshcript", "fukugen-daihon"];
+const packages = ["poodle", "rsat", "gibbon", "bullshcript"];
 
 const projects = [];
 for (const name of packages) {

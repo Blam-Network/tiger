@@ -1,0 +1,254 @@
+class c_character_translation_unit : c_biped_stat_translator:  # true name unknown
+    static real non_forward_speed_scalar = 0.85
+    static real sneak_accel_scalar = 0.7
+    static real sneak_speed_scalar = 0.55
+
+
+
+
+
+
+
+
+
+    static def agility_table_build_acceleration_column(speed, acceleration_time):
+        return speed / acceleration_time
+
+    def import():
+
+
+
+
+        armor_table = add_character_stats_table(e_investment_character_stats.armor, 0, 20)
+        add_column_to_table(armor_table, e_damageable_stat.health_vitality)
+        add_column_to_table(armor_table, e_damageable_stat.shield_vitality)
+        add_column_to_table(armor_table)
+
+
+        set_translation_row(armor_table, 0, 100, 35, 1)
+        set_translation_row(armor_table, 1, 100, 40, 1)
+        set_translation_row(armor_table, 2, 100, 45, 1)
+        set_translation_row(armor_table, 3, 100, 50, 1)
+        set_translation_row(armor_table, 4, 100, 51.071, 1)
+        set_translation_row(armor_table, 5, 100, 52.143, 1)
+        set_translation_row(armor_table, 6, 100, 53.214, 1)
+        set_translation_row(armor_table, 7, 100, 54.286, 1)
+        set_translation_row(armor_table, 8, 100, 55.357, 1)
+        set_translation_row(armor_table, 9, 100, 56.429, 1)
+        set_translation_row(armor_table, 10, 100, 57.5, 1)
+        set_translation_row(armor_table, 11, 100, 58.571, 1)
+        set_translation_row(armor_table, 12, 100, 59.643, 1)
+        set_translation_row(armor_table, 13, 100, 60.714, 1)
+        set_translation_row(armor_table, 14, 100, 61.786, 1)
+        set_translation_row(armor_table, 15, 100, 62.857, 1)
+        set_translation_row(armor_table, 16, 100, 63.929, 1)
+        set_translation_row(armor_table, 17, 100, 65, 1)
+        set_translation_row(armor_table, 18, 100, 70, 1)
+        set_translation_row(armor_table, 19, 100, 75, 1)
+        set_translation_row(armor_table, 20, 100, 80, 1)
+
+
+
+
+
+        agility_table = add_character_stats_table(e_investment_character_stats.agility, 0, 20)
+        speed_column = add_column_to_table(agility_table, e_biped_stat.run_forward_speed)
+        acceleration_column = add_column_to_table(agility_table, e_biped_stat.run_acceleration)
+        jump_velocity_column = add_column_to_table(agility_table, e_biped_stat.jump_velocity)
+        airborne_acc_column = add_column_to_table(agility_table, e_biped_stat.airborne_acceleration)
+
+
+        set_translation_row(agility_table, 0, 4, 0.45, 4.9, 3.1)
+        set_translation_row(agility_table, 1, 4.4, 0.407, 4.98, 3.12)
+        set_translation_row(agility_table, 2, 4.8, 0.363, 5.06, 3.14)
+        set_translation_row(agility_table, 3, 5.2, 0.3, 5.14, 3.16)
+        set_translation_row(agility_table, 4, 5.257, 0.296, 5.22, 3.18)
+        set_translation_row(agility_table, 5, 5.314, 0.293, 5.3, 3.2)
+        set_translation_row(agility_table, 6, 5.371, 0.289, 5.38, 3.22)
+        set_translation_row(agility_table, 7, 5.429, 0.286, 5.46, 3.24)
+        set_translation_row(agility_table, 8, 5.486, 0.282, 5.54, 3.26)
+        set_translation_row(agility_table, 9, 5.543, 0.279, 5.62, 3.28)
+        set_translation_row(agility_table, 10, 5.6, 0.275, 5.7, 3.3)
+        set_translation_row(agility_table, 11, 5.657, 0.271, 5.78, 3.32)
+        set_translation_row(agility_table, 12, 5.714, 0.268, 5.86, 3.34)
+        set_translation_row(agility_table, 13, 5.771, 0.264, 5.94, 3.36)
+        set_translation_row(agility_table, 14, 5.829, 0.261, 6.02, 3.38)
+        set_translation_row(agility_table, 15, 5.886, 0.257, 6.1, 3.4)
+        set_translation_row(agility_table, 16, 5.943, 0.254, 6.18, 3.42)
+        set_translation_row(agility_table, 17, 6, 0.25, 6.26, 3.44)
+        set_translation_row(agility_table, 18, 6.167, 0.233, 6.34, 3.46)
+        set_translation_row(agility_table, 19, 6.5, 0.2, 6.42, 3.48)
+        set_translation_row(agility_table, 20, 7, 0.15, 6.5, 3.5)
+
+
+        set_translation_column(acceleration_column, agility_table_build_acceleration_column, speed_column, acceleration_column)
+
+
+        set_translation_multiply(0, e_biped_stat.run_backward_speed, e_biped_stat.run_forward_speed, non_forward_speed_scalar)
+        set_translation_multiply(0, e_biped_stat.run_sideways_speed, e_biped_stat.run_forward_speed, non_forward_speed_scalar)
+        set_translation_multiply(0, e_biped_stat.sneak_forward_speed, e_biped_stat.run_forward_speed, sneak_speed_scalar)
+        set_translation_multiply(0, e_biped_stat.sneak_backward_speed, e_biped_stat.run_forward_speed, sneak_speed_scalar * non_forward_speed_scalar)
+        set_translation_multiply(0, e_biped_stat.sneak_sideways_speed, e_biped_stat.run_forward_speed, sneak_speed_scalar * non_forward_speed_scalar)
+        set_translation_multiply(0, e_biped_stat.sneak_acceleration, e_biped_stat.run_acceleration, sneak_accel_scalar)
+
+
+
+
+
+        recovery_table = add_character_stats_table(e_investment_character_stats.recovery, 0, 20)
+        add_column_to_table(recovery_table, e_resource_pool_stat.charge_stun)
+        add_column_to_table(recovery_table, e_resource_pool_stat.charge_rate)
+        add_column_to_table(recovery_table, e_damageable_stat.shield_stun_time)
+        add_column_to_table(recovery_table, e_damageable_stat.shield_recharge_time)
+        add_column_to_table(recovery_table, e_damageable_stat.health_stun_time)
+        add_column_to_table(recovery_table, e_damageable_stat.health_recharge_time)
+
+
+        set_translation_row(recovery_table, 0, 3.2, 13, 7, 3.5, 4.5, 3.5)
+        set_translation_row(recovery_table, 1, 3.08, 14, 6.85, 3.425, 4.425, 3.425)
+        set_translation_row(recovery_table, 2, 2.96, 15, 6.7, 3.35, 4.35, 3.35)
+        set_translation_row(recovery_table, 3, 2.84, 16, 6.55, 3.275, 4.275, 3.275)
+        set_translation_row(recovery_table, 4, 2.72, 17, 6.4, 3.2, 4.2, 3.2)
+        set_translation_row(recovery_table, 5, 2.6, 18, 6.25, 3.125, 4.125, 3.125)
+        set_translation_row(recovery_table, 6, 2.48, 19, 6.1, 3.05, 4.05, 3.05)
+        set_translation_row(recovery_table, 7, 2.36, 20, 5.95, 2.975, 3.975, 2.975)
+        set_translation_row(recovery_table, 8, 2.24, 21, 5.8, 2.9, 3.9, 2.9)
+        set_translation_row(recovery_table, 9, 2.12, 22, 5.65, 2.825, 3.825, 2.825)
+        set_translation_row(recovery_table, 10, 2, 23, 5.5, 2.75, 3.75, 2.75)
+        set_translation_row(recovery_table, 11, 1.88, 24, 5.35, 2.675, 3.675, 2.675)
+        set_translation_row(recovery_table, 12, 1.76, 25, 5.2, 2.6, 3.6, 2.6)
+        set_translation_row(recovery_table, 13, 1.64, 26, 5.05, 2.525, 3.525, 2.525)
+        set_translation_row(recovery_table, 14, 1.52, 27, 4.9, 2.45, 3.45, 2.45)
+        set_translation_row(recovery_table, 15, 1.4, 28, 4.75, 2.375, 3.375, 2.375)
+        set_translation_row(recovery_table, 16, 1.28, 29, 4.6, 2.3, 3.3, 2.3)
+        set_translation_row(recovery_table, 17, 1.16, 30, 4.45, 2.225, 3.225, 2.225)
+        set_translation_row(recovery_table, 18, 1.04, 31, 4.3, 2.15, 3.15, 2.15)
+        set_translation_row(recovery_table, 19, 0.92, 32, 4.15, 2.075, 3.075, 2.075)
+        set_translation_row(recovery_table, 20, 0.8, 33, 2, 1.5, 2, 1.5)
+
+
+
+
+
+        focus_table = add_character_stats_table(e_investment_character_stats.focus, 0, 20)
+        add_column_to_table(focus_table, e_resource_pool_stat.capacity)
+        add_column_to_table(focus_table, e_resource_pool_stat.locked_level)
+        add_column_to_table(focus_table)
+
+
+        set_translation_row(focus_table, 0, 60, 10, 0)
+        set_translation_row(focus_table, 1, 60, 10, 0.05)
+        set_translation_row(focus_table, 2, 60, 10, 0.1)
+        set_translation_row(focus_table, 3, 60, 10, 0.15)
+        set_translation_row(focus_table, 4, 60, 10, 0.2)
+        set_translation_row(focus_table, 5, 60, 10, 0.25)
+        set_translation_row(focus_table, 6, 60, 10, 0.3)
+        set_translation_row(focus_table, 7, 60, 10, 0.35)
+        set_translation_row(focus_table, 8, 60, 10, 0.4)
+        set_translation_row(focus_table, 9, 60, 10, 0.45)
+        set_translation_row(focus_table, 10, 60, 10, 0.5)
+        set_translation_row(focus_table, 11, 60, 10, 0.55)
+        set_translation_row(focus_table, 12, 60, 10, 0.6)
+        set_translation_row(focus_table, 13, 60, 10, 0.65)
+        set_translation_row(focus_table, 14, 60, 10, 0.7)
+        set_translation_row(focus_table, 15, 60, 10, 0.75)
+        set_translation_row(focus_table, 16, 60, 10, 0.8)
+        set_translation_row(focus_table, 17, 60, 10, 0.85)
+        set_translation_row(focus_table, 18, 60, 10, 0.9)
+        set_translation_row(focus_table, 19, 60, 10, 0.95)
+        set_translation_row(focus_table, 20, 60, 10, 1)
+
+
+
+
+
+        mastery_table = add_character_stats_table(e_investment_character_stats.mastery, 0, 20)
+        add_column_to_table(mastery_table)
+
+
+        set_translation_row(mastery_table, 0, 0)
+        set_translation_row(mastery_table, 1, 0.05)
+        set_translation_row(mastery_table, 2, 0.1)
+        set_translation_row(mastery_table, 3, 0.15)
+        set_translation_row(mastery_table, 4, 0.2)
+        set_translation_row(mastery_table, 5, 0.25)
+        set_translation_row(mastery_table, 6, 0.3)
+        set_translation_row(mastery_table, 7, 0.35)
+        set_translation_row(mastery_table, 8, 0.4)
+        set_translation_row(mastery_table, 9, 0.45)
+        set_translation_row(mastery_table, 10, 0.5)
+        set_translation_row(mastery_table, 11, 0.55)
+        set_translation_row(mastery_table, 12, 0.6)
+        set_translation_row(mastery_table, 13, 0.65)
+        set_translation_row(mastery_table, 14, 0.7)
+        set_translation_row(mastery_table, 15, 0.75)
+        set_translation_row(mastery_table, 16, 0.8)
+        set_translation_row(mastery_table, 17, 0.85)
+        set_translation_row(mastery_table, 18, 0.9)
+        set_translation_row(mastery_table, 19, 0.95)
+        set_translation_row(mastery_table, 20, 1)
+
+
+
+
+
+        strength_table = add_character_stats_table(e_investment_character_stats.strength, 0, 20)
+        add_column_to_table(strength_table)
+
+
+        set_translation_row(strength_table, 0, 0)
+        set_translation_row(strength_table, 1, 0.05)
+        set_translation_row(strength_table, 2, 0.1)
+        set_translation_row(strength_table, 3, 0.15)
+        set_translation_row(strength_table, 4, 0.2)
+        set_translation_row(strength_table, 5, 0.25)
+        set_translation_row(strength_table, 6, 0.3)
+        set_translation_row(strength_table, 7, 0.35)
+        set_translation_row(strength_table, 8, 0.4)
+        set_translation_row(strength_table, 9, 0.45)
+        set_translation_row(strength_table, 10, 0.5)
+        set_translation_row(strength_table, 11, 0.55)
+        set_translation_row(strength_table, 12, 0.6)
+        set_translation_row(strength_table, 13, 0.65)
+        set_translation_row(strength_table, 14, 0.7)
+        set_translation_row(strength_table, 15, 0.75)
+        set_translation_row(strength_table, 16, 0.8)
+        set_translation_row(strength_table, 17, 0.85)
+        set_translation_row(strength_table, 18, 0.9)
+        set_translation_row(strength_table, 19, 0.95)
+        set_translation_row(strength_table, 20, 1)
+
+
+
+
+
+        resistance_table = add_resistance_stats_table(0, 20)
+        add_column_to_table(resistance_table, e_damageable_stat.resist_arc, e_damageable_stat.resist_kinetic, e_damageable_stat.resist_thermal, e_damageable_stat.resist_void, e_damageable_stat.resist_raid)
+
+
+        set_translation_row(resistance_table, 0, 1)
+        set_translation_row(resistance_table, 1, 0.975)
+        set_translation_row(resistance_table, 2, 0.95)
+        set_translation_row(resistance_table, 3, 0.925)
+        set_translation_row(resistance_table, 4, 0.9)
+        set_translation_row(resistance_table, 5, 0.875)
+        set_translation_row(resistance_table, 6, 0.85)
+        set_translation_row(resistance_table, 7, 0.825)
+        set_translation_row(resistance_table, 8, 0.8)
+        set_translation_row(resistance_table, 9, 0.775)
+        set_translation_row(resistance_table, 10, 0.75)
+        set_translation_row(resistance_table, 11, 0.725)
+        set_translation_row(resistance_table, 12, 0.7)
+        set_translation_row(resistance_table, 13, 0.675)
+        set_translation_row(resistance_table, 14, 0.65)
+        set_translation_row(resistance_table, 15, 0.625)
+        set_translation_row(resistance_table, 16, 0.6)
+        set_translation_row(resistance_table, 17, 0.575)
+        set_translation_row(resistance_table, 18, 0.55)
+        set_translation_row(resistance_table, 19, 0.525)
+        set_translation_row(resistance_table, 20, 0.5)
+
+        return true
+
+# Decompiled from 36735.13.12.02.1953.alpha script tags
+# See tag 8210000F

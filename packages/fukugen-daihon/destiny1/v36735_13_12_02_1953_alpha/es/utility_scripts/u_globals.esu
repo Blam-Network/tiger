@@ -1,0 +1,292 @@
+c_kill_incident_listener kill_listener  # true name unknown
+string_hash _participant_fireteam_hash = "participant_fireteam"
+
+
+
+
+
+
+
+
+
+
+
+
+def kill_accum_combatant_bubble(combatant_name, bubble_name, pobj, min, max):
+    print("kill_accum_combatant_bubble is deprecated because it takes raw strings. Use kill_accum_combatant_bubble_hash instead.")
+
+    pobj.progress_activate(min, max)
+
+    kill_listener.reset()
+    kill_listener.bind_audience("participant_fireteam")
+    kill_listener.bind_dead_combatant_name(combatant_name)
+    kill_listener.bind_bubble_name(bubble_name)
+
+    while pobj.progress_get_current() < max:
+        pobj.progress_update(kill_listener.get_count())
+
+
+        sleep(1)
+    pobj.progress_update(max)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+def kill_accum_bubble(bubble_name, pobj, min, max):
+    print("kill_accum_bubble is deprecated because it takes raw strings. Use kill_accum_bubble_hash instead.")
+    pobj.progress_activate(min, max)
+
+    kill_listener.reset()
+    kill_listener.bind_audience("participant_fireteam")
+    kill_listener.bind_bubble_name(bubble_name)
+
+    while pobj.progress_get_current() < max:
+        pobj.progress_update(kill_listener.get_count())
+
+
+        sleep(1)
+    pobj.progress_update(max)
+
+def kill_accum_combatant(combatant_name, pobj, min, max):
+    print("kill_accum_combatant is deprecated because it takes raw strings. Use kill_accum_combatant_hash instead.")
+    pobj.progress_activate(min, max)
+
+    kill_listener.reset()
+    kill_listener.bind_audience("participant_fireteam")
+    kill_listener.bind_dead_combatant_name(combatant_name)
+
+    while pobj.progress_get_current() < max:
+        pobj.progress_update(kill_listener.get_count())
+
+
+        sleep(1)
+    pobj.progress_update(max)
+
+
+
+
+def kill_accum_combatant_bubble_hash(combatant_name, bubble_name, pobj, min, max):
+    pobj.progress_activate(min, max)
+
+    kill_listener.reset()
+    kill_listener.bind_audience_hash(_participant_fireteam_hash)
+    kill_listener.bind_dead_combatant_name_hash(combatant_name)
+    kill_listener.bind_bubble_name_hash(bubble_name)
+
+    while pobj.progress_get_current() < max:
+        pobj.progress_update(kill_listener.get_count())
+
+
+        sleep(1)
+    pobj.progress_update(max)
+
+def kill_accum_bubble_hash(bubble_name, pobj, min, max):
+    pobj.progress_activate(min, max)
+
+    kill_listener.reset()
+    kill_listener.bind_audience_hash(_participant_fireteam_hash)
+    kill_listener.bind_bubble_name_hash(bubble_name)
+
+    while pobj.progress_get_current() < max:
+        pobj.progress_update(kill_listener.get_count())
+
+
+        sleep(1)
+    pobj.progress_update(max)
+
+def kill_accum_combatant_hash(combatant_name, pobj, min, max):
+    pobj.progress_activate(min, max)
+
+    kill_listener.reset()
+    kill_listener.bind_audience_hash(_participant_fireteam_hash)
+    kill_listener.bind_dead_combatant_name_hash(combatant_name)
+
+    while pobj.progress_get_current() < max:
+        pobj.progress_update(kill_listener.get_count())
+
+
+        sleep(1)
+    pobj.progress_update(max)
+
+def kill_accum_generic(pobj, min, max):
+    pobj.progress_activate(min, max)
+
+    kill_listener.reset()
+    kill_listener.bind_audience_hash(_participant_fireteam_hash)
+
+    while pobj.progress_get_current() < max:
+        pobj.progress_update(kill_listener.get_count())
+
+
+        sleep(1)
+    pobj.progress_update(max)
+
+
+
+
+def sleep_forever():
+    sleep_until(false, 10)
+
+
+
+
+
+def objective_start(po_obj):
+
+    po_obj.set_incoming()
+    po_obj.set_active()
+
+def objective_end(po_obj):
+
+    po_obj.set_complete()
+    po_obj.nav_point_clear()
+    sleep(3)
+    po_obj.clear()
+
+def objective_end_silent(po_obj):
+    po_obj.nav_point_clear()
+    sleep(3)
+    po_obj.clear()
+
+
+def countdown(po_obj, pm_defend, time):
+
+    po_obj.timer_activate(time)
+    po_obj.timer_start()
+
+    while not po_obj.timer_is_complete():
+
+        if pm_defend.test_any_inside():
+            po_obj.timer_start()
+        else:
+            po_obj.timer_pause()
+
+        sleep(1)
+
+
+
+
+
+def vex_warpgate(warpgate, sq):
+    warpgate.set_channel_scalar("activate", 1)
+    sleep(1)
+    warpgate.drop_squad(sq); sleep_until(not warpgate.is_dropping())
+    sleep(1)
+    warpgate.set_channel_scalar("activate", 0)
+
+
+
+
+
+def vex_cloud_enter(cloud, enter):
+    if not cloud.is_bound():
+        cloud.place()
+    cloud.execute(cs_dropship_follow_path(enter)); sleep_until(cloud.get_command_script_state() != e_command_script_state.executing)
+
+def vex_cloud_exit(cloud, exit):
+    cloud.execute(cs_dropship_follow_path(exit)); sleep_until(cloud.get_command_script_state() != e_command_script_state.executing)
+    cloud.remove()
+
+
+
+
+def dropship_enter(pilot, enter, enter_angle):
+    pilot.place()
+    print("DROPSHIP PLACED")
+    pilot.execute(cs_dropship_follow_path_enter(enter, enter_angle)); sleep_until(pilot.get_command_script_state() != e_command_script_state.executing)
+
+def dropship_exit(pilot, exit, exit_angle):
+    pilot.execute(cs_dropship_follow_path_exit(exit, exit_angle)); sleep_until(pilot.get_command_script_state() != e_command_script_state.executing)
+    pilot.remove()
+    print("DROPSHIP REMOVED")
+
+def dropship_travel(pilot, travel):
+    pilot.execute(cs_dropship_follow_path(travel)); sleep_until(pilot.get_command_script_state() != e_command_script_state.executing)
+
+def dropship_point_defense(pilot, duration):
+    pilot.execute(cs_point_defense(duration)); sleep_until(pilot.get_command_script_state() != e_command_script_state.executing)
+
+def dropship_squad(pilot, sq, enter, exit, enter_angle, exit_angle):
+    dropship_enter(pilot, enter, enter_angle)
+    if sq != nil:
+        pilot.drop_squad(sq); sleep_until(not pilot.is_dropping())
+    dropship_exit(pilot, exit, exit_angle)
+
+def dropship_drop(pilot, sq, enter, exit):
+    pilot.place()
+    pilot.execute(enter); sleep_until(pilot.get_command_script_state() != e_command_script_state.executing, 0.2)
+    if sq != nil:
+        pilot.drop_squad(sq); sleep_until(not pilot.is_dropping())
+        print("dropping squads")
+    pilot.execute(exit); sleep_until(pilot.get_command_script_state() != e_command_script_state.executing, 0.2)
+    pilot.remove()
+
+
+
+
+def create_interactable(o_device, int_obj):
+    int_obj(o_device)
+    o_device.create()
+
+    int_obj.enable_all_players()
+
+
+
+
+command_script cs_dropship_follow_path_enter(path, enter_angle):
+    snap_to(path, 0)
+    ability("dropship", enter_angle)
+    follow_path(path)
+    set_channel_scalar("doors", 1)
+    sleep(1)
+
+command_script cs_dropship_follow_path_exit(path, exit_angle):
+    set_channel_scalar("doors", 0)
+    snap_to(path, 0)
+    follow_path(path)
+    ability("dropship", exit_angle)
+    sleep(1)
+
+command_script cs_dropship_follow_path(path):
+    snap_to(path, 0)
+    follow_path(path)
+    sleep(1)
+
+command_script cs_point_defense(duration):
+    ability("point_defense", "fire")
+    terminate_delay(duration)
+
+
+
+
+def get_max_fireteam_power_level():
+    max_pl = 0
+    max_pl = get_power_level_if_greater(0, max_pl)
+    max_pl = get_power_level_if_greater(1, max_pl)
+    max_pl = get_power_level_if_greater(2, max_pl)
+    return max_pl
+
+def get_power_level_if_greater(index, current_pl):
+    c_player_script_iterator.index = index
+    new_pl = c_player_script_iterator.get_sensor().get_power_level()
+    if current_pl < new_pl:
+        return new_pl
+    else:
+        return current_pl
+
+# Decompiled from 36735.13.12.02.1953.alpha script tags
+# See tags 821B8026, 8228A00C

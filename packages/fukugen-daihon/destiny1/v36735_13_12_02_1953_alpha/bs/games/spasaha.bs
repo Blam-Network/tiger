@@ -1,0 +1,24 @@
+class c_game_manager : c_game_manager_base:  # true name unknown
+    static c_common_reference abilities_configuration
+    static static_array<c_common_reference, 3> perks_configuration  # true name unknown
+    static c_blueprint_handle sobject_blueprint_reference  # true name unknown
+
+
+
+
+    def import():
+        print("---=== GAME MANAGER INITIALIZING STATIC DATA ===---")
+
+        sobject_binding_reference = c_sobject_binding
+        player_datum_reference = c_player_datum
+        sobject_blueprint_reference = c_sobject_blueprint_instance
+        abilities_configuration = c_sandbox_configuration.abilities
+
+        perks_configuration[e_perk_type.character] = c_sandbox_configuration.character_perks
+        perks_configuration[e_perk_type.weapon] = c_sandbox_configuration.weapon_perks
+        perks_configuration[e_perk_type.armor] = c_sandbox_configuration.armor_perks
+
+        return true
+
+# Decompiled from 36735.13.12.02.1953.alpha script tags
+# See tag 82100006

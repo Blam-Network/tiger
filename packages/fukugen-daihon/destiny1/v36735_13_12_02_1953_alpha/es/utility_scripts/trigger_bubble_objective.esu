@@ -1,0 +1,46 @@
+c_player_objective_sensor_host _player_objective
+c_sequence_host _incoming_sequence  # true name unknown
+c_sequence_host _completion_sequence  # true name unknown
+c_nav_point_host _nav_point  # true name unknown
+c_player_trigger_sensor_host _player_trigger  # true name unknown
+
+
+
+
+
+
+
+def import_only_bind(_bubble):
+    return _player_trigger.import_only_bind(_bubble)
+
+def is_complete():
+    return _player_trigger.is_triggered()
+
+def objective_begin():
+    _player_objective.set_incoming()
+    sleep(2)
+    _incoming_sequence.start()
+    sleep_until_timeout(_incoming_sequence.is_done(), 10)
+    objective_begin_immediate()
+
+def objective_begin_immediate():
+    _player_objective.set_active()
+    _player_objective.nav_point_activate(_nav_point)
+    objective_begin_silent()
+
+def objective_begin_silent():
+    _player_trigger.reset()
+
+def objective_end():
+    _player_objective.nav_point_clear()
+    _completion_sequence.start()
+    sleep_until_timeout(_completion_sequence.is_done(), 10)
+    _player_objective.set_complete()
+    sleep(2)
+    _player_objective.clear()
+
+def objective_end_silent():
+    _player_objective.clear()
+
+# Decompiled from 36735.13.12.02.1953.alpha script tags
+# See tag 821B8046

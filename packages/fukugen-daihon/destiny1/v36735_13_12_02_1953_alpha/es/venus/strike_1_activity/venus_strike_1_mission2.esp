@@ -1,0 +1,26 @@
+u_globals utils
+c_encounter_handle enc_dig_site_strike1  # true name unknown
+trigger_volume_objective trigger_volume_dig_site
+dialog_trigger md_s1_m2_d010_trigger
+dialog_trigger md_s1_m2_d020_trigger
+
+
+
+
+thread init: pass
+
+
+thread complete: pass
+
+
+thread main:
+    trigger_volume_dig_site.objective_begin_immediate()
+    md_s1_m2_d010_trigger.enable()
+    md_s1_m2_d020_trigger.enable()
+
+    sleep_until(trigger_volume_dig_site.is_complete())
+
+    trigger_volume_dig_site.objective_end_silent()
+
+# Decompiled from 36735.13.12.02.1953.alpha script tags
+# See tag 821B8040

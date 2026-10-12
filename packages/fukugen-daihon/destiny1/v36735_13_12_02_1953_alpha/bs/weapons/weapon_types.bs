@@ -1,0 +1,91 @@
+class weapon : c_weapon:  # true name unknown
+    c_weapon_magazine magazine  # true name unknown
+    c_weapon_reloader reloader  # true name unknown
+
+
+
+
+
+
+
+
+
+
+    def foo():
+        print("this sucks")
+class weapon_plus_continuous_reload : c_weapon:  # true name unknown
+    c_weapon_magazine magazine  # true name unknown
+    c_weapon_continuous_reloader reloader  # true name unknown
+
+
+
+
+
+    def foo():
+        print("this sucks")
+class weapon_plus_heat : c_weapon:  # true name unknown
+    c_weapon_heat heat  # true name unknown
+    c_weapon_battery battery  # true name unknown
+
+
+
+
+
+    def foo():
+        print("this sucks")
+class weapon_infinite : c_weapon:  # true name unknown
+
+
+
+
+
+
+
+
+
+
+
+
+
+    def foo():
+        print("this sucks")
+class full_auto_weapon : c_weapon:  # true name unknown
+    c_weapon_magazine magazine  # true name unknown
+    c_weapon_reloader reloader  # true name unknown
+
+
+
+
+
+
+    def foo():
+        print("this sucks")
+class semi_auto_weapon : c_weapon:  # true name unknown
+    c_weapon_magazine magazine  # true name unknown
+    c_weapon_reloader reloader  # true name unknown
+
+
+
+
+
+    def foo():
+        print("this sucks")
+class semi_auto_charge_weapon : c_weapon:  # true name unknown
+    c_weapon_magazine magazine  # true name unknown
+    c_weapon_reloader reloader  # true name unknown
+
+
+
+
+
+    def foo():
+        print("this sucks")
+
+# Decompiled from 36735.13.12.02.1953.alpha script tags
+# See tag 8210002C (weapon)
+# See tag 8210002E (weapon_plus_continuous_reload)
+# See tag 8210002F (weapon_plus_heat)
+# See tag 8210002D (weapon_infinite)
+# See tag 82100029 (full_auto_weapon)
+# See tag 8210002B (semi_auto_weapon)
+# See tag 8210002A (semi_auto_charge_weapon)

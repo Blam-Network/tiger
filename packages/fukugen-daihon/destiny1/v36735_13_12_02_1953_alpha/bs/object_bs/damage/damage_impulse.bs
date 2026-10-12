@@ -1,0 +1,116 @@
+struct s_custom_damage_scalar_behavior : s_damage_impulse_behavior:  # true name unknown
+    e_damage_scalar target_scalar
+    e_damage_scalar_modifier_operation target_operation
+    real value_at_minimum_intensity
+    real value_at_maximum_intensity
+
+struct s_custom_routing_behavior : s_damage_impulse_behavior:  # true name unknown
+    bool force_area_routing_check
+
+class c_damage_impulse : c_damage_impulse_base:  # true name unknown
+    static c_damage_impulse_description_pointer description_pointer  # true name unknown
+    static c_damage_impulse_exemptions_pointer exemptions_pointer  # true name unknown
+    static dynamic_array<s_damage_impulse_behavior_element> runtime_behaviors  # true name unknown
+    static c_damage_impulse_victim_response_pointer impulse_victim_response_pointer  # true name unknown
+    static c_damage_impulse_attacker_responses_pointer impulse_attacker_responses_pointer  # true name unknown
+    static s_damage_scalar_values damage_scalar_values  # true name unknown
+    static dynamic_array<s_damage_scalar_modifier> damage_scalar_modifiers  # true name unknown
+    static bool force_area_routing_check
+    static bool is_intercept_only
+    static s_damage_impulse_description description  # true name unknown
+    static e_damage_type damage_type
+    static s_damage_labels_spec damage_labels_spec  # true name unknown
+    static s_damage_impulse_exemptions exemptions  # true name unknown
+    static dynamic_array<s_damage_impulse_behavior_element> behaviors  # true name unknown
+    static s_damage_impulse_victim_response impulse_victim_response  # true name unknown
+    static s_damage_impulse_attacker_responses impulse_attacker_responses  # true name unknown
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    def import():
+        success = true
+
+        description_pointer = description
+        description.damage_type = damage_type
+        if not description.damage_labels.import_spec(damage_labels_spec):
+            success = false
+
+        exemptions_pointer = exemptions
+
+        damage_scalar_values.fill(0)
+        damage_scalar_values.set_value(e_damage_scalar.base, 1)
+
+        for source_behavior_element in behaviors:
+            source_behavior = source_behavior_element.owner_pointer
+            if source_behavior:
+
+
+
+                switch schema(source_behavior):
+                    case s_damage_impulse_behavior_precision_target_behavior:
+                        add_scalar_modifier(e_damage_scalar.precision, e_damage_scalar_modifier_operation.replace_with_value, 1, 1)
+
+
+
+
+                    case s_custom_damage_scalar_behavior:
+                        add_scalar_modifier(source_behavior.target_scalar, source_behavior.target_operation, source_behavior.value_at_minimum_intensity, source_behavior.value_at_maximum_intensity)
+
+
+
+
+
+                    case s_custom_routing_behavior:
+                        if source_behavior.force_area_routing_check:
+                            force_area_routing_check = true
+
+                    case s_damage_impulse_behavior_intercept_only:
+                        is_intercept_only = true
+
+                    case s_damage_impulse_behavior_custom_shield_behavior: pass
+                    case s_damage_impulse_behavior_performs_restoration: pass
+                    case s_damage_impulse_behavior_performs_acceleration: pass
+                    case s_damage_impulse_behavior_named_ping: pass
+                    case s_damage_impulse_behavior_death_hopon: pass
+                    case s_damage_impulse_behavior_makes_custom_audio: pass
+                    case s_damage_impulse_behavior_player_feedback_modifier: pass
+                    case s_damage_impulse_behavior_aim_deflection: pass
+
+
+            dest_behavior_element = runtime_behaviors.new()
+            dest_behavior_element.owner_pointer = source_behavior_element.owner_pointer
+        behaviors.resize(0)
+
+
+        if not impulse_attacker_responses.import():
+            success = false
+
+        impulse_victim_response_pointer = impulse_victim_response
+        impulse_attacker_responses_pointer = impulse_attacker_responses
+        return success
+
+    def add_scalar_modifier(scalar, operation, min_value, max_value):
+        scalar_mod = damage_scalar_modifiers.new()
+        scalar_mod.target_scalar = scalar
+        scalar_mod.target_operation = operation
+        scalar_mod.value_minimum = min_value
+        scalar_mod.value_maximum = max_value
+
+# Decompiled from 36735.13.12.02.1953.alpha script tags
+# See tag 8210000A

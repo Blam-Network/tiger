@@ -1,0 +1,72 @@
+c_object_sensor_host _zone
+c_object_sensor_host _pillar
+c_objective_sensor_host _ai_objective  # true name unknown
+c_trigger_volume_slot_host _volume
+c_objective_timer_host pillar_timer bind(_pillar)  # true name unknown
+c_player_monitor_sensor_host pm_volume bind(_volume)  # true name unknown
+int total_time
+bool succeed
+bool fail
+bool bypass
+
+
+
+
+
+
+
+def import_only_bind(_time):
+    total_time = _time
+    return true
+
+def create():
+    _pillar.create()
+    activate()
+
+def activate():
+    print("ACTIVATING PILLAR")
+    pillar_timer.activate(total_time)
+    pillar_timer.stop()
+    _zone.create()
+    bypass = false
+    main.restart()
+
+def reset():
+    print("RESET")
+    fail = true
+    sleep(1)
+    pillar_timer.activate(total_time)
+    pillar_timer.stop()
+    main.restart()
+    _zone.create()
+
+
+def de_activate():
+    print("DEACTIVATING PILLAR")
+    _zone.delete_object()
+    _pillar.delete_object()
+    bypass = true
+
+
+thread main:
+    print("MAIN")
+    fail = false
+    succeed = false
+    pillar_timer.start()
+    while bypass == false and succeed == false:
+        sleep(1)
+        if pm_volume.get_count() == 0:
+            pillar_timer.set_rate_multiplier(-1)
+            print("LOSING PROGRESS")
+        elif pm_volume.get_count() == 1:
+            pillar_timer.set_rate_multiplier(1)
+            print("MAKING PROGRESS")
+        print(pillar_timer.get_remaining_time_in_seconds())
+        if pillar_timer.get_remaining_time_in_seconds() <= 0 and bypass == false:
+            succeed = true
+            _zone.delete_object()
+            print("RAID PILLAR COMPLETE")
+        sleep(1)
+
+# Decompiled from 36735.13.12.02.1953.alpha script tags
+# See tag 821B803B

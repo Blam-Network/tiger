@@ -1,0 +1,154 @@
+c_squad_sensor_host sq_vex01
+c_squad_sensor_host sq_vex02
+c_squad_sensor_host sq_vex03
+c_squad_sensor_host sq_vex04
+c_squad_group_sensor_host sg_vex  # true name unknown
+c_squad_member_sensor_host sq_vex01__vex  # true name unknown
+c_squad_member_sensor_host sq_vex02__vex  # true name unknown
+c_squad_member_sensor_host sq_vex03__vex  # true name unknown
+c_squad_member_sensor_host sq_vex04__vex_block_ai  # true name unknown
+string_hash sacrifice_incident = "vex_block_sacrifice"
+c_hop_on_sensor_host ho_vex_death  # true name unknown
+c_object_filter_sensor_host of_vex_death
+
+
+
+
+
+def set_objective(obj):
+    obj.add_squad(sq_vex01)
+    obj.add_squad(sq_vex02)
+    obj.add_squad(sq_vex03)
+    obj.add_squad(sq_vex04)
+
+startup thread initialize_wave:
+    sg_vex.add_child(sq_vex01)
+    sg_vex.add_child(sq_vex02)
+    sg_vex.add_child(sq_vex03)
+    sg_vex.add_child(sq_vex04)
+
+    set_temperaments_base(sq_vex01)
+    set_temperaments_base(sq_vex02)
+    set_temperaments_base(sq_vex03)
+    set_temperaments_base(sq_vex04)
+
+    ho_vex_death.set_filter(of_vex_death)
+
+def set_temperaments_base(sq):
+    sq.activate_temperament("temper_always_walk")
+    sq.activate_temperament("temper_combat_no_self_preserve")
+    sq.activate_temperament("temper_combat_no_teleport_path")
+
+def remove_squads():
+    sq_vex01.remove()
+    sq_vex02.remove()
+    sq_vex03.remove()
+    sq_vex04.remove()
+
+
+def drop_wave_all(cloud_prefab_list):
+    drop_wave_1(cloud_prefab_list)
+    drop_wave_2(cloud_prefab_list)
+    drop_wave_3(cloud_prefab_list)
+    drop_wave_4(cloud_prefab_list)
+
+def drop_wave_123(cloud_prefab_list):
+    drop_wave_1(cloud_prefab_list)
+    drop_wave_2(cloud_prefab_list)
+    drop_wave_3(cloud_prefab_list)
+
+def drop_wave_1(cloud_prefab_list):
+    drop_wave(get_cloud(cloud_prefab_list), sq_vex01)
+    vex1_drop.restart()
+    sleep(0.5)
+def drop_wave_2(cloud_prefab_list):
+    drop_wave(get_cloud(cloud_prefab_list), sq_vex02)
+    vex2_drop.restart()
+    sleep(0.5)
+def drop_wave_3(cloud_prefab_list):
+    drop_wave(get_cloud(cloud_prefab_list), sq_vex03)
+    vex3_drop.restart()
+    sleep(0.5)
+def drop_wave_4(cloud_prefab_list):
+    drop_wave(get_cloud(cloud_prefab_list), sq_vex04)
+    vex4_drop.restart()
+    sleep(0.5)
+
+def drop_wave(cloud_prefab, sq):
+
+    if not cloud_prefab.get_pilot().is_bound():
+        cloud_prefab.sq_vex_cloud.place()
+
+    set_objective(cloud_prefab.obj_vex_target)
+    cloud_prefab.get_pilot().drop_squad(sq); sleep_until(not cloud_prefab.get_pilot().is_dropping())
+
+    cloud_prefab.sq_vex_cloud.remove()
+
+    sleep_until(not cloud_prefab.get_pilot().is_dropping())
+    cloud_prefab.in_use = false
+
+def get_cloud(cloud_prefab_list):
+    index = select_cloud_i(cloud_prefab_list)
+    return cloud_prefab_list[index]
+
+def select_cloud_i(cloud_prefab_list):
+    found = false
+    rand_i = 0
+    while found == false:
+        rand_i = mathlib.random_int_inclusive(0, len(cloud_prefab_list) - 1)
+        if cloud_prefab_list[rand_i].in_use == false:
+            found = true
+            cloud_prefab_list[rand_i].in_use = true
+            return rand_i
+        sleep(0.5)
+    return rand_i
+
+thread vex1_drop:
+    ai_to_block(sq_vex01, sq_vex01__vex)
+thread vex2_drop:
+    ai_to_block(sq_vex02, sq_vex02__vex)
+thread vex3_drop:
+    ai_to_block(sq_vex03, sq_vex03__vex)
+thread vex4_drop:
+    ai_to_block(sq_vex04, sq_vex04__vex_block_ai)
+
+def ai_to_block(sq, cb):
+
+    sleep_until(sq.count_at_firing_area() > 0, 0.5)
+
+
+
+    if sq.alive_count() > 0:
+        run_seize(sq)
+    if sq.alive_count() == 0:
+        print("a PLAYER killed it!")
+    else:
+        print("the block killed it!")
+        vex_death(sq)
+    sq.deactivate_temperament("temper_freeze")
+    sq.deactivate_temperament("temper_vex_seize")
+    cb.abort_command_script()
+
+def run_seize(sq):
+
+    sleep(1)
+    print("seize")
+    sq.activate_temperament("temper_vex_seize")
+    sq.activate_temperament("temper_freeze")
+    sleep(2.5)
+
+def vex_death(sq):
+    of_vex_death.add(sq)
+    c_incident_utilities.submit_incident_hash(sacrifice_incident)
+    sleep(1)
+    of_vex_death.clear()
+    sq.kill()
+
+def assign_hopon_all(of):
+    of.add(sq_vex01)
+    of.add(sq_vex02)
+    of.add(sq_vex03)
+    of.add(sq_vex04)
+
+# Decompiled from 36735.13.12.02.1953.alpha script tags
+# See tag 821B8050

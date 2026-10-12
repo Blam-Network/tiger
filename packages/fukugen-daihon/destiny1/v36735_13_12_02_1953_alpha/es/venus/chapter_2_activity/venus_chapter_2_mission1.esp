@@ -1,0 +1,49 @@
+u_globals utils
+c_encounter_handle enc_entrance_ch2m1  # true name unknown
+c_location_sensor_host entrance  # true name unknown
+c_player_monitor_sensor_host pm_bubble_entrance bind(entrance)  # true name unknown
+c_trigger_volume_slot_host tv_entrance_md01
+c_player_trigger_sensor_host pt_entrance_md01 bind(tv_entrance_md01)  # true name unknown
+collect_loot_objective ch2m1_collect_loot bind("ch2m1_collect_loot", 1)
+dialog_trigger md_c2_m1_d020_trigger
+c_sequence_host md_c2_m1_d010  # true name unknown
+c_sequence_host md_c2_m1_d030  # true name unknown
+bool text_dialog = true
+
+
+
+
+
+
+
+
+thread init: pass
+
+
+thread complete: pass
+
+
+thread main:
+    print("phase_script startup")
+    venus_c2_m01_d10.wake()
+    sleep_until(md_c2_m1_d010.is_done())
+    md_c2_m1_d020_trigger.enable()
+    ch2m1_collect_loot.objective_begin()
+    enc_entrance_ch2m1.ch2m1_objective.wake()
+    sleep_until(enc_entrance_ch2m1.sq_fallen_captain.alive_count() == 0)
+    sleep_until_timeout(ch2m1_collect_loot.is_complete(), 120)
+    ch2m1_collect_loot.objective_end()
+    venus_c2_m01_d30.wake()
+
+
+
+thread venus_c2_m01_d10:
+    md_c2_m1_d010.start()
+    print("md_c2_m1_d010")
+
+thread venus_c2_m01_d30:
+    md_c2_m1_d030.start()
+    print("md_c2_m1_d030")
+
+# Decompiled from 36735.13.12.02.1953.alpha script tags
+# See tag 821B801D

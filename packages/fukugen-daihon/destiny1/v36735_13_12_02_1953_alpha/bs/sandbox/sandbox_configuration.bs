@@ -1,0 +1,674 @@
+class c_sandbox_configuration : c_library:  # true name unknown
+    static table<e_abilities, s_ability_configuration> abilities
+    static table<e_character_perks, s_perk_configuration> character_perks
+    static table<e_weapon_perks, s_perk_configuration> weapon_perks
+    static table<e_armor_perks, s_perk_configuration> armor_perks
+
+
+
+
+
+    static def add_mod(ability, ability_mod_name):
+        abilities[ability].ability_mod_names.append(ability_mod_name)
+
+    static def set_ability_name(ability, ability_name):
+        abilities[ability].label = ability
+        abilities[ability].name = ability_name
+
+    static def set_character_perk_name(perk, perk_name):
+        character_perks[perk].label = perk
+        character_perks[perk].name = perk_name
+
+    static def set_weapon_perk_name(perk, perk_name):
+        weapon_perks[perk].label = perk
+        weapon_perks[perk].name = perk_name
+
+    static def set_armor_perk_name(perk, perk_name):
+        armor_perks[perk].label = perk
+        armor_perks[perk].name = perk_name
+
+    def import():
+        abilities.fit()
+        character_perks.fit()
+        weapon_perks.fit()
+        armor_perks.fit()
+
+
+        set_name = set_ability_name
+
+        set_name(e_abilities.melee_guardian, "Guardian Melee")
+        set_name(e_abilities.melee_hunter, "Hunter Melee")
+        set_name(e_abilities.melee_warlock, "Warlock Melee")
+
+        set_name(e_abilities.lift, "Lift")
+        set_name(e_abilities.double_jump, "Double-Jump")
+        set_name(e_abilities.glide, "Glide")
+        set_name(e_abilities.blink, "Blink")
+
+        set_name(e_abilities.sprint, "Sprint")
+
+        set_name(e_abilities.axion_bolt, "Axion Bolt")
+        set_name(e_abilities.flux_grenade, "Flux Grenade")
+        set_name(e_abilities.proximity_grenade, "Proximity Grenade")
+        set_name(e_abilities.pulse_grenade, "Pulse Grenade")
+        set_name(e_abilities.sixth_grenade, "Sixth Grenade")
+        set_name(e_abilities.solar_flare, "Solar Flare")
+
+        set_name(e_abilities.frag_basic, "FOTC Frag")
+        set_name(e_abilities.bolt_arc, "Arc Bolt")
+        set_name(e_abilities.bolt_thermal, "Thermal Bolt")
+        set_name(e_abilities.bolt_void, "Void Bolt")
+        set_name(e_abilities.field_arc, "Arc Field")
+        set_name(e_abilities.field_thermal, "Thermal Field")
+        set_name(e_abilities.field_void, "Void Field")
+        set_name(e_abilities.flare_arc, "Arc Flare")
+        set_name(e_abilities.flare_thermal, "Thermal Flare")
+        set_name(e_abilities.flare_void, "Void Flare")
+        set_name(e_abilities.flux_arc, "Arc Flux")
+        set_name(e_abilities.flux_thermal, "Thermal Flux")
+        set_name(e_abilities.flux_void, "Void Flux")
+        set_name(e_abilities.prox_arc, "Arc Prox")
+        set_name(e_abilities.prox_thermal, "Thermal Prox")
+        set_name(e_abilities.prox_void, "Void Prox")
+        set_name(e_abilities.pulse_arc, "Arc Pulse")
+        set_name(e_abilities.pulse_thermal, "Thermal Pulse")
+        set_name(e_abilities.pulse_void, "Void Pulse")
+
+
+        set_name(e_abilities.fist_of_havoc_super, "(Super) Fist of Havoc")
+        set_name(e_abilities.golden_gun_super, "(Super) Golden Gun")
+        set_name(e_abilities.nova_bomb_super, "(Super) Nova Bomb")
+        set_name(e_abilities.ward_of_dawn_super, "(Super) Ward of Dawn")
+        set_name(e_abilities.arc_blade_super, "(Super) Arc Blade")
+        set_name(e_abilities.resto_radiance_super, "(Super) Resto-Radiance")
+
+        set_name(e_abilities.vehicle_summon, "Vehicle Summon")
+        set_name(e_abilities.test_idle, "test_idle")
+
+
+        local add_mod = self.add_mod
+
+
+
+
+
+
+
+        add_mod(e_abilities.bolt_arc, "armor_grenade_bonus0")
+        add_mod(e_abilities.bolt_arc, "armor_grenade_bonus1")
+        add_mod(e_abilities.bolt_arc, "armor_grenade_bonus2")
+        add_mod(e_abilities.bolt_arc, "armor_grenade_bonus3")
+        add_mod(e_abilities.bolt_arc, "armor_hunter_arc0_grenade_upgrade1_bonus0")
+        add_mod(e_abilities.bolt_thermal, "armor_grenade_bonus0")
+        add_mod(e_abilities.bolt_thermal, "armor_grenade_bonus1")
+        add_mod(e_abilities.bolt_thermal, "armor_grenade_bonus2")
+        add_mod(e_abilities.bolt_thermal, "armor_grenade_bonus3")
+        add_mod(e_abilities.bolt_thermal, "armor_warlock_thermal0_grenade_upgrade1_bonus0")
+        add_mod(e_abilities.bolt_void, "armor_grenade_bonus0")
+        add_mod(e_abilities.bolt_void, "armor_grenade_bonus1")
+        add_mod(e_abilities.bolt_void, "armor_grenade_bonus2")
+        add_mod(e_abilities.bolt_void, "armor_grenade_bonus3")
+        add_mod(e_abilities.bolt_void, "armor_warlock_void0_grenade_upgrade1_bonus0")
+        add_mod(e_abilities.field_arc, "armor_grenade_bonus0")
+        add_mod(e_abilities.field_arc, "armor_grenade_bonus1")
+        add_mod(e_abilities.field_arc, "armor_grenade_bonus2")
+        add_mod(e_abilities.field_arc, "armor_grenade_bonus3")
+        add_mod(e_abilities.field_arc, "armor_hunter_arc0_grenade_upgrade2_bonus0")
+        add_mod(e_abilities.field_thermal, "armor_grenade_bonus0")
+        add_mod(e_abilities.field_thermal, "armor_grenade_bonus1")
+        add_mod(e_abilities.field_thermal, "armor_grenade_bonus2")
+        add_mod(e_abilities.field_thermal, "armor_grenade_bonus3")
+        add_mod(e_abilities.field_thermal, "armor_hunter_thermal0_grenade_upgrade1_bonus0")
+        add_mod(e_abilities.field_void, "armor_grenade_bonus0")
+        add_mod(e_abilities.field_void, "armor_grenade_bonus1")
+        add_mod(e_abilities.field_void, "armor_grenade_bonus2")
+        add_mod(e_abilities.field_void, "armor_grenade_bonus3")
+        add_mod(e_abilities.field_void, "armor_titan_void0_grenade_upgrade1_bonus0")
+        add_mod(e_abilities.flare_arc, "armor_grenade_bonus0")
+        add_mod(e_abilities.flare_arc, "armor_grenade_bonus1")
+        add_mod(e_abilities.flare_arc, "armor_grenade_bonus2")
+        add_mod(e_abilities.flare_arc, "armor_grenade_bonus3")
+        add_mod(e_abilities.flare_arc, "armor_hunter_arc0_grenade_upgrade0_bonus0")
+        add_mod(e_abilities.flare_thermal, "armor_grenade_bonus0")
+        add_mod(e_abilities.flare_thermal, "armor_grenade_bonus1")
+        add_mod(e_abilities.flare_thermal, "armor_grenade_bonus2")
+        add_mod(e_abilities.flare_thermal, "armor_grenade_bonus3")
+        add_mod(e_abilities.flare_thermal, "armor_warlock_thermal0_grenade_upgrade0_bonus0")
+        add_mod(e_abilities.flare_void, "armor_grenade_bonus0")
+        add_mod(e_abilities.flare_void, "armor_grenade_bonus1")
+        add_mod(e_abilities.flare_void, "armor_grenade_bonus2")
+        add_mod(e_abilities.flare_void, "armor_grenade_bonus3")
+        add_mod(e_abilities.flare_void, "armor_warlock_void0_grenade_upgrade2_bonus0")
+        add_mod(e_abilities.flux_arc, "armor_grenade_bonus0")
+        add_mod(e_abilities.flux_arc, "armor_grenade_bonus1")
+        add_mod(e_abilities.flux_arc, "armor_grenade_bonus2")
+        add_mod(e_abilities.flux_arc, "armor_grenade_bonus3")
+        add_mod(e_abilities.flux_arc, "armor_titan_arc0_grenade_upgrade1_bonus0")
+        add_mod(e_abilities.flux_thermal, "armor_grenade_bonus0")
+        add_mod(e_abilities.flux_thermal, "armor_grenade_bonus1")
+        add_mod(e_abilities.flux_thermal, "armor_grenade_bonus2")
+        add_mod(e_abilities.flux_thermal, "armor_grenade_bonus3")
+        add_mod(e_abilities.flux_thermal, "armor_warlock_thermal0_grenade_upgrade2_bonus0")
+        add_mod(e_abilities.flux_void, "armor_grenade_bonus0")
+        add_mod(e_abilities.flux_void, "armor_grenade_bonus1")
+        add_mod(e_abilities.flux_void, "armor_grenade_bonus2")
+        add_mod(e_abilities.flux_void, "armor_grenade_bonus3")
+        add_mod(e_abilities.flux_void, "armor_titan_void0_grenade_upgrade0_bonus0")
+        add_mod(e_abilities.prox_arc, "armor_grenade_bonus0")
+        add_mod(e_abilities.prox_arc, "armor_grenade_bonus1")
+        add_mod(e_abilities.prox_arc, "armor_grenade_bonus2")
+        add_mod(e_abilities.prox_arc, "armor_grenade_bonus3")
+        add_mod(e_abilities.prox_arc, "armor_titan_arc0_grenade_upgrade2_bonus0")
+        add_mod(e_abilities.prox_thermal, "armor_grenade_bonus0")
+        add_mod(e_abilities.prox_thermal, "armor_grenade_bonus1")
+        add_mod(e_abilities.prox_thermal, "armor_grenade_bonus2")
+        add_mod(e_abilities.prox_thermal, "armor_grenade_bonus3")
+        add_mod(e_abilities.prox_thermal, "armor_hunter_thermal0_grenade_upgrade0_bonus0")
+        add_mod(e_abilities.prox_void, "armor_grenade_bonus0")
+        add_mod(e_abilities.prox_void, "armor_grenade_bonus1")
+        add_mod(e_abilities.prox_void, "armor_grenade_bonus2")
+        add_mod(e_abilities.prox_void, "armor_grenade_bonus3")
+        add_mod(e_abilities.prox_void, "armor_titan_void0_grenade_upgrade2_bonus0")
+        add_mod(e_abilities.pulse_arc, "armor_grenade_bonus0")
+        add_mod(e_abilities.pulse_arc, "armor_grenade_bonus1")
+        add_mod(e_abilities.pulse_arc, "armor_grenade_bonus2")
+        add_mod(e_abilities.pulse_arc, "armor_grenade_bonus3")
+        add_mod(e_abilities.pulse_arc, "armor_titan_arc0_grenade_upgrade0_bonus0")
+        add_mod(e_abilities.pulse_thermal, "armor_grenade_bonus0")
+        add_mod(e_abilities.pulse_thermal, "armor_grenade_bonus1")
+        add_mod(e_abilities.pulse_thermal, "armor_grenade_bonus2")
+        add_mod(e_abilities.pulse_thermal, "armor_grenade_bonus3")
+        add_mod(e_abilities.pulse_thermal, "armor_hunter_thermal0_grenade_upgrade2_bonus0")
+        add_mod(e_abilities.pulse_void, "armor_grenade_bonus0")
+        add_mod(e_abilities.pulse_void, "armor_grenade_bonus1")
+        add_mod(e_abilities.pulse_void, "armor_grenade_bonus2")
+        add_mod(e_abilities.pulse_void, "armor_grenade_bonus3")
+        add_mod(e_abilities.pulse_void, "armor_warlock_void0_grenade_upgrade0_bonus0")
+
+
+
+        add_mod(e_abilities.axion_bolt, "extra_charge")
+        add_mod(e_abilities.axion_bolt, "faster_followup_throw")
+        add_mod(e_abilities.axion_bolt, "faster_recharge")
+        add_mod(e_abilities.axion_bolt, "harder_throw")
+        add_mod(e_abilities.axion_bolt, "larger_splash_core")
+        add_mod(e_abilities.axion_bolt, "larger_splash_radius")
+        add_mod(e_abilities.axion_bolt, "increased_damage_on_splash")
+        add_mod(e_abilities.axion_bolt, "spawn_seeker_bolt_on_first_kill")
+        add_mod(e_abilities.axion_bolt, "spawn_seeker_bolt_on_second_kill")
+        add_mod(e_abilities.axion_bolt, "improved_seeker_bolt_target_detection")
+        add_mod(e_abilities.axion_bolt, "improved_seeker_bolt_tracking_steering")
+        add_mod(e_abilities.axion_bolt, "increased_seeker_bolt_tracking_speed")
+        add_mod(e_abilities.axion_bolt, "bolt_target_chaining")
+
+        add_mod(e_abilities.axion_bolt, "disorienting_explosion")
+
+
+
+
+        add_mod(e_abilities.sixth_grenade, "extra_charge")
+        add_mod(e_abilities.sixth_grenade, "faster_followup_throw")
+        add_mod(e_abilities.sixth_grenade, "faster_recharge")
+        add_mod(e_abilities.sixth_grenade, "harder_throw")
+        add_mod(e_abilities.sixth_grenade, "increased_drone_lifetime")
+        add_mod(e_abilities.sixth_grenade, "improved_drone_target_detection")
+        add_mod(e_abilities.sixth_grenade, "increased_drone_tracking_speed")
+        add_mod(e_abilities.sixth_grenade, "increased_drone_impact_count")
+        add_mod(e_abilities.sixth_grenade, "increased_drone_damage_on_impact")
+
+
+        add_mod(e_abilities.sixth_grenade, "damage_type_arc")
+        add_mod(e_abilities.sixth_grenade, "damage_type_kinetic")
+        add_mod(e_abilities.sixth_grenade, "damage_type_raid")
+        add_mod(e_abilities.sixth_grenade, "damage_type_thermal")
+        add_mod(e_abilities.sixth_grenade, "damage_type_void")
+        add_mod(e_abilities.sixth_grenade, "void_switch_plus_impact")
+
+
+
+        add_mod(e_abilities.flux_grenade, "extra_charge")
+        add_mod(e_abilities.flux_grenade, "faster_followup_throw")
+        add_mod(e_abilities.flux_grenade, "faster_recharge")
+        add_mod(e_abilities.flux_grenade, "harder_throw")
+        add_mod(e_abilities.flux_grenade, "improved_target_detection")
+        add_mod(e_abilities.flux_grenade, "improved_tracking_steering")
+        add_mod(e_abilities.flux_grenade, "improved_attach")
+
+        add_mod(e_abilities.flux_grenade, "larger_explosion_on_attach")
+        add_mod(e_abilities.flux_grenade, "increased_damage_on_impact")
+        add_mod(e_abilities.flux_grenade, "increased_damage_on_splash")
+        add_mod(e_abilities.flux_grenade, "larger_splash_core")
+        add_mod(e_abilities.flux_grenade, "larger_splash_radius")
+        add_mod(e_abilities.flux_grenade, "disorienting_explosion")
+
+
+
+        add_mod(e_abilities.proximity_grenade, "extra_charge")
+        add_mod(e_abilities.proximity_grenade, "faster_followup_throw")
+        add_mod(e_abilities.proximity_grenade, "faster_recharge")
+        add_mod(e_abilities.proximity_grenade, "harder_throw")
+        add_mod(e_abilities.proximity_grenade, "improved_attach")
+
+        add_mod(e_abilities.proximity_grenade, "increased_damage_on_precision_impact")
+        add_mod(e_abilities.proximity_grenade, "increased_damage_on_splash")
+        add_mod(e_abilities.proximity_grenade, "larger_splash_core")
+        add_mod(e_abilities.proximity_grenade, "larger_splash_radius")
+
+        add_mod(e_abilities.proximity_grenade, "increased_lifetime")
+
+        add_mod(e_abilities.proximity_grenade, "damage_type_arc")
+        add_mod(e_abilities.proximity_grenade, "damage_type_kinetic")
+        add_mod(e_abilities.proximity_grenade, "damage_type_raid")
+        add_mod(e_abilities.proximity_grenade, "damage_type_thermal")
+        add_mod(e_abilities.proximity_grenade, "damage_type_void")
+
+
+
+        add_mod(e_abilities.pulse_grenade, "extra_charge")
+        add_mod(e_abilities.pulse_grenade, "faster_followup_throw")
+        add_mod(e_abilities.pulse_grenade, "faster_recharge")
+        add_mod(e_abilities.pulse_grenade, "harder_throw")
+        add_mod(e_abilities.pulse_grenade, "arm_on_combatant_impact")
+
+
+        add_mod(e_abilities.pulse_grenade, "increased_damage_on_impact")
+        add_mod(e_abilities.pulse_grenade, "increased_damage_on_precision_impact")
+        add_mod(e_abilities.pulse_grenade, "increased_damage_on_splash")
+        add_mod(e_abilities.pulse_grenade, "set_combatants_on_fire")
+        add_mod(e_abilities.pulse_grenade, "larger_splash_core")
+        add_mod(e_abilities.pulse_grenade, "larger_splash_radius")
+        add_mod(e_abilities.pulse_grenade, "disorienting_explosion")
+        add_mod(e_abilities.pulse_grenade, "secondary_explosion")
+        add_mod(e_abilities.pulse_grenade, "secondary_explosion_rank_2")
+        add_mod(e_abilities.pulse_grenade, "damage_type_arc")
+        add_mod(e_abilities.pulse_grenade, "damage_type_kinetic")
+        add_mod(e_abilities.pulse_grenade, "damage_type_raid")
+        add_mod(e_abilities.pulse_grenade, "damage_type_thermal")
+        add_mod(e_abilities.pulse_grenade, "damage_type_void")
+
+
+
+        add_mod(e_abilities.solar_flare, "extra_charge")
+        add_mod(e_abilities.solar_flare, "faster_followup_throw")
+        add_mod(e_abilities.solar_flare, "faster_recharge")
+        add_mod(e_abilities.solar_flare, "harder_throw")
+        add_mod(e_abilities.solar_flare, "increased_damage_on_impact")
+        add_mod(e_abilities.solar_flare, "increased_damage_on_splash")
+        add_mod(e_abilities.solar_flare, "larger_splash_core")
+        add_mod(e_abilities.solar_flare, "larger_splash_radius")
+        add_mod(e_abilities.solar_flare, "set_environments_on_fire")
+        add_mod(e_abilities.solar_flare, "larger_fire_on_environment_radius")
+
+
+        add_mod(e_abilities.solar_flare, "set_combatants_on_fire")
+
+        add_mod(e_abilities.solar_flare, "extra_damage_when_burn_ends")
+        add_mod(e_abilities.solar_flare, "e3_solar_flare_mods")
+
+
+
+
+
+
+        add_mod(e_abilities.fist_of_havoc_super, "air_activate")
+        add_mod(e_abilities.fist_of_havoc_super, "far_leap")
+
+        add_mod(e_abilities.fist_of_havoc_super, "increase_damage_rank_1")
+        add_mod(e_abilities.fist_of_havoc_super, "increase_damage_rank_2")
+        add_mod(e_abilities.fist_of_havoc_super, "increase_damage_rank_3")
+        add_mod(e_abilities.fist_of_havoc_super, "increase_splash_radius_rank_1")
+        add_mod(e_abilities.fist_of_havoc_super, "increase_splash_radius_rank_2")
+        add_mod(e_abilities.fist_of_havoc_super, "increase_splash_radius_rank_3")
+        add_mod(e_abilities.fist_of_havoc_super, "increase_recharge_rank_1")
+        add_mod(e_abilities.fist_of_havoc_super, "increase_recharge_rank_2")
+        add_mod(e_abilities.fist_of_havoc_super, "increase_recharge_rank_3")
+
+
+
+        add_mod(e_abilities.ward_of_dawn_super, "enable_air_activation")
+        add_mod(e_abilities.ward_of_dawn_super, "push_back")
+
+        add_mod(e_abilities.ward_of_dawn_super, "apply_overshield_rank_1")
+        add_mod(e_abilities.ward_of_dawn_super, "apply_overshield_rank_2")
+        add_mod(e_abilities.ward_of_dawn_super, "increase_ward_duration_rank_1")
+        add_mod(e_abilities.ward_of_dawn_super, "increase_ward_duration_rank_2")
+        add_mod(e_abilities.ward_of_dawn_super, "increase_ward_duration_rank_3")
+        add_mod(e_abilities.ward_of_dawn_super, "increase_ward_strength_rank_1")
+        add_mod(e_abilities.ward_of_dawn_super, "increase_overshield_duration_rank_1")
+        add_mod(e_abilities.ward_of_dawn_super, "increase_overshield_duration_rank_2")
+        add_mod(e_abilities.ward_of_dawn_super, "increase_overshield_duration_rank_3")
+
+
+
+        add_mod(e_abilities.golden_gun_super, "increased_duration_rank_1")
+        add_mod(e_abilities.golden_gun_super, "increased_duration_rank_2")
+        add_mod(e_abilities.golden_gun_super, "increased_duration_rank_3")
+        add_mod(e_abilities.golden_gun_super, "increase_recharge_rank_1")
+        add_mod(e_abilities.golden_gun_super, "increase_recharge_rank_2")
+        add_mod(e_abilities.golden_gun_super, "increase_recharge_rank_3")
+        add_mod(e_abilities.golden_gun_super, "over_penetration")
+        add_mod(e_abilities.golden_gun_super, "extra_golden_bullet")
+        add_mod(e_abilities.golden_gun_super, "enable_air_activation")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        add_mod(e_abilities.arc_blade_super, "enable_air_activation")
+
+
+
+        add_mod(e_abilities.nova_bomb_super, "spread_shot")
+
+        add_mod(e_abilities.nova_bomb_super, "enable_tracking")
+        add_mod(e_abilities.nova_bomb_super, "increased_impact_damage")
+        add_mod(e_abilities.nova_bomb_super, "increase_damage_rank_1")
+        add_mod(e_abilities.nova_bomb_super, "increase_damage_rank_2")
+        add_mod(e_abilities.nova_bomb_super, "increase_damage_rank_3")
+        add_mod(e_abilities.nova_bomb_super, "increase_splash_radius_rank_1")
+        add_mod(e_abilities.nova_bomb_super, "increase_splash_radius_rank_2")
+        add_mod(e_abilities.nova_bomb_super, "increase_splash_radius_rank_3")
+        add_mod(e_abilities.nova_bomb_super, "increase_recharge_rank_1")
+        add_mod(e_abilities.nova_bomb_super, "increase_recharge_rank_2")
+        add_mod(e_abilities.nova_bomb_super, "increase_recharge_rank_3")
+
+        add_mod(e_abilities.nova_bomb_super, "e3_fade_to_white")
+
+
+
+        add_mod(e_abilities.resto_radiance_super, "protect_aura_resurrect")
+        add_mod(e_abilities.resto_radiance_super, "assault_aura_resurrect")
+        add_mod(e_abilities.resto_radiance_super, "e3_no_resurrect")
+
+        add_mod(e_abilities.resto_radiance_super, "resurrection_shape_scalar")
+        add_mod(e_abilities.resto_radiance_super, "increase_recharge_rank_1")
+        add_mod(e_abilities.resto_radiance_super, "increase_recharge_rank_2")
+        add_mod(e_abilities.resto_radiance_super, "increase_recharge_rank_3")
+        add_mod(e_abilities.resto_radiance_super, "increased_duration_rank_1")
+
+
+
+
+
+
+        add_mod(e_abilities.sprint, "increased_duration")
+        add_mod(e_abilities.sprint, "increased_recharge")
+        add_mod(e_abilities.sprint, "increased_speed")
+        add_mod(e_abilities.sprint, "free_throw_grenade")
+        add_mod(e_abilities.sprint, "free_reload_weapon")
+        add_mod(e_abilities.sprint, "faster_acceleration")
+        add_mod(e_abilities.sprint, "better_turn_control")
+        add_mod(e_abilities.sprint, "crouch_slide_long")
+
+
+        add_mod(e_abilities.lift, "lift_control")
+        add_mod(e_abilities.lift, "lift_boost")
+
+        add_mod(e_abilities.double_jump, "high_jump")
+        add_mod(e_abilities.double_jump, "long_jump")
+        add_mod(e_abilities.double_jump, "strafe_jump")
+        add_mod(e_abilities.double_jump, "cadillac_jump")
+        add_mod(e_abilities.double_jump, "triple_jump")
+
+        add_mod(e_abilities.glide, "fast_glide")
+        add_mod(e_abilities.glide, "controlled_glide")
+        add_mod(e_abilities.glide, "catapult_glide")
+        add_mod(e_abilities.glide, "banking_glide")
+        add_mod(e_abilities.glide, "cadillac_glide")
+
+        add_mod(e_abilities.blink, "blink_farther")
+
+
+
+
+
+        add_mod(e_abilities.melee_guardian, "longer_lunge")
+        add_mod(e_abilities.melee_guardian, "recover_grenade")
+        add_mod(e_abilities.melee_guardian, "recover_super")
+        add_mod(e_abilities.melee_guardian, "enable_backstab")
+        add_mod(e_abilities.melee_guardian, "increased_backstab")
+        add_mod(e_abilities.melee_guardian, "gain_health")
+        add_mod(e_abilities.melee_guardian, "increased_knockback")
+        add_mod(e_abilities.melee_guardian, "silence")
+        add_mod(e_abilities.melee_guardian, "disorient")
+        add_mod(e_abilities.melee_guardian, "bleed")
+        add_mod(e_abilities.melee_guardian, "slow")
+        add_mod(e_abilities.melee_guardian, "burst")
+        add_mod(e_abilities.melee_guardian, "enable_precision")
+        add_mod(e_abilities.melee_guardian, "e3_mod")
+        add_mod(e_abilities.melee_guardian, "enable_shoulder_charge")
+
+        add_mod(e_abilities.melee_hunter, "longer_lunge")
+        add_mod(e_abilities.melee_hunter, "recover_grenade")
+        add_mod(e_abilities.melee_hunter, "recover_super")
+        add_mod(e_abilities.melee_hunter, "enable_backstab")
+        add_mod(e_abilities.melee_hunter, "increased_backstab")
+        add_mod(e_abilities.melee_hunter, "gain_health")
+        add_mod(e_abilities.melee_hunter, "increased_knockback")
+        add_mod(e_abilities.melee_hunter, "silence")
+        add_mod(e_abilities.melee_hunter, "disorient")
+        add_mod(e_abilities.melee_hunter, "bleed")
+        add_mod(e_abilities.melee_hunter, "slow")
+        add_mod(e_abilities.melee_hunter, "burst")
+        add_mod(e_abilities.melee_hunter, "enable_precision")
+        add_mod(e_abilities.melee_hunter, "knife_throw")
+        add_mod(e_abilities.melee_hunter, "knife_dot")
+        add_mod(e_abilities.melee_hunter, "knife_vanish")
+
+        add_mod(e_abilities.melee_warlock, "longer_lunge")
+        add_mod(e_abilities.melee_warlock, "recover_grenade")
+        add_mod(e_abilities.melee_warlock, "recover_super")
+        add_mod(e_abilities.melee_warlock, "enable_backstab")
+        add_mod(e_abilities.melee_warlock, "increased_backstab")
+        add_mod(e_abilities.melee_warlock, "gain_health")
+        add_mod(e_abilities.melee_warlock, "increased_knockback")
+        add_mod(e_abilities.melee_warlock, "silence")
+        add_mod(e_abilities.melee_warlock, "disorient")
+        add_mod(e_abilities.melee_warlock, "bleed")
+        add_mod(e_abilities.melee_warlock, "slow")
+
+        add_mod(e_abilities.melee_warlock, "enable_precision")
+        add_mod(e_abilities.melee_warlock, "scorch")
+        add_mod(e_abilities.melee_warlock, "push")
+
+        add_mod(e_abilities.melee_warlock, "e3_mod")
+        add_mod(e_abilities.melee_warlock, "e3_push")
+
+
+
+
+
+        set_name = set_character_perk_name
+        set_name(e_character_perks.ammo_drop_for_allies_on_kill, "Ammo Drop for Allies on Kill (Chance)")
+        set_name(e_character_perks.player_super_gain_on_kill, "Super Gain on Kill")
+        set_name(e_character_perks.player_super_gain_on_assist, "Super Gain on Assit")
+        set_name(e_character_perks.player_super_gain_on_kill_combatant, "Super Gain on Combatant Kill")
+        set_name(e_character_perks.player_super_gain_on_capture, "Super Gain on PvP Capture")
+        set_name(e_character_perks.player_refill_clip_on_melee_kill, "Refill Clip on Melee Kill")
+        set_name(e_character_perks.player_aoe_overshield_on_kill, "AoE Overshield on Kill (Chance)")
+        set_name(e_character_perks.player_aoe_primary_boost_on_kill, "AoE Primary Boost on Kill (Chance)")
+        set_name(e_character_perks.sprint_damage_reduction, "Sprint Damage Reduction")
+        set_name(e_character_perks.player_unstoppable, "Unstoppable")
+        set_name(e_character_perks.player_shadow_sprint_extend, "Shadow Sprint Extend")
+        set_name(e_character_perks.player_golden_gun_extend, "Golden Gun Extend")
+        set_name(e_character_perks.player_axion_refresh, "Axion Refresh")
+        set_name(e_character_perks.player_precision_kill_bonus, "AoE Damage on Kill (Chance)")
+        set_name(e_character_perks.player_faster_ally_revive, "Faster Ally Revive")
+
+
+
+
+        set_name = self.set_weapon_perk_name
+        set_name(e_weapon_perks.weapon_ammo_more_minimum_respawn_mags, "Ammo: More Minimum Mags On Respawn")
+        set_name(e_weapon_perks.weapon_analog_trigger, "Analog Trigger")
+        set_name(e_weapon_perks.weapon_armor_piercing_rounds, "Armor Piercing Rounds")
+        set_name(e_weapon_perks.weapon_bug_out_bag, "Bug Out Bag")
+        set_name(e_weapon_perks.weapon_clown_cartridge, "Clown Cartridge")
+        set_name(e_weapon_perks.weapon_counterbalance, "Counterbalance")
+        set_name(e_weapon_perks.weapon_crowd_control, "Crowd Control")
+        set_name(e_weapon_perks.weapon_damage_type_arc, "Damage Type: Arc")
+        set_name(e_weapon_perks.weapon_damage_type_kinetic, "Damage Type: Kinetic")
+        set_name(e_weapon_perks.weapon_damage_type_raid, "Damage Type: Raid")
+        set_name(e_weapon_perks.weapon_damage_type_thermal, "Damage Type: Thermal")
+        set_name(e_weapon_perks.weapon_damage_type_void, "Damage Type: Void")
+        set_name(e_weapon_perks.weapon_direct_deposit, "Direct Deposit")
+        set_name(e_weapon_perks.weapon_expert_marksman, "Expert Marksman")
+        set_name(e_weapon_perks.weapon_full_auto, "Fire Mode: Full Auto")
+        set_name(e_weapon_perks.weapon_focus_fire, "Focus Fire")
+        set_name(e_weapon_perks.weapon_from_the_hip, "From the Hip")
+        set_name(e_weapon_perks.weapon_full_auto_shotty, "Full Auto Shotty")
+        set_name(e_weapon_perks.weapon_glass_half_full, "Glass Half Full")
+        set_name(e_weapon_perks.weapon_grenades_horseshoes_rockets, "Grenades_Horseshoes_and_Rockets")
+        set_name(e_weapon_perks.weapon_hair_trigger, "Hair Trigger")
+        set_name(e_weapon_perks.weapon_handling_faster_ads, "Handling: Faster Aiming Down Sights")
+        set_name(e_weapon_perks.weapon_handling_faster_ads_move, "Handling: Faster Movement While in ADS")
+        set_name(e_weapon_perks.weapon_handling_faster_ready, "Handling: Faster Weapon Ready")
+        set_name(e_weapon_perks.weapon_hat_trick, "Hat Trick")
+        set_name(e_weapon_perks.weapon_high_caliber_rounds, "High Caliber Rounds")
+        set_name(e_weapon_perks.weapon_if_all_else_fails, "If All Else Fails...")
+        set_name(e_weapon_perks.weapon_just_a_scratch, "Just a Scratch")
+        set_name(e_weapon_perks.weapon_killer_efficiency, "Killer Efficiency")
+        set_name(e_weapon_perks.weapon_lightweight, "Lightweight")
+        set_name(e_weapon_perks.weapon_luck_in_the_chamber, "Luck In The Chamber")
+        set_name(e_weapon_perks.weapon_marksman, "Marksman")
+        set_name(e_weapon_perks.weapon_metal_detector, "Metal Detector")
+        set_name(e_weapon_perks.weapon_metal_detector_full, "Metal Detector Full")
+        set_name(e_weapon_perks.weapon_metal_detector_heavy, "Metal Detector Heavy")
+        set_name(e_weapon_perks.weapon_metal_detector_primary, "Metal Detector Primary")
+        set_name(e_weapon_perks.weapon_metal_detector_special, "Metal Detector Special")
+        set_name(e_weapon_perks.weapon_mirv_mini, "MIRV Mini")
+        set_name(e_weapon_perks.weapon_mulligan, "Mulligan")
+        set_name(e_weapon_perks.weapon_overdrive, "Overdrive")
+        set_name(e_weapon_perks.weapon_pack_mule, "Pack Mule")
+        set_name(e_weapon_perks.weapon_performance_bonus_auto_rifle, "Performance Bonus Auto Rifle")
+        set_name(e_weapon_perks.weapon_performance_bonus_pulse_rifle, "Performance Bonus Pulse Rifle")
+        set_name(e_weapon_perks.weapon_performance_bonus_scout_rifle, "Performance Bonus Scout Rifle")
+        set_name(e_weapon_perks.weapon_performance_bonus_fusion_rifle, "Performance Bonus Fusion Rifle")
+        set_name(e_weapon_perks.weapon_performance_bonus_hand_cannon, "Performance Bonus Hand Cannon")
+        set_name(e_weapon_perks.weapon_performance_bonus_shotgun, "Performance Bonus Shotgun")
+        set_name(e_weapon_perks.weapon_performance_bonus_machinegun, "Performance Bonus Machinegun")
+        set_name(e_weapon_perks.weapon_performance_bonus_sniper_rifle, "Performance Bonus Sniper Rifle")
+        set_name(e_weapon_perks.weapon_reach, "R E A C H")
+        set_name(e_weapon_perks.weapon_reactive_reload, "Reactive Reload")
+        set_name(e_weapon_perks.weapon_recoil_lower_final_error, "Recoil: Lower Final Error")
+        set_name(e_weapon_perks.weapon_recoil_lower_max_recoil_angle, "Recoil: Lower Max Recoil Angle")
+        set_name(e_weapon_perks.weapon_reload_faster_reload_empty, "Reload: Faster Reload Empty")
+        set_name(e_weapon_perks.weapon_return_to_sender, "Return To Sender")
+        set_name(e_weapon_perks.weapon_surplus, "Surplus")
+        set_name(e_weapon_perks.weapon_sustained_fire, "Sustained Fired")
+        set_name(e_weapon_perks.weapon_take_a_knee, "Take a Knee")
+        set_name(e_weapon_perks.weapon_the_old_one_two, "The Old One, Two... Three, Four, Five")
+        set_name(e_weapon_perks.weapon_three_is_the_deadliest_number, "Three Is The Deadliest Number")
+        set_name(e_weapon_perks.weapon_thump_rounds, "Thump Rounds")
+        set_name(e_weapon_perks.weapon_tracking, "Lock-On Tracking")
+        set_name(e_weapon_perks.weapon_wasteful, "Wasteful")
+        set_name(e_weapon_perks.weapon_zen_moment, "Zen Moment")
+
+
+
+
+        set_name = self.set_armor_perk_name
+        set_name(e_armor_perks.armor_shoot_to_loot, "Shoot to Loot")
+        set_name(e_armor_perks.armor_ammo_capacity_all_weapons, "armor_ammo_capacity_all_weapons")
+        set_name(e_armor_perks.armor_ammo_capacity_all_primaries, "armor_ammo_capacity_all_primaries")
+        set_name(e_armor_perks.armor_ammo_capacity_all_specials, "armor_ammo_capacity_all_specials")
+        set_name(e_armor_perks.armor_ammo_capacity_all_heavies, "armor_ammo_capacity_all_heavies")
+        set_name(e_armor_perks.armor_ammo_capacity_auto_rifles, "armor_ammo_capacity_auto_rifles")
+        set_name(e_armor_perks.armor_ammo_capacity_pulse_rifles, "armor_ammo_capacity_pulse_rifles")
+        set_name(e_armor_perks.armor_ammo_capacity_scout_rifles, "armor_ammo_capacity_scout_rifles")
+        set_name(e_armor_perks.armor_ammo_capacity_shotguns, "armor_ammo_capacity_shotguns")
+        set_name(e_armor_perks.armor_ammo_capacity_hand_cannons, "armor_ammo_capacity_hand_cannons")
+        set_name(e_armor_perks.armor_ammo_capacity_smgs, "armor_ammo_capacity_smgs")
+        set_name(e_armor_perks.armor_ammo_capacity_sniper_rifles, "armor_ammo_capacity_sniper_rifles")
+        set_name(e_armor_perks.armor_ammo_capacity_hmgs, "armor_ammo_capacity_hmgs")
+        set_name(e_armor_perks.armor_ammo_capacity_laser_blasters, "armor_ammo_capacity_laser_blasters")
+        set_name(e_armor_perks.armor_ammo_capacity_rocket_launchers, "armor_ammo_capacity_rocket_launchers")
+        set_name(e_armor_perks.armor_ready_speed_all_weapons, "armor_ready_speed_all_weapons")
+        set_name(e_armor_perks.armor_ready_speed_all_primaries, "armor_ready_speed_all_primaries")
+        set_name(e_armor_perks.armor_ready_speed_all_specials, "armor_ready_speed_all_specials")
+        set_name(e_armor_perks.armor_ready_speed_all_heavies, "armor_ready_speed_all_heavies")
+        set_name(e_armor_perks.armor_ready_speed_auto_rifles, "armor_ready_speed_auto_rifles")
+        set_name(e_armor_perks.armor_ready_speed_pulse_rifles, "armor_ready_speed_pulse_rifles")
+        set_name(e_armor_perks.armor_ready_speed_scout_rifles, "armor_ready_speed_scout_rifles")
+        set_name(e_armor_perks.armor_ready_speed_shotguns, "armor_ready_speed_shotguns")
+        set_name(e_armor_perks.armor_ready_speed_hand_cannons, "armor_ready_speed_hand_cannons")
+        set_name(e_armor_perks.armor_ready_speed_smgs, "armor_ready_speed_smgs")
+        set_name(e_armor_perks.armor_ready_speed_sniper_rifles, "armor_ready_speed_sniper_rifles")
+        set_name(e_armor_perks.armor_ready_speed_hmgs, "armor_ready_speed_hmgs")
+        set_name(e_armor_perks.armor_ready_speed_laser_blasters, "armor_ready_speed_laser_blasters")
+        set_name(e_armor_perks.armor_ready_speed_rocket_launchers, "armor_ready_speed_rocket_launchers")
+        set_name(e_armor_perks.armor_reload_speed_all_weapons, "armor_reload_speed_all_weapons")
+        set_name(e_armor_perks.armor_reload_speed_all_primaries, "armor_reload_speed_all_primaries")
+        set_name(e_armor_perks.armor_reload_speed_all_specials, "armor_reload_speed_all_specials")
+        set_name(e_armor_perks.armor_reload_speed_all_heavies, "armor_reload_speed_all_heavies")
+        set_name(e_armor_perks.armor_reload_speed_auto_rifles, "armor_reload_speed_auto_rifles")
+        set_name(e_armor_perks.armor_reload_speed_pulse_rifles, "armor_reload_speed_pulse_rifles")
+        set_name(e_armor_perks.armor_reload_speed_scout_rifles, "armor_reload_speed_scout_rifles")
+        set_name(e_armor_perks.armor_reload_speed_shotguns, "armor_reload_speed_shotguns")
+        set_name(e_armor_perks.armor_reload_speed_hand_cannons, "armor_reload_speed_hand_cannons")
+        set_name(e_armor_perks.armor_reload_speed_smgs, "armor_reload_speed_smgs")
+        set_name(e_armor_perks.armor_reload_speed_sniper_rifles, "armor_reload_speed_sniper_rifles")
+        set_name(e_armor_perks.armor_reload_speed_hmgs, "armor_reload_speed_hmgs")
+        set_name(e_armor_perks.armor_reload_speed_laser_blasters, "armor_reload_speed_laser_blasters")
+        set_name(e_armor_perks.armor_reload_speed_rocket_launchers, "armor_reload_speed_rocket_launchers")
+        set_name(e_armor_perks.armor_zoom_speed_all_weapons, "armor_zoom_speed_all_weapons")
+        set_name(e_armor_perks.armor_zoom_speed_all_primaries, "armor_zoom_speed_all_primaries")
+        set_name(e_armor_perks.armor_zoom_speed_all_specials, "armor_zoom_speed_all_specials")
+        set_name(e_armor_perks.armor_zoom_speed_all_heavies, "armor_zoom_speed_all_heavies")
+        set_name(e_armor_perks.armor_zoom_speed_auto_rifles, "armor_zoom_speed_auto_rifles")
+        set_name(e_armor_perks.armor_zoom_speed_pulse_rifles, "armor_zoom_speed_pulse_rifles")
+        set_name(e_armor_perks.armor_zoom_speed_scout_rifles, "armor_zoom_speed_scout_rifles")
+        set_name(e_armor_perks.armor_zoom_speed_shotguns, "armor_zoom_speed_shotguns")
+        set_name(e_armor_perks.armor_zoom_speed_hand_cannons, "armor_zoom_speed_hand_cannons")
+        set_name(e_armor_perks.armor_zoom_speed_smgs, "armor_zoom_speed_smgs")
+        set_name(e_armor_perks.armor_zoom_speed_sniper_rifles, "armor_zoom_speed_sniper_rifles")
+        set_name(e_armor_perks.armor_zoom_speed_hmgs, "armor_zoom_speed_hmgs")
+        set_name(e_armor_perks.armor_zoom_speed_laser_blasters, "armor_zoom_speed_laser_blasters")
+        set_name(e_armor_perks.armor_zoom_speed_rocket_launchers, "armor_zoom_speed_rocket_launchers")
+        set_name(e_armor_perks.armor_accuracy_all_weapons, "armor_accuracy_all_weapons")
+        set_name(e_armor_perks.armor_accuracy_all_primaries, "armor_accuracy_all_primaries")
+        set_name(e_armor_perks.armor_accuracy_all_specials, "armor_accuracy_all_specials")
+        set_name(e_armor_perks.armor_accuracy_all_heavies, "armor_accuracy_all_heavies")
+        set_name(e_armor_perks.armor_accuracy_auto_rifles, "armor_accuracy_auto_rifles")
+        set_name(e_armor_perks.armor_accuracy_pulse_rifles, "armor_accuracy_pulse_rifles")
+        set_name(e_armor_perks.armor_accuracy_scout_rifles, "armor_accuracy_scout_rifles")
+        set_name(e_armor_perks.armor_accuracy_shotguns, "armor_accuracy_shotguns")
+        set_name(e_armor_perks.armor_accuracy_hand_cannons, "armor_accuracy_hand_cannons")
+        set_name(e_armor_perks.armor_accuracy_smgs, "armor_accuracy_smgs")
+        set_name(e_armor_perks.armor_accuracy_sniper_rifles, "armor_accuracy_sniper_rifles")
+        set_name(e_armor_perks.armor_accuracy_hmgs, "armor_accuracy_hmgs")
+        set_name(e_armor_perks.armor_accuracy_laser_blasters, "armor_accuracy_laser_blasters")
+        set_name(e_armor_perks.armor_accuracy_rocket_launchers, "armor_accuracy_rocket_launchers")
+        set_name(e_armor_perks.armor_stability_all_weapons, "armor_stability_all_weapons")
+        set_name(e_armor_perks.armor_stability_all_primaries, "armor_stability_all_primaries")
+        set_name(e_armor_perks.armor_stability_all_specials, "armor_stability_all_specials")
+        set_name(e_armor_perks.armor_stability_all_heavies, "armor_stability_all_heavies")
+        set_name(e_armor_perks.armor_stability_auto_rifles, "armor_stability_auto_rifles")
+        set_name(e_armor_perks.armor_stability_pulse_rifles, "armor_stability_pulse_rifles")
+        set_name(e_armor_perks.armor_stability_scout_rifles, "armor_stability_scout_rifles")
+        set_name(e_armor_perks.armor_stability_shotguns, "armor_stability_shotguns")
+        set_name(e_armor_perks.armor_stability_hand_cannons, "armor_stability_hand_cannons")
+        set_name(e_armor_perks.armor_stability_smgs, "armor_stability_smgs")
+        set_name(e_armor_perks.armor_stability_sniper_rifles, "armor_stability_sniper_rifles")
+        set_name(e_armor_perks.armor_stability_hmgs, "armor_stability_hmgs")
+        set_name(e_armor_perks.armor_stability_laser_blasters, "armor_stability_laser_blasters")
+        set_name(e_armor_perks.armor_stability_rocket_launchers, "armor_stability_rocket_launchers")
+        return true
+
+# Decompiled from 36735.13.12.02.1953.alpha script tags
+# See tag 8210000E

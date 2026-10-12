@@ -1,0 +1,233 @@
+class weapon_utils : c_library:  # true name unknown
+    static real global_time_per_frame = 0.033333335
+    static int primary_weapon_id
+    static int special_weapon_id = 1
+    static int heavy_weapon_id = 2
+
+
+
+
+
+
+
+
+    static def copy_value(value):
+        return value
+
+    static def multiply_values(value1, value2):
+        return value1 * value2
+
+    static def divide_values(value1, value2):
+        return value1 / value2
+
+
+
+
+    static def get_duration_from_framecount(framecount):
+        return global_time_per_frame * framecount
+
+
+
+
+
+    static def set_channel_to_scale(channel_manager, channel_name, channel_scale):
+        channel_was_set = false
+        channel_index = -1
+
+        if channel_manager:
+            channel_index = channel_manager.find_import_channel(channel_name)
+
+        if channel_index != -1:
+            channel_manager.set_import_value(channel_index, vector4(channel_scale, channel_scale, channel_scale, channel_scale))
+            channel_was_set = true
+        else:
+            channel_was_set = false
+        return channel_was_set
+
+
+
+
+
+    static def get_frame_bound_rounds_per_second(rounds_per_second, shots_per_fire):
+
+
+        rate_of_fire = 1 / rounds_per_second
+
+        frames_per_fire = rate_of_fire / global_time_per_frame
+
+        rounds_fired_per_second = 1 / (mathlib.ceil(frames_per_fire) * global_time_per_frame)
+        if shots_per_fire > 1:
+            rounds_fired_per_second = rounds_fired_per_second * shots_per_fire
+
+        return rounds_fired_per_second
+
+
+
+
+
+    static def get_fire_recovery_time(burst_rate_of_fire, rounds_per_second, shots_per_fire):
+        fire_recovery_time = 1 / rounds_per_second
+
+        if shots_per_fire > 1 and burst_rate_of_fire > 0:
+            fire_recovery_time = fire_recovery_time - 1 / burst_rate_of_fire * shots_per_fire
+
+
+        return fire_recovery_time
+
+
+
+
+
+    static def get_soft_recovery_fraction(trigger_behavior, fire_recovery_time):
+        soft_recovery_fraction = 0
+        if trigger_behavior == e_trigger_behavior._weapon_trigger_behavior_latch:
+            soft_recovery_fraction = mathlib.pin(1 - fire_recovery_time, 0.05, 0.95)
+
+
+        return soft_recovery_fraction
+
+
+    static def get_spew_soft_recovery_fraction(fire_recovery_time):
+        return 0
+
+
+    static def get_latched_soft_recovery_fraction(fire_recovery_time):
+        return mathlib.pin(1 - fire_recovery_time, 0.05, 0.95)
+
+
+
+
+    static def get_zoomed_error_scale_high(ads_accuracy_scale, error_angle_low, error_angle_high):
+        return ads_accuracy_scale * (error_angle_low / error_angle_high)
+
+
+
+
+    static def get_accuracy_curve_offset(accuracy_scalar, rounds_per_second):
+        offset = accuracy_scalar / rounds_per_second
+        return mathlib.pin(offset, 0, 1)
+
+
+
+
+
+    static def get_error_per_recovery(error_deceleration_time, fire_recovery_time, shots_per_fire):
+        error_per_recovery = 0
+        if shots_per_fire > 1 and error_deceleration_time > 0:
+            error_per_recovery = fire_recovery_time / error_deceleration_time
+        return error_per_recovery
+
+
+
+
+
+    static def get_recoil_curve_offset(recoil_scalar, rounds_per_second):
+        offset = recoil_scalar / rounds_per_second
+        return mathlib.pin(offset, 0, 1)
+
+
+
+
+
+    static def get_recoil_per_recovery(recoil_scalar, recoil_deceleration_time, rounds_fired_per_second, fire_recovery_time, shots_per_fire):
+        recoil_offset = 0
+        recoil_per_recovery = 0
+        if shots_per_fire > 1:
+            recoil_offset = recoil_scalar / rounds_fired_per_second
+
+            recoil_per_recovery = fire_recovery_time / recoil_deceleration_time
+
+
+        return recoil_offset + recoil_per_recovery
+
+
+
+
+
+    static def get_scaled_impact_damage(highest_rounds_per_second, lowest_rounds_per_second, max_rof_impact_damage_scale, base_dps, rounds_per_second, shots_per_fire):
+
+
+        frame_bound_current_rps = weapon_utils.get_frame_bound_rounds_per_second(rounds_per_second, shots_per_fire)
+
+        base_rof_adjusted_damage = base_dps / frame_bound_current_rps
+
+        adjusted_high_rof = highest_rounds_per_second - lowest_rounds_per_second
+        adjusted_current_rof = frame_bound_current_rps - lowest_rounds_per_second
+
+        damage_per_fire = base_rof_adjusted_damage * (1 + (max_rof_impact_damage_scale - 1) * (adjusted_current_rof / adjusted_high_rof))
+
+
+
+
+
+        return damage_per_fire
+
+
+
+
+
+    static def get_scaled_shotgun_impact_damage(shotgun, base_dps, rounds_per_second, shots_per_fire, shot_count):
+
+        base_rof_adjusted_damage = weapon_utils.get_scaled_impact_damage(shotgun.highest_rounds_per_second, shotgun.lowest_rounds_per_second, shotgun.max_rof_impact_damage_scale, base_dps, rounds_per_second, shots_per_fire)
+
+        damage_per_pellet = base_rof_adjusted_damage / shot_count
+
+
+
+
+        return damage_per_pellet
+
+
+
+
+
+    static def get_rounds_reloaded(rate_of_fire_0, rate_of_fire_current, magazine_size, shots_per_fire):
+        rounds_reloaded = mathlib.round(rate_of_fire_current / rate_of_fire_0 * magazine_size)
+        if shots_per_fire > 1:
+            rounds_reloaded = rounds_reloaded * shots_per_fire
+
+        return rounds_reloaded
+
+
+
+
+
+    static def get_sustain_acquisition_rate(sustain_damage_acquire_time_scale, rounds_per_second, shots_per_fire, magazine_size):
+        frame_bound_rounds_per_second = get_frame_bound_rounds_per_second(rounds_per_second, shots_per_fire)
+        rounds_to_total_acquisition = sustain_damage_acquire_time_scale * frame_bound_rounds_per_second * magazine_size
+        sustain_acquisition_rate = 1 / rounds_to_total_acquisition
+        return sustain_acquisition_rate
+
+
+
+
+
+    static def get_sustain_grace_time(sustain_damage_grace_time_scale, magazine_size):
+        return sustain_damage_grace_time_scale * magazine_size
+
+
+
+
+
+    static def get_sustain_decay_time(sustain_damage_decay_time_scale, magazine_size):
+        return sustain_damage_decay_time_scale * magazine_size
+
+
+
+
+
+    static def get_movement_penality(zoom_amount, stat_scalar):
+        return (1 - 1 / zoom_amount) * stat_scalar
+class c_weapon_translation_base : c_weapon_stat_translator:  # true name unknown
+
+
+
+
+
+    def get_stat_index(weapon_sheet, stat):
+        result_level = weapon_sheet.investment_weapon_stats[stat].get_modified_value()
+        return mathlib.pin(result_level, 0, 6)
+
+# Decompiled from 36735.13.12.02.1953.alpha script tags
+# See tag 82100031 (weapon_utils)
+# See tag 82100030 (c_weapon_translation_base)

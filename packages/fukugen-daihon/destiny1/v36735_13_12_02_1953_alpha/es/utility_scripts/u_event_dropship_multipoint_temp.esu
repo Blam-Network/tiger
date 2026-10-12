@@ -1,0 +1,672 @@
+u_event_globals u_event_globals
+u_event_dropship_preset pf_event_dropship_preset
+dynamic_array<u_event_dropship_point_temp> pf_event_dropship_point
+c_squad_sensor_host sq_event_dropship_pilot
+c_squad_member_sensor_host sq_event_dropship_pilot__pilot  # true name unknown
+c_control_point_set_sensor_host cps_dropship_enter  # true name unknown
+c_control_point_set_sensor_host cps_dropship_exit  # true name unknown
+c_control_point_set_sensor_host cps_dropship_hover_path  # true name unknown
+bool b_dropship_hover
+bool b_drill_deployed
+c_squad_group_sensor_host sg_event_dropship  # true name unknown
+c_squad_group_sensor_host sg_event_dropship_total  # true name unknown
+int g_i_current_wave_count
+int g_i_dropship_location
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+def roll_dropship_initiate_timer():
+    for x in pick_random_count(1, 60):
+        return x
+    return 0
+
+def roll_dropship_event_timer():
+    for x in pick_random_count(1, 60.1):
+        return x
+    return 0
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+thread init:
+    sleep(30)
+    main.restart()
+
+
+
+
+
+
+
+
+
+thread main:
+
+
+
+
+    i_successful_waves = 0
+    b_player_has_engaged = false
+
+
+    obj_selected_point, obj_exit_selected_point, o_selected_beacon, o_fiction_object, d_fiction_device, cps_selected_dropship_entry, sq_selected_wave_a, sq_selected_wave_b, pt_selected_trigger, leader = pf_event_dropship_point[g_i_current_wave_count].get_all_data()
+
+
+    i_setup_timer, i_main_timer = func_dropship_multipoint_setup()
+
+
+    func_event_engagement_setup()
+
+
+    func_dropship_multipoint_event_start(i_setup_timer)
+
+    while not pf_event_dropship_preset.po_event_dropship_multipoint.timer_is_complete() and not b_player_has_engaged:
+        if u_event_globals.get_kil_squad_count() > 0 or pt_selected_trigger.is_triggered():
+            b_player_has_engaged = true
+
+            sc_seq_glimmer_start.restart()
+
+            rewards = 0
+
+
+            i_successful_waves = func_event_dropship_engaged(i_main_timer)
+
+            print("successful wave count #: " + g_i_current_wave_count)
+
+            if i_successful_waves > 0:
+
+                if i_successful_waves == len(pf_event_dropship_point):
+                    rewards = 3
+                    print("rewards = 3")
+                    sc_seq_glimmer_end_gold.restart()
+                    sc_seq_glimmer_stop_music1.restart()
+
+                elif i_successful_waves == len(pf_event_dropship_point) - 1:
+                    rewards = 2
+                    print("rewards = 2")
+                    sc_seq_glimmer_end_silver.restart()
+
+                elif i_successful_waves == len(pf_event_dropship_point) - 2:
+                    rewards = 1
+                    print("rewards = 1")
+                    sc_seq_glimmer_end_bronze.restart()
+
+                elif i_successful_waves <= len(pf_event_dropship_point) - 3:
+                    rewards = 0
+                    print("rewards = 0")
+                    sc_seq_glimmer_end_bronze.restart()
+
+                sleep(1)
+                pf_event_dropship_preset.po_event_dropship_multipoint.set_public_event_tier(rewards)
+                pf_event_dropship_preset.po_event_dropship_multipoint.set_complete()
+                sleep(2)
+            else:
+                sc_seq_glimmer_end_bronze.restart()
+                sc_delete_cover_success.restart()
+                pf_event_dropship_preset.po_event_dropship_multipoint.set_failed()
+                print("FAILED EVENT")
+
+
+        sleep(1)
+
+    if not b_player_has_engaged:
+        pf_event_dropship_preset.po_event_dropship_multipoint.set_failed()
+        pf_event_dropship_point[0].o_event_dropship_beacon_pt.delete_object()
+        sc_delete_cover_success.restart()
+
+    func_combatant_cleanup()
+    func_event_dropship_remove()
+    g_i_dropship_location = 0
+    g_i_current_wave_count = 0
+    print("cleanup!")
+
+
+
+
+
+
+def func_event_dropship_engaged(i_main_timer):
+
+
+
+
+    total_wave_count = len(pf_event_dropship_point)
+    first_wave_time = 90
+
+    pf_event_dropship_point[0].pt_event_dropship.reset()
+
+    successful_waves = 0
+
+
+    pf_event_dropship_preset.po_event_dropship_multipoint.timer_pause()
+    pf_event_dropship_preset.po_event_dropship_multipoint.progress_activate(1, len(pf_event_dropship_point))
+    pf_event_dropship_preset.po_event_dropship_multipoint.timer_activate(first_wave_time)
+    pf_event_dropship_preset.po_event_dropship_multipoint.timer_start()
+
+    while g_i_current_wave_count <= total_wave_count:
+
+
+        o_old_beacon = pf_event_dropship_point[g_i_current_wave_count].get_object()
+        o_old_device, d_old_device = pf_event_dropship_point[g_i_current_wave_count].get_device()
+
+
+        sleep_until(sg_event_dropship.alive_count() <= 0 or pf_event_dropship_preset.po_event_dropship_multipoint.timer_is_complete())
+
+
+        sleep(2)
+
+        o_old_beacon.delete_object()
+        d_fiction_device = pf_event_dropship_point[g_i_dropship_location].d_event_fiction_device
+
+        d_fiction_device.set_device_position(0.3)
+        o_old_device.delete_object()
+
+        if sg_event_dropship.alive_count() <= 0:
+            sc_delete_cover_success.restart()
+            successful_waves = successful_waves + 1
+            g_i_current_wave_count = g_i_current_wave_count + 1
+            pf_event_dropship_preset.po_event_dropship_multipoint.timer_pause()
+        else:
+            print("WAVE FAILED.")
+            print("EVENT FAILED.")
+            print("removing remaining AI...")
+            pf_event_dropship_preset.po_event_dropship_multipoint.timer_pause()
+            sc_seq_glimmer_stop_music1.restart()
+            sc_delete_cover_fail.restart()
+            return successful_waves
+
+        if g_i_current_wave_count == total_wave_count:
+            return successful_waves
+
+
+        pf_event_dropship_preset.po_event_dropship_multipoint.nav_point_clear()
+        pf_event_dropship_preset.po_event_dropship_multipoint.progress_update(g_i_current_wave_count + 1)
+        sleep(1)
+        pf_event_dropship_preset.po_event_dropship_multipoint.timer_activate(i_main_timer)
+
+
+
+
+        sc_seq_glimmer_wave_complete1.restart()
+
+
+        g_i_dropship_location = g_i_dropship_location + 1
+        sleep_until(sq_event_dropship_pilot.alive_count() < 1)
+        func_dropship_multipoint_move_to_location()
+        print("current wave: " + g_i_current_wave_count + " dropship: " + g_i_dropship_location)
+        print("Dropship moving")
+
+        func_dropship_multipoint_create_beacon()
+
+
+
+        pf_event_dropship_preset.po_event_dropship_multipoint.timer_start()
+
+        func_dropship_multipoint_drop_squad()
+
+    return successful_waves
+
+thread sc_delete_cover_success:
+
+    for i in range(len(pf_event_dropship_point[g_i_dropship_location].o_dropship_cov)):
+        pf_event_dropship_point[g_i_dropship_location].dev_dropship_cov[i].set_device_position(0.3)
+
+
+    for i in range(len(pf_event_dropship_point[g_i_dropship_location].o_dropship_cov)):
+        pf_event_dropship_point[g_i_dropship_location].o_dropship_cov[i].delete_object()
+
+thread sc_delete_cover_fail:
+
+    for i in range(len(pf_event_dropship_point[g_i_dropship_location].o_dropship_cov)):
+        pf_event_dropship_point[g_i_dropship_location].dev_dropship_cov[i].set_device_position(0.4)
+
+
+    for i in range(len(pf_event_dropship_point[g_i_dropship_location].o_dropship_cov)):
+        pf_event_dropship_point[g_i_dropship_location].o_dropship_cov[i].delete_object()
+
+
+
+
+
+
+
+thread func_enemy_navpoint_setup:
+
+    sq_selected_wave0_a_cell_1, sq_selected_wave0_a_cell_2, sq_selected_wave0_b_cell_1, sq_selected_wave0_b_cell_2, sq_selected_wave0_b_cell_3, sq_selected_wave0_leader_cell_1 = pf_event_dropship_point[g_i_dropship_location].get_cell_data()
+
+    sleep_until(pf_event_dropship_preset.po_event_dropship_multipoint.timer_get_current() <= 20 and sg_event_dropship.alive_count() <= 3 or pf_event_dropship_preset.po_event_dropship_multipoint.timer_is_complete())
+    if not pf_event_dropship_preset.po_event_dropship_multipoint.timer_is_complete():
+
+
+        pf_event_dropship_preset.po_event_dropship_multipoint.nav_point_clear()
+
+
+        pf_event_dropship_preset.po_event_dropship_multipoint.nav_point_activate(sq_selected_wave0_a_cell_1)
+        pf_event_dropship_preset.po_event_dropship_multipoint.nav_point_activate(sq_selected_wave0_a_cell_2)
+
+        pf_event_dropship_preset.po_event_dropship_multipoint.nav_point_activate(sq_selected_wave0_b_cell_1)
+        pf_event_dropship_preset.po_event_dropship_multipoint.nav_point_activate(sq_selected_wave0_b_cell_2)
+        pf_event_dropship_preset.po_event_dropship_multipoint.nav_point_activate(sq_selected_wave0_b_cell_3)
+
+        pf_event_dropship_preset.po_event_dropship_multipoint.nav_point_activate(sq_selected_wave0_leader_cell_1)
+
+
+
+
+
+
+
+
+
+
+
+
+    else:
+        print("dropship event has ended, not blipping enemies")
+
+
+
+
+
+
+def func_dropship_multipoint_setup():
+    print("---------------------------------------")
+    print("---Multipoint Event Variables---")
+    i_event_dropship_setup_timer = roll_dropship_initiate_timer()
+    i_event_dropship_main_timer = roll_dropship_event_timer()
+    print("picked initial timer at: " + i_event_dropship_setup_timer)
+    print("picked event timer at: " + i_event_dropship_main_timer)
+    print("---------------------------------------")
+
+    return i_event_dropship_setup_timer, i_event_dropship_main_timer
+
+
+
+
+
+def func_event_engagement_setup():
+    u_event_globals.bind_squad_engagement(pf_event_dropship_point[0].sq_event_dropship_wave0a, pf_event_dropship_preset.po_event_dropship_multipoint)
+    u_event_globals.bind_squad_engagement(pf_event_dropship_point[0].sq_event_dropship_wave0b, pf_event_dropship_preset.po_event_dropship_multipoint)
+    u_event_globals.bind_squad_engagement(pf_event_dropship_point[0].sq_event_dropship_wave0_leader, pf_event_dropship_preset.po_event_dropship_multipoint)
+    for i in range(len(pf_event_dropship_point)):
+        pf_event_dropship_point[i].pt_event_dropship.set_handler(pf_event_dropship_preset.po_event_dropship_multipoint.d_handle_engagement_incident)
+        pf_event_dropship_point[i].pt_event_dropship.disable()
+
+
+
+
+
+
+def func_dropship_multipoint_event_start(i_setup_timer):
+
+
+    if not sq_event_dropship_pilot__pilot.is_bound():
+        sq_event_dropship_pilot__pilot.place()
+
+
+
+
+
+
+
+    func_dropship_multipoint_move_to_location()
+
+
+
+    pf_event_dropship_preset.po_event_dropship_multipoint.set_incoming()
+
+    sleep(2)
+
+
+    pf_event_dropship_preset.po_event_dropship_multipoint.timer_activate(i_setup_timer)
+    pf_event_dropship_preset.po_event_dropship_multipoint.timer_start()
+
+    func_dropship_multipoint_drop_squad()
+
+
+
+    func_enemy_navpoint_setup.restart()
+
+
+
+
+
+
+
+def func_dropship_multipoint_move_to_location():
+
+    sc_seq_glimmer_engage1.restart()
+
+
+
+
+
+
+
+
+
+
+
+
+
+    if not sq_event_dropship_pilot__pilot.is_bound():
+        sq_event_dropship_pilot__pilot.place()
+
+    sq_event_dropship_pilot__pilot.place()
+
+    sleep_until(sq_event_dropship_pilot__pilot.get_command_script_state() != e_command_script_state.executing)
+    sq_event_dropship_pilot__pilot.execute(pf_event_dropship_point[g_i_dropship_location].cps_dropship_point_enter); sleep_until(sq_event_dropship_pilot__pilot.get_command_script_state() != e_command_script_state.executing, 0.2)
+    print("point set entrance")
+    sq_event_dropship_pilot__pilot.execute(pf_event_dropship_point[g_i_dropship_location].cps_event_dropship_to_pt); sleep_until(sq_event_dropship_pilot__pilot.get_command_script_state() != e_command_script_state.executing)
+
+    if g_i_dropship_location == 0:
+        pf_event_dropship_preset.pt_drill_pre_engage.disable()
+        func_dropship_multipoint_create_beacon()
+        b_drill_deployed = true
+    else:
+        pf_event_dropship_point[g_i_dropship_location - 1].pt_event_dropship.disable()
+
+    pf_event_dropship_point[g_i_dropship_location].pt_event_dropship.reset()
+
+
+
+
+
+
+def func_dropship_multipoint_create_beacon():
+    o_selected_beacon = pf_event_dropship_point[g_i_dropship_location].o_event_dropship_beacon_pt
+    o_selected_beacon.create()
+
+    o_fiction_device = pf_event_dropship_point[g_i_dropship_location].o_event_fiction_device_temp
+    o_fiction_device.create()
+    d_fiction_device = pf_event_dropship_point[g_i_dropship_location].d_event_fiction_device
+    d_fiction_device.set_device_position(0)
+
+    sleep(5)
+
+    for i in range(len(pf_event_dropship_point[g_i_dropship_location].o_dropship_cov)):
+        pf_event_dropship_point[g_i_dropship_location].o_dropship_cov[i].create()
+
+    for i in range(len(pf_event_dropship_point[g_i_dropship_location].dev_dropship_cov)):
+        pf_event_dropship_point[g_i_dropship_location].dev_dropship_cov[i].set_device_position(0)
+
+    pf_event_dropship_preset.po_event_dropship_multipoint.nav_point_clear()
+    pf_event_dropship_preset.po_event_dropship_multipoint.nav_point_activate(o_selected_beacon)
+
+
+
+
+
+
+def func_dropship_multipoint_drop_squad():
+
+
+    obj_selected_point, obj_exit_selected_point, o_selected_beacon, o_fiction_object, d_fiction_device, cps_selected_dropship_entry, sq_selected_wave_a, sq_selected_wave_b, pt_selected_trigger, leader = pf_event_dropship_point[g_i_current_wave_count].get_all_data()
+
+
+    obj_selected_point.add_squad(sq_selected_wave_a)
+    obj_selected_point.add_squad(sq_selected_wave_b)
+    obj_selected_point.add_squad(leader)
+    sg_event_dropship.add_child(sq_selected_wave_a)
+    sg_event_dropship.add_child(sq_selected_wave_b)
+    sg_event_dropship.add_child(leader)
+
+    sq_event_dropship_pilot__pilot.execute(cs_dropship_open_doors()); sleep_until(sq_event_dropship_pilot__pilot.get_command_script_state() != e_command_script_state.executing)
+
+    sq_event_dropship_pilot__pilot.drop_squad(sq_selected_wave_a); sleep_until(not sq_event_dropship_pilot__pilot.is_dropping())
+    sc_spawn_dropship_squads.restart()
+
+
+    pf_event_dropship_preset.po_event_dropship_multipoint.set_active()
+
+thread sc_spawn_dropship_squads:
+
+    obj_selected_point, obj_exit_selected_point, o_selected_beacon, o_fiction_object, d_fiction_device, cps_selected_dropship_entry, sq_selected_wave_a, sq_selected_wave_b, pt_selected_trigger, leader = pf_event_dropship_point[g_i_current_wave_count].get_all_data()
+
+    sleep(1)
+
+    sleep_until(sq_event_dropship_pilot__pilot.get_command_script_state() != e_command_script_state.executing and not sq_event_dropship_pilot__pilot.is_dropping())
+
+
+    sq_event_dropship_pilot__pilot.drop_squad(sq_selected_wave_b); sleep_until(not sq_event_dropship_pilot__pilot.is_dropping())
+    sq_event_dropship_pilot__pilot.drop_squad(leader); sleep_until(not sq_event_dropship_pilot__pilot.is_dropping())
+
+    sleep(1)
+    sq_event_dropship_pilot__pilot.execute(cs_dropship_close_doors()); sleep_until(sq_event_dropship_pilot__pilot.get_command_script_state() != e_command_script_state.executing)
+
+
+
+
+
+
+
+
+    sleep_until(sq_event_dropship_pilot__pilot.get_command_script_state() != e_command_script_state.executing and not sq_event_dropship_pilot__pilot.is_dropping())
+    sq_event_dropship_pilot__pilot.execute(pf_event_dropship_point[g_i_dropship_location].cps_dropship_point_exit); sleep_until(sq_event_dropship_pilot__pilot.get_command_script_state() != e_command_script_state.executing, 0.2)
+    print("point set fly away")
+    sq_event_dropship_pilot.remove()
+
+
+    func_enemy_navpoint_setup.restart()
+
+
+
+
+
+
+
+
+def func_event_dropship_remove():
+
+    pf_event_dropship_preset.po_event_dropship_multipoint.clear()
+    pf_event_dropship_preset.po_event_dropship_multipoint.timer_clear()
+    pf_event_dropship_preset.po_event_dropship_multipoint.progress_clear()
+
+    for i in range(len(pf_event_dropship_point)):
+        pf_event_dropship_point[i].pt_event_dropship.disable()
+
+
+
+
+
+
+
+
+
+    sq_event_dropship_pilot__pilot.execute(cs_dropship_close_doors()); sleep_until(sq_event_dropship_pilot__pilot.get_command_script_state() != e_command_script_state.executing)
+
+    sq_event_dropship_pilot__pilot.execute(cps_dropship_exit); sleep_until(sq_event_dropship_pilot__pilot.get_command_script_state() != e_command_script_state.executing, 0.2)
+
+    sq_event_dropship_pilot.remove()
+
+def func_combatant_cleanup():
+
+    sg_event_dropship.activate_temperament("temper_despawn")
+    sleep(4)
+    sg_event_dropship.deactivate_temperament("temper_despawn")
+    sg_event_dropship.remove()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+thread func_dropship_hover:
+
+    while b_dropship_hover == true:
+        sq_event_dropship_pilot__pilot.execute(cps_dropship_hover_path); sleep_until(sq_event_dropship_pilot__pilot.get_command_script_state() != e_command_script_state.executing)
+
+
+
+
+
+
+
+thread complete:
+
+    func_event_dropship_remove()
+    print("complete cleanup")
+
+
+
+
+
+
+
+
+command_script cs_dropship_follow_path_entry(path):
+    snap_to(path, 0)
+
+
+    ability("dropship", "enter_25")
+
+
+    ability("dropship", "enter_1")
+
+    follow_path(path)
+
+command_script cs_dropship_follow_path(path):
+    follow_path(path)
+
+command_script cs_dropship_follow_path_exit(path):
+    follow_path(path)
+
+
+    ability("dropship", "exit_25")
+
+
+    ability("dropship", "exit_1")
+
+    sleep(1)
+
+command_script cs_dropship_open_doors():
+    set_channel_scalar("doors", 1)
+
+command_script cs_dropship_close_doors():
+    set_channel_scalar("doors", 0)
+
+
+
+
+
+
+thread sc_seq_glimmer_start:
+    pf_event_dropship_preset.seq_glimmer_start.start()
+    sleep(1)
+    sc_seq_glimmer_music1.restart()
+
+
+
+thread sc_seq_glimmer_engage1:
+    sleep_until(pf_event_dropship_preset.pt_drill_pre_engage.is_triggered() or b_drill_deployed == true)
+    if b_drill_deployed == false:
+        pf_event_dropship_preset.seq_glimmer_engage1.start()
+
+
+
+thread sc_seq_glimmer_engage2:
+    pf_event_dropship_preset.seq_glimmer_engage2.start()
+
+
+
+thread sc_seq_glimmer_end_gold:
+    pf_event_dropship_preset.seq_glimmer_end_gold.start()
+
+
+
+thread sc_seq_glimmer_wave_complete1:
+    pf_event_dropship_preset.seq_glimmer_wave_complete1.start()
+
+
+
+thread sc_seq_glimmer_wave_complete2:
+    sleep(1)
+    pf_event_dropship_preset.seq_glimmer_wave_complete2.start()
+
+
+
+thread sc_seq_glimmer_end_bronze:
+    sleep(1)
+    pf_event_dropship_preset.seq_glimmer_end_bronze.start()
+
+
+
+thread sc_seq_glimmer_end_silver:
+    sleep(1)
+    pf_event_dropship_preset.seq_glimmer_end_silver.start()
+
+
+
+thread sc_seq_glimmer_music1:
+    pf_event_dropship_preset.seq_glimmer_music1.start()
+
+
+thread sc_seq_glimmer_stop_music1:
+    pf_event_dropship_preset.seq_glimmer_music1.stop()
+
+
+thread sc_seq_glimmer_incoming:
+    pf_event_dropship_preset.seq_glimmer_incoming.start()
+
+# Decompiled from 36735.13.12.02.1953.alpha script tags
+# See tag 821B802D

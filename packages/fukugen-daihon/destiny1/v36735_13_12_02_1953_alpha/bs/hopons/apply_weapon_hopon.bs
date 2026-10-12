@@ -1,0 +1,35 @@
+class c_apply_weapon_hop_on : c_component:  # true name unknown
+    c_hop_on_pattern hop_on_pattern  # true name unknown
+    static int weapon_slot
+    implements i_finalize finalize_interface  # true name unknown
+    c_interface_reference inventory  # true name unknown
+
+
+
+
+
+
+
+
+
+
+
+
+    def finalize_interface.finalize():
+        inventory = get_object().find_interface(i_inventory)
+        apply_weapon_hopon()
+
+    def dispose():
+        hop_on_pattern.delete_hop_on()
+
+    def apply_weapon_hopon():
+        if inventory:
+            item = inventory.get_item(weapon_slot)
+            if item:
+                weapon_content = item.find_interface(i_weapon_content)
+
+                if weapon_content:
+                    hop_on_pattern.create_hop_on_on_target(item)
+
+# Decompiled from 36735.13.12.02.1953.alpha script tags
+# See tag 82100007

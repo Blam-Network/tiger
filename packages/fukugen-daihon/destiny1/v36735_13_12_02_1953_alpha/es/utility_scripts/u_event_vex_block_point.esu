@@ -1,0 +1,21 @@
+c_squad_sensor_host sq_vex_cloud
+c_squad_member_sensor_host sq_vex_cloud__pilot  # true name unknown
+bool in_use
+c_objective_sensor_host obj_vex_target  # true name unknown
+
+
+
+
+
+
+def get_pilot():
+
+    generated_pilot = get_combatant()
+
+    return generated_pilot
+
+def get_combatant():
+    return sq_vex_cloud__pilot
+
+# Decompiled from 36735.13.12.02.1953.alpha script tags
+# See tag 821B804E

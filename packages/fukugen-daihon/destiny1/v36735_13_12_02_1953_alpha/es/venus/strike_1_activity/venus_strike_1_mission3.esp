@@ -1,0 +1,229 @@
+u_globals utils
+c_squad_sensor_host warpstorm01
+c_squad_member_sensor_host warpstorm01__storm  # true name unknown
+c_squad_sensor_host warpstorm02
+c_squad_member_sensor_host warpstorm02__storm  # true name unknown
+c_squad_sensor_host warpstorm03
+c_squad_member_sensor_host warpstorm03__storm  # true name unknown
+c_squad_sensor_host sq_boss
+c_squad_member_sensor_host sq_boss__ultra_hydra  # true name unknown
+c_health_sensor_host hydra_health  # true name unknown
+c_squad_sensor_host sq_strike_template
+c_squad_sensor_host sq_strike01_4
+c_squad_sensor_host sq_strike01_6
+c_squad_sensor_host sq_strike01_8
+c_squad_sensor_host sq_strike02_4
+c_squad_sensor_host sq_strike02_6
+c_squad_sensor_host sq_strike02_8
+c_squad_sensor_host sq_strike03_4
+c_squad_sensor_host sq_strike03_6
+c_squad_sensor_host sq_strike03_8
+c_squad_sensor_host sq_boss_guard01
+c_squad_sensor_host sq_boss_guard02
+c_squad_sensor_host sq_boss_guard03
+c_squad_sensor_host sq_boss_guard04
+c_squad_sensor_host sq_boss_guard05
+c_squad_sensor_host sq_boss_guard06
+c_squad_group_sensor_host sgq_strike_guards  # true name unknown
+c_squad_group_sensor_host sgq_strike_minions  # true name unknown
+c_object_sensor_host pvp_heavy_cache_respawn_1
+c_object_sensor_host pvp_heavy_cache_respawn_2
+c_object_sensor_host pvp_heavy_cache_respawn_3
+c_objective_sensor_host obj_ruins_strike  # true name unknown
+c_trigger_volume_slot_host tv_2_vol
+c_trigger_volume_slot_host tv_1_vol
+c_trigger_volume_slot_host tv_3_vol
+c_trigger_volume_slot_host tv_start_boss
+c_player_monitor_sensor_host pm_2_vol bind(tv_2_vol)  # true name unknown
+c_player_monitor_sensor_host pm_1_vol bind(tv_1_vol)  # true name unknown
+c_player_monitor_sensor_host pm_3_vol bind(tv_3_vol)  # true name unknown
+c_player_trigger_sensor_host pt_start_boss bind(tv_start_boss)  # true name unknown
+c_sequence_host md_s1_m3_d020  # true name unknown
+c_sequence_host md_s1_m3_d030  # true name unknown
+c_sequence_host md_s1_m3_d040  # true name unknown
+int g_spawn_direction
+int g_wave_num
+kill_squad_objective kill_squad_ruins bind("strike_kill_boss", 1)
+dialog_trigger md_s1_m3_d010_trigger
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+thread init:
+    sc_heavy_ammo_recycle.wake()
+
+thread complete:
+    c_lifetime_script_utilities.get_lifetime_sensor().end_game()
+
+thread main:
+    sgq_strike_minions.add_child(sq_strike01_4)
+    sgq_strike_minions.add_child(sq_strike01_6)
+    sgq_strike_minions.add_child(sq_strike01_8)
+    sgq_strike_minions.add_child(sq_strike02_4)
+    sgq_strike_minions.add_child(sq_strike02_6)
+    sgq_strike_minions.add_child(sq_strike02_8)
+    sgq_strike_minions.add_child(sq_strike03_4)
+    sgq_strike_minions.add_child(sq_strike03_6)
+    sgq_strike_minions.add_child(sq_strike03_8)
+    sgq_strike_guards.add_child(sq_boss_guard01)
+    sgq_strike_guards.add_child(sq_boss_guard02)
+    sgq_strike_guards.add_child(sq_boss_guard03)
+    sgq_strike_guards.add_child(sq_boss_guard04)
+    sgq_strike_guards.add_child(sq_boss_guard05)
+    sgq_strike_guards.add_child(sq_boss_guard06)
+    hydra_health.bind_combatant(sq_boss__ultra_hydra)
+    print("Vex Ruins Strike")
+    md_s1_m3_d010_trigger.enable()
+    sc_mission_logic.wake()
+    sleep_until(md_s1_m3_d010_trigger._dialog_sequence.is_done())
+    kill_squad_ruins.objective_begin_immediate()
+    sleep_until(kill_squad_ruins.is_complete())
+    sgq_strike_minions.remove()
+    venus_s1_m03_d40.wake()
+    sleep_until(md_s1_m3_d040.is_done())
+    kill_squad_ruins.objective_end()
+    sleep(3)
+
+thread sc_heavy_ammo_recycle:
+    while true:
+        pvp_heavy_cache_respawn_1.create()
+        pvp_heavy_cache_respawn_2.create()
+        pvp_heavy_cache_respawn_3.create()
+        sleep(30)
+        pvp_heavy_cache_respawn_1.delete_object()
+        pvp_heavy_cache_respawn_2.delete_object()
+        pvp_heavy_cache_respawn_3.delete_object()
+
+
+thread sc_mission_logic:
+
+    print("place guards")
+    sq_boss_guard01.place()
+    sq_boss_guard02.place()
+    sq_boss_guard03.place()
+    sq_boss_guard04.place()
+    sq_boss_guard05.place()
+    sq_boss_guard06.place()
+    sleep_until(sgq_strike_guards.alive_count() > 5)
+    sleep_until(sgq_strike_guards.alive_count() < 5)
+    sleep_until_timeout(sgq_strike_guards.alive_count() < 1, 120)
+    sq_boss.place()
+    sleep(1)
+    sleep_until(hydra_health.is_ready(), 0.5)
+    print("start encounter")
+    sleep_until(hydra_health.get_health_fraction() < 0.75)
+    print("hydra health < 75%")
+    g_wave_num = 1
+    strike_player_direction()
+    strike_warpstorm_direction()
+    sleep_until(hydra_health.get_health_fraction() < 0.50)
+    print("hydra health < 50%")
+    g_wave_num = 2
+    strike_player_direction()
+    strike_warpstorm_direction()
+    sleep_until(hydra_health.get_health_fraction() < 0.25)
+    print("hydra health < 25%")
+    g_wave_num = 3
+    strike_player_direction()
+    strike_warpstorm_direction()
+
+def strike_warpstorm_direction():
+    if g_wave_num == 1:
+        if g_spawn_direction == 1:
+            strike_warpgate(warpstorm01__storm, sq_strike01_4)
+            strike_warpgate(warpstorm02__storm, sq_strike02_4)
+
+        elif g_spawn_direction == 2:
+            strike_warpgate(warpstorm02__storm, sq_strike02_4)
+            strike_warpgate(warpstorm03__storm, sq_strike03_4)
+
+        elif g_spawn_direction == 3:
+            strike_warpgate(warpstorm03__storm, sq_strike03_4)
+            strike_warpgate(warpstorm01__storm, sq_strike01_4)
+
+    if g_wave_num == 2:
+        if g_spawn_direction == 1:
+            strike_warpgate(warpstorm01__storm, sq_strike01_6)
+            strike_warpgate(warpstorm02__storm, sq_strike02_6)
+            strike_warpgate(warpstorm03__storm, sq_strike03_4)
+
+        elif g_spawn_direction == 2:
+            strike_warpgate(warpstorm02__storm, sq_strike02_6)
+            strike_warpgate(warpstorm03__storm, sq_strike03_6)
+            strike_warpgate(warpstorm01__storm, sq_strike01_4)
+
+        elif g_spawn_direction == 3:
+            strike_warpgate(warpstorm03__storm, sq_strike03_6)
+            strike_warpgate(warpstorm01__storm, sq_strike01_6)
+            strike_warpgate(warpstorm02__storm, sq_strike02_4)
+
+    if g_wave_num == 3:
+        if g_spawn_direction == 1:
+            strike_warpgate(warpstorm01__storm, sq_strike01_8)
+            strike_warpgate(warpstorm02__storm, sq_strike02_8)
+            strike_warpgate(warpstorm03__storm, sq_strike03_6)
+
+        elif g_spawn_direction == 2:
+            strike_warpgate(warpstorm02__storm, sq_strike02_8)
+            strike_warpgate(warpstorm03__storm, sq_strike03_8)
+            strike_warpgate(warpstorm01__storm, sq_strike01_6)
+
+        elif g_spawn_direction == 3:
+            strike_warpgate(warpstorm03__storm, sq_strike03_8)
+            strike_warpgate(warpstorm01__storm, sq_strike01_8)
+            strike_warpgate(warpstorm02__storm, sq_strike02_6)
+
+def strike_warpgate(cloud, sq):
+    sleep_until(sgq_strike_minions.alive_count() < 12)
+    if kill_squad_ruins.is_complete() == false:
+        cloud.place()
+    if kill_squad_ruins.is_complete() == false:
+        cloud.drop_squad(sq); sleep_until(not cloud.is_dropping())
+    cloud.remove()
+
+
+def strike_player_direction():
+
+
+
+    if pm_2_vol.get_count() >= pm_1_vol.get_count() and pm_2_vol.get_count() >= pm_3_vol.get_count():
+        g_spawn_direction = 2
+    elif pm_1_vol.get_count() >= pm_2_vol.get_count() and pm_1_vol.get_count() >= pm_3_vol.get_count():
+        g_spawn_direction = 1
+    elif pm_3_vol.get_count() >= pm_2_vol.get_count() and pm_3_vol.get_count() >= pm_1_vol.get_count():
+        g_spawn_direction = 3
+    else:
+        d_rand_num = mathlib.random_int_inclusive(1, 3)
+        if d_rand_num == 1:
+            g_spawn_direction = 1
+        if d_rand_num == 2:
+            g_spawn_direction = 2
+        if d_rand_num == 3:
+            g_spawn_direction = 3
+    print("!!!!!!!!!!!!!!!!!!g_spawn_direction!!!!!!!!!!!!!!!!!!!!!!! : " + g_spawn_direction)
+
+
+thread venus_s1_m03_d20:
+    md_s1_m3_d020.start()
+    print("md_s1_m3_d020")
+
+thread venus_s1_m03_d30:
+    md_s1_m3_d030.start()
+    print("md_s1_m3_d030")
+
+thread venus_s1_m03_d40:
+    md_s1_m3_d040.start()
+    print("md_s1_m3_d040")
+
+# Decompiled from 36735.13.12.02.1953.alpha script tags
+# See tag 821B8041

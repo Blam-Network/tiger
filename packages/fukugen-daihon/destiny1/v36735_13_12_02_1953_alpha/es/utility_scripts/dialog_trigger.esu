@@ -1,0 +1,34 @@
+static_array<c_trigger_volume_slot_host, 1> _trigger_volume
+c_sequence_host _dialog_sequence  # true name unknown
+c_player_trigger_sensor_host _player_trigger  # true name unknown
+
+
+
+
+
+def import_only_bind(_player_objective, _suppression_behavior):
+    _dialog_sequence.import_only_bind(_player_objective, _suppression_behavior)
+    return true
+
+def user_import():
+    for volume in _trigger_volume:
+        volume.import_only_clear_slice_set_assignment()
+        _player_trigger.import_only_bind(volume)
+    return true
+
+thread main:
+    _player_trigger.reset()
+    sleep_until(_player_trigger.is_triggered(), 0.5)
+    _dialog_sequence.start()
+
+def enable():
+    main.restart()
+
+def is_triggered():
+    return _player_trigger.is_triggered()
+
+def disable():
+    main.kill()
+
+# Decompiled from 36735.13.12.02.1953.alpha script tags
+# See tag 821B8045

@@ -1,0 +1,105 @@
+class c_pvp_dominion : c_pvp_slayer:
+    static string_hash base_capture_score_hash = "base_capture_score"
+    static string_hash participant_player_hash = "participant_player"
+    static string_hash dominion_zone_captured_hash = "pvp_dominion_zone_captured"
+    static string_hash all_players_hash = "all_players"
+    static string_hash domination_hash = 0x1333F055  # hash not cracked
+    static string_hash domination_kill_hash = "pvp_domination_kill"
+    static string_hash dominion_zones_hash = "dominion_zones"
+    static string_hash domination_begin_hash = "pvp_team_domination_begin"
+    static string_hash domination_end_hash = "pvp_team_domination_end"
+    static string_hash score_control_bonus_hash = "pvp_score_control_bonus"
+    int base_capture_score
+    static_array<int, 4> zone_control_score_bonus  # true name unknown
+    int dominating_team = -1
+    static_array<c_object_sensor_host, 3> zones
+    static_array<c_capturable_host, 3> zone_capturables
+    c_incident_listener capture_incident_listener
+
+
+
+
+
+
+
+
+
+
+
+
+    thread zone_watcher:
+        while not game_over:
+            new_dominating_team = -1
+            for team in range(2):
+                zone_count = get_zones_for_team(team)
+                if zone_count == 3:
+                    new_dominating_team = team
+
+            if new_dominating_team != dominating_team:
+                if dominating_team != -1:
+                    c_incident_utilities.submit_incident_with_team(domination_end_hash, dominating_team)
+                dominating_team = new_dominating_team
+                c_scoreboard_script_utilities.get_scoreboard().clear_notifications()
+                if dominating_team != -1:
+                    c_scoreboard_script_utilities.get_scoreboard().activate_notification_for_team(domination_hash, dominating_team)
+                    c_incident_utilities.submit_incident_with_team(domination_begin_hash, dominating_team)
+
+            sleep(0.5)
+
+
+    def import():
+        incident_game_type_hash = "pvp_game_type_dominion"
+        incident_game_start_hash = "pvp_game_start_dominion"
+        return zones[0].import_only_bind("dominion_a") and zones[1].import_only_bind("dominion_b") and zones[2].import_only_bind("dominion_c") and zone_capturables[0].import_only_bind(zones[0]) and zone_capturables[1].import_only_bind(zones[1]) and zone_capturables[2].import_only_bind(zones[2])
+
+
+
+
+
+
+    def get_zones_for_team(team):
+        return c_scoreboard_script_utilities.get_scoreboard().get_team_stat(dominion_zones_hash, team)
+
+    def handle_capture(incident_name, incident_metadata):
+        if not game_over:
+            scoreboard = c_scoreboard_script_utilities.get_scoreboard()
+            incident_player_iterator.begin(incident_name, participant_player_hash, incident_metadata)
+            while incident_player_iterator.is_valid():
+                add_player_score(score_capture_hash, incident_player_iterator.get_character_id(), base_capture_score)
+                incident_player_iterator.next()
+
+    def d_slayer_handle_kill(character_id, incident_metadata):
+        team = c_player_script_utilities.get_player_sensor(character_id).get_team_index()
+        local zones = get_zones_for_team(team)
+        if zones > 0:
+            add_player_score(score_control_bonus_hash, character_id, zone_control_score_bonus[zones])
+            if zones == 3:
+                c_incident_utilities.submit_incident_with_metadata(domination_kill_hash, incident_metadata)
+
+    def d_slayer_init():
+        print("in c_pvp_dominion.d_slayer_init")
+        zone_control_score_bonus[0] = 0
+        zone_control_score_bonus[1] = 50
+        zone_control_score_bonus[2] = 100
+        zone_control_score_bonus[3] = 200
+        base_capture_score = get_outer().get_activity_option_integer(base_capture_score_hash)
+        capture_incident_listener.bind_hash(dominion_zone_captured_hash, all_players_hash)
+        capture_incident_listener.set_handler(handle_capture)
+        zone_capturables[0].set_icon_index(0)
+        zone_capturables[1].set_icon_index(1)
+        zone_capturables[2].set_icon_index(2)
+
+    def d_slayer_start():
+        zones[0].create()
+        zones[1].create()
+        zones[2].create()
+        zone_watcher.wake()
+
+    def d_slayer_tick(timer):
+        if game_over:
+            for i, zone in zones:
+                zone_capturables[i].reset()
+                zone_capturables[i].lock()
+
+# Decompiled from 36735.13.12.02.1953.alpha script tags
+# See tags 8220C004, 82236004, 82260004

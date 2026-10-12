@@ -1,0 +1,511 @@
+u_event_vex_block_preset pf_event_vex_block_preset
+u_event_globals event_globals
+static_array<u_event_vex_block_point, 8> pf_event_vex_cloud_point
+static_array<u_event_vex_block_wave, 8> pf_event_vex_block_wave
+dynamic_array<c_object_sensor_host> o_vex_cov
+static_array<c_device_host, 10> dev_vex_cov
+c_object_sensor_host o_vex_block
+c_device_host d_vex_block bind(o_vex_block)
+c_objective_sensor_host obj_vex_block_initial  # true name unknown
+c_squad_sensor_host sq_initialize
+c_squad_member_sensor_host sq_initialize__goblin  # true name unknown
+c_squad_sensor_host sq_vex_cloud_init
+c_squad_member_sensor_host sq_vex_cloud_init__pilot  # true name unknown
+c_trigger_volume_slot_host tv_engagement
+c_player_trigger_sensor_host pt_engagement bind(tv_engagement)  # true name unknown
+c_hop_on_sensor_host ho_overshield  # true name unknown
+c_object_filter_sensor_host of_overshield
+c_incident_listener il_block_kills
+string_hash sacrifice_incident = "vex_block_sacrifice"
+string_hash all_players = "all_players"
+c_kill_incident_listener kil_player_kills  # true name unknown
+string_hash event_squad_id = "sq_event_vex_block"
+int i_setup_timer = 90
+int i_event_timer = 210
+int i_current_vex_cloud
+int i_dead_count
+int i_dead_max = 10
+int i_max_reward_tier = 5
+c_hop_on_sensor_host ho_vex_death  # true name unknown
+c_object_filter_sensor_host of_vex_death
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+thread init:
+    print("init vex block")
+    sleep(30)
+    main.restart()
+
+thread complete:
+
+    print("cleanup")
+
+
+thread main:
+
+
+    func_event_setup(pf_event_vex_block_preset.po_event_vex_block)
+    func_event_start(pf_event_vex_block_preset.po_event_vex_block)
+    func_pre_engagement()
+
+
+    sleep(1)
+    print("pre-engage over")
+    if pf_event_vex_block_preset.po_event_vex_block.get_engaged_player_count() > 0:
+        print("engaged!")
+        func_event_engaged(pf_event_vex_block_preset.po_event_vex_block)
+
+
+        print(" event running? ", func_event_running())
+        print(" timer? ", func_event_timer_complete(), " count? ", func_event_count_complete())
+        sleep_until(not func_event_running())
+        print(" event running? ", func_event_running())
+        print(" timer? ", func_event_timer_complete(), " count? ", func_event_count_complete())
+        spawn_waves.kill()
+        print("done with waves!")
+
+        if i_dead_count >= i_dead_max and not func_event_timer_complete():
+            func_event_failure(pf_event_vex_block_preset.po_event_vex_block)
+
+        else:
+            func_event_success(pf_event_vex_block_preset.po_event_vex_block)
+
+
+    else:
+        print("didn't engage!")
+        func_event_failure(pf_event_vex_block_preset.po_event_vex_block)
+    print("done!")
+    func_event_cleanup(pf_event_vex_block_preset.po_event_vex_block)
+
+
+
+
+
+def user_import():
+    for i, obj in o_vex_cov:
+        dev_vex_cov[i].import_only_bind(o_vex_cov[i])
+
+def func_event_setup(event_po):
+    o_vex_block.create()
+
+    for i in range(len(o_vex_cov)):
+        o_vex_cov[i].create()
+    for i in range(len(dev_vex_cov)):
+        dev_vex_cov[i].set_device_position(1)
+
+
+
+
+
+
+    d_vex_block.set_device_position(1)
+
+
+    il_block_kills.reset()
+    il_block_kills.bind_hash(sacrifice_incident, all_players)
+
+
+    kil_player_kills.reset()
+    kil_player_kills.bind_audience_hash(all_players)
+    kil_player_kills.bind_squad_identifier(event_squad_id)
+
+
+    event_po.nav_point_activate(o_vex_block)
+
+
+    create_vex_cloud_init()
+
+
+    func_event_engagement_setup()
+
+
+    ho_vex_death.set_filter(of_vex_death)
+
+
+
+def func_event_start(event_po):
+    event_po.set_incoming()
+    event_po.timer_activate(i_setup_timer)
+    event_po.timer_start()
+    print("event timer started!")
+
+
+
+
+
+def func_pre_engagement():
+
+    print("checking for engagement")
+    spawn_pre_engage_waves.restart()
+    sleep_until(func_event_timer_complete() or kil_player_kills.get_count() > 0)
+    spawn_pre_engage_waves.kill()
+    sq_vex_cloud_init__pilot.abort_command_script()
+    sq_vex_cloud_init.remove()
+
+
+
+
+def func_event_engaged(event_po):
+
+
+
+
+    sc_seq_vex_block_start.restart()
+
+    pt_engagement.reset()
+
+
+    event_po.timer_pause()
+    event_po.timer_activate(i_event_timer)
+    event_po.timer_start()
+    event_po.set_active()
+
+
+    event_po.progress_activate(i_dead_max, i_dead_max)
+
+
+    print("sleeping for the timer...is it active? ", func_event_timer_complete())
+    sleep(1)
+
+
+    count_block_kills.restart()
+    spawn_waves.restart()
+
+
+
+
+
+
+def func_event_success(event_po):
+
+    sc_seq_vex_block_end_gold.wake()
+    if i_dead_count == 0:
+        event_po.set_public_event_tier(3)
+        print("Public Event Tier Gold")
+        print("dead count: ", i_dead_count, i_dead_max)
+
+    elif i_dead_count >= i_dead_max:
+        event_po.set_public_event_tier(0)
+        print("Public Event Tier Ribbon")
+        print("dead count: ", i_dead_count, i_dead_max)
+
+    elif i_dead_count <= i_dead_max * 0.5:
+        event_po.set_public_event_tier(2)
+        print("Public Event Tier Silver")
+        print("dead count: ", i_dead_count, i_dead_max)
+
+    elif i_dead_count >= i_dead_max * 0.5:
+        event_po.set_public_event_tier(1)
+        print("Public Event Tier Bronze")
+        print("dead count: ", i_dead_count, i_dead_max)
+
+
+
+
+
+    event_po.set_complete()
+
+def func_event_failure(event_po):
+    event_po.set_failed()
+    sc_seq_vex_block_end_bronze.wake()
+    sleep(3)
+
+def func_event_cleanup(event_po):
+    sleep(2)
+    event_po.clear()
+
+    ho_overshield.clear_filter()
+    of_overshield.clear()
+    of_vex_death.clear()
+
+    func_remove_all_squads()
+    for i in range(len(o_vex_cov)):
+        o_vex_cov[i].delete_object()
+    o_vex_block.delete_object()
+
+
+
+
+
+
+def func_event_engagement_setup():
+
+
+
+
+
+    event_globals.bind_squad_engagement(sq_initialize, pf_event_vex_block_preset.po_event_vex_block)
+
+
+    pt_engagement.set_handler(pf_event_vex_block_preset.po_event_vex_block.d_handle_engagement_incident)
+    pt_engagement.disable()
+
+
+
+
+
+
+def func_set_temperament(_sq):
+    _sq.activate_temperament("temper_always_walk")
+    _sq.activate_temperament("temper_combat_no_self_preserve")
+
+def func_event_timer_complete():
+
+    return pf_event_vex_block_preset.po_event_vex_block.timer_is_complete()
+
+def func_event_count_complete():
+
+    return pf_event_vex_block_preset.po_event_vex_block.progress_is_complete()
+
+def func_event_get_timer():
+    return pf_event_vex_block_preset.po_event_vex_block.timer_get_current()
+
+def func_event_get_progress_count():
+    return pf_event_vex_block_preset.po_event_vex_block.progress_get_current()
+
+def func_event_running():
+    return func_event_timer_complete() == false and func_event_get_progress_count() > 0
+
+def activate_hopon(_hopon, _of):
+    _hopon.set_filter(_of)
+
+
+def add_to_hopon(_of, _object):
+    _of.add(_object)
+
+def remove_from_hopon(_of, _object):
+    _of.remove(_object)
+
+def create_vex_cloud_init():
+    if not sq_vex_cloud_init__pilot.is_bound():
+        sq_vex_cloud_init__pilot.place()
+    sleep(10)
+
+
+
+
+
+
+
+
+
+def func_remove_all_squads():
+    sq_vex_cloud_init.remove()
+    sq_initialize.remove()
+
+    for i in range(len(pf_event_vex_cloud_point)):
+        pf_event_vex_cloud_point[i].sq_vex_cloud.remove()
+
+    for i in range(len(pf_event_vex_block_wave)):
+        pf_event_vex_block_wave[i].remove_squads()
+
+
+thread watch_for_block_death: pass
+
+
+
+
+
+thread spawn_pre_engage_waves:
+
+    sq_vex_cloud_init__pilot.abort_command_script()
+
+
+    obj_vex_block_initial.add_squad(sq_initialize)
+    set_temperaments_base(sq_initialize)
+
+    while not func_event_timer_complete() and kil_player_kills.get_count() == 0:
+
+        sq_vex_cloud_init__pilot.drop_squad(sq_initialize); sleep_until(not sq_vex_cloud_init__pilot.is_dropping())
+
+        sleep_until(sq_initialize.count_at_firing_area() > 0, 0.5)
+
+        if sq_initialize.alive_count() > 0:
+            run_seize(sq_initialize)
+        if sq_initialize.alive_count() == 0:
+            print("a PLAYER killed it!")
+        else:
+            print("the block killed it!")
+            vex_death(sq_initialize)
+
+        sq_initialize.deactivate_temperament("temper_freeze")
+        sq_initialize.deactivate_temperament("temper_vex_seize")
+        sq_vex_cloud_init__pilot.abort_command_script()
+
+def vex_death(sq):
+    of_vex_death.add(sq)
+    sleep(1)
+    of_vex_death.clear()
+    sq.kill()
+
+def set_temperaments_base(sq):
+    sq.activate_temperament("temper_always_walk")
+    sq.activate_temperament("temper_combat_no_self_preserve")
+    sq.activate_temperament("temper_combat_no_teleport_path")
+
+def run_seize(sq):
+
+    sleep(1)
+    print("seize")
+    sq.activate_temperament("temper_vex_seize")
+    sq.activate_temperament("temper_freeze")
+    sleep(2.5)
+
+thread spawn_waves:
+    print("start waves thread")
+    while func_event_running():
+        print("running")
+
+        time = func_event_get_timer()
+        if time > 195 and get_wave_alive_count(0) < 2:
+
+            drop_wave_0.restart()
+            print("dropped wave[0]")
+            sleep(10)
+        elif time < 195 and time > 120 and get_wave_alive_count(1) + get_wave_alive_count(2) < 2:
+            drop_wave_1.restart()
+            sleep(1)
+            drop_wave_2.restart()
+            print("dropped wave[1], wave[2]")
+            sleep(10)
+        elif time < 120 and time > 80 and get_wave_alive_count(3) + get_wave_alive_count(4) + get_wave_alive_count(5) < 2:
+            drop_wave_3.restart()
+            sleep(1)
+            drop_wave_4.restart()
+            sleep(1)
+            drop_wave_5.restart()
+            print("dropped wave[3], wave[4], wave[5]")
+            sleep(10)
+        elif time < 80 and time > 45 and get_wave_alive_count(3) + get_wave_alive_count(4) < 2:
+            drop_wave_3.restart()
+            sleep(1)
+            pf_event_vex_block_wave[4].assign_hopon_all(of_overshield)
+            drop_wave_4.restart()
+            print("dropped wave[3], wave[4]")
+            sleep(10)
+        elif time < 45 and get_wave_alive_count(6) + get_wave_alive_count(7) < 1:
+            drop_wave_6.restart()
+            sleep(1)
+            drop_wave_7.restart()
+            print("dropped wave[6], wave[7]")
+            sleep(10)
+        sleep(1)
+    print("waves NOT running")
+
+thread drop_wave_0:
+    drop_wave_all(0)
+thread drop_wave_1:
+    drop_wave_all(1)
+thread drop_wave_2:
+    drop_wave_all(2)
+thread drop_wave_3:
+    drop_wave_123(3)
+thread drop_wave_4:
+    drop_wave_123(4)
+thread drop_wave_5:
+    drop_wave_123(5)
+thread drop_wave_6:
+    drop_wave_123(6)
+thread drop_wave_7:
+    drop_wave_123(7)
+
+def drop_wave_all(i):
+    pf_event_vex_block_wave[i].drop_wave_1(pf_event_vex_cloud_point)
+    pf_event_vex_block_wave[i].drop_wave_2(pf_event_vex_cloud_point)
+    pf_event_vex_block_wave[i].drop_wave_3(pf_event_vex_cloud_point)
+    pf_event_vex_block_wave[i].drop_wave_4(pf_event_vex_cloud_point)
+
+def drop_wave_123(i):
+    pf_event_vex_block_wave[i].drop_wave_1(pf_event_vex_cloud_point)
+    pf_event_vex_block_wave[i].drop_wave_2(pf_event_vex_cloud_point)
+    pf_event_vex_block_wave[i].drop_wave_3(pf_event_vex_cloud_point)
+
+
+def get_wave_alive_count(index):
+    return pf_event_vex_block_wave[index].sg_vex.alive_count()
+
+thread count_block_kills:
+    print("start kill thread")
+    il_block_kills.reset()
+
+    while func_event_running():
+        i_dead_count = il_block_kills.get_count()
+
+        pf_event_vex_block_preset.po_event_vex_block.progress_update(i_dead_max - i_dead_count)
+        sleep(1)
+
+
+
+
+
+
+
+thread sc_seq_vex_block_start:
+
+    pf_event_vex_block_preset.seq_vex_block_start.start()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+thread sc_seq_vex_block_25:
+    pf_event_vex_block_preset.seq_vex_block_25.start()
+
+
+thread sc_seq_vex_block_50:
+    pf_event_vex_block_preset.seq_vex_block_50.start()
+
+
+thread sc_seq_vex_block_75:
+    pf_event_vex_block_preset.seq_vex_block_75.start()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+thread sc_seq_vex_block_end_gold:
+    pf_event_vex_block_preset.seq_vex_block_end_gold.start()
+
+
+thread sc_seq_vex_block_end_silver:
+    pf_event_vex_block_preset.seq_vex_block_end_silver.start()
+
+
+thread sc_seq_vex_block_end_bronze:
+    pf_event_vex_block_preset.seq_vex_block_end_bronze.start()
+
+# Decompiled from 36735.13.12.02.1953.alpha script tags
+# See tag 821B802E

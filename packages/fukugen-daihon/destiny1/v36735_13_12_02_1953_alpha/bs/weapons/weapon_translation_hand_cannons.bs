@@ -1,0 +1,892 @@
+enum e_hand_cannon_type:
+    hand_cannon
+    count
+
+struct s_hand_cannon : s_hand_cannon_constants:
+    unknown_80802AA8 trigger_behavior  # true name unknown
+    real rate_of_fire
+    real shots_per_fire
+    real rounds_fired_per_second
+    real fire_recovery_time
+    real soft_recovery_fraction
+    real rounds_reloaded
+    real rounds_total_initial
+    real rounds_total_max
+    real reload_full_time
+    real reload_empty_time
+    real ready_time
+    real put_away_duration
+    real ads_time
+    real movement_penality_scale
+    real ads_movement_penality_scale
+    real zoom_level_count
+    real zoom_amount
+    real error_deceleration_time
+    real error_angle_low
+    real error_angle_high
+    real zoomed_error_scale_low
+    real zoomed_error_scale_high
+    real accuracy_offset
+    real error_per_recovery
+    real recoil_offset
+    real recoil_kick_speed
+    real recoil_deceleration_time
+    real recoil_scale
+    real recoil_per_recovery
+    real impact_damage_scale
+    real sustain_damage_scale
+    real sustain_acquisition_rate
+    real sustain_grace_time
+    real sustain_decay_time
+    real precision_body_damage_scale
+    real precision_shield_damage_scale
+
+struct s_hand_cannon_constants:
+    real initial_rate_of_fire
+    real minimum_respawn_rounds
+    real autoaim_angle
+    real magnetism_angle
+    real autoaim_falloff_distance
+    real autoaim_distance
+    real magnetism_falloff_distance
+    real magnetism_distance
+    real recoil_return_speed
+    real recoil_max_angle
+    real recoil_kick_min_yaw_angle
+    real recoil_kick_max_yaw_angle
+    real recoil_kick_min_pitch_angle
+    real recoil_kick_max_pitch_angle
+    real recoil_kick_min_radial_yaw_angle
+    real recoil_kick_max_radial_yaw_angle
+    real recoil_kick_min_radial_pitch_angle
+    real recoil_kick_max_radial_pitch_angle
+    real lowest_rounds_per_second
+    real highest_rounds_per_second
+    real base_damage
+    real sustain_damage
+    real precision_damage
+
+struct s_rate_of_fire_stats:
+    real hand_cannon_rate_of_fire
+    real hand_cannon_shots_per_fire
+
+struct s_optics_stats:
+    real hand_cannon_zoom_amount
+    real hand_cannon_ads_accuracy_scaling
+
+struct s_reload_stats:
+    real hand_cannon_reload_full_time
+    real hand_cannon_reload_empty_time
+
+struct s_handling_stats:
+    real hand_cannon_reload_full_time
+    real hand_cannon_reload_empty_time
+    real hand_cannon_ready_time
+    real hand_cannon_put_away_duration
+    real hand_cannon_ads_time
+
+struct s_magazine_size_stats:
+    real hand_cannon_magazine_size
+
+struct s_accuracy_stats:
+    real hand_cannon_initial_error
+
+struct s_stability_stats:
+    real hand_cannon_final_error
+    real hand_cannon_ads_move_penality_scale
+    real hand_cannon_recoil_scale
+
+struct s_range_stats:
+    real hand_cannon_range_scale
+
+struct s_base_damage_stats:
+    real hand_cannon_base_dps
+
+struct s_sustain_damage_stats:
+    real hand_cannon_sustain_damage_scale
+
+struct s_precision_damage_stats:
+    real hand_cannon_precision_body_damage_scale
+    real hand_cannon_precision_shield_damage_scale
+
+class c_weapon_translation_hand_cannons : c_weapon_translation_base:
+    static s_hand_cannon_constants constants
+    static static_stack<s_rate_of_fire_stats, 7> rate_of_fire
+    static static_stack<s_optics_stats, 7> optics
+    static static_stack<s_reload_stats, 7> reload
+    static static_stack<s_handling_stats, 7> handling
+    static static_stack<s_magazine_size_stats, 7> magazine_size
+    static static_stack<s_accuracy_stats, 7> accuracy
+    static static_stack<s_stability_stats, 7> stability
+    static static_stack<s_range_stats, 7> range
+    static static_stack<s_base_damage_stats, 7> base_damage
+    static static_stack<s_sustain_damage_stats, 7> sustain_damage
+    static static_stack<s_precision_damage_stats, 7> precision_damage
+    static real sustain_damage_acquire_time_scale = 0.5
+    static real sustain_damage_grace_time_scale = 0.25
+    static real sustain_damage_decay_time_scale = 0.5
+    static real max_rof_impact_damage_scale = 1
+    static real recoil_deceleration_time = 0.65
+    static real error_deceleration_time = 1
+    static real movement_penality_scale
+    static real initial_ammo_scale = 3
+    static real total_ammo_scale = 6
+    static real minimum_respawn_clips = 3
+    static real accuracy_scalar = 0.5
+    static real recoil_scalar = 0.25
+    static int zoom_level_count = 1
+    static string_hash recoil_stability_channel = "recoil_stability"
+    static string_hash zoom_amount_channel = "zoom_amount"
+    implements i_weapon_stats weapon_stats_interface  # true name unknown
+    c_interface_reference weapon_interface  # true name unknown
+    c_interface_reference weapon_barrel_interface  # true name unknown
+    c_interface_reference weapon_magazine_interface  # true name unknown
+    c_interface_reference weapon_reload_interface  # true name unknown
+    c_interface_reference weapon_trigger_interface  # true name unknown
+    c_interface_reference weapon_input_interface  # true name unknown
+    c_interface_reference channel_manager  # true name unknown
+    s_hand_cannon hc
+    int investment_rate_of_fire
+    int investment_optics
+    int investment_reload
+    int investment_handling
+    int investment_magazine_size
+    int investment_accuracy
+    int investment_stability
+    int investment_range
+    int investment_base_damage
+    int investment_sustain_damage
+    int investment_precision_damage
+    real highest_rounds_per_second
+    real lowest_rounds_per_second
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    static def recoil_kick_speed_calculation(kick_speed):
+        return mathlib.max(kick_speed * 2, 15) * nativemathlib.degrees_to_radians
+
+    static def initialize_constants():
+        set_group_count(e_hand_cannon_type.count)
+        add_group("hand_cannon", e_trigger_behavior._weapon_trigger_behavior_latch, e_trigger_behavior._weapon_trigger_behavior_latch)
+
+        constants.initial_rate_of_fire = 1.5
+        constants.minimum_respawn_rounds = 4
+        constants.autoaim_angle = 2.25 * nativemathlib.degrees_to_radians
+        constants.magnetism_angle = 5 * nativemathlib.degrees_to_radians
+        constants.autoaim_falloff_distance = 30
+        constants.autoaim_distance = 60
+        constants.magnetism_falloff_distance = 30
+        constants.magnetism_distance = 60
+        constants.recoil_return_speed = 2 * nativemathlib.degrees_to_radians
+        constants.recoil_max_angle = 0.5 * nativemathlib.degrees_to_radians
+        constants.recoil_kick_min_yaw_angle = 0 * nativemathlib.degrees_to_radians
+        constants.recoil_kick_max_yaw_angle = 0 * nativemathlib.degrees_to_radians
+        constants.recoil_kick_min_pitch_angle = -0.1 * nativemathlib.degrees_to_radians
+        constants.recoil_kick_max_pitch_angle = -20 * nativemathlib.degrees_to_radians
+        constants.recoil_kick_min_radial_yaw_angle = 0 * nativemathlib.degrees_to_radians
+        constants.recoil_kick_max_radial_yaw_angle = 7.5 * nativemathlib.degrees_to_radians
+        constants.recoil_kick_min_radial_pitch_angle = 0 * nativemathlib.degrees_to_radians
+        constants.recoil_kick_max_radial_pitch_angle = 0 * nativemathlib.degrees_to_radians
+        constants.lowest_rounds_per_second = weapon_utils.get_frame_bound_rounds_per_second(1.5, 0)
+        constants.highest_rounds_per_second = weapon_utils.get_frame_bound_rounds_per_second(2.5, 0)
+        constants.base_damage = 110
+        constants.sustain_damage = 1
+        constants.precision_damage = 1.5
+
+    static def build_import_tables():
+        initialize_constants()
+
+
+
+
+
+        set_translation_copy(0, e_weapon_magazine_stat.minimum_respawn_rounds, constants.minimum_respawn_rounds)
+        set_translation_copy(0, e_weapon_stat.pitch_speed_penalty_zoomed, 0)
+        set_translation_copy(0, e_weapon_stat.yaw_speed_penalty_zoomed, 0)
+        set_translation_copy(0, e_weapon_barrel_stat.recoil_return_speed, constants.recoil_return_speed)
+        set_translation_copy(0, e_weapon_barrel_stat.recoil_max_angle, constants.recoil_max_angle)
+        set_translation_copy(0, e_weapon_stat.zoom_level_count, zoom_level_count)
+        set_translation_copy(0, e_weapon_stat.autoaim_angle, constants.autoaim_angle)
+        set_translation_copy(0, e_weapon_stat.magnetism_angle, constants.magnetism_angle)
+        set_translation_copy(0, e_weapon_stat.autoaim_distance, constants.autoaim_distance)
+        set_translation_copy(0, e_weapon_stat.autoaim_falloff_distance, constants.autoaim_falloff_distance)
+        set_translation_copy(0, e_weapon_stat.magnetism_distance, constants.magnetism_distance)
+        set_translation_copy(0, e_weapon_stat.magnetism_falloff_distance, constants.magnetism_falloff_distance)
+        set_translation_copy(0, e_weapon_barrel_stat.error_deceleration_time, error_deceleration_time)
+        set_translation_copy(0, e_weapon_barrel_stat.recoil_deceleration_time, recoil_deceleration_time)
+        set_translation_copy(0, e_weapon_stat.forward_movement_penalty, movement_penality_scale)
+        set_translation_copy(0, e_weapon_stat.sideways_movement_penalty, movement_penality_scale)
+
+
+
+
+
+        rate_of_fire_table = add_weapon_stats_table(e_investment_weapon_stats.rate_of_fire, 0, 6)
+        rate_of_fire_column = add_column_to_table(rate_of_fire_table, e_weapon_barrel_stat.normal_initial_rate_of_fire, e_weapon_barrel_stat.normal_final_rate_of_fire, e_weapon_barrel_stat.zoomed_initial_rate_of_fire, e_weapon_barrel_stat.zoomed_final_rate_of_fire)
+        shots_fired_column = add_column_to_table(rate_of_fire_table, e_weapon_barrel_stat.normal_shots_per_fire_minimum, e_weapon_barrel_stat.normal_shots_per_fire_maximum, e_weapon_barrel_stat.zoomed_shots_per_fire_minimum, e_weapon_barrel_stat.zoomed_shots_per_fire_maximum)
+
+
+        set_translation_row(rate_of_fire_table, 0, 1.5, 0)
+        set_translation_row(rate_of_fire_table, 1, 1.667, 0)
+        set_translation_row(rate_of_fire_table, 2, 1.875, 0)
+        set_translation_row(rate_of_fire_table, 3, 2, 0)
+        set_translation_row(rate_of_fire_table, 4, 2.143, 0)
+        set_translation_row(rate_of_fire_table, 5, 2.308, 0)
+        set_translation_row(rate_of_fire_table, 6, 2.5, 0)
+
+        fire_recovery_column = add_column_to_table(rate_of_fire_table, e_weapon_barrel_stat.normal_fire_recovery_time, e_weapon_barrel_stat.zoomed_fire_recovery_time)
+        set_translation_column(fire_recovery_column, weapon_utils.get_fire_recovery_time, 0, rate_of_fire_column, shots_fired_column)
+
+        soft_recovery_column = add_column_to_table(rate_of_fire_table, e_weapon_barrel_stat.normal_soft_recovery_fraction, e_weapon_barrel_stat.zoomed_soft_recovery_fraction)
+        set_translation_column(soft_recovery_column, weapon_utils.get_latched_soft_recovery_fraction, fire_recovery_column)
+
+        accuracy_offset_column = add_column_to_table(rate_of_fire_table, e_weapon_barrel_stat.firing_accuracy, e_weapon_barrel_stat.firing_crouched_accuracy, e_weapon_barrel_stat.firing_zoomed_accuracy, e_weapon_barrel_stat.firing_zoomed_crouched_accuracy)
+        set_translation_column(accuracy_offset_column, weapon_utils.get_accuracy_curve_offset, accuracy_scalar, rate_of_fire_column)
+
+        recoil_offset_column = add_column_to_table(rate_of_fire_table, e_weapon_barrel_stat.firing_recoil, e_weapon_barrel_stat.firing_crouched_recoil, e_weapon_barrel_stat.firing_zoomed_recoil, e_weapon_barrel_stat.firing_zoomed_crouched_recoil)
+        set_translation_column(recoil_offset_column, weapon_utils.get_recoil_curve_offset, recoil_scalar, rate_of_fire_column)
+
+        recoil_kick_speed_column = add_column_to_table(rate_of_fire_table, e_weapon_barrel_stat.recoil_kick_speed)
+        set_translation_column(recoil_kick_speed_column, weapon_utils.get_frame_bound_rounds_per_second, rate_of_fire_column, shots_fired_column)
+        set_translation_column(recoil_kick_speed_column, recoil_kick_speed_calculation, recoil_kick_speed_column)
+
+        error_per_recovery_column = add_column_to_table(rate_of_fire_table, e_weapon_barrel_stat.error_per_recovery)
+        set_translation_column(error_per_recovery_column, weapon_utils.get_error_per_recovery, error_deceleration_time, fire_recovery_column, shots_fired_column)
+
+
+
+
+
+        magazine_size_table = add_weapon_stats_table(e_investment_weapon_stats.clip_size, 0, 6)
+        magazine_size_column = add_column_to_table(magazine_size_table)
+
+
+        set_translation_row(magazine_size_column, 0, 4)
+        set_translation_row(magazine_size_column, 1, 5)
+        set_translation_row(magazine_size_column, 2, 6)
+        set_translation_row(magazine_size_column, 3, 7)
+        set_translation_row(magazine_size_column, 4, 8)
+        set_translation_row(magazine_size_column, 5, 9)
+        set_translation_row(magazine_size_column, 6, 10)
+
+        set_translation_divide(0, e_weapon_magazine_stat.rounds_reloaded, e_weapon_barrel_stat.normal_initial_rate_of_fire, constants.initial_rate_of_fire)
+        set_translation_multiply(0, e_weapon_magazine_stat.rounds_reloaded, e_weapon_magazine_stat.rounds_reloaded, magazine_size_column)
+        set_translation_round(0, e_weapon_magazine_stat.rounds_reloaded, e_weapon_magazine_stat.rounds_reloaded)
+        set_translation_copy(0, e_weapon_magazine_stat.rounds_loaded_max, e_weapon_magazine_stat.rounds_reloaded)
+
+        set_translation_multiply(0, e_weapon_magazine_stat.rounds_total_initial, e_weapon_magazine_stat.rounds_reloaded, initial_ammo_scale)
+        set_translation_multiply(0, e_weapon_magazine_stat.rounds_total_max, e_weapon_magazine_stat.rounds_reloaded, total_ammo_scale)
+
+        sustained_grace_column = add_column_to_table(magazine_size_table, e_weapon_barrel_stat.sustained_grace_time)
+        set_translation_column(sustained_grace_column, weapon_utils.get_sustain_grace_time, sustain_damage_grace_time_scale, magazine_size_column)
+
+        sustained_decay_column = add_column_to_table(magazine_size_table, e_weapon_barrel_stat.sustained_decay_time)
+        set_translation_column(sustained_decay_column, weapon_utils.get_sustain_decay_time, sustain_damage_decay_time_scale, magazine_size_column)
+
+
+
+
+
+        agility_table = add_weapon_stats_table(e_investment_weapon_stats.weapon_agility, 0, 6)
+        reload_full_column = add_column_to_table(agility_table, e_weapon_reload_stat.reload_duration)
+        reload_empty_column = add_column_to_table(agility_table, e_weapon_reload_stat.reload_empty_duration)
+        ready_column = add_column_to_table(agility_table, e_weapon_stat.ready_duration)
+        put_away_time_column = add_column_to_table(agility_table, e_weapon_stat.put_away_duration)
+        ads_time_column = add_column_to_table(agility_table, e_weapon_stat.aim_down_sights_time)
+
+
+        set_translation_row(agility_table, 0, 5, 5, 1.2, 0.433, 0.333)
+        set_translation_row(agility_table, 1, 4.5, 4.5, 1.1, 0.4, 0.3)
+        set_translation_row(agility_table, 2, 4, 4, 1, 0.367, 0.266)
+        set_translation_row(agility_table, 3, 3.5, 3.5, 0.9, 0.333, 0.233)
+        set_translation_row(agility_table, 4, 3, 3, 0.8, 0.3, 0.2)
+        set_translation_row(agility_table, 5, 2.5, 2.5, 0.7, 0.267, 0.166)
+        set_translation_row(agility_table, 6, 2, 2, 0.6, 0.233, 0.133)
+
+
+
+
+
+        optics_table = add_weapon_stats_table(e_investment_weapon_stats.optics, 0, 6)
+        zoom_amount_column = add_column_to_table(optics_table, e_weapon_stat.zoom_magnification_minimum, e_weapon_stat.zoom_magnification_maximum)
+        accuracy_scale_column = add_column_to_table(optics_table, e_weapon_barrel_stat.zoomed_error_scale_low)
+
+
+        set_translation_row(optics_table, 0, 1.4, 0.7)
+        set_translation_row(optics_table, 1, 1.5, 0.667)
+        set_translation_row(optics_table, 2, 1.6, 0.633)
+        set_translation_row(optics_table, 3, 1.7, 0.6)
+        set_translation_row(optics_table, 4, 1.8, 0.567)
+        set_translation_row(optics_table, 5, 1.9, 0.533)
+        set_translation_row(optics_table, 6, 2, 0.5)
+
+        movement_penalty_zoomed_column = add_column_to_table(optics_table, e_weapon_stat.forward_movement_penalty_zoomed, e_weapon_stat.sideways_movement_penalty_zoomed)
+        set_translation_column(movement_penalty_zoomed_column, weapon_utils.get_movement_penality, zoom_amount_column, 0.25)
+
+
+
+
+
+        accuracy_table = add_weapon_stats_table(e_investment_weapon_stats.initial_accuracy, 0, 6)
+        initial_error_column = add_column_to_table(accuracy_table, e_weapon_barrel_stat.error_angle_low)
+
+
+        set_translation_row(accuracy_table, 0, 0.3)
+        set_translation_row(accuracy_table, 1, 0.283)
+        set_translation_row(accuracy_table, 2, 0.267)
+        set_translation_row(accuracy_table, 3, 0.25)
+        set_translation_row(accuracy_table, 4, 0.233)
+        set_translation_row(accuracy_table, 5, 0.217)
+        set_translation_row(accuracy_table, 6, 0.2)
+
+        set_translation_column(initial_error_column, weapon_utils.multiply_values, initial_error_column, nativemathlib.degrees_to_radians)
+
+
+
+
+
+        stability_table = add_weapon_stats_table(e_investment_weapon_stats.stability, 0, 6)
+        final_error_column = add_column_to_table(stability_table, e_weapon_barrel_stat.error_angle_high)
+        not_used_column = add_column_to_table(stability_table)
+        recoil_scale_column = add_column_to_table(stability_table, e_weapon_barrel_stat.recoil_kick_min_yaw_angle, e_weapon_barrel_stat.recoil_kick_max_yaw_angle, e_weapon_barrel_stat.recoil_kick_min_pitch_angle, e_weapon_barrel_stat.recoil_kick_max_pitch_angle, e_weapon_barrel_stat.recoil_kick_min_radial_yaw_angle, e_weapon_barrel_stat.recoil_kick_max_radial_yaw_angle, e_weapon_barrel_stat.recoil_kick_min_radial_pitch_angle, e_weapon_barrel_stat.recoil_kick_max_radial_pitch_angle)
+
+
+        set_translation_row(stability_table, 0, 2.75, 0, 1.5)
+        set_translation_row(stability_table, 1, 2.5, 0, 1.333)
+        set_translation_row(stability_table, 2, 2.25, 0, 1.167)
+        set_translation_row(stability_table, 3, 2, 0, 1)
+        set_translation_row(stability_table, 4, 1.75, 0, 0.857)
+        set_translation_row(stability_table, 5, 1.5, 0, 0.75)
+        set_translation_row(stability_table, 6, 1.25, 0, 0.667)
+
+        set_translation_column(final_error_column, weapon_utils.multiply_values, final_error_column, nativemathlib.degrees_to_radians)
+
+        set_translation_multiply(0, e_weapon_barrel_stat.recoil_kick_min_yaw_angle, e_weapon_barrel_stat.recoil_kick_min_yaw_angle, constants.recoil_kick_min_yaw_angle)
+        set_translation_multiply(0, e_weapon_barrel_stat.recoil_kick_max_yaw_angle, e_weapon_barrel_stat.recoil_kick_max_yaw_angle, constants.recoil_kick_max_yaw_angle)
+        set_translation_multiply(0, e_weapon_barrel_stat.recoil_kick_min_pitch_angle, e_weapon_barrel_stat.recoil_kick_min_pitch_angle, constants.recoil_kick_min_pitch_angle)
+        set_translation_multiply(0, e_weapon_barrel_stat.recoil_kick_max_pitch_angle, e_weapon_barrel_stat.recoil_kick_max_pitch_angle, constants.recoil_kick_max_pitch_angle)
+        set_translation_multiply(0, e_weapon_barrel_stat.recoil_kick_min_radial_yaw_angle, e_weapon_barrel_stat.recoil_kick_min_radial_yaw_angle, constants.recoil_kick_min_radial_yaw_angle)
+        set_translation_multiply(0, e_weapon_barrel_stat.recoil_kick_max_radial_yaw_angle, e_weapon_barrel_stat.recoil_kick_max_radial_yaw_angle, constants.recoil_kick_max_radial_yaw_angle)
+        set_translation_multiply(0, e_weapon_barrel_stat.recoil_kick_min_radial_pitch_angle, e_weapon_barrel_stat.recoil_kick_min_radial_pitch_angle, constants.recoil_kick_min_radial_pitch_angle)
+        set_translation_multiply(0, e_weapon_barrel_stat.recoil_kick_max_radial_pitch_angle, e_weapon_barrel_stat.recoil_kick_max_radial_pitch_angle, constants.recoil_kick_max_radial_pitch_angle)
+
+        set_translation_divide(0, e_weapon_barrel_stat.zoomed_error_scale_high, initial_error_column, final_error_column)
+        set_translation_multiply(0, e_weapon_barrel_stat.zoomed_error_scale_high, e_weapon_barrel_stat.zoomed_error_scale_high, e_weapon_barrel_stat.zoomed_error_scale_low)
+
+
+
+
+
+
+
+        set_translation_divide(0, e_weapon_barrel_stat.impact_damage_multiplier, 1, rate_of_fire_column)
+        set_translation_divide(0, e_weapon_barrel_stat.impact_damage_multiplier, e_weapon_barrel_stat.impact_damage_multiplier, weapon_utils.global_time_per_frame)
+        set_translation_ceiling(0, e_weapon_barrel_stat.impact_damage_multiplier, e_weapon_barrel_stat.impact_damage_multiplier)
+        set_translation_multiply(0, e_weapon_barrel_stat.impact_damage_multiplier, e_weapon_barrel_stat.impact_damage_multiplier, weapon_utils.global_time_per_frame)
+        set_translation_divide(0, e_weapon_barrel_stat.impact_damage_multiplier, 1, e_weapon_barrel_stat.impact_damage_multiplier)
+        set_translation_copy(0, e_weapon_barrel_stat.sustained_max_multiplier, e_weapon_barrel_stat.impact_damage_multiplier)
+        set_translation_copy(0, e_weapon_barrel_stat.sustained_acquire_rate, e_weapon_barrel_stat.impact_damage_multiplier)
+
+
+        set_translation_subtract(0, e_weapon_barrel_stat.sustained_max_multiplier, e_weapon_barrel_stat.sustained_max_multiplier, constants.lowest_rounds_per_second)
+        set_translation_divide(0, e_weapon_barrel_stat.sustained_max_multiplier, e_weapon_barrel_stat.sustained_max_multiplier, constants.highest_rounds_per_second - constants.lowest_rounds_per_second)
+        set_translation_multiply(0, e_weapon_barrel_stat.sustained_max_multiplier, e_weapon_barrel_stat.sustained_max_multiplier, max_rof_impact_damage_scale - 1)
+        set_translation_add(0, e_weapon_barrel_stat.sustained_max_multiplier, e_weapon_barrel_stat.sustained_max_multiplier, 1)
+        set_translation_divide(0, e_weapon_barrel_stat.impact_damage_multiplier, constants.base_damage, e_weapon_barrel_stat.impact_damage_multiplier)
+        set_translation_multiply(0, e_weapon_barrel_stat.impact_damage_multiplier, e_weapon_barrel_stat.impact_damage_multiplier, e_weapon_barrel_stat.sustained_max_multiplier)
+
+
+
+
+        set_translation_copy(0, e_weapon_barrel_stat.sustained_max_multiplier, constants.sustain_damage)
+
+        set_translation_multiply(0, e_weapon_barrel_stat.sustained_acquire_rate, e_weapon_barrel_stat.sustained_acquire_rate, sustain_damage_acquire_time_scale)
+        set_translation_multiply(0, e_weapon_barrel_stat.sustained_acquire_rate, e_weapon_barrel_stat.sustained_acquire_rate, magazine_size_column)
+        set_translation_divide(0, e_weapon_barrel_stat.sustained_acquire_rate, 1, e_weapon_barrel_stat.sustained_acquire_rate)
+
+
+
+
+        set_translation_copy(0, e_weapon_barrel_stat.precision_damage_fraction, constants.precision_damage - 1)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    def set_stat_indexes(weapon_sheet):
+        investment_rate_of_fire = get_stat_index(weapon_sheet, e_investment_weapon_stats.rate_of_fire)
+        investment_optics = get_stat_index(weapon_sheet, e_investment_weapon_stats.optics)
+        investment_reload = get_stat_index(weapon_sheet, e_investment_weapon_stats.reload)
+        investment_handling = get_stat_index(weapon_sheet, e_investment_weapon_stats.weapon_agility)
+        investment_magazine_size = get_stat_index(weapon_sheet, e_investment_weapon_stats.clip_size)
+        investment_accuracy = get_stat_index(weapon_sheet, e_investment_weapon_stats.initial_accuracy)
+        investment_stability = get_stat_index(weapon_sheet, e_investment_weapon_stats.stability)
+        investment_range = get_stat_index(weapon_sheet, e_investment_weapon_stats.projectile_range)
+        investment_base_damage = 0
+        investment_sustain_damage = 0
+        investment_precision_damage = 0
+
+
+
+
+    def set_weapon_stat(stat, value):
+        weapon_interface.get_stat(stat).set_base_value(value)
+
+    def get_weapon_stat(stat):
+        return weapon_interface.get_stat(stat).get_base_value()
+
+
+
+
+    def set_barrel_stat(stat, value):
+        weapon_barrel_interface.get_stat(stat).set_base_value(value)
+
+    def get_barrel_stat(stat):
+        return weapon_barrel_interface.get_stat(stat).get_base_value()
+
+
+
+
+    def set_magazn_stat(stat, value):
+        weapon_magazine_interface.get_stat(stat).set_base_value(value)
+
+    def get_magazn_stat(stat):
+        return weapon_magazine_interface.get_stat(stat).get_base_value()
+
+
+
+
+    def set_reload_stat(stat, value):
+        weapon_reload_interface.get_stat(stat).set_base_value(value)
+
+    def get_reload_stat(stat):
+        return weapon_reload_interface.get_stat(stat).get_base_value()
+
+
+
+
+    def set_trigger_behavior(value):
+        weapon_trigger_interface.set_normal_trigger_behavior(value)
+        weapon_trigger_interface.set_zoomed_trigger_behavior(value)
+
+    def get_trigger_behavior():
+        return weapon_trigger_interface.get_normal_trigger_behavior()
+
+
+
+
+    def import_rate_of_fire_stats(index, hand_cannon_rate_of_fire, hand_cannon_shots_per_fire):
+        rate_of_fire[index].hand_cannon_rate_of_fire = hand_cannon_rate_of_fire
+        rate_of_fire[index].hand_cannon_shots_per_fire = hand_cannon_shots_per_fire
+
+    def import_optics_stats(index, hand_cannon_zoom_amount, hand_cannon_ads_accuracy_scaling):
+        optics[index].hand_cannon_zoom_amount = hand_cannon_zoom_amount
+        optics[index].hand_cannon_ads_accuracy_scaling = hand_cannon_ads_accuracy_scaling
+
+    def import_reload_stats(index, hand_cannon_reload_full_time, hand_cannon_reload_empty_time):
+        reload[index].hand_cannon_reload_full_time = hand_cannon_reload_full_time
+        reload[index].hand_cannon_reload_empty_time = hand_cannon_reload_empty_time
+
+    def import_handling_stats(index, hand_cannon_reload_full_time, hand_cannon_reload_empty_time, hand_cannon_ready_time, hand_cannon_put_away_duration, hand_cannon_ads_time):
+        handling[index].hand_cannon_reload_full_time = hand_cannon_reload_full_time
+        handling[index].hand_cannon_reload_empty_time = hand_cannon_reload_empty_time
+        handling[index].hand_cannon_ready_time = hand_cannon_ready_time
+        handling[index].hand_cannon_put_away_duration = hand_cannon_put_away_duration
+        handling[index].hand_cannon_ads_time = hand_cannon_ads_time
+
+    def import_magazine_size_stats(index, hand_cannon_magazine_size):
+        magazine_size[index].hand_cannon_magazine_size = hand_cannon_magazine_size
+
+    def import_accuracy_stats(index, hand_cannon_initial_error):
+        accuracy[index].hand_cannon_initial_error = hand_cannon_initial_error
+
+    def import_stability_stats(index, hand_cannon_final_error, hand_cannon_ads_move_penality_scale, hand_cannon_recoil_scale):
+        stability[index].hand_cannon_final_error = hand_cannon_final_error
+        stability[index].hand_cannon_ads_move_penality_scale = hand_cannon_ads_move_penality_scale
+        stability[index].hand_cannon_recoil_scale = hand_cannon_recoil_scale
+
+    def import_range_stats(index, hand_cannon_range_scale):
+        range[index].hand_cannon_range_scale = hand_cannon_range_scale
+
+    def import_base_damage_stats(index, hand_cannon_base_dps):
+        base_damage[index].hand_cannon_base_dps = hand_cannon_base_dps
+
+    def import_sustain_damage_stats(index, hand_cannon_sustain_damage_scale):
+        sustain_damage[index].hand_cannon_sustain_damage_scale = hand_cannon_sustain_damage_scale
+
+    def import_precision_damage_stats(index, hand_cannon_precision_body_damage_scale, hand_cannon_precision_shield_damage_scale):
+        precision_damage[index].hand_cannon_precision_body_damage_scale = hand_cannon_precision_body_damage_scale
+        precision_damage[index].hand_cannon_precision_shield_damage_scale = hand_cannon_precision_shield_damage_scale
+
+
+
+
+
+
+    def weapon_stats_interface.translate_stats(weapon_sheet):
+        finalize_interfaces()
+
+        set_stat_indexes(weapon_sheet)
+
+        lowest_rounds_per_second = weapon_utils.get_frame_bound_rounds_per_second(rate_of_fire[0].hand_cannon_rate_of_fire, rate_of_fire[0].hand_cannon_shots_per_fire)
+        highest_rounds_per_second = weapon_utils.get_frame_bound_rounds_per_second(rate_of_fire[6].hand_cannon_rate_of_fire, rate_of_fire[6].hand_cannon_shots_per_fire)
+
+        group_id = get_group_index(weapon_sheet)
+        if group_id == enum_to_int(e_hand_cannon_type.hand_cannon):
+            translate_hand_cannon_stats(hc)
+
+        apply_stats(hc)
+
+
+    def finalize_interfaces():
+        weapon_interface = get_object().find_interface(i_weapon)
+        weapon_barrel_interface = get_object().find_interface(i_weapon_barrel)
+        weapon_magazine_interface = get_object().find_interface(i_weapon_magazine)
+        weapon_reload_interface = get_object().find_interface(i_weapon_reload)
+        weapon_trigger_interface = get_object().find_interface(i_weapon_trigger)
+        weapon_input_interface = find_interface(i_weapon_input)
+        channel_manager = find_interface(i_channel_manager)
+
+
+
+
+    def import():
+        build_import_tables()
+
+
+
+
+        for index in range(rate_of_fire.maximum_count()):
+            rate_of_fire.new()
+
+        import_rate_of_fire_stats(0, 1.5, 0)
+        import_rate_of_fire_stats(1, 1.667, 0)
+        import_rate_of_fire_stats(2, 1.875, 0)
+        import_rate_of_fire_stats(3, 2, 0)
+        import_rate_of_fire_stats(4, 2.143, 0)
+        import_rate_of_fire_stats(5, 2.308, 0)
+        import_rate_of_fire_stats(6, 2.5, 0)
+
+
+
+
+        for index in range(optics.maximum_count()):
+            optics.new()
+
+        import_optics_stats(0, 1.4, 0.9)
+        import_optics_stats(1, 1.5, 0.867)
+        import_optics_stats(2, 1.6, 0.833)
+        import_optics_stats(3, 1.7, 0.8)
+        import_optics_stats(4, 1.8, 0.767)
+        import_optics_stats(5, 1.9, 0.733)
+        import_optics_stats(6, 2, 0.7)
+
+
+
+
+        for index in range(reload.maximum_count()):
+            reload.new()
+
+        import_reload_stats(0, 5, 5)
+        import_reload_stats(1, 4.5, 4.5)
+        import_reload_stats(2, 4, 4)
+        import_reload_stats(3, 3.5, 3.5)
+        import_reload_stats(4, 3, 3)
+        import_reload_stats(5, 2.5, 2.5)
+        import_reload_stats(6, 2, 2)
+
+
+
+
+        for index in range(handling.maximum_count()):
+            handling.new()
+
+        import_handling_stats(0, 5, 5, 1.2, 0.433, 0.333)
+        import_handling_stats(1, 4.5, 4.5, 1.1, 0.4, 0.3)
+        import_handling_stats(2, 4, 4, 1, 0.367, 0.266)
+        import_handling_stats(3, 3.5, 3.5, 0.9, 0.333, 0.233)
+        import_handling_stats(4, 3, 3, 0.8, 0.3, 0.2)
+        import_handling_stats(5, 2.5, 2.5, 0.7, 0.267, 0.166)
+        import_handling_stats(6, 2, 2, 0.6, 0.233, 0.133)
+
+
+
+
+        for index in range(magazine_size.maximum_count()):
+            magazine_size.new()
+
+        import_magazine_size_stats(0, 6)
+        import_magazine_size_stats(1, 6)
+        import_magazine_size_stats(2, 6)
+        import_magazine_size_stats(3, 6)
+        import_magazine_size_stats(4, 6)
+        import_magazine_size_stats(5, 6)
+        import_magazine_size_stats(6, 6)
+
+
+
+
+        for index in range(accuracy.maximum_count()):
+            accuracy.new()
+
+        import_accuracy_stats(0, 0.3)
+        import_accuracy_stats(1, 0.283)
+        import_accuracy_stats(2, 0.267)
+        import_accuracy_stats(3, 0.25)
+        import_accuracy_stats(4, 0.233)
+        import_accuracy_stats(5, 0.217)
+        import_accuracy_stats(6, 0.2)
+
+
+
+
+        for index in range(stability.maximum_count()):
+            stability.new()
+
+        import_stability_stats(0, 2, 0, 1)
+        import_stability_stats(1, 2, 0, 1)
+        import_stability_stats(2, 2, 0, 1)
+        import_stability_stats(3, 2, 0, 1)
+        import_stability_stats(4, 2, 0, 1)
+        import_stability_stats(5, 2, 0, 1)
+        import_stability_stats(6, 2, 0, 1)
+
+
+
+
+        for index in range(range.maximum_count()):
+            range.new()
+
+        import_range_stats(0, 0.8)
+        import_range_stats(1, 0.85)
+        import_range_stats(2, 0.9)
+        import_range_stats(3, 0.95)
+        import_range_stats(4, 1)
+        import_range_stats(5, 1.05)
+        import_range_stats(6, 1.1)
+
+
+
+
+        for index in range(base_damage.maximum_count()):
+            base_damage.new()
+
+        import_base_damage_stats(0, 110)
+        import_base_damage_stats(1, 110)
+        import_base_damage_stats(2, 110)
+        import_base_damage_stats(3, 110)
+        import_base_damage_stats(4, 110)
+        import_base_damage_stats(5, 110)
+        import_base_damage_stats(6, 110)
+
+
+
+
+        for index in range(sustain_damage.maximum_count()):
+            sustain_damage.new()
+
+        import_sustain_damage_stats(0, 1)
+        import_sustain_damage_stats(1, 1)
+        import_sustain_damage_stats(2, 1)
+        import_sustain_damage_stats(3, 1)
+        import_sustain_damage_stats(4, 1)
+        import_sustain_damage_stats(5, 1)
+        import_sustain_damage_stats(6, 1)
+
+
+
+
+        for index in range(precision_damage.maximum_count()):
+            precision_damage.new()
+
+        import_precision_damage_stats(0, 1.5, 1.5)
+        import_precision_damage_stats(1, 1.5, 1.5)
+        import_precision_damage_stats(2, 1.5, 1.5)
+        import_precision_damage_stats(3, 1.5, 1.5)
+        import_precision_damage_stats(4, 1.5, 1.5)
+        import_precision_damage_stats(5, 1.5, 1.5)
+        import_precision_damage_stats(6, 1.5, 1.5)
+
+        return true
+
+
+
+
+
+
+
+
+
+
+    def translate_hand_cannon_stats(hc):
+
+        hc.trigger_behavior = e_trigger_behavior._weapon_trigger_behavior_latch
+
+        hc.rate_of_fire = rate_of_fire[investment_rate_of_fire].hand_cannon_rate_of_fire
+        hc.shots_per_fire = rate_of_fire[investment_rate_of_fire].hand_cannon_shots_per_fire
+        local magazine_size = self.magazine_size[investment_magazine_size].hand_cannon_magazine_size
+        hc.reload_full_time = reload[investment_reload].hand_cannon_reload_full_time
+        hc.reload_empty_time = reload[investment_reload].hand_cannon_reload_empty_time
+        hc.ready_time = handling[investment_handling].hand_cannon_ready_time
+        hc.put_away_duration = handling[investment_handling].hand_cannon_put_away_duration
+        hc.ads_time = handling[investment_handling].hand_cannon_ads_time
+        hc.zoom_amount = optics[investment_optics].hand_cannon_zoom_amount
+
+        ads_accuracy_scale = optics[investment_optics].hand_cannon_ads_accuracy_scaling
+        initial_error = accuracy[investment_accuracy].hand_cannon_initial_error
+        final_error = stability[investment_stability].hand_cannon_final_error
+        hc.ads_movement_penality_scale = stability[investment_stability].hand_cannon_ads_move_penality_scale
+        hc.recoil_scale = stability[investment_stability].hand_cannon_recoil_scale
+        range_scale = range[investment_range].hand_cannon_range_scale
+        base_dps = base_damage[investment_base_damage].hand_cannon_base_dps
+        hc.sustain_damage_scale = sustain_damage[investment_sustain_damage].hand_cannon_sustain_damage_scale
+        hc.precision_body_damage_scale = precision_damage[investment_precision_damage].hand_cannon_precision_body_damage_scale
+        hc.precision_shield_damage_scale = precision_damage[investment_precision_damage].hand_cannon_precision_shield_damage_scale
+
+        hc.rounds_fired_per_second = weapon_utils.get_frame_bound_rounds_per_second(hc.rate_of_fire, hc.shots_per_fire)
+        hc.fire_recovery_time = weapon_utils.get_fire_recovery_time(0, hc.rate_of_fire, hc.shots_per_fire)
+        hc.soft_recovery_fraction = weapon_utils.get_soft_recovery_fraction(hc.trigger_behavior, hc.fire_recovery_time)
+        hc.rounds_reloaded = weapon_utils.get_rounds_reloaded(rate_of_fire[0].hand_cannon_rate_of_fire, hc.rate_of_fire, magazine_size, hc.shots_per_fire)
+        hc.rounds_total_initial = hc.rounds_reloaded * initial_ammo_scale
+        hc.rounds_total_max = hc.rounds_reloaded * total_ammo_scale
+        hc.minimum_respawn_rounds = self.magazine_size[0].hand_cannon_magazine_size
+        hc.autoaim_angle = 2.25 * nativemathlib.degrees_to_radians
+        hc.magnetism_angle = 5 * nativemathlib.degrees_to_radians
+        hc.autoaim_falloff_distance = 20 * range_scale
+        hc.autoaim_distance = 40 * range_scale
+        hc.magnetism_falloff_distance = 20 * range_scale
+        hc.magnetism_distance = 40 * range_scale
+        hc.error_angle_low = initial_error * nativemathlib.degrees_to_radians
+        hc.error_angle_high = final_error * nativemathlib.degrees_to_radians
+        hc.zoomed_error_scale_low = ads_accuracy_scale
+        hc.zoomed_error_scale_high = weapon_utils.get_zoomed_error_scale_high(ads_accuracy_scale, hc.error_angle_low, hc.error_angle_high)
+        hc.accuracy_offset = weapon_utils.get_accuracy_curve_offset(accuracy_scalar, hc.rate_of_fire)
+        hc.error_per_recovery = weapon_utils.get_error_per_recovery(error_deceleration_time, hc.fire_recovery_time, hc.shots_per_fire)
+        hc.recoil_offset = weapon_utils.get_recoil_curve_offset(recoil_scalar, hc.rate_of_fire)
+        hc.impact_damage_scale = weapon_utils.get_scaled_impact_damage(highest_rounds_per_second, lowest_rounds_per_second, max_rof_impact_damage_scale, base_dps, hc.rate_of_fire, hc.shots_per_fire)
+        hc.sustain_acquisition_rate = weapon_utils.get_sustain_acquisition_rate(sustain_damage_acquire_time_scale, hc.rate_of_fire, hc.shots_per_fire, magazine_size)
+        hc.sustain_grace_time = weapon_utils.get_sustain_grace_time(sustain_damage_grace_time_scale, magazine_size)
+        hc.sustain_decay_time = weapon_utils.get_sustain_decay_time(sustain_damage_decay_time_scale, magazine_size)
+        weapon_input = weapon_input_interface.get_weapon_input()
+        weapon_input.set_primary_trigger_initial_threshold(0.45)
+        weapon_input.set_primary_trigger_press_threshold(0.1)
+        weapon_input.set_primary_trigger_release_threshold(0.01)
+
+
+
+
+    def apply_stats(hc):
+
+        set_trigger_behavior(hc.trigger_behavior)
+
+        set_barrel_stat(e_weapon_barrel_stat.normal_initial_rate_of_fire, hc.rate_of_fire)
+        set_barrel_stat(e_weapon_barrel_stat.normal_final_rate_of_fire, hc.rate_of_fire)
+        set_barrel_stat(e_weapon_barrel_stat.zoomed_initial_rate_of_fire, hc.rate_of_fire)
+        set_barrel_stat(e_weapon_barrel_stat.zoomed_final_rate_of_fire, hc.rate_of_fire)
+        set_barrel_stat(e_weapon_barrel_stat.normal_shots_per_fire_minimum, hc.shots_per_fire)
+        set_barrel_stat(e_weapon_barrel_stat.normal_shots_per_fire_maximum, hc.shots_per_fire)
+        set_barrel_stat(e_weapon_barrel_stat.zoomed_shots_per_fire_minimum, hc.shots_per_fire)
+        set_barrel_stat(e_weapon_barrel_stat.zoomed_shots_per_fire_maximum, hc.shots_per_fire)
+        set_barrel_stat(e_weapon_barrel_stat.normal_fire_recovery_time, hc.fire_recovery_time)
+        set_barrel_stat(e_weapon_barrel_stat.zoomed_fire_recovery_time, hc.fire_recovery_time)
+        set_barrel_stat(e_weapon_barrel_stat.normal_soft_recovery_fraction, hc.soft_recovery_fraction)
+        set_barrel_stat(e_weapon_barrel_stat.zoomed_soft_recovery_fraction, hc.soft_recovery_fraction)
+
+        set_magazn_stat(e_weapon_magazine_stat.rounds_reloaded, hc.rounds_reloaded)
+        set_magazn_stat(e_weapon_magazine_stat.rounds_loaded_max, hc.rounds_reloaded)
+        set_magazn_stat(e_weapon_magazine_stat.minimum_respawn_rounds, hc.minimum_respawn_rounds)
+        set_magazn_stat(e_weapon_magazine_stat.rounds_total_initial, hc.rounds_total_initial)
+        set_magazn_stat(e_weapon_magazine_stat.rounds_total_max, hc.rounds_total_max)
+        set_reload_stat(e_weapon_reload_stat.reload_duration, hc.reload_full_time)
+        set_reload_stat(e_weapon_reload_stat.reload_empty_duration, hc.reload_empty_time)
+        set_weapon_stat(e_weapon_stat.ready_duration, hc.ready_time)
+        set_weapon_stat(e_weapon_stat.put_away_duration, hc.put_away_duration)
+        set_weapon_stat(e_weapon_stat.aim_down_sights_time, hc.ads_time)
+
+        set_weapon_stat(e_weapon_stat.forward_movement_penalty, movement_penality_scale)
+        set_weapon_stat(e_weapon_stat.sideways_movement_penalty, movement_penality_scale)
+        set_weapon_stat(e_weapon_stat.forward_movement_penalty_zoomed, weapon_utils.get_movement_penality(hc.zoom_amount, 0.25))
+        set_weapon_stat(e_weapon_stat.sideways_movement_penalty_zoomed, weapon_utils.get_movement_penality(hc.zoom_amount, 0.25))
+        set_weapon_stat(e_weapon_stat.pitch_speed_penalty_zoomed, 0)
+        set_weapon_stat(e_weapon_stat.yaw_speed_penalty_zoomed, 0)
+
+        set_weapon_stat(e_weapon_stat.zoom_level_count, zoom_level_count)
+        set_weapon_stat(e_weapon_stat.zoom_magnification_minimum, hc.zoom_amount)
+        set_weapon_stat(e_weapon_stat.zoom_magnification_maximum, hc.zoom_amount)
+        weapon_utils.set_channel_to_scale(channel_manager, zoom_amount_channel, hc.zoom_amount)
+
+        set_weapon_stat(e_weapon_stat.autoaim_angle, hc.autoaim_angle)
+        set_weapon_stat(e_weapon_stat.magnetism_angle, hc.magnetism_angle)
+        set_weapon_stat(e_weapon_stat.autoaim_distance, hc.autoaim_distance)
+        set_weapon_stat(e_weapon_stat.autoaim_falloff_distance, hc.autoaim_falloff_distance)
+        set_weapon_stat(e_weapon_stat.magnetism_distance, hc.magnetism_distance)
+        set_weapon_stat(e_weapon_stat.magnetism_falloff_distance, hc.magnetism_falloff_distance)
+
+        set_barrel_stat(e_weapon_barrel_stat.error_deceleration_time, error_deceleration_time)
+        set_barrel_stat(e_weapon_barrel_stat.error_angle_low, hc.error_angle_low)
+        set_barrel_stat(e_weapon_barrel_stat.error_angle_high, hc.error_angle_high)
+        set_barrel_stat(e_weapon_barrel_stat.zoomed_error_scale_low, hc.zoomed_error_scale_low)
+        set_barrel_stat(e_weapon_barrel_stat.zoomed_error_scale_high, hc.zoomed_error_scale_high)
+        set_barrel_stat(e_weapon_barrel_stat.firing_accuracy, hc.accuracy_offset)
+        set_barrel_stat(e_weapon_barrel_stat.firing_crouched_accuracy, hc.accuracy_offset)
+        set_barrel_stat(e_weapon_barrel_stat.firing_zoomed_accuracy, hc.accuracy_offset)
+        set_barrel_stat(e_weapon_barrel_stat.firing_zoomed_crouched_accuracy, hc.accuracy_offset)
+        set_barrel_stat(e_weapon_barrel_stat.error_per_recovery, hc.error_per_recovery)
+
+        set_barrel_stat(e_weapon_barrel_stat.recoil_deceleration_time, recoil_deceleration_time)
+        set_barrel_stat(e_weapon_barrel_stat.recoil_kick_speed, mathlib.max(hc.rounds_fired_per_second * 2, 15) * nativemathlib.degrees_to_radians)
+        set_barrel_stat(e_weapon_barrel_stat.recoil_return_speed, 2 * nativemathlib.degrees_to_radians)
+        set_barrel_stat(e_weapon_barrel_stat.recoil_max_angle, 0.5 * nativemathlib.degrees_to_radians)
+        set_barrel_stat(e_weapon_barrel_stat.recoil_kick_min_yaw_angle, 0 * hc.recoil_scale * nativemathlib.degrees_to_radians)
+        set_barrel_stat(e_weapon_barrel_stat.recoil_kick_max_yaw_angle, 0 * hc.recoil_scale * nativemathlib.degrees_to_radians)
+        set_barrel_stat(e_weapon_barrel_stat.recoil_kick_min_pitch_angle, -0.1 * hc.recoil_scale * nativemathlib.degrees_to_radians)
+        set_barrel_stat(e_weapon_barrel_stat.recoil_kick_max_pitch_angle, -20 * hc.recoil_scale * nativemathlib.degrees_to_radians)
+        set_barrel_stat(e_weapon_barrel_stat.recoil_kick_min_radial_yaw_angle, 0 * hc.recoil_scale * nativemathlib.degrees_to_radians)
+        set_barrel_stat(e_weapon_barrel_stat.recoil_kick_max_radial_yaw_angle, 7.5 * hc.recoil_scale * nativemathlib.degrees_to_radians)
+        set_barrel_stat(e_weapon_barrel_stat.recoil_kick_min_radial_pitch_angle, 0 * hc.recoil_scale * nativemathlib.degrees_to_radians)
+        set_barrel_stat(e_weapon_barrel_stat.recoil_kick_max_radial_pitch_angle, 0 * hc.recoil_scale * nativemathlib.degrees_to_radians)
+        set_barrel_stat(e_weapon_barrel_stat.firing_recoil, hc.recoil_offset)
+        set_barrel_stat(e_weapon_barrel_stat.firing_crouched_recoil, hc.recoil_offset)
+        set_barrel_stat(e_weapon_barrel_stat.firing_zoomed_recoil, hc.recoil_offset)
+        set_barrel_stat(e_weapon_barrel_stat.firing_zoomed_crouched_recoil, hc.recoil_offset)
+        weapon_utils.set_channel_to_scale(channel_manager, recoil_stability_channel, hc.recoil_scale)
+
+        set_barrel_stat(e_weapon_barrel_stat.impact_damage_multiplier, hc.impact_damage_scale)
+        set_barrel_stat(e_weapon_barrel_stat.sustained_max_multiplier, hc.sustain_damage_scale)
+        set_barrel_stat(e_weapon_barrel_stat.sustained_acquire_rate, hc.sustain_acquisition_rate)
+        set_barrel_stat(e_weapon_barrel_stat.sustained_grace_time, hc.sustain_grace_time)
+        set_barrel_stat(e_weapon_barrel_stat.sustained_decay_time, hc.sustain_decay_time)
+        set_barrel_stat(e_weapon_barrel_stat.precision_damage_fraction, hc.precision_body_damage_scale - 1)
+
+# Decompiled from 36735.13.12.02.1953.alpha script tags
+# See tag 82100022

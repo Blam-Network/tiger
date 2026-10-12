@@ -1,0 +1,105 @@
+c_trigger_volume_slot_host _trigger_volume
+dynamic_array<c_squad_sensor_host> _squad
+c_squad_group_sensor_host _squad_group  # true name unknown
+c_squad_sensor_host _dropship_squad
+c_squad_member_sensor_host _dropship_squad__pilot  # true name unknown
+c_objective_sensor_host _objective  # true name unknown
+c_common_reference _objective_reference
+c_control_point_set_sensor_host _dropship_entry_path  # true name unknown
+c_control_point_set_sensor_host _dropship_exit_path  # true name unknown
+int respawn_time = 30
+c_timer_sensor_host _respawn_timer  # true name unknown
+c_player_monitor_sensor_host _player_monitor bind(_trigger_volume)  # true name unknown
+
+
+
+
+
+
+
+
+
+def import_only_bind(identifier):
+    for s in _squad:
+        s.import_only_bind(identifier)
+    return true
+
+def set_objective(override_objective):
+    _objective_reference = override_objective
+
+def activate():
+    main.restart()
+
+thread init:
+    if not _player_monitor.test_any_inside():
+        main.restart()
+
+def deactivate():
+    main.kill()
+    complete.restart()
+
+thread main:
+    for s in _squad:
+        _squad_group.add_child(s)
+
+    if _objective_reference:
+        _objective_reference.add_squad(_squad_group)
+    else:
+        _objective.add_squad(_squad_group)
+        _objective.reset()
+
+
+    dropship_enter.restart()
+    sleep_until(dropship_enter.is_finished())
+
+    _dropship_squad__pilot.drop_squad(_squad_group); sleep_until(not _dropship_squad__pilot.is_dropping())
+
+    dropship_leave.restart()
+
+    while true:
+        if _squad_group.alive_count() == 0:
+            break
+        if _squad_group.current_in_combat_count() > 0:
+            _respawn_timer.reset(respawn_time)
+            _respawn_timer.stop()
+        else:
+            _respawn_timer.start()
+
+        if _respawn_timer.is_expired() and respawn_time > 0:
+
+            _squad_group.respawn()
+            _objective.reset()
+
+        sleep(1)
+
+thread complete:
+    if _squad_group.alive_count() > 0:
+        _squad_group.activate_temperament("temper_despawn")
+        sleep(4)
+        _squad_group.deactivate_temperament("temper_despawn")
+    _squad_group.remove()
+    if dropship_enter.is_running():
+        sleep_until(dropship_enter.is_finished())
+        dropship_leave.restart()
+    if dropship_leave.is_running():
+        sleep_until(dropship_leave.is_finished())
+
+thread dropship_enter:
+    _dropship_squad.place()
+    _dropship_squad__pilot.execute(_dropship_entry_path); sleep_until(_dropship_squad__pilot.get_command_script_state() != e_command_script_state.executing)
+    if not complete.is_running():
+        _dropship_squad__pilot.execute(cs_dropship_open_doors()); sleep_until(_dropship_squad__pilot.get_command_script_state() != e_command_script_state.executing)
+
+thread dropship_leave:
+    _dropship_squad__pilot.execute(cs_dropship_close_doors()); sleep_until(_dropship_squad__pilot.get_command_script_state() != e_command_script_state.executing)
+    _dropship_squad__pilot.execute(_dropship_exit_path); sleep_until(_dropship_squad__pilot.get_command_script_state() != e_command_script_state.executing)
+    _dropship_squad.remove()
+
+command_script cs_dropship_open_doors():
+    set_channel_scalar("doors", 1)
+
+command_script cs_dropship_close_doors():
+    set_channel_scalar("doors", 0)
+
+# Decompiled from 36735.13.12.02.1953.alpha script tags
+# See tag 821B8030

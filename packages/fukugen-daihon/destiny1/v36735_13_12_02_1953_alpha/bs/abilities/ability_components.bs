@@ -1,0 +1,4 @@
+# Decompiled from 36735.13.12.02.1953.alpha script tags
+# See tag 82100000 (c_condition_vol_component)
+# See tag 82100001 (c_player_status_icon)
+# The tags name these decls but hold no compiled code, so nothing here can be recovered.

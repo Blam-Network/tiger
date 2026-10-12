@@ -1,0 +1,252 @@
+int g_i_event_time
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+def set_event_frequency(time):
+    g_i_event_time = time
+
+
+
+
+
+
+def start(event1):
+
+    while true:
+
+
+        event1.main.restart()
+
+
+        sleep(mathlib.random_int_inclusive(g_i_event_time - 15, g_i_event_time + 15))
+
+
+
+def start_1(event1):
+
+    while true:
+
+        i_selected_variation = mathlib.random_int_never_highest_value(0, len(event1))
+        event1[i_selected_variation].main.restart()
+        sleep_until(event1[i_selected_variation].main.is_finished())
+        sleep(mathlib.random_int_inclusive(g_i_event_time - 15, g_i_event_time + 15))
+
+def start_2(event1, event2):
+
+    while true:
+        i_selected_active_event = mathlib.random_int_never_highest_value(0, 2)
+
+        if i_selected_active_event == 0:
+            i_selected_variation = mathlib.random_int_never_highest_value(0, len(event1))
+
+            event1[i_selected_variation].main.restart()
+            sleep_until(event1[i_selected_variation].main.is_finished())
+        elif i_selected_active_event == 1:
+            i_selected_variation = mathlib.random_int_never_highest_value(0, len(event2))
+            event2[i_selected_variation].main.restart()
+            sleep_until(event2[i_selected_variation].main.is_finished())
+
+        sleep(mathlib.random_int_inclusive(g_i_event_time - 15, g_i_event_time + 15))
+
+
+def start_2_weighted(event1, weight1, event2, weight2):
+
+    while true:
+        i_selected_active_event = mathlib.random_int_never_highest_value(0, weight1 + weight2)
+        print("Weighted Value: " + i_selected_active_event)
+        if i_selected_active_event >= 0 and i_selected_active_event < weight1:
+            print("Picked Event #1")
+            i_selected_variation = mathlib.random_int_never_highest_value(0, len(event1))
+
+            event1[i_selected_variation].main.restart()
+            sleep_until(event1[i_selected_variation].main.is_finished())
+        elif weight1 <= i_selected_active_event and i_selected_active_event < weight1 + weight2:
+            print("Picked Event #2")
+            i_selected_variation = mathlib.random_int_never_highest_value(0, len(event2))
+            event2[i_selected_variation].main.restart()
+            sleep_until(event2[i_selected_variation].main.is_finished())
+
+        sleep(mathlib.random_int_inclusive(g_i_event_time - 15, g_i_event_time + 15))
+
+def start_3(event1, event2, event3):
+
+    while true:
+        i_selected_active_event = mathlib.random_int_inclusive(0, 2)
+
+        if i_selected_active_event == 0:
+            i_selected_variation = mathlib.random_int_never_highest_value(0, len(event1))
+
+            event1[i_selected_variation].main.restart()
+            sleep_until(event1[i_selected_variation].main.is_finished())
+        elif i_selected_active_event == 1:
+            i_selected_variation = mathlib.random_int_never_highest_value(0, len(event2))
+            event2[i_selected_variation].main.restart()
+            sleep_until(event2[i_selected_variation].main.is_finished())
+        elif i_selected_active_event == 2:
+            i_selected_variation = mathlib.random_int_never_highest_value(0, len(event3))
+            event3[i_selected_variation].main.restart()
+            sleep_until(event3[i_selected_variation].main.is_finished())
+
+        sleep(mathlib.random_int_inclusive(g_i_event_time - 15, g_i_event_time + 15))
+
+
+def start_3_weighted(event1, weight1, event2, weight2, event3, weight3):
+
+    while true:
+        i_selected_active_event = mathlib.random_int_never_highest_value(0, weight1 + weight2 + weight3)
+        print("Weighted Value: " + i_selected_active_event)
+        if i_selected_active_event >= 0 and i_selected_active_event < weight1:
+            print("Picked Event #1")
+            i_selected_variation = mathlib.random_int_never_highest_value(0, len(event1))
+
+            event1[i_selected_variation].main.restart()
+            sleep_until(event1[i_selected_variation].main.is_finished())
+        elif weight1 <= i_selected_active_event and i_selected_active_event < weight1 + weight2:
+            print("Picked Event #2")
+            i_selected_variation = mathlib.random_int_never_highest_value(0, len(event2))
+            event2[i_selected_variation].main.restart()
+            sleep_until(event2[i_selected_variation].main.is_finished())
+        elif weight1 + weight2 <= i_selected_active_event and i_selected_active_event < weight1 + weight2 + weight3:
+            print("Picked Event #3")
+            i_selected_variation = mathlib.random_int_never_highest_value(0, len(event3))
+            event3[i_selected_variation].main.restart()
+            sleep_until(event3[i_selected_variation].main.is_finished())
+
+        sleep(mathlib.random_int_inclusive(g_i_event_time - 15, g_i_event_time + 15))
+
+
+def start_4(event1, event2, event3, event4):
+
+    while true:
+        i_selected_active_event = mathlib.random_int_inclusive(0, 3)
+
+        if i_selected_active_event == 0:
+            i_selected_variation = mathlib.random_int_never_highest_value(0, len(event1))
+
+            event1[i_selected_variation].main.restart()
+            sleep_until(event1[i_selected_variation].main.is_finished())
+        elif i_selected_active_event == 1:
+            i_selected_variation = mathlib.random_int_never_highest_value(0, len(event2))
+            event2[i_selected_variation].main.restart()
+            sleep_until(event2[i_selected_variation].main.is_finished())
+        elif i_selected_active_event == 2:
+            i_selected_variation = mathlib.random_int_never_highest_value(0, len(event3))
+            event3[i_selected_variation].main.restart()
+            sleep_until(event3[i_selected_variation].main.is_finished())
+        elif i_selected_active_event == 3:
+            i_selected_variation = mathlib.random_int_never_highest_value(0, len(event4))
+            event4[i_selected_variation].main.restart()
+            sleep_until(event4[i_selected_variation].main.is_finished())
+
+        sleep(mathlib.random_int_inclusive(g_i_event_time - 15, g_i_event_time + 15))
+
+def start_4_weighted(event1, weight1, event2, weight2, event3, weight3, event4, weight4):
+
+    while true:
+        i_selected_active_event = mathlib.random_int_never_highest_value(0, weight1 + weight2 + weight3 + weight4)
+
+        if i_selected_active_event >= 0 and i_selected_active_event < weight1:
+            print("Picked Event #1")
+            i_selected_variation = mathlib.random_int_never_highest_value(0, len(event1))
+
+            event1[i_selected_variation].main.restart()
+            sleep_until(event1[i_selected_variation].main.is_finished())
+        elif weight1 <= i_selected_active_event and i_selected_active_event < weight1 + weight2:
+            print("Picked Event #2")
+            i_selected_variation = mathlib.random_int_never_highest_value(0, len(event2))
+            event2[i_selected_variation].main.restart()
+            sleep_until(event2[i_selected_variation].main.is_finished())
+        elif weight1 + weight2 <= i_selected_active_event and i_selected_active_event < weight1 + weight2 + weight3:
+            print("Picked Event #3")
+            i_selected_variation = mathlib.random_int_never_highest_value(0, len(event3))
+            event3[i_selected_variation].main.restart()
+            sleep_until(event3[i_selected_variation].main.is_finished())
+        elif weight1 + weight2 + weight3 <= i_selected_active_event and i_selected_active_event < weight1 + weight2 + weight3 + weight4:
+            print("Picked Event #4")
+            i_selected_variation = mathlib.random_int_never_highest_value(0, len(event4))
+            event4[i_selected_variation].main.restart()
+            sleep_until(event4[i_selected_variation].main.is_finished())
+
+        sleep(mathlib.random_int_inclusive(g_i_event_time - 15, g_i_event_time + 15))
+
+
+
+def start_5(event1, event2, event3, event4, event5):
+
+    while true:
+        i_selected_active_event = mathlib.random_int_inclusive(0, 4)
+
+        if i_selected_active_event == 0:
+            i_selected_variation = mathlib.random_int_never_highest_value(0, len(event1))
+
+            event1[i_selected_variation].main.restart()
+            sleep_until(event1[i_selected_variation].main.is_finished())
+        elif i_selected_active_event == 1:
+            i_selected_variation = mathlib.random_int_never_highest_value(0, len(event2))
+            event2[i_selected_variation].main.restart()
+            sleep_until(event2[i_selected_variation].main.is_finished())
+        elif i_selected_active_event == 2:
+            i_selected_variation = mathlib.random_int_never_highest_value(0, len(event3))
+            event3[i_selected_variation].main.restart()
+            sleep_until(event3[i_selected_variation].main.is_finished())
+        elif i_selected_active_event == 3:
+            i_selected_variation = mathlib.random_int_never_highest_value(0, len(event4))
+            event4[i_selected_variation].main.restart()
+            sleep_until(event4[i_selected_variation].main.is_finished())
+        elif i_selected_active_event == 4:
+            i_selected_variation = mathlib.random_int_never_highest_value(0, len(event5))
+            event5[i_selected_variation].main.restart()
+            sleep_until(event5[i_selected_variation].main.is_finished())
+
+        sleep(mathlib.random_int_inclusive(g_i_event_time - 15, g_i_event_time + 15))
+
+def start_5_weighted(event1, weight1, event2, weight2, event3, weight3, event4, weight4, event5, weight5):
+
+    while true:
+        i_selected_active_event = mathlib.random_int_never_highest_value(0, weight1 + weight2 + weight3 + weight4)
+
+        if i_selected_active_event >= 0 and i_selected_active_event < weight1:
+            print("Picked Event #1")
+            i_selected_variation = mathlib.random_int_never_highest_value(0, len(event1))
+
+            event1[i_selected_variation].main.restart()
+            sleep_until(event1[i_selected_variation].main.is_finished())
+        elif weight1 <= i_selected_active_event and i_selected_active_event < weight1 + weight2:
+            print("Picked Event #2")
+            i_selected_variation = mathlib.random_int_never_highest_value(0, len(event2))
+            event2[i_selected_variation].main.restart()
+            sleep_until(event2[i_selected_variation].main.is_finished())
+        elif weight1 + weight2 <= i_selected_active_event and i_selected_active_event < weight1 + weight2 + weight3:
+            print("Picked Event #3")
+            i_selected_variation = mathlib.random_int_never_highest_value(0, len(event3))
+            event3[i_selected_variation].main.restart()
+            sleep_until(event3[i_selected_variation].main.is_finished())
+        elif weight1 + weight2 + weight3 <= i_selected_active_event and i_selected_active_event < weight1 + weight2 + weight3 + weight4:
+            print("Picked Event #4")
+            i_selected_variation = mathlib.random_int_never_highest_value(0, len(event4))
+            event4[i_selected_variation].main.restart()
+            sleep_until(event4[i_selected_variation].main.is_finished())
+        elif weight1 + weight2 + weight3 + weight4 <= i_selected_active_event and i_selected_active_event < weight1 + weight2 + weight3 + weight4 + weight5:
+            print("Picked Event #5")
+            i_selected_variation = mathlib.random_int_never_highest_value(0, len(event5))
+            event5[i_selected_variation].main.restart()
+            sleep_until(event5[i_selected_variation].main.is_finished())
+        sleep(mathlib.random_int_inclusive(g_i_event_time - 15, g_i_event_time + 15))
+
+# Decompiled from 36735.13.12.02.1953.alpha script tags
+# See tag 821B8025

@@ -1,0 +1,17 @@
+u_globals utils
+activity_end_objective strike1_end_objective
+
+
+
+
+thread init: pass
+
+
+thread complete:
+    c_lifetime_script_utilities.get_lifetime_sensor().end_game()
+
+thread main:
+    strike1_end_objective.activity_end()
+
+# Decompiled from 36735.13.12.02.1953.alpha script tags
+# See tag 821B8042

@@ -1,0 +1,16 @@
+class c_encounter__story_common : c_encounter:  # true name unknown
+    c_scoreboard_host scoreboard  # true name unknown
+    c_hard_wipe_globals_host hard_wipe_globals  # true name unknown
+    c_timer_sensor_host lifetime_timer  # true name unknown
+    c_lifetime_sensor_host lifetime  # true name unknown
+    c_fireteam_sensor_host fireteam
+    static_array<c_activity_player_sensor_host, 16> players
+
+
+
+    def import():
+        success = lifetime.import_only_bind(lifetime_timer)
+        return success
+
+# Decompiled from 36735.13.12.02.1953.alpha script tags
+# See tags 821B8001, 821E2001, 8228A001

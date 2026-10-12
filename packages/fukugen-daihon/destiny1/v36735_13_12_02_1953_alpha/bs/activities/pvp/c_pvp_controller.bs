@@ -1,0 +1,200 @@
+struct s_pvp_game_type:
+    c_common_reference script
+    string_hash name
+
+class c_pvp_controller : c_activity_script:  # true name unknown
+    static string_hash time_limit_hash = "time_limit"
+    static string_hash sudden_death_time_limit_hash = "pvp_sudden_death_time_limit"
+    static string_hash team_count_hash = "team_picker_team_count"
+    static string_hash pvp_gametype_hash = "pvp_gametype"
+    static string_hash incident_victory_imminent_hash = "pvp_victory_imminent"
+    static string_hash incident_five_minutes_remaining_hash = "pvp_five_minutes_remaining"
+    static string_hash incident_one_minute_remaining_hash = "pvp_one_minute_remaining"
+    static string_hash incident_thirty_seconds_remaining_hash = "pvp_thirty_seconds_remaining"
+    static string_hash incident_ten_seconds_remaining_hash = "pvp_ten_seconds_remaining"
+    static string_hash incident_sudden_death_hash = "pvp_sudden_death"
+    static string_hash incident_game_over_hash = "pvp_game_over"
+    static string_hash pvp_music_switch_hash = "pvp_music_switch"
+    static string_hash pvp_music_close_game_hash = "close_game"
+    static string_hash pvp_music_round_intro_hash = "round_intro"
+    static string_hash pvp_music_nothing_hash = 0xFD3EA900  # hash not cracked
+    static string_hash pvp_music_combat_start_hash = "combat_start"
+    static string_hash pvp_music_near_score_limit_hash = "near_score_limit"
+    static string_hash pvp_music_one_minute_remaining_hash = "one_minute_remaining"
+    static string_hash pvp_music_ten_seconds_remaining_hash = "ten_seconds_remaining"
+    static string_hash pvp_music_sudden_death_hash = "sudden_death"
+    static string_hash pvp_music_round_complete_hash = "round_complete"
+    int game_type_count
+    int game_type
+    static_stack<s_pvp_game_type, 8> game_types
+    s_pvp_game_type dummy_game_type
+    int time_vo
+    int music_state
+    bool played_victory_imminent_sequence
+    int time_limit
+    int sudden_death_time_limit
+    bool sudden_death
+    c_sequence_host pvp_music_sequence  # true name unknown
+    static_array<c_cinematic_sensor_host, 2> landing_cinematic
+    static_array<c_object_filter_sensor_host, 2> team_filters
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    thread game_thread:
+        timer = c_lifetime_script_utilities.get_lifetime_timer()
+        time_limit = get_outer().get_activity_option_integer(time_limit_hash)
+        sudden_death_time_limit = get_outer().get_activity_option_integer(sudden_death_time_limit_hash)
+        game_type_name = get_outer().get_activity_option_string_hash(pvp_gametype_hash)
+        game_type = -1
+
+        for i, game_type in game_types:
+            if game_type.name == game_type_name:
+                self.game_type = i
+
+        if game_type == -1:
+            print("game type not found, defaulting to the first registered game type")
+            game_type = 0
+
+        if game_type >= 0 and game_type < game_type_count:
+            game_script = game_types[game_type].script
+
+
+            game_script.init()
+            game_script.player_objective.set_active()
+
+            for i, filter in team_filters:
+                filter.add_players_on_team(i)
+            while c_player_script_utilities.get_player_count() == 0 or not c_player_script_utilities.all_players_are_ready():
+                print("%d players are connected, %d are ready".format(c_player_script_utilities.get_player_count(), c_player_script_utilities.get_ready_player_count()))
+                sleep(1)
+
+
+
+
+            pvp_music_sequence.start()
+            pvp_music_sequence.set_state(pvp_music_switch_hash, pvp_music_round_intro_hash)
+
+
+            c_lifetime_script_utilities.get_lifetime_sensor().set_state(e_activity_lifetime_state.countdown)
+            c_incident_utilities.submit_incident_hash(game_script.incident_game_type_hash)
+            for i, cinematic in landing_cinematic:
+                cinematic.start()
+            while not landing_cinematic[0].is_done():
+                sleep(1)
+
+
+
+            c_lifetime_script_utilities.get_lifetime_sensor().set_state(e_activity_lifetime_state.active)
+            c_incident_utilities.submit_incident_hash(game_script.incident_game_start_hash)
+            timer.reset(time_limit)
+            timer.start()
+            print("STARTING GAME")
+            game_script.start()
+
+
+            pvp_music_sequence.set_state(pvp_music_switch_hash, pvp_music_nothing_hash)
+
+            while not game_script.game_over:
+                game_script.tick(timer)
+
+                if not game_script.game_over:
+                    if timer.get_remaining_time_in_seconds() <= 300 and time_vo < 1:
+                        c_incident_utilities.submit_incident_hash(incident_five_minutes_remaining_hash)
+                        time_vo = 1
+                    elif timer.get_remaining_time_in_seconds() <= 60 and time_vo < 2:
+                        c_incident_utilities.submit_incident_hash(incident_one_minute_remaining_hash)
+
+                        if music_state < 1:
+                            pvp_music_sequence.set_state(pvp_music_switch_hash, pvp_music_one_minute_remaining_hash)
+                            music_state = 1
+                        time_vo = 2
+                    elif timer.get_remaining_time_in_seconds() <= 30 and time_vo < 3:
+                        c_incident_utilities.submit_incident_hash(incident_thirty_seconds_remaining_hash)
+                        time_vo = 3
+                    elif timer.get_remaining_time_in_seconds() <= 10 and time_vo < 4:
+                        c_incident_utilities.submit_incident_hash(incident_ten_seconds_remaining_hash)
+                        time_vo = 4
+
+                        if music_state < 2:
+                            pvp_music_sequence.set_state(pvp_music_switch_hash, pvp_music_ten_seconds_remaining_hash)
+                            music_state = 2
+
+                    if game_script.game_almost_over:
+                        if not played_victory_imminent_sequence:
+                            c_incident_utilities.submit_incident_with_team(incident_victory_imminent_hash, c_scoreboard_script_utilities.get_scoreboard().get_leading_team_index())
+                            played_victory_imminent_sequence = true
+
+
+                        if music_state < 1:
+                            pvp_music_sequence.set_state(pvp_music_switch_hash, pvp_music_near_score_limit_hash)
+                            music_state = 1
+
+                    if game_script.game_almost_over or timer.get_remaining_time_in_seconds() < 180:
+                        c_lifetime_script_utilities.get_lifetime_sensor().allow_join_in_progress(false)
+
+                    if timer.is_expired():
+                        if not sudden_death:
+                            c_incident_utilities.submit_incident_hash(incident_sudden_death_hash)
+                            timer.reset(sudden_death_time_limit)
+                            sudden_death = true
+
+
+                            pvp_music_sequence.set_state(pvp_music_switch_hash, pvp_music_sudden_death_hash)
+                        else:
+                            game_script.game_over = true
+
+                sleep(0.5)
+
+
+
+            timer.stop()
+            c_incident_utilities.submit_incident_with_team(incident_game_over_hash, c_scoreboard_script_utilities.get_scoreboard().get_leading_team_index())
+
+
+            pvp_music_sequence.set_state(pvp_music_switch_hash, pvp_music_round_complete_hash)
+
+            sleep(2)
+
+
+        else:
+            print("invalid or unsupported game type setting! ending activity in 5 seconds")
+            sleep(5)
+
+
+        c_lifetime_script_utilities.get_lifetime_sensor().end_game()
+
+        while true:
+            sleep(5)
+
+
+    def d_finalize():
+        c_lifetime_script_utilities.get_lifetime_sensor().set_state(e_activity_lifetime_state.pregame)
+
+    def register_game_type(script, name):
+        game_type_count = game_type_count + 1
+        dummy_game_type.script = script
+        dummy_game_type.name = name
+        game_types.append(dummy_game_type)
+
+    def run():
+        game_thread.wake()
+        sleep(0.5)
+
+# Decompiled from 36735.13.12.02.1953.alpha script tags
+# See tags 8220C003, 82236003, 82260003

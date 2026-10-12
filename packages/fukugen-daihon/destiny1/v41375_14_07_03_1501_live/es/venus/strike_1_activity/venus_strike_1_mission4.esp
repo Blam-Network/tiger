@@ -1,0 +1,181 @@
+# es\venus\strike_1_activity\venus_strike_1_mission4.esp
+#
+# Mission 4, the ruins: reach the ruins, clear the boss's guards, kill the
+# boss. The waves come on a timer while the boss lives. The enforcer comes in
+# when a player reaches its volume, and the boss is invincible until it dies
+# (guessed from the row names).
+
+c_squad_group_sensor_host sgq_strike_minions  # true name unknown
+c_squad_sensor_host sq_strike01_4
+c_squad_sensor_host sq_strike01_6
+c_squad_sensor_host sq_strike01_8
+c_squad_sensor_host sq_strike02_4
+c_squad_sensor_host sq_strike02_6
+c_squad_sensor_host sq_strike02_8
+c_squad_sensor_host sq_strike03_4
+c_squad_sensor_host sq_strike03_6
+c_squad_sensor_host sq_strike03_8
+c_squad_group_sensor_host sgq_strike_guards  # true name unknown
+c_squad_sensor_host sq_boss_guard01
+c_squad_sensor_host sq_boss_guard02
+c_squad_sensor_host sq_boss_guard03
+c_squad_sensor_host sq_boss_guard04
+c_squad_sensor_host sq_boss_guard05
+c_squad_sensor_host sq_boss_guard06
+trigger_volume_objective trigger_volume_ruins
+dialog_trigger md_s1_m3_d010_trigger
+c_trigger_volume_slot_host tv_2_vol
+c_player_monitor_sensor_host pm_2_vol bind(tv_2_vol)  # true name unknown
+c_squad_sensor_host sq_boss_enforcer
+c_object_filter_sensor_host of_boss
+c_squad_sensor_host sq_boss
+c_sequence_host md_s1_m3_d020  # true name unknown
+c_hop_on_sensor_host ho_invincible  # true name unknown
+int g_wave_num
+c_trigger_volume_slot_host tv_1_vol
+c_player_monitor_sensor_host pm_1_vol bind(tv_1_vol)  # true name unknown
+int g_spawn_direction
+c_squad_sensor_host warpstorm01
+c_squad_member_sensor_host warpstorm01__storm  # true name unknown
+c_squad_sensor_host warpstorm02
+c_squad_member_sensor_host warpstorm02__storm  # true name unknown
+c_squad_sensor_host warpstorm03
+c_squad_member_sensor_host warpstorm03__storm  # true name unknown
+c_trigger_volume_slot_host tv_3_vol
+c_player_monitor_sensor_host pm_3_vol bind(tv_3_vol)  # true name unknown
+c_trigger_volume_slot_host tv_enforcer
+c_player_monitor_sensor_host pm_enforcer bind(tv_enforcer)  # true name unknown
+kill_squad_objective kill_squad_ruins bind("strike_kill_boss", 1)
+
+thread init: pass
+
+thread complete: pass
+
+thread main:
+    sgq_strike_minions.add_child(sq_strike01_4)
+    sgq_strike_minions.add_child(sq_strike01_6)
+    sgq_strike_minions.add_child(sq_strike01_8)
+    sgq_strike_minions.add_child(sq_strike02_4)
+    sgq_strike_minions.add_child(sq_strike02_6)
+    sgq_strike_minions.add_child(sq_strike02_8)
+    sgq_strike_minions.add_child(sq_strike03_4)
+    sgq_strike_minions.add_child(sq_strike03_6)
+    sgq_strike_minions.add_child(sq_strike03_8)
+    sgq_strike_guards.add_child(sq_boss_guard01)
+    sgq_strike_guards.add_child(sq_boss_guard02)
+    sgq_strike_guards.add_child(sq_boss_guard03)
+    sgq_strike_guards.add_child(sq_boss_guard04)
+    sgq_strike_guards.add_child(sq_boss_guard05)
+    sgq_strike_guards.add_child(sq_boss_guard06)
+    print("Vex Ruins Strike")
+    trigger_volume_ruins.objective_begin()
+    sleep_until(trigger_volume_ruins.is_complete())
+    trigger_volume_ruins.objective_end_silent()
+    md_s1_m3_d010_trigger.enable()
+    sc_mission_logic.wake()
+    sleep_until_timeout(md_s1_m3_d010_trigger._dialog_sequence.is_done(), 30)
+    kill_squad_ruins.objective_begin_immediate()
+    sleep_until(kill_squad_ruins.is_complete())
+    sgq_strike_minions.remove()
+    sq_boss_enforcer.remove()
+    of_boss.clear()
+    kill_squad_ruins.objective_end()
+    sleep(3)
+
+thread sc_mission_logic:
+    print("place guards")
+    sq_boss_guard01.place()
+    sq_boss_guard02.place()
+    sq_boss_guard03.place()
+    sq_boss_guard04.place()
+    sq_boss_guard05.place()
+    sq_boss_guard06.place()
+    sleep_until(sgq_strike_guards.alive_count() > 5)
+    sleep_until(sgq_strike_guards.alive_count() < 5)
+    sleep_until_timeout(sgq_strike_guards.alive_count() < 1, 120)
+    sq_boss.place()
+    md_s1_m3_d020.start()
+    print("start encounter")
+    ho_invincible.set_filter(of_boss)
+    sc_enforcer.wake()
+    g_wave_num = 1
+    while kill_squad_ruins.is_complete() == false and g_wave_num <= 3:
+        sleep(45)
+        if kill_squad_ruins.is_complete() == false:
+            print("boss wave " + g_wave_num)
+            strike_player_direction()
+            strike_warpstorm_direction()
+            g_wave_num = g_wave_num + 1
+
+thread sc_enforcer:
+    sleep_until(pm_enforcer.get_count() > 0)
+    print("enforcer")
+    sq_boss_enforcer.place()
+    of_boss.add(sq_boss)
+    sleep(2)
+    sleep_until_timeout(sq_boss_enforcer.alive_count() < 1, 120)
+    of_boss.clear()
+
+def strike_warpstorm_direction():
+    if g_wave_num == 1:
+        if g_spawn_direction == 1:
+            strike_warpgate(warpstorm01__storm, sq_strike01_4)
+            strike_warpgate(warpstorm02__storm, sq_strike02_4)
+        elif g_spawn_direction == 2:
+            strike_warpgate(warpstorm02__storm, sq_strike02_4)
+            strike_warpgate(warpstorm03__storm, sq_strike03_4)
+        elif g_spawn_direction == 3:
+            strike_warpgate(warpstorm03__storm, sq_strike03_4)
+            strike_warpgate(warpstorm01__storm, sq_strike01_4)
+    if g_wave_num == 2:
+        if g_spawn_direction == 1:
+            strike_warpgate(warpstorm01__storm, sq_strike01_6)
+            strike_warpgate(warpstorm02__storm, sq_strike02_6)
+            strike_warpgate(warpstorm03__storm, sq_strike03_4)
+        elif g_spawn_direction == 2:
+            strike_warpgate(warpstorm02__storm, sq_strike02_6)
+            strike_warpgate(warpstorm03__storm, sq_strike03_6)
+            strike_warpgate(warpstorm01__storm, sq_strike01_4)
+        elif g_spawn_direction == 3:
+            strike_warpgate(warpstorm03__storm, sq_strike03_6)
+            strike_warpgate(warpstorm01__storm, sq_strike01_6)
+            strike_warpgate(warpstorm02__storm, sq_strike02_4)
+    if g_wave_num == 3:
+        if g_spawn_direction == 1:
+            strike_warpgate(warpstorm01__storm, sq_strike01_8)
+            strike_warpgate(warpstorm02__storm, sq_strike02_8)
+            strike_warpgate(warpstorm03__storm, sq_strike03_6)
+        elif g_spawn_direction == 2:
+            strike_warpgate(warpstorm02__storm, sq_strike02_8)
+            strike_warpgate(warpstorm03__storm, sq_strike03_8)
+            strike_warpgate(warpstorm01__storm, sq_strike01_6)
+        elif g_spawn_direction == 3:
+            strike_warpgate(warpstorm03__storm, sq_strike03_8)
+            strike_warpgate(warpstorm01__storm, sq_strike01_8)
+            strike_warpgate(warpstorm02__storm, sq_strike02_6)
+
+def strike_warpgate(cloud, sq):
+    sleep_until(sgq_strike_minions.alive_count() < 12)
+    if kill_squad_ruins.is_complete() == false:
+        cloud.place()
+    if kill_squad_ruins.is_complete() == false:
+        cloud.drop_squad(sq)
+        sleep_until(not cloud.is_dropping())
+    cloud.remove()
+
+def strike_player_direction():
+    if pm_2_vol.get_count() >= pm_1_vol.get_count() and pm_2_vol.get_count() >= pm_3_vol.get_count():
+        g_spawn_direction = 2
+    elif pm_1_vol.get_count() >= pm_2_vol.get_count() and pm_1_vol.get_count() >= pm_3_vol.get_count():
+        g_spawn_direction = 1
+    elif pm_3_vol.get_count() >= pm_2_vol.get_count() and pm_3_vol.get_count() >= pm_1_vol.get_count():
+        g_spawn_direction = 3
+    else:
+        d_rand_num = mathlib.random_int_inclusive(1, 3)
+        if d_rand_num == 1:
+            g_spawn_direction = 1
+        if d_rand_num == 2:
+            g_spawn_direction = 2
+        if d_rand_num == 3:
+            g_spawn_direction = 3
+    print("!!!!!!!!!!!!!!!!!!g_spawn_direction!!!!!!!!!!!!!!!!!!!!!!! : " + g_spawn_direction)

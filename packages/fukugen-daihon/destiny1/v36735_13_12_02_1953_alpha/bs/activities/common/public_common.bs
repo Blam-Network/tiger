@@ -1,0 +1,3 @@
+# Decompiled from 36735.13.12.02.1953.alpha script tags
+# See tags 821B8003, 821E2006, 8220C002, 82236002, 82260002, 8228A002 (c_encounter__public_common)
+# The tags name this decl but hold no compiled code, so nothing here can be recovered.

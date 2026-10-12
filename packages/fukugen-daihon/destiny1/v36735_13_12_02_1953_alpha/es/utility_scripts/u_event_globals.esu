@@ -1,0 +1,35 @@
+c_kill_incident_listener kil_squad  # true name unknown
+c_kill_incident_listener kil_object  # true name unknown
+c_engagement_incident_listener eil_damage  # true name unknown
+
+
+
+
+
+
+
+
+def bind_squad_engagement(sq_tracking, po_public_event):
+    kil_squad.bind_squad(sq_tracking)
+    kil_squad.set_handler(po_public_event.d_handle_engagement_incident)
+
+def bind_object_engagement(o_tracking, po_public_event):
+    kil_object.bind_object_identifier(o_tracking)
+    kil_object.set_handler(po_public_event.d_handle_engagement_incident)
+
+def bind_squad_damage_engagement(sq_tracking, po_public_event):
+    eil_damage.bind_squad_identifier(sq_tracking)
+    eil_damage.set_handler(po_public_event.d_handle_engagement_incident)
+
+
+
+
+
+def get_kil_squad_count():
+    return kil_squad.get_count()
+
+def get_kil_object_count():
+    return kil_object.get_count()
+
+# Decompiled from 36735.13.12.02.1953.alpha script tags
+# See tag 821B804D
