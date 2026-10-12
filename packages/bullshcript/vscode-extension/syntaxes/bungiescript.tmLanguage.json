@@ -1,0 +1,133 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "BungieScript",
+  "scopeName": "source.bungiescript",
+  "patterns": [
+    { "include": "#comment" },
+    { "include": "#declaration" },
+    { "include": "#member" },
+    { "include": "#keyword" },
+    { "include": "#string" },
+    { "include": "#number" },
+    { "include": "#constant" },
+    { "include": "#builtin" },
+    { "include": "#type" },
+    { "include": "#call" },
+    { "include": "#operator" }
+  ],
+  "repository": {
+    "comment": {
+      "name": "comment.line.number-sign.bungiescript",
+      "match": "#.*$"
+    },
+    "declaration": {
+      "patterns": [
+        {
+          "match": "^\\s*(class|struct|enum)\\s+([A-Za-z_]\\w*)(?:\\s*:\\s*([A-Za-z_][\\w.]*))?",
+          "captures": {
+            "1": { "name": "storage.type.class.bungiescript" },
+            "2": { "name": "entity.name.type.class.bungiescript" },
+            "3": { "name": "entity.other.inherited-class.bungiescript" }
+          }
+        },
+        {
+          "match": "^\\s*(?:(static)\\s+)?(def)\\s+([A-Za-z_][\\w.]*)",
+          "captures": {
+            "1": { "name": "storage.modifier.bungiescript" },
+            "2": { "name": "storage.type.function.bungiescript" },
+            "3": { "name": "entity.name.function.bungiescript" }
+          }
+        },
+        {
+          "match": "^\\s*(?:(startup)\\s+)?(thread)\\s+([A-Za-z_]\\w*)",
+          "captures": {
+            "1": { "name": "storage.modifier.bungiescript" },
+            "2": { "name": "storage.type.thread.bungiescript" },
+            "3": { "name": "entity.name.function.thread.bungiescript" }
+          }
+        },
+        {
+          "match": "^\\s*(delegate|command_script|implements)\\s+([A-Za-z_][\\w.]*)(?:\\s+([A-Za-z_]\\w*))?",
+          "captures": {
+            "1": { "name": "storage.type.bungiescript" },
+            "2": { "name": "entity.name.function.bungiescript" },
+            "3": { "name": "variable.other.member.bungiescript" }
+          }
+        }
+      ]
+    },
+    "member": {
+      "match": "^\\s*(?:(static)\\s+)?([A-Za-z_]\\w*(?:<[^>]*>)?(?:\\[\\d*\\])?)\\s+([A-Za-z_]\\w*)(?=\\s*(?:=|bind\\b|#|\\[|$))",
+      "captures": {
+        "1": { "name": "storage.modifier.bungiescript" },
+        "2": { "name": "entity.name.type.bungiescript" },
+        "3": { "name": "variable.other.member.bungiescript" }
+      }
+    },
+    "keyword": {
+      "patterns": [
+        {
+          "name": "keyword.control.bungiescript",
+          "match": "\\b(if|elif|else|while|for|in|switch|case|default|return|break|pass)\\b"
+        },
+        {
+          "name": "keyword.operator.logical.bungiescript",
+          "match": "\\b(and|or|not)\\b"
+        },
+        { "name": "keyword.other.bungiescript", "match": "\\b(bind)\\b" },
+        { "name": "storage.modifier.bungiescript", "match": "\\b(local)\\b" },
+        { "name": "variable.language.self.bungiescript", "match": "\\bself\\b" }
+      ]
+    },
+    "string": {
+      "patterns": [
+        {
+          "name": "string.quoted.double.bungiescript",
+          "begin": "\"",
+          "end": "\"",
+          "patterns": [
+            {
+              "name": "constant.character.escape.bungiescript",
+              "match": "\\\\(?:\\d{1,3}|x[0-9A-Fa-f]{2}|.)"
+            }
+          ]
+        },
+        {
+          "name": "string.quoted.single.bungiescript",
+          "begin": "'",
+          "end": "'",
+          "patterns": [
+            {
+              "name": "constant.character.escape.bungiescript",
+              "match": "\\\\(?:\\d{1,3}|x[0-9A-Fa-f]{2}|.)"
+            }
+          ]
+        }
+      ]
+    },
+    "number": {
+      "name": "constant.numeric.bungiescript",
+      "match": "\\b(?:0[xX][0-9A-Fa-f]+|\\d+(?:\\.\\d*)?(?:[eE][+-]?\\d+)?|\\.\\d+(?:[eE][+-]?\\d+)?)\\b"
+    },
+    "constant": {
+      "name": "constant.language.bungiescript",
+      "match": "\\b(true|false|nil)\\b"
+    },
+    "builtin": {
+      "name": "support.function.builtin.bungiescript",
+      "match": "\\b(sleep|sleep_until|sleep_until_timeout|range|print|assert|len|enum_to_int|is_instance|allocate|schema|pick_random_count|event_message|event_warning|event_error|vector4)\\b(?=\\s*\\()"
+    },
+    "type": {
+      "name": "entity.name.type.bungiescript",
+      "match": "\\b(?:[cesi]_[A-Za-z0-9_]+|int|short|real|bool|string|string_hash|vector2d|vector3d|vector4|static_array|static_stack|dynamic_array|table|bundlelib|mathlib|nativemathlib)\\b"
+    },
+    "call": {
+      "match": "\\b([A-Za-z_]\\w*)(?=\\s*\\()",
+      "captures": { "1": { "name": "entity.name.function.call.bungiescript" } }
+    },
+    "operator": {
+      "name": "keyword.operator.bungiescript",
+      "match": "!=|==|<=|>=|[-+*/%^<>=]"
+    }
+  }
+}

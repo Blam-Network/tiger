@@ -7,8 +7,7 @@
     "packages/poodle",
     "packages/rsat",
     "packages/gibbon",
-    "packages/bullshcript",
-    "packages/dictionary"
+    "packages/bullshcript"
   ],
   "scripts": {
     "build": "npm run build --workspaces",

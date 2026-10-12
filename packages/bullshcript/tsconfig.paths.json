@@ -1,0 +1,8 @@
+{
+  "compilerOptions": {
+    "paths": {
+      "@blamnetwork/bullshcript/destiny1/*": ["./src/versions/destiny1/*"],
+      "@blamnetwork/gibbon/destiny1/*": ["../gibbon/src/versions/destiny1/*"]
+    }
+  }
+}

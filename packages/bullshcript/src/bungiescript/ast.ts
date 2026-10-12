@@ -1,0 +1,282 @@
+// BungieScript syntax tree. Every node keeps its source line (the line the
+// chunk's debug info ends up pointing at) and the byte span of its text.
+
+export type BsFileKind = "bs" | "es" | "esp" | "esu";
+
+interface BsSpan {
+  readonly end: number;
+  readonly line: number;
+  readonly start: number;
+}
+
+export interface BsFile {
+  readonly decls: readonly BsDecl[];
+  readonly kind: BsFileKind;
+  // as given, forward slashes: "es/utility_scripts/kill_squad_objective.esu"
+  readonly path: string;
+}
+
+export type BsDeclKind = "class" | "struct" | "enum";
+
+export interface BsDecl extends BsSpan {
+  readonly base: string | undefined;
+  // es-family files declare their one class implicitly
+  readonly implicit: boolean;
+  readonly kind: BsDeclKind;
+  readonly members: readonly BsMember[];
+  readonly name: string;
+}
+
+// `static_array<T, N>`, `T[N]`, `table<K, V>` or a plain name
+export interface BsType {
+  readonly args: readonly (BsType | number)[];
+  // T[N]'s N
+  readonly count: number | undefined;
+  readonly name: string;
+  readonly text: string;
+}
+
+export type BsMember =
+  | BsCommandScript
+  | BsDelegate
+  | BsEnumValue
+  | BsField
+  | BsImplements
+  | BsMethod
+  | BsThread;
+
+export interface BsField extends BsSpan {
+  readonly bind: readonly BsExpr[] | undefined;
+  readonly default: BsExpr | undefined;
+  readonly isStatic: boolean;
+  readonly kind: "field";
+  readonly name: string;
+  readonly type: BsType;
+}
+
+export interface BsThread extends BsSpan {
+  readonly body: readonly BsStmt[];
+  readonly kind: "thread";
+  readonly name: string;
+  readonly startup: boolean;
+}
+
+export interface BsMethod extends BsSpan {
+  readonly body: readonly BsStmt[];
+  readonly isStatic: boolean;
+  readonly kind: "def";
+  readonly name: string;
+  // `def member.name()` implements a member's delegate
+  readonly owner: string | undefined;
+  readonly params: readonly string[];
+}
+
+interface BsDelegate extends BsSpan {
+  readonly kind: "delegate";
+  readonly name: string;
+  readonly params: readonly string[];
+}
+
+export interface BsCommandScript extends BsSpan {
+  readonly body: readonly BsStmt[];
+  readonly kind: "command_script";
+  readonly name: string;
+  readonly params: readonly string[];
+}
+
+interface BsImplements extends BsSpan {
+  readonly interfaceName: string;
+  readonly kind: "implements";
+  readonly name: string;
+}
+
+export interface BsEnumValue extends BsSpan {
+  readonly kind: "enum_value";
+  readonly name: string;
+  readonly value: number;
+}
+
+export type BsStmt =
+  | BsAssign
+  | BsBreak
+  | BsExprStmt
+  | BsFor
+  | BsIf
+  | BsLocal
+  | BsPass
+  | BsReturn
+  | BsSwitch
+  | BsWhile;
+
+interface BsExprStmt extends BsSpan {
+  readonly expr: BsExpr;
+  readonly kind: "expr";
+}
+
+interface BsAssign extends BsSpan {
+  readonly kind: "assign";
+  readonly targets: readonly BsExpr[];
+  readonly value: BsExpr;
+}
+
+// `local x[, y] [= e]`: a new local even where the name is a member's
+interface BsLocal extends BsSpan {
+  readonly kind: "local";
+  readonly names: readonly string[];
+  readonly value: BsExpr | undefined;
+}
+
+export interface BsIfBranch {
+  readonly body: readonly BsStmt[];
+  readonly cond: BsExpr;
+  readonly line: number;
+}
+
+export interface BsIf extends BsSpan {
+  readonly branches: readonly BsIfBranch[];
+  readonly kind: "if";
+  readonly orelse: readonly BsStmt[] | undefined;
+}
+
+interface BsWhile extends BsSpan {
+  readonly body: readonly BsStmt[];
+  readonly cond: BsExpr;
+  readonly kind: "while";
+}
+
+interface BsFor extends BsSpan {
+  readonly body: readonly BsStmt[];
+  readonly iter: BsExpr;
+  readonly kind: "for";
+  readonly targets: readonly string[];
+}
+
+export interface BsCase {
+  readonly body: readonly BsStmt[];
+  readonly line: number;
+  readonly value: BsExpr;
+}
+
+export interface BsSwitch extends BsSpan {
+  readonly cases: readonly BsCase[];
+  readonly default: readonly BsStmt[] | undefined;
+  readonly kind: "switch";
+  readonly subject: BsExpr;
+}
+
+interface BsReturn extends BsSpan {
+  readonly kind: "return";
+  readonly values: readonly BsExpr[];
+}
+
+interface BsBreak extends BsSpan {
+  readonly kind: "break";
+}
+
+interface BsPass extends BsSpan {
+  readonly kind: "pass";
+}
+
+export type BsExpr =
+  | BsAttr
+  | BsBinary
+  | BsBool
+  | BsCall
+  | BsIndex
+  | BsList
+  | BsName
+  | BsNil
+  | BsNumber
+  | BsString
+  | BsTuple
+  | BsUnary;
+
+interface BsName extends BsSpan {
+  readonly kind: "name";
+  readonly name: string;
+}
+
+interface BsNumber extends BsSpan {
+  readonly kind: "number";
+  // as written; Lua's reader rounds it the same way
+  readonly text: string;
+  readonly value: number;
+}
+
+interface BsString extends BsSpan {
+  readonly kind: "string";
+  // decoded bytes
+  readonly value: string;
+}
+
+interface BsBool extends BsSpan {
+  readonly kind: "bool";
+  readonly value: boolean;
+}
+
+interface BsNil extends BsSpan {
+  readonly kind: "nil";
+}
+
+interface BsAttr extends BsSpan {
+  readonly kind: "attr";
+  readonly name: string;
+  readonly object: BsExpr;
+}
+
+interface BsIndex extends BsSpan {
+  readonly index: BsExpr;
+  readonly kind: "index";
+  readonly object: BsExpr;
+}
+
+// `[a, b, c]`: a Python-style list, indexed from 0 like the host's arrays
+export interface BsList extends BsSpan {
+  readonly items: readonly BsExpr[];
+  readonly kind: "list";
+}
+
+export interface BsCall extends BsSpan {
+  readonly args: readonly BsExpr[];
+  readonly callee: BsExpr;
+  readonly kind: "call";
+}
+
+export type BsBinaryOp =
+  | "!="
+  | "%"
+  | "*"
+  | "**"
+  | "+"
+  | "-"
+  | "/"
+  | "<"
+  | "<="
+  | "=="
+  | ">"
+  | ">="
+  | "and"
+  | "or";
+
+interface BsBinary extends BsSpan {
+  readonly kind: "binary";
+  readonly left: BsExpr;
+  readonly op: BsBinaryOp;
+  // the operator token's line: a condition may continue on the next line
+  readonly opLine: number;
+  readonly right: BsExpr;
+}
+
+type BsUnaryOp = "-" | "not";
+
+interface BsUnary extends BsSpan {
+  readonly kind: "unary";
+  readonly op: BsUnaryOp;
+  readonly operand: BsExpr;
+}
+
+// `(x, y, z)`: a vector constant in a member default
+interface BsTuple extends BsSpan {
+  readonly items: readonly BsExpr[];
+  readonly kind: "tuple";
+}

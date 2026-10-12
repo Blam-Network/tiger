@@ -28,8 +28,8 @@
       // Binary formats and the Lua VM are bit twiddling all the way down.
       "includes": [
         "packages/*/src/**",
-        "packages/dictionary/tools/**",
-        "packages/dictionary/test/**",
+        "packages/bullshcript/test/**",
+        "packages/bullshcript/tools/**",
         "packages/gibbon/test/**"
       ],
       "linter": {

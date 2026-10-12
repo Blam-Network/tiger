@@ -1,0 +1,50 @@
+{
+  "name": "@blamnetwork/bullshcript",
+  "version": "0.1.0",
+  "description": "Runtime, VM, decompiler and BungieScript compiler for Destiny 1 activity scripts",
+  "private": true,
+  "type": "module",
+  "files": [
+    "dist",
+    "dist-cjs"
+  ],
+  "bin": {
+    "bullshcript": "./dist/cli.js"
+  },
+  "scripts": {
+    "build": "node ../../scripts/clean-dist.mjs && tsc -p tsconfig.build.json && tsc -p tsconfig.build.cjs.json && node ../../scripts/write-cjs-package-json.mjs",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "cd ../.. && vitest run packages/bullshcript",
+    "prepack": "npm run build",
+    "lift:alpha": "vite-node --config ../../vitest.config.ts --options.deps.inline @craftycodie/cstruct tools/fukugen-daihon/alpha_lift/lift.ts --",
+    "vscode:package": "node scripts/package-vscode-extension.mjs",
+    "vscode:install": "node scripts/package-vscode-extension.mjs --install"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Blam-Network/tiger.git",
+    "directory": "packages/bullshcript"
+  },
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
+  "devDependencies": {
+    "@blamnetwork/gibbon": "^0.1.0"
+  },
+  "exports": {
+    "./destiny1/*": {
+      "types": "./dist/versions/destiny1/*.d.ts",
+      "import": "./dist/versions/destiny1/*.js",
+      "require": "./dist-cjs/versions/destiny1/*.js",
+      "default": "./dist/versions/destiny1/*.js"
+    }
+  },
+  "typesVersions": {
+    "*": {
+      "destiny1/*": [
+        "./dist/versions/destiny1/*"
+      ]
+    }
+  }
+}

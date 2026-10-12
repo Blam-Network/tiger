@@ -1,0 +1,45 @@
+{
+  "name": "bungiescript",
+  "displayName": "BungieScript (bullshcript estimate)",
+  "description": "Highlighting for our estimate of Bungie's BungieScript and EncounterScript (.bs, .es, .esp, .esu)",
+  "version": "0.1.0",
+  "publisher": "blamnetwork",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Blam-Network/tiger.git",
+    "directory": "packages/bullshcript/vscode-extension"
+  },
+  "engines": {
+    "vscode": "^1.60.0"
+  },
+  "categories": [
+    "Programming Languages"
+  ],
+  "contributes": {
+    "languages": [
+      {
+        "id": "bungiescript",
+        "aliases": [
+          "BungieScript",
+          "EncounterScript",
+          "bs"
+        ],
+        "extensions": [
+          ".bs",
+          ".es",
+          ".esp",
+          ".esu"
+        ],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "bungiescript",
+        "scopeName": "source.bungiescript",
+        "path": "./syntaxes/bungiescript.tmLanguage.json"
+      }
+    ]
+  }
+}

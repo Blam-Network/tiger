@@ -1,0 +1,5 @@
+dist/
+dist-cjs/
+*.tsbuildinfo
+node_modules/
+vscode-extension/dist/

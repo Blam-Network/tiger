@@ -6,6 +6,4 @@ dist-cjs
 *.dll
 .vitepress/cache
 .local/
-packages/bullshcript/
-packages/dictionary/
 scratch/
