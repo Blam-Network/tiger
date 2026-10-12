@@ -1,0 +1,24 @@
+# escosmoact_cosmo_m4_dome_cact_cosmo_m4_dome_c_mission4.esp
+#
+# Mission 4, the end: back to the control room. Reaching it plays the outro
+# and Rasputin's broadcast, then the activity ends (the Ghost's last line
+# and the broadcast's second part are unknown_f9e600a7's).
+
+trigger_volume_objective obj_m4_finish
+c_sequence_host seq_m_outro
+c_sequence_host seq_cosmo4_rasputin
+c_sequence_host seq_d_o3_s04
+
+thread init: pass
+
+thread complete:
+    c_lifetime_script_utilities.get_lifetime_sensor().end_game(30)
+
+thread main:
+    seq_d_o3_s04.start()
+    obj_m4_finish.objective_begin()
+    sleep_until(obj_m4_finish.is_complete())
+    seq_m_outro.start()
+    seq_cosmo4_rasputin.start()
+    obj_m4_finish.objective_end_silent()
+    set_activity_complete()

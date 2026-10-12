@@ -1,0 +1,52 @@
+# es\utility_scripts\interactable_objective.esu
+#
+# An objective on something the player uses once (the Last Array's console).
+# Ported from the alpha's; day0's rows have no activity flag or incident
+# listener, so both are the script's own. The flag is what lets the player
+# use the object.
+
+c_player_objective_sensor_host _player_objective
+c_sequence_host _incoming_sequence
+c_sequence_host _completion_sequence
+c_nav_point_host _nav_point
+c_encounter_binding_host _object
+c_activity_flag _activity_flag
+c_interactable_incident_listener _incident_listener
+
+def import_only_bind(identifier):
+    return _object.import_only_bind_object(identifier) and _activity_flag.import_only_bind(identifier) and _incident_listener.import_only_bind(identifier)
+
+def is_complete():
+    return _incident_listener.get_count() > 0
+
+def objective_begin():
+    _player_objective.set_incoming()
+    sleep(2)
+    _incoming_sequence.start()
+    sleep_until_timeout(_incoming_sequence.is_done(), 10)
+    objective_begin_immediate()
+
+def objective_begin_immediate():
+    _player_objective.set_active()
+    _player_objective.nav_point_activate_with_fallback(_object, _nav_point)
+    objective_begin_silent()
+
+def objective_begin_silent():
+    _incident_listener.reset()
+    _activity_flag.activate()
+
+def cleanup():
+    _activity_flag.clear()
+
+def objective_end():
+    cleanup()
+    _player_objective.nav_point_clear()
+    _completion_sequence.start()
+    sleep_until_timeout(_completion_sequence.is_done(), 10)
+    _player_objective.set_complete()
+    sleep(2)
+    _player_objective.clear()
+
+def objective_end_silent():
+    cleanup()
+    _player_objective.clear()
