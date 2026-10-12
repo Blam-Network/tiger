@@ -49,7 +49,7 @@ function empty_package(pkg_id: number, patch: number, language: number) {
 }
 
 describe("c_package_set", () => {
-  const dir = mkdtempSync(join(tmpdir(), "gibbon-day0-"));
+  const dir = mkdtempSync(join(tmpdir(), "gibbon-TU0-"));
   const files: [string, number, number, number][] = [
     ["360_globals_0151_0.pkg", 0x151, 0, e_package_language.none],
     ["360_globals_0151_1.pkg", 0x151, 1, e_package_language.none],
