@@ -9,7 +9,7 @@ import {
 } from "../hks/coroutines.ts";
 import { LuaHostEnvironment, LuaHostObject } from "../hks/host_env.ts";
 import {
-  chunkStringConstants,
+  fieldMethodCalls,
   handleFieldNames,
   tableFieldNames,
 } from "../hks/script_shape.ts";
@@ -520,9 +520,17 @@ export class LuaEncounterHost {
       ...this.options.chunks,
       ...(this.options.childScripts?.values() ?? []),
     ];
+    // A thread another script restarts or wakes is not started at activity
+    // start; a child archetype's restart of its own `main` says nothing about
+    // a root's `main`, so archetypes only name what their own Lua calls.
+    const archetypes = new Set(this.options.childScripts?.values());
     for (const chunk of graph) {
-      for (const name of chunkStringConstants(chunk)) {
-        named.add(name);
+      const archetype =
+        archetypes.has(chunk) && !this.options.rootTags?.has(chunk.tagId);
+      for (const [field, methods] of fieldMethodCalls(chunk)) {
+        if (!archetype && (methods.has("restart") || methods.has("wake"))) {
+          named.add(field);
+        }
       }
       for (const field of handleFieldNames(chunk)) {
         this.handles.add(field);

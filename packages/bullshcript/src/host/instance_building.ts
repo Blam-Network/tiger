@@ -282,7 +282,10 @@ export function startupThreads(
 ): string[] {
   const schema = schemaOf(self, chunk);
   return schema === undefined
-    ? threadNames(named, implNames).autoStart
+    ? threadNames(
+        new Set([...named, ...chunkStringConstants(chunk)]),
+        implNames
+      ).autoStart
     : schemaStartupThreads(schema);
 }
 
