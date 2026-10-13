@@ -1,0 +1,2 @@
+domain,function,bits,description
+v230_incidents,fnv1,32,2.3.1 incident registry names (80A60DA0; a class 18 incident names itself by index into it)

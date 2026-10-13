@@ -8,7 +8,8 @@
       "!**/node_modules",
       "!**/test/corpus",
       "!**/docs/.vitepress",
-      "!**/*.generated.ts"
+      "!**/*.generated.ts",
+      "!packages/tiger-packets/cache"
     ]
   },
   "linter": {
@@ -30,7 +31,9 @@
         "packages/*/src/**",
         "packages/bullshcript/test/**",
         "packages/bullshcript/tools/**",
-        "packages/gibbon/test/**"
+        "packages/gibbon/test/**",
+        "packages/tiger-packets/test/**",
+        "packages/tiger-packets/scripts/**"
       ],
       "linter": {
         "rules": {
@@ -95,7 +98,8 @@
       "includes": [
         "scripts/**",
         "packages/*/scripts/**",
-        "packages/*/tools/**"
+        "packages/*/tools/**",
+        "packages/tiger-packets/src/cli.ts"
       ],
       "linter": {
         "rules": {

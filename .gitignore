@@ -7,3 +7,4 @@ dist-cjs
 .vitepress/cache
 .local/
 scratch/
+packages/tiger-packets/

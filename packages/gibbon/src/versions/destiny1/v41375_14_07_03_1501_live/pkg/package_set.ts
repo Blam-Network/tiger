@@ -1,10 +1,14 @@
-import { readdirSync } from "node:fs";
-import { join } from "node:path";
+import { existsSync, readdirSync } from "node:fs";
+import { basename, dirname, join } from "node:path";
 import { c } from "@craftycodie/cstruct";
 import { c_block_cache } from "./block_cache.ts";
-import { file_source } from "./byte_source.ts";
+import { type byte_source, file_source } from "./byte_source.ts";
 import type { package_entry } from "./package_entry.ts";
-import { c_package_file, type decompressor } from "./package_file.ts";
+import {
+  c_package_file,
+  type decompressor,
+  package_patch_path,
+} from "./package_file.ts";
 import {
   e_package_language,
   k_package_header_size,
@@ -19,6 +23,10 @@ import {
 } from "./tag_hash.ts";
 
 export interface package_set_options {
+  // A folder whose packages stand in for the patches this one lacks, by
+  // file name: a later build's folder of patches 1+ over the disc's patch 0,
+  // whose block tables still point at patch 0 blocks.
+  base_dir?: string;
   cache_blocks?: number;
   decompress?: decompressor;
   // Which of a localized package's variants to read; packages without one
@@ -35,6 +43,23 @@ export interface package_path {
   language: number;
   patch: number;
   path: string;
+}
+
+// An earlier patch of a package: beside it, else the same file name in the
+// base folder.
+function open_patch_from(
+  path: string,
+  patch: number,
+  base_dir: string
+): byte_source | undefined {
+  const name = basename(package_patch_path(path, patch));
+  for (const dir of [dirname(path), base_dir]) {
+    const sibling = join(dir, name);
+    if (existsSync(sibling)) {
+      return file_source(sibling);
+    }
+  }
+  return;
 }
 
 // Every package in a directory, keyed by the id in its header. Of an id's
@@ -114,9 +139,14 @@ export class c_package_set {
     if (!known) {
       return;
     }
+    const base = this.options.base_dir;
     const file = c_package_file.open(known.path, {
       decompress: this.options.decompress,
       cache: this.cache,
+      open_patch:
+        base === undefined
+          ? undefined
+          : (patch) => open_patch_from(known.path, patch, base),
     });
     this.opened.set(pkg_id, file);
     return file;

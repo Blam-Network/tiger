@@ -10,7 +10,6 @@
 #
 # The area encounters (dome_a, dome_c) are scripts of their own.
 # unknown_f9e600a7 holds the music and Ghost lines. From one retail capture
-# (tiger-packet-analysis docs/missions/act_cosmo_m4_dome_c.md).
 
 startup thread ss_cosmo_m4_dome_c:
     print("script startup")

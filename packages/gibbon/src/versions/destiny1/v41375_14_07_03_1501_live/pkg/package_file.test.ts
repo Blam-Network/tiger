@@ -1,9 +1,13 @@
-import { describe, expect, it } from "vitest";
+import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+import { afterAll, describe, expect, it } from "vitest";
 import { memory_source } from "./byte_source.ts";
 import { k_block_flag_compressed, k_block_size } from "./package_block.ts";
 import { k_package_entry_type_tag } from "./package_entry.ts";
 import { c_package_file, package_patch_path } from "./package_file.ts";
 import { e_package_language } from "./package_header.ts";
+import { c_package_set } from "./package_set.ts";
 import { make_tag_hash } from "./tag_hash.ts";
 
 interface test_block {
@@ -183,5 +187,43 @@ describe("c_package_file", () => {
     expect(package_patch_path("d/360_globals_0151_0.pkg", 2)).toBe(
       "d/360_globals_0151_2.pkg"
     );
+  });
+});
+
+// A folder of patch 1 only, whose patch 0 blocks sit in another folder.
+describe("c_package_set base_dir", () => {
+  const root = mkdtempSync(join(tmpdir(), "gibbon-base-"));
+  const dir = join(root, "patched");
+  const base = join(root, "disc");
+  mkdirSync(dir);
+  mkdirSync(base);
+  const first = Buffer.from(
+    Array.from({ length: k_block_size }, (_, i) => i & 0xff)
+  );
+  const old = Buffer.alloc(0x2000 + k_block_size);
+  first.copy(old, 0x2000);
+  writeFileSync(
+    join(dir, "360_globals_0151_1.pkg"),
+    build_package(
+      [
+        { bytes: first, patch: 0, offset: 0x2000 },
+        { bytes: Buffer.alloc(0x100, 0xee) },
+      ],
+      1
+    )
+  );
+  writeFileSync(join(base, "360_globals_0151_0.pkg"), old);
+  afterAll(() => rmSync(root, { recursive: true, force: true }));
+
+  it("reads a missing patch from the base folder", () => {
+    const set = c_package_set.open_directory(dir, { base_dir: base });
+    expect(set.read_tag(make_tag_hash(0x151, 0))).toEqual(
+      first.subarray(0x10, 0x30)
+    );
+  });
+
+  it("stays strict without one", () => {
+    const set = c_package_set.open_directory(dir);
+    expect(() => set.read_tag(make_tag_hash(0x151, 0))).toThrow("no patch 0");
   });
 });
