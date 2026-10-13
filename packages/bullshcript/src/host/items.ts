@@ -37,7 +37,7 @@ export type CommandScriptCommand =
   | { kind: 2; seconds: number }
   | { kind: 3; point: ItemRef; index: number; stop: boolean }
   | { kind: 4 }
-  | { kind: 5; which: number; value: boolean }
+  | { kind: 5; which: number; value: number }
   | { kind: 6; temperament: number; add: boolean }
   | { kind: 7; channel: number; values: readonly number[] }
   | { kind: 8; point: ItemRef; index: number }

@@ -171,6 +171,33 @@ export class LuaCommandScriptBuilder {
         });
         break;
       }
+      // face(point, index): turn to a path's point (kind 8). Retail's
+      // dropships face their exit path's first point before the exit ability.
+      case "face": {
+        const point = pointRow(this.types, this.rowOf(args[0]));
+        if (!point) {
+          this.note(`${call} (not a point row, skipped)`);
+          return true;
+        }
+        this.append(call, {
+          kind: 8,
+          point,
+          index: number(args[1]),
+          end: { kind: 0 },
+        });
+        break;
+      }
+      // set_flag(which, value): the tags' flag command (kind 5). Retail sends
+      // (3, 3) around every dropship's moves and abilities; what the flags do
+      // is not known.
+      case "set_flag":
+        this.append(call, {
+          kind: 5,
+          which: number(args[0]),
+          value: number(args[1]),
+          end: { kind: 0 },
+        });
+        break;
       case "set_channel_scalar": {
         const value = number(args[1]);
         this.append(call, {
@@ -225,6 +252,15 @@ export class LuaCommandScriptBuilder {
             ...last,
             end: { kind: 2, seconds: number(args[0]) },
           };
+        }
+        break;
+      }
+      // Ends the last atom with end kind 1 rather than its own duration:
+      // retail's dropship exits open with set_flag(3, 3) ended this way.
+      case "terminate_immediate": {
+        const last = this.atoms.at(-1);
+        if (last) {
+          this.atoms[this.atoms.length - 1] = { ...last, end: { kind: 1 } };
         }
         break;
       }

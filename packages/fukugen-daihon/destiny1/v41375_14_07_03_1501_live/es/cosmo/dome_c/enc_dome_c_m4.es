@@ -8,6 +8,9 @@
 # carrying its activity flag, which mission 2's objective sets. The Fallen
 # skiff at the landing flies in on its entry path, drops its squad when the
 # player comes outside and leaves on the landing's path five seconds later.
+# Once the console works two Hive ships pass over the dome while a third
+# brings each wave in, drops it and leaves. The ships' command scripts are
+# retail's atom for atom.
 
 c_objective_sensor_host obj_dome_c_m4_fallen
 c_objective_sensor_host obj_dome_c_m4_hive
@@ -25,7 +28,6 @@ interactable_placement obj_placement_m4_finish
 c_squad_member_sensor_host sq_ds_fallen_landing01__dropship
 c_control_point_set_sensor_host cps_ds_fallen_landing01_enter
 c_control_point_set_sensor_host cps_ds_fallen_landing01
-c_command_script __cs
 c_squad_sensor_host sq_fallen_corridor01a
 c_squad_sensor_host sq_fallen_corridor01b
 c_squad_sensor_host sq_fallen_corridor01c1
@@ -42,9 +44,15 @@ c_squad_sensor_host sq_fallen_ctrlambush01
 c_squad_sensor_host sq_fallen_ctrlambush02
 c_squad_sensor_host sq_fallen_ctrlambush03
 c_sequence_host seq_hive_wave_announce
-c_squad_sensor_host sq_ds_hive_assault01
-c_squad_sensor_host sq_ds_hive_assault02
-c_squad_sensor_host sq_ds_hive_assault03
+c_squad_member_sensor_host sq_ds_hive_assault01__dropship
+c_squad_member_sensor_host sq_ds_hive_assault02__dropship
+c_squad_member_sensor_host sq_ds_hive_assault03__dropship
+c_control_point_set_sensor_host cps_ds_hive_assault01_enter
+c_control_point_set_sensor_host cps_ds_hive_assault01_exit
+c_control_point_set_sensor_host cps_ds_hive_assault02
+c_control_point_set_sensor_host cps_ds_hive_assault03
+c_control_point_set_sensor_host cps_ds_hive_assault03_enter
+c_control_point_set_sensor_host cps_ds_hive_assault03_exit
 c_squad_sensor_host sq_hive_assault_thrall_first1
 c_squad_sensor_host sq_hive_assault_thrall_first2
 static_array<c_squad_sensor_host, 5> sq_hive_assault_thrall
@@ -88,7 +96,8 @@ thread sc_console:
 # the Fallen, corridor by corridor to the control room
 thread sc_corridors:
     sleep(3)
-    dropship_enter(sq_ds_fallen_landing01__dropship, cps_ds_fallen_landing01_enter)
+    sq_ds_fallen_landing01__dropship.place()
+    sq_ds_fallen_landing01__dropship.execute(cs_skiff_enter(cps_ds_fallen_landing01_enter))
     sleep(3)
     sq_fallen_corridor01a.set_task("task_4")
     sleep_until(pm_refresh_corridor01.test_any_inside())
@@ -107,7 +116,7 @@ thread sc_corridors:
     sq_fallen_landing01.set_task("task")
     sq_ds_fallen_landing01__dropship.drop_squad(sq_fallen_landing01)
     sleep(5)
-    dropship_leave(sq_ds_fallen_landing01__dropship, cps_ds_fallen_landing01)
+    sq_ds_fallen_landing01__dropship.execute(cs_skiff_exit(cps_ds_fallen_landing01))
     sleep_until(sq_fallen_flank01.alive_count() <= 1)
     sq_fallen_landing01.set_task("t_flank01")
     sq_fallen_flank01.set_task("t_flank01")
@@ -127,70 +136,121 @@ thread sc_corridors:
     sleep(5)
     sq_fallen_controlentrance01.set_task("t_controlentrance01")
 
-# the Hive, once the console is working: dropships, then three waves
+# the Hive, once the console is working: two ships pass over the dome, the
+# third brings in three waves
 thread sc_assault:
     sleep_until(o_terminal_invis_device.is_alive())
     o_hei_satellite_event_a01.set_device_position(1)
     sleep(3)
     o_hei_satellite_event_a02.set_device_position(1)
     sleep_until(pm_outdoor_enc_wave02.test_any_inside())
-    sq_ds_hive_assault02.place()
+    hive_ship_pass(sq_ds_hive_assault02__dropship, cps_ds_hive_assault02)
     sleep(1)
-    sq_ds_hive_assault03.place()
+    hive_ship_pass(sq_ds_hive_assault03__dropship, cps_ds_hive_assault03)
     sleep(1)
-    sq_ds_hive_assault01.place()
+    ship = sq_ds_hive_assault01__dropship
+    hive_ship_enter(ship, cps_ds_hive_assault01_enter)
     sleep(12)
-    place_on_task(sq_hive_assault_thrall_first1, "t_thrall_1")
-    place_on_task(sq_hive_assault_thrall_first2, "t_thrall_1")
+    drop_on_task(ship, sq_hive_assault_thrall_first1, "t_thrall_1")
+    drop_on_task(ship, sq_hive_assault_thrall_first2, "t_thrall_1")
     seq_hive_wave_announce.start()
     sleep(5)
-    sq_hive_assault_heavy01a.set_task("0x56D7ABC2")
+    drop_on_task(ship, sq_hive_assault_heavy01a, "0x56D7ABC2")
+    sleep(3)
+    hive_ship_leave(ship, cps_ds_hive_assault01_exit)
+
+    # the second wave
     sleep_until(sq_hive_assault_thrall_first2.alive_count() == 0)
-    sleep_until(sq_ds_hive_assault01.alive_count() == 0)
-    sleep_until(sq_ds_hive_assault02.alive_count() == 0)
-    sleep(7)
+    sleep(13)
+    hive_ship_enter(ship, cps_ds_hive_assault01_enter)
+    sleep(8)
     place_on_task(sq_hive_assault_thrall[0], "t_thrall_1")
     sleep(5)
-    place_on_task(sq_hive_assault_trooper02a, "t_anchors")
+    drop_on_task(ship, sq_hive_assault_trooper02a, "t_anchors")
     sleep(3)
-    place_on_task(sq_hive_assault_trooper02b, "t_anchors")
+    drop_on_task(ship, sq_hive_assault_trooper02b, "t_anchors")
     sleep(4)
-    place_on_task(sq_hive_assault_heavy02a, "task_7")
+    drop_on_task(ship, sq_hive_assault_heavy02a, "task_7")
+    sleep(3)
+    hive_ship_leave(ship, cps_ds_hive_assault01_exit)
+
+    # the third
     sleep_until(sq_hive_assault_trooper02a.alive_count() == 0)
     sleep_until(sq_hive_assault_trooper02b.alive_count() == 0)
+    hive_ship_enter(ship, cps_ds_hive_assault03_enter)
+    sleep(1)
     place_on_task(sq_hive_assault_thrall[1], "t_thrall_1")
     sq_hive_assault_trooper02a.set_task("task_4")
     sq_hive_assault_trooper02b.set_task("task_4")
     sq_hive_assault_heavy01a.set_task("task_4")
     sleep(12)
-    place_on_task(sq_hive_assault_trooper03a, "task")
+    drop_on_task(ship, sq_hive_assault_trooper03a, "task")
     sleep(3)
-    place_on_task(sq_hive_assault_trooper03b, "task")
+    drop_on_task(ship, sq_hive_assault_trooper03b, "task")
     sleep(3)
-    place_on_task(sq_hive_assault_trooper03c, "task")
-    sleep(7)
-    place_on_task(sq_hive_assault_heavy03a, "task_6")
-    sleep(14)
+    drop_on_task(ship, sq_hive_assault_trooper03c, "task")
+    sleep(5)
+    drop_on_task(ship, sq_hive_assault_heavy03a, "task_6")
+    sleep(3)
+    hive_ship_leave(ship, cps_ds_hive_assault03_exit)
+    sleep(11)
     sq_hive_assault_trooper03a.set_task("task_4")
     sq_hive_assault_trooper03b.set_task("task_4")
     sq_hive_assault_trooper03c.set_task("task_4")
 
-def dropship_enter(pilot, path):
-    __cs.clear()
-    __cs.snap_to(path, 0)
-    __cs.ability("dropship", "enter_25_long")
-    __cs.move_to(path, 1, true)
-    __cs.set_channel_scalar("doors", 1)
+def hive_ship_enter(pilot, path):
     pilot.place()
-    pilot.execute(__cs)
+    pilot.execute(cs_hive_ship_enter(path))
 
-def dropship_leave(pilot, path):
-    __cs.clear()
-    __cs.set_channel_scalar("doors", 0)
-    __cs.move_to(path, 0, false)
-    __cs.ability("dropship", "0x1E35DF11")
-    pilot.execute(__cs)
+def hive_ship_pass(pilot, path):
+    pilot.place()
+    pilot.execute(cs_hive_ship_pass(path))
+
+def hive_ship_leave(pilot, path):
+    pilot.execute(cs_hive_ship_exit(path))
+
+def drop_on_task(pilot, sq, task):
+    sq.set_task(task)
+    pilot.drop_squad(sq)
 
 def place_on_task(sq, task):
     sq.set_task(task)
     sq.place()
+
+# the skiff comes in on its path, opens up and turns to face the landing
+command_script cs_skiff_enter(path):
+    snap_to(path, 0)
+    ability("dropship", "enter_90")
+    set_channel_scalar("doors", 1)
+    set_flag(3, 3)
+    terminate_immediate()
+    face(path, 0)
+
+command_script cs_skiff_exit(path):
+    set_flag(3, 3)
+    terminate_immediate()
+    move_to(path, 0, false)
+    face(path, 0)
+    move_to(path, 1, false)
+    ability("dropship", "exit_25")
+
+# the wave ship flies its entrance and holds until told to leave
+command_script cs_hive_ship_enter(path):
+    snap_to(path, 0)
+    ability("dropship", "0xE06C034F")
+    set_flag(3, 3)
+
+command_script cs_hive_ship_exit(path):
+    set_flag(3, 3)
+    terminate_immediate()
+    move_to(path, 0, false)
+    face(path, 0)
+    ability("dropship", "exit_1")
+
+# the other two cross the dome and leave
+command_script cs_hive_ship_pass(path):
+    snap_to(path, 0)
+    set_flag(3, 3)
+    ability("dropship", "0xE06C034F")
+    move_to(path, 1, false)
+    ability("dropship", "exit_1")

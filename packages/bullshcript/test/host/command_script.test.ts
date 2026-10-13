@@ -135,6 +135,30 @@ describe("command scripts", () => {
     expect(notes.some((line) => line.includes("not a point row"))).toBe(true);
   });
 
+  // Retail 2.3.1's Last Array wave ship leaving (cookie 2): a flag atom
+  // ended at once, a move and a face on the exit path, then the exit.
+  it("builds retail's dropship exit: set_flag, face and an immediate end", () => {
+    const { call, cs, handle } = builder();
+    call("set_flag", 3, 3);
+    call("terminate_immediate");
+    call("move_to", handle(path), 0, false);
+    call("face", handle(path), 0);
+    call("ability", "dropship", "exit_1");
+    expect(cs.script).toEqual([
+      { kind: 5, which: 3, value: 3, end: { kind: 1 } },
+      { kind: 3, point, index: 0, stop: false, end: { kind: 0 } },
+      { kind: 8, point, index: 0, end: { kind: 0 } },
+      {
+        kind: 9,
+        name: fnv1("dropship"),
+        argument: fnv1("exit_1"),
+        slot: -1,
+        index: 0,
+        end: { kind: 0 },
+      },
+    ]);
+  });
+
   it("holds no more than the client's 32 atoms", () => {
     const { call, cs } = builder();
     for (let i = 0; i < 40; i++) {
