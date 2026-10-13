@@ -21,6 +21,7 @@ import {
 import * as instanceBuilding from "./instance_building.ts";
 import { itemRef } from "./items.ts";
 import {
+  boundObjectOf,
   LuaPredicatePack,
   registerBoundObject,
   resolveStringHash,
@@ -30,6 +31,7 @@ import {
   unboundAnswer,
   unboundLabel,
 } from "./natives.ts";
+import { playerCount as monitorPlayerCount } from "./object_natives.ts";
 
 // sleep() rounds anything shorter up to this (0x835CC7F0).
 const SLEEP_FLOOR_SECONDS = 0.5;
@@ -730,8 +732,10 @@ export function encounterManager(
             ? Math.min(number(args[5], 0), AMBIENT_FIRST_WAIT_MAX_SECONDS)
             : 0,
       });
-      // The manager, not an autostart, runs a registered encounter: stop what
-      // building it started.
+      // The manager, not an autostart, runs a registered encounter: stop the
+      // main (and an ambient's init) building it started. Its other startup
+      // threads keep running: simple_encounter's ss_initial_placement closes
+      // the window after which a run respawns rather than places.
       stopEncounterThreads(self, encounter, kind === "ambient");
       self.writer.note(
         `encounters: ${kind} ${instanceName(self, encounter)} cost ${number(args[1], 0)}`
@@ -780,11 +784,17 @@ function stopEncounterThreads(
   for (const script of [...self.scheduler.threads]) {
     if (
       self.threadOwners.get(script) === instance &&
-      (andInit || !script.name.endsWith(".init"))
+      (threadNamed(script.name, "main") ||
+        (andInit && threadNamed(script.name, "init")))
     ) {
       self.scheduler.remove(script);
     }
   }
+}
+
+// A scoped thread name ("amb_x.main") or a root instance's bare one.
+function threadNamed(scoped: string, name: string): boolean {
+  return scoped === name || scoped.endsWith(`.${name}`);
 }
 
 function encounterRunning(
@@ -840,12 +850,23 @@ export function advanceManager(
     if (excluded(self, manager, encounter)) {
       continue;
     }
+    // A wiped encounter comes back out of sight: retail's dome A Fallen went
+    // back in a second after the player left their volume (the Last Array's
+    // public host), the rule simple_encounter's own init applies.
+    if (encounter.state === "cooling" && playerInside(encounter)) {
+      continue;
+    }
     if (activateEncounter(self, encounter)) {
       encounter.state = "active";
       spent += encounter.cost;
       activated = true;
     }
   }
+}
+
+function playerInside(encounter: ManagedEncounter): boolean {
+  const monitor = boundObjectOf(encounter.instance.get("_player_monitor"));
+  return monitor !== undefined && monitorPlayerCount(monitor) > 0;
 }
 
 export function excluded(

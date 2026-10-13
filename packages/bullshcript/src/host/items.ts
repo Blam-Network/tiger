@@ -238,6 +238,10 @@ export interface SquadState {
   killed?: number;
   // SquadAuth ref0 and [10]: the TU0 client hands the squad a firing area set from the task.
   objective?: ItemRef;
+  // The activity tick its bodies last went up: SquadAuth [6]. Retail's moves
+  // with every placement (the Last Array's dome A Fallen, 7681 ticks between
+  // the first and the respawn).
+  placedAt?: number;
   task?: number;
   // The task's +0xC, sent as [9] as retail does; the TU0 client never reads it.
   taskInfluencer?: number;

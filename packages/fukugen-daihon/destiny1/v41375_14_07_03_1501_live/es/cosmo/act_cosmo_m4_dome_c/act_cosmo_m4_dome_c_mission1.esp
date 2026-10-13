@@ -5,7 +5,7 @@
 
 c_location_sensor_host array
 trigger_bubble_objective obj_m4_o1a bind(array)
-collect_loot_objective obj_m4_o1b bind("0xDA728072", 1)
+collect_loot_objective obj_m4_o1b bind("0xDA728072", 5)
 c_sequence_host seq_d_o1_s03
 c_sequence_host seq_d_o1_s04
 c_sequence_host seq_d_o1_s05

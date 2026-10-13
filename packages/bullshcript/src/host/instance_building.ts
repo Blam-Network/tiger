@@ -46,7 +46,7 @@ import {
 import { chunkDeclName, type LuaEncounterHost } from "./encounter_host.ts";
 import { itemKey } from "./item_key.ts";
 import type { NavPoint } from "./items.ts";
-import { fnv1 } from "./name_hash.ts";
+import { fnv1, parseHashLiteral } from "./name_hash.ts";
 import {
   boundObjectOf,
   LuaBoundObject,
@@ -1315,7 +1315,8 @@ export function bound(
       roster: (squad) =>
         squadRosterSize(self.types, self.options.bundles, squad),
       resolveByIdentifier: (identifier) =>
-        resolveInstanceField(self.options.bundles, "", identifier),
+        resolveInstanceField(self.options.bundles, "", identifier) ??
+        objectForIdentifier(self, identifier),
       squadScopeOf: (row) => squadScopeOf(self, row),
       squadsForIdentifier: (identifier) =>
         squadsForIdentifier(self, identifier),
@@ -1326,6 +1327,29 @@ export function bound(
   );
   self.objects.push(object);
   return object;
+}
+
+// The Object a placement's import identifier names (the Last Array's
+// console, bound by "0x4CBCA57B"): the row whose importIdent it is.
+function objectForIdentifier(
+  self: LuaEncounterHost,
+  identifier: string
+): BoundRow | undefined {
+  const hash = parseHashLiteral(identifier) ?? fnv1(identifier);
+  for (const tag of self.options.bundles) {
+    const row = tag.rows.find(
+      (entry) =>
+        entry.importIdent === hash && entry.typeId === self.types.Object
+    );
+    if (row) {
+      return {
+        bundle: tag.bundle,
+        name: identifier,
+        typeId: row.typeId,
+        typeIndex: row.typeIndex,
+      };
+    }
+  }
 }
 
 // bind_squad_identifier's row as the Squad item keys get_count() sums: itself,

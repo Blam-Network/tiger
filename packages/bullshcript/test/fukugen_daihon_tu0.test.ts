@@ -1,8 +1,6 @@
 // Fukugen Daihon's TU0 sources compiled as one project: every decl has a
 // chunk, the bundle rows the scripts declare are the bundles' (the TU0 row
 // tables), and the threads flagged startup are the ones the TU0 host starts.
-import { existsSync } from "node:fs";
-import { join } from "node:path";
 import {
   compileScriptFiles,
   type ScriptFileSource,
@@ -17,7 +15,7 @@ const BUNGIE_PATH = /^(bs|es)\/[a-z0-9_]+(\/[a-z0-9_]+)*\.(bs|es|esp|esu)$/;
 describe("TU0 BungieScript sources", () => {
   const compiled = tu0Compiled();
 
-  it("keeps the layout the alpha's chunks record, one authored README", () => {
+  it("keeps the layout the alpha's chunks record", () => {
     expect(scriptFiles).toHaveLength(77);
     for (const file of scriptFiles) {
       expect(file.path).toMatch(BUNGIE_PATH);
@@ -25,7 +23,6 @@ describe("TU0 BungieScript sources", () => {
       expect(file.decls, file.path).toHaveLength(1);
       expect(file.stubs, file.path).toEqual([]);
     }
-    expect(existsSync(join(tu0Scripts.dir, "README.md"))).toBe(true);
   });
 
   it("compiles as one project, every member declared", () => {

@@ -255,7 +255,14 @@ export class LuaItemWriter {
       `${itemKey(row.bundle, row.typeIndex)}:bodies`,
       `${describe(row)} bodies=${count}`
     );
-    this.squad(row, { ...change, bodies: count });
+    const previous = this.context.state.squad(row).bodies ?? 0;
+    this.squad(row, {
+      ...change,
+      bodies: count,
+      ...(count > previous
+        ? { placedAt: this.context.clock.activityTicks() }
+        : {}),
+    });
   }
 
   reserve(row: ItemRef): void {
@@ -484,6 +491,9 @@ export class LuaBoundObject {
   destructibleKilled = false;
   playerIterator: { index: number; players: readonly string[] } | undefined;
   squadDeathsAtPlace = 0;
+  // A wiped squad respawned and not yet reported back: alive_count answers
+  // the bodies asked for until the client counts them.
+  respawnPending = false;
   incidentDeathsAtPlace = 0;
   get playedAt(): number | undefined {
     return this.sequence.playedAt;

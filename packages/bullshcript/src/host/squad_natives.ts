@@ -784,14 +784,29 @@ export function respawn(self: LuaBoundObject): boolean {
     }
     return true;
   }
-  if (!self.row || self.desiredBodies === 0) {
+  if (self.row?.typeId !== self.types.Squad) {
+    return (self.row !== undefined && aliveCount(self) > 0) || place(self);
+  }
+  // A squad this handle never placed but the table did (its default bodies)
+  // refills to its roster like one it placed.
+  const fielded = squadBodies(self, self.row);
+  if (self.desiredBodies === 0 && fielded === 0) {
     return place(self);
   }
-  const died =
-    (self.context.reports.squadDeaths?.(
-      itemKey(self.row.bundle, self.row.typeIndex)
-    ) ?? 0) - self.squadDeathsAtPlace;
-  self.writer.bodies(self.row, self.desiredBodies + Math.max(0, died));
+  // The bodies the squad is short go on top of what it has fielded: retail's
+  // dome A Fallen went 2 -> 4 and 1 -> 2 as they came back (the Last Array's
+  // public host). A fielded count the client already has is no change at all.
+  const desired =
+    self.desiredBodies > 0 ? self.desiredBodies : self.rows.roster(self.row);
+  const missing = Math.max(0, desired - aliveCount(self));
+  if (missing === 0) {
+    return true;
+  }
+  self.writer.bodies(self.row, fielded + missing);
+  // A new placement: deaths count from here, and alive_count answers the
+  // bodies asked for until the client reports them.
+  notePlacement(self, desired);
+  self.respawnPending = true;
   return true;
 }
 
@@ -883,6 +898,12 @@ export function aliveCount(self: LuaBoundObject): number {
   const incidentDeaths = self.context.reports.squadIncidentDeaths?.(key);
   const tally = self.context.reports.squadTally?.(key);
   const reported = self.context.reports.squadAliveCount(key);
+  if (self.respawnPending) {
+    if (!reported) {
+      return self.desiredBodies;
+    }
+    self.respawnPending = false;
+  }
   if (tally !== undefined) {
     const lost = tally.reduce((sum, cell) => sum + Math.max(0, cell), 0);
     // A placed named member's cell goes out as 0 (sensor-auth's roster),

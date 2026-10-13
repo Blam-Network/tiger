@@ -55,15 +55,15 @@ startup thread ss_main_thread:
 
 startup thread ss_encounter_controller_thread:
     encounters.actor_budget = 9
-    encounters.add_ambient_encounter(amb_smpl_domea01, 2, 100, 20, 300, 0)
-    encounters.add_ambient_encounter(amb_smpl_cave_domea01, 2, 100, 20, 300, 0)
-    encounters.add_ambient_encounter(amb_smpl_cave_drysea01, 2, 100, 20, 300, 0)
-    encounters.add_ambient_encounter(amb_smpl_cluster_mound01, 3, 100, 20, 300, 0)
-    encounters.add_ambient_encounter(amb_smpl_cluster_north01, 2, 100, 20, 300, 0)
-    encounters.add_ambient_encounter(amb_smpl_cave_entrance_domea01, 1, 100, 20, 300, 0)
-    encounters.add_ambient_encounter(amb_smpl_lonetail_drysea01, 3, 100, 20, 300, 0)
-    encounters.add_ambient_encounter(amb_smpl_lonemid_deltas01, 3, 100, 20, 300, 0)
-    encounters.add_ambient_encounter(amb_smpl_cluster_mid01, 3, 100, 20, 300, 0)
+    encounters.add_ambient_encounter(amb_smpl_domea01, 2, 100, 20, 30, 0)
+    encounters.add_ambient_encounter(amb_smpl_cave_domea01, 2, 100, 20, 30, 0)
+    encounters.add_ambient_encounter(amb_smpl_cave_drysea01, 2, 100, 20, 30, 0)
+    encounters.add_ambient_encounter(amb_smpl_cluster_mound01, 3, 100, 20, 30, 0)
+    encounters.add_ambient_encounter(amb_smpl_cluster_north01, 2, 100, 20, 30, 0)
+    encounters.add_ambient_encounter(amb_smpl_cave_entrance_domea01, 1, 100, 20, 30, 0)
+    encounters.add_ambient_encounter(amb_smpl_lonetail_drysea01, 3, 100, 20, 30, 0)
+    encounters.add_ambient_encounter(amb_smpl_lonemid_deltas01, 3, 100, 20, 30, 0)
+    encounters.add_ambient_encounter(amb_smpl_cluster_mid01, 3, 100, 20, 30, 0)
 
 # TU0's squads carry no objective of their own, so each takes its encounter's
 # objective and task once the encounter has placed it: the tasks retail gave

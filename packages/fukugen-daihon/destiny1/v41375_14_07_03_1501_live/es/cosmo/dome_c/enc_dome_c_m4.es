@@ -4,7 +4,10 @@
 # corridors, the landing and the control room entrance, each group coming on
 # as the player reaches it. Once the console is working the Hive land in
 # three waves outside. From one retail capture: where a step has no trigger
-# on the wire, the wait is that run's.
+# on the wire, the wait is that run's. The console is usable only by players
+# carrying its activity flag, which mission 2's objective sets. The Fallen
+# skiff at the landing flies in on its entry path, drops its squad when the
+# player comes outside and leaves on the landing's path five seconds later.
 
 c_objective_sensor_host obj_dome_c_m4_fallen
 c_objective_sensor_host obj_dome_c_m4_hive
@@ -17,7 +20,12 @@ c_object_sensor_host o_terminal_invis_device
 c_object_sensor_host o_auto_door02
 c_object_sensor_host o_hei_satellite_event_a01
 c_object_sensor_host o_hei_satellite_event_a02
-c_squad_sensor_host sq_ds_fallen_landing01
+interactable_placement obj_placement_m4_o2
+interactable_placement obj_placement_m4_finish
+c_squad_member_sensor_host sq_ds_fallen_landing01__dropship
+c_control_point_set_sensor_host cps_ds_fallen_landing01_enter
+c_control_point_set_sensor_host cps_ds_fallen_landing01
+c_command_script __cs
 c_squad_sensor_host sq_fallen_corridor01a
 c_squad_sensor_host sq_fallen_corridor01b
 c_squad_sensor_host sq_fallen_corridor01c1
@@ -55,6 +63,10 @@ startup thread sc_dome_c:
     for satellite in [o_hei_satellite_event_a01, o_hei_satellite_event_a02]:
         satellite.create()
         satellite.set_device_position(0)
+    for placement in [obj_placement_m4_o2, obj_placement_m4_finish]:
+        placement._object_filter.add_players_with_activity_flag(placement._object.import_identifier())
+        placement._object.set_enabled_player_filter(placement._object_filter)
+        placement._object.create()
     for sq in [sq_fallen_corridor01a, sq_fallen_corridor01b, sq_fallen_corridor01c1, sq_fallen_corridor01d, sq_fallen_corridor02a, sq_fallen_corridor02b, sq_fallen_flank01, sq_fallen_raised01, sq_fallen_landing01, sq_fallen_controlentrance01, sq_fallen_controlentrance_shanks, sq_fallen_controlentrance_guards, sq_fallen_ctrlambush01, sq_fallen_ctrlambush02, sq_fallen_ctrlambush03]:
         sq.set_objective(obj_dome_c_m4_fallen)
     for sq in [sq_hive_assault_thrall_first1, sq_hive_assault_thrall_first2, sq_hive_assault_thrall[0], sq_hive_assault_thrall[1], sq_hive_assault_heavy01a, sq_hive_assault_trooper02a, sq_hive_assault_trooper02b, sq_hive_assault_heavy02a, sq_hive_assault_trooper03a, sq_hive_assault_trooper03b, sq_hive_assault_trooper03c, sq_hive_assault_heavy03a]:
@@ -64,12 +76,19 @@ startup thread sc_dome_c:
     place_on_task(sq_fallen_corridor02a, "task_2")
     place_on_task(sq_fallen_corridor02b, "0x3C7C73C1")
     sc_corridors.wake()
+    sc_console.wake()
     sc_assault.wake()
+
+# the console shows it is working once used
+thread sc_console:
+    console = obj_placement_m4_o2._object
+    sleep_until(console.is_active())
+    console.set_device_position(0.28)
 
 # the Fallen, corridor by corridor to the control room
 thread sc_corridors:
     sleep(3)
-    sq_ds_fallen_landing01.place()
+    dropship_enter(sq_ds_fallen_landing01__dropship, cps_ds_fallen_landing01_enter)
     sleep(3)
     sq_fallen_corridor01a.set_task("task_4")
     sleep_until(pm_refresh_corridor01.test_any_inside())
@@ -85,7 +104,10 @@ thread sc_corridors:
         sq.set_task("task_5")
     place_on_task(sq_fallen_flank01, "t_raised01")
     place_on_task(sq_fallen_raised01, "0x3FB06BC8")
-    place_on_task(sq_fallen_landing01, "task")
+    sq_fallen_landing01.set_task("task")
+    sq_ds_fallen_landing01__dropship.drop_squad(sq_fallen_landing01)
+    sleep(5)
+    dropship_leave(sq_ds_fallen_landing01__dropship, cps_ds_fallen_landing01)
     sleep_until(sq_fallen_flank01.alive_count() <= 1)
     sq_fallen_landing01.set_task("t_flank01")
     sq_fallen_flank01.set_task("t_flank01")
@@ -152,6 +174,22 @@ thread sc_assault:
     sq_hive_assault_trooper03a.set_task("task_4")
     sq_hive_assault_trooper03b.set_task("task_4")
     sq_hive_assault_trooper03c.set_task("task_4")
+
+def dropship_enter(pilot, path):
+    __cs.clear()
+    __cs.snap_to(path, 0)
+    __cs.ability("dropship", "enter_25_long")
+    __cs.move_to(path, 1, true)
+    __cs.set_channel_scalar("doors", 1)
+    pilot.place()
+    pilot.execute(__cs)
+
+def dropship_leave(pilot, path):
+    __cs.clear()
+    __cs.set_channel_scalar("doors", 0)
+    __cs.move_to(path, 0, false)
+    __cs.ability("dropship", "0x1E35DF11")
+    pilot.execute(__cs)
 
 def place_on_task(sq, task):
     sq.set_task(task)
