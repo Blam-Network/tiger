@@ -248,7 +248,7 @@ interface LuaPendingForLoop {
   readonly pc: number;
 }
 
-interface LuaFrame {
+export interface LuaFrame {
   readonly closure: LuaClosure;
   // pc of the instruction being executed, which is what an error reports;
   // `pc` has already moved on by the time anything can fail
@@ -285,6 +285,13 @@ export interface LuaVmOptions {
   readonly stringMetatable?: LuaTable;
 }
 
+// A debugger's look at a thread before each instruction: "pause" suspends a
+// coroutine there (the instruction has not run), "continue" runs it. Only a
+// thread that could yield may pause; the hook decides what to do otherwise.
+export interface LuaDebugHook {
+  beforeInstruction(thread: LuaThread, frame: LuaFrame): "continue" | "pause";
+}
+
 const DEFAULT_STEP_LIMIT = 1_000_000;
 const DEFAULT_CALL_DEPTH_LIMIT = 200;
 
@@ -296,6 +303,12 @@ export class LuaVm {
   // threads currently inside resume(), nested when a native runs Lua
   // through LuaVm.call; the C-call depth the yield rule is about
   activeResumes = 0;
+  // Unset unless a debugger is attached with something to stop on: one
+  // field test per instruction otherwise.
+  debugHook: LuaDebugHook | undefined;
+  // The threads inside resume(), outermost first, so a debugger can show a
+  // native's nested Lua under the coroutine that called it.
+  readonly resuming: LuaThread[] = [];
 
   constructor(options: LuaVmOptions = {}) {
     this.globals = options.globals ?? new LuaTable();
@@ -335,6 +348,9 @@ export class LuaThread {
   private readonly frames: LuaFrame[] = [];
   private results: readonly LuaValue[] = [];
   private yieldRequested = false;
+  // Set when a debugger paused the thread before frame.pc: the resume runs
+  // that instruction without asking the hook again.
+  debugPaused = false;
 
   constructor(vm: LuaVm, fn: LuaFunction, args: readonly LuaValue[]) {
     this.vm = vm;
@@ -357,6 +373,9 @@ export class LuaThread {
     this.status = "running";
     this.yieldRequested = false;
     this.vm.activeResumes += 1;
+    this.vm.resuming.push(this);
+    let skipHook = this.debugPaused;
+    this.debugPaused = false;
     let steps = 0;
     try {
       while (this.frames.length > 0) {
@@ -364,6 +383,19 @@ export class LuaThread {
         if (steps > this.vm.stepLimit) {
           this.fail(`step limit of ${this.vm.stepLimit} instructions exceeded`);
         }
+        const hook = this.vm.debugHook;
+        if (hook !== undefined && !skipHook) {
+          const frame = this.frame;
+          if (
+            hook.beforeInstruction(this, frame) === "pause" &&
+            this.mayPause()
+          ) {
+            this.debugPaused = true;
+            this.status = "suspended";
+            return { status: "yielded" };
+          }
+        }
+        skipHook = false;
         this.execute();
         if (this.yieldRequested) {
           this.yieldRequested = false;
@@ -376,9 +408,20 @@ export class LuaThread {
       throw error;
     } finally {
       this.vm.activeResumes -= 1;
+      this.vm.resuming.pop();
     }
     this.status = "dead";
     return { status: "returned", values: this.results };
+  }
+
+  // Whether a pause here could be resumed later: the same rule as a yield.
+  mayPause(): boolean {
+    return !this.hostCall && this.vm.activeResumes === 1;
+  }
+
+  // The live frames, outermost first, for a debugger to read.
+  debugFrames(): readonly LuaFrame[] {
+    return this.frames;
   }
 
   // ---- frames ------------------------------------------------------------

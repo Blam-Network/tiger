@@ -20,6 +20,7 @@ import {
 } from "./encounter_host.ts";
 import * as instanceBuilding from "./instance_building.ts";
 import { itemRef } from "./items.ts";
+import { fnv1 } from "./name_hash.ts";
 import {
   boundObjectOf,
   LuaPredicatePack,
@@ -147,6 +148,40 @@ export function advanceMissions(self: LuaEncounterHost): void {
   self.options.onPhaseStarted?.(next.declName);
   for (const name of [...PHASE_LIFECYCLE, ...next.startup]) {
     startThreadGuarded(self, next.instance, next.prefix, name, next.declName);
+  }
+}
+
+// Makes `index` the running mission phase now, whatever the running one was
+// doing: its threads are killed (not completed) and the new one starts as
+// advanceMissions would start it. A debugger's jump.
+export function jumpToPhase(self: LuaEncounterHost, index: number): void {
+  const target = self.phases[index];
+  if (target === undefined) {
+    throw new Error(`no mission phase ${index}`);
+  }
+  const current = self.phases[self.phaseIndex];
+  if (current) {
+    for (const script of [...self.scheduler.threads]) {
+      if (self.threadOwners.get(script) === current.instance) {
+        self.scheduler.remove(script);
+      }
+    }
+    self.writer.note(`mission ${current.declName} left (debugger)`);
+  }
+  self.phaseIndex = index;
+  self.phaseCompleting = false;
+  self.phaseFailed = false;
+  self.options.phaseProgress?.write(index);
+  self.writer.note(`mission ${target.declName} starting (debugger)`);
+  self.options.onPhaseStarted?.(target.declName);
+  for (const name of [...PHASE_LIFECYCLE, ...target.startup]) {
+    startThreadGuarded(
+      self,
+      target.instance,
+      target.prefix,
+      name,
+      target.declName
+    );
   }
 }
 
@@ -428,20 +463,32 @@ export function lifetimeTimer(
 
 // The activity's own Lifetime (type 16) row - one per activity, found by
 // type rather than a fixed name like get_lifetime_timer's lifetime_timer.
+// The activity's lifetime: the binder's row named `lifetime`, the one its
+// players wait on. Other Lifetime rows belong to encounters (a patrol's
+// cosmo_patrols_controller._lifetime came first in cosmo_patrols_1, and
+// setting that one active spawned nobody); one is used only with no other.
+const LIFETIME_ROW_HASH = fnv1("lifetime");
+
 function lifetimeRow(self: LuaEncounterHost): BoundRow | undefined {
+  let first: BoundRow | undefined;
   for (const tag of self.options.bundles) {
     for (const row of tag.rows) {
-      if (row.typeId === self.types.Lifetime) {
-        return {
-          bundle: tag.bundle,
-          name: row.name ?? "lifetime",
-          typeId: row.typeId,
-          typeIndex: row.typeIndex,
-        };
+      if (row.typeId !== self.types.Lifetime) {
+        continue;
       }
+      const bound = {
+        bundle: tag.bundle,
+        name: row.name ?? "lifetime",
+        typeId: row.typeId,
+        typeIndex: row.typeIndex,
+      };
+      if (row.nameHash === LIFETIME_ROW_HASH) {
+        return bound;
+      }
+      first ??= bound;
     }
   }
-  return;
+  return first;
 }
 
 // One handle for the whole runtime, so the state a script sets is the one

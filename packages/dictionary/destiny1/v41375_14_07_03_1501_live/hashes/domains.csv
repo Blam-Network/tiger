@@ -6,3 +6,4 @@ tu0_bundles,fnv1,32,TU0 bundle names and lookup group names
 tu0_server_messages,fnv1,32,"TU0 server message names (investment SharedDef 80A5806B), keyed by the row's name hash"
 tu0_objective_tasks,fnv1,32,TU0 Objective task names (808015F0 task list; a squad's task is an index into it)
 tu0_string_hashes,fnv1,32,"TU0 string_hash constants scripts hand to natives: performances, cues and states, temperaments, actions, dropship abilities, incident names"
+tu0_spawn_points,fnv1,32,"TU0 spawn point names (80800701 spawn point sets; the build strips them, so from the alpha's 80800A52 tags or cracked from region pairs)"

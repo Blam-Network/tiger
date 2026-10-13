@@ -55,6 +55,19 @@ export class ScriptItemState {
     return this.squads.get(squadKey(bundle, typeIndex))?.bodies;
   }
 
+  // Everything held, for a debugger: keys are `bundle:typeIndex`, decimal.
+  snapshot(): {
+    flags: number[];
+    sequences: [string, SequenceState][];
+    squads: [string, SquadState][];
+  } {
+    return {
+      flags: [...this.flags],
+      sequences: [...this.sequences],
+      squads: [...this.squads],
+    };
+  }
+
   hasActivityFlag(hash: number): boolean {
     return this.flags.has(hash >>> 0);
   }

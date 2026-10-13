@@ -77,6 +77,9 @@ export class LuaScheduler {
   // Whether a thread may run this tick at all; one that may not is neither
   // polled nor resumed.
   isRunnable: (script: LuaScriptThread) => boolean = () => true;
+  // A debugger's all-stop: no thread is polled or resumed, the rest of a
+  // pass included, until it clears.
+  paused = false;
   private running: LuaScriptThread | undefined;
 
   constructor(vm: LuaVm) {
@@ -131,6 +134,28 @@ export class LuaScheduler {
     }
   }
 
+  // Resumes one thread now, outside a tick and through an all-stop, whatever
+  // its gate: a debugger's continue or step. Reports what became of it.
+  resumeOne(script: LuaScriptThread): "done" | "failed" | "suspended" {
+    if (!this.scripts.includes(script)) {
+      return script.error === undefined ? "done" : "failed";
+    }
+    script.gate = undefined;
+    const report = { completed: [], failed: [], resumed: [] };
+    const paused = this.paused;
+    this.paused = false;
+    try {
+      this.runPass([script], false, { tick: 0, time: 0 }, report);
+    } finally {
+      // a breakpoint the thread met sets it again
+      this.paused ||= paused;
+    }
+    if (report.failed.length > 0) {
+      return "failed";
+    }
+    return report.completed.length > 0 ? "done" : "suspended";
+  }
+
   // One server tick: resume every thread whose gate has opened, in spawn order.
   tick(context: LuaTickContext): LuaTickReport {
     const resumed: LuaScriptThread[] = [];
@@ -162,6 +187,9 @@ export class LuaScheduler {
   ): void {
     const { completed, failed, resumed } = report;
     for (const script of pass) {
+      if (this.paused) {
+        return;
+      }
       if (script.state === "done" || script.state === "failed") {
         continue;
       }

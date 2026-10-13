@@ -1,0 +1,7 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "default",
+  "description": "The main window; the UI needs no native commands.",
+  "windows": ["main"],
+  "permissions": ["core:default"]
+}

@@ -13,6 +13,7 @@ export * from "./v41375_14_07_03_1501_live/definitions/schema.ts";
 export * from "./v41375_14_07_03_1501_live/definitions/schema_fast_init.ts";
 export * from "./v41375_14_07_03_1501_live/definitions/scoreboard_definition.ts";
 export * from "./v41375_14_07_03_1501_live/definitions/sensor_slot.ts";
+export * from "./v41375_14_07_03_1501_live/definitions/spawn_point.ts";
 export * from "./v41375_14_07_03_1501_live/definitions/squad_definition.ts";
 export * from "./v41375_14_07_03_1501_live/definitions/unlock_flags.ts";
 export * from "./v41375_14_07_03_1501_live/definitions/world_binding.ts";

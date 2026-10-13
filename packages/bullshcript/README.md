@@ -105,6 +105,10 @@ compiled_bs/
 
 If anything fails to compile, nothing is written and the previous `compiled_bs/` stays as it was. Servers read and write this folder with the same code: `readCompiledBs` and `writeCompiledBs`.
 
+## Debugging scripts
+
+`ScriptDebugger` (`@blamnetwork/bullshcript/destiny1/debug`) lets a client inspect and control running script hosts over the Debug Adapter Protocol. [bullshcript-debugger](../bullshcript-debugger) is its desktop client, and its README covers embedding it.
+
 ## The VS Code extension
 
 `vscode-extension/` highlights BungieScript and EncounterScript (`.bs`, `.es`, `.esp`, `.esu`). `npm run vscode:package` packs it into a `.vsix` without vsce; `npm run vscode:install` installs it.

@@ -243,6 +243,9 @@ export class LuaEncounterHost {
     Readonly<Record<string, boolean | number>>
   >();
   readonly trace: string[] = [];
+  // What an attached debugger listens to (src/debug).
+  readonly noteListeners = new Set<(line: string) => void>();
+  readonly sentListeners = new Set<(change: ItemChange) => void>();
   readonly unresolved: string[] = [];
   // The subset that is a binding: an import slot or a field the script
   // calls into.
@@ -447,6 +450,16 @@ export class LuaEncounterHost {
       runHandler: (handler, args) => this.runHandler(handler, args),
       scoreboardDefinition: options.scoreboardDefinition,
       sink: options.onItemChange ?? (() => undefined),
+      onNote: (line) => {
+        for (const listener of this.noteListeners) {
+          listener(line);
+        }
+      },
+      onSent: (change) => {
+        for (const listener of this.sentListeners) {
+          listener(change);
+        }
+      },
       state: this.itemState,
       time: () => this.now,
       trace: this.trace,
@@ -733,7 +746,21 @@ export class LuaEncounterHost {
 
   // Several connections beat their own keepalive; only a beat most of a
   // tick after the last one ticks.
+  // Every chunk the host can run, roots and the archetypes under them.
+  get allChunks(): readonly LuaChunk[] {
+    return [
+      ...new Set([
+        ...this.options.chunks,
+        ...(this.options.childScripts?.values() ?? []),
+      ]),
+    ];
+  }
+
   tickIfDue(wallMs: number): boolean {
+    // A debugger's all-stop holds the clock too.
+    if (this.scheduler.paused) {
+      return false;
+    }
     const intervalMs = this.options.tickSeconds * MS_PER_SECOND;
     if (
       this.lastTickWallMs !== undefined &&
@@ -747,6 +774,9 @@ export class LuaEncounterHost {
   }
 
   tick(): void {
+    if (this.scheduler.paused) {
+      return;
+    }
     this.ticks += 1;
     this.now += this.options.tickSeconds;
     // The clock still moves.
@@ -785,7 +815,7 @@ export class LuaEncounterHost {
   // Resumes what is ready without moving the clock, so a newly active
   // bundle's placements make the world entry.
   runReadyThreads(): void {
-    if (this.activityEnded) {
+    if (this.activityEnded || this.scheduler.paused) {
       return;
     }
     const context: LuaTickContext = { tick: this.ticks, time: this.now };

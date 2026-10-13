@@ -191,6 +191,9 @@ export interface LuaHostContext {
   // A gate whose predicate only touches row-less handles can never change.
   noteRowRead(hasRow: boolean): void;
   objectStates: Map<string, ObjectItemState>;
+  // A debugger's taps on what the scripts note and send.
+  onNote?(line: string): void;
+  onSent?(change: ItemChange): void;
   onSquadEpochBump?(key: string): void;
   placeActors: boolean;
   playerSensor(characterKey: string): LuaValue | undefined;
@@ -217,6 +220,7 @@ export class LuaItemWriter {
   note(line: string): void {
     this.context.trace.push(line);
     this.context.log(`lua ${line}`);
+    this.context.onNote?.(line);
   }
 
   notePoll(key: string, line: string): void {
@@ -229,6 +233,7 @@ export class LuaItemWriter {
 
   private send(change: ItemChange): void {
     this.context.sink(change);
+    this.context.onSent?.(change);
   }
 
   set(row: BoundRow, change: ItemState, label: string): void {
