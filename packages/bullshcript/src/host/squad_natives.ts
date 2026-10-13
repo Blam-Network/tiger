@@ -678,6 +678,8 @@ export function pushActor(self: LuaBoundObject, label: string): boolean {
           self.actorKillEpoch === undefined
             ? undefined
             : { epoch: self.actorKillEpoch },
+        incarnation:
+          self.actorIncarnation > 1 ? self.actorIncarnation : undefined,
       },
     },
     label
@@ -771,6 +773,11 @@ export function maxCount(self: LuaBoundObject): number {
 
 // Actor place()/remove(): the actor's own placed flag (read at 0x835B5844).
 function placeActor(self: LuaBoundObject, placed: boolean): boolean {
+  // Placed again: a new actor, with nothing left to drop from the last one.
+  if (placed && self.actorPlaced) {
+    self.actorIncarnation += 1;
+    self.actorDropRefs = [];
+  }
   self.actorPlaced = placed;
   notePlacement(self, placed ? 1 : 0);
   return pushActor(self, placed ? "place()" : "remove()");

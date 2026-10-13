@@ -80,6 +80,9 @@ export interface ActorState {
   };
   // A new id is a new drop.
   drop?: { id: number; squads: readonly ItemRef[] };
+  // ActorAuth [0] for an actor placed again, from 2: the client spawns it
+  // afresh (a dropship that flew its exit is gone until then).
+  incarnation?: number;
   // ActorAuth's kill flag plus an epoch bump; remove() unlinks instead.
   kill?: { epoch: number };
   placed: boolean;

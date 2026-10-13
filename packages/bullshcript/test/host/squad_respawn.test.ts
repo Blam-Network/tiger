@@ -5,6 +5,7 @@ import { describe, expect, it } from "vitest";
 import { LuaHostFunction, type LuaValue } from "../../src/hks/values.ts";
 import type { BoundRow } from "../../src/host/bindings.ts";
 import { ScriptItemState } from "../../src/host/item_state.ts";
+import type { ItemChange } from "../../src/host/items.ts";
 import {
   LuaBoundObject,
   type LuaHostContext,
@@ -23,6 +24,7 @@ function makeSquad() {
     tally?: readonly number[];
   } = {};
   let ticks = 100;
+  const changes: ItemChange[] = [];
   const context: LuaHostContext = {
     types: ActivityBundleItemType,
     activityFlagChanged: () => undefined,
@@ -52,7 +54,9 @@ function makeSquad() {
       triggerFired: () => false,
     },
     runHandler: () => undefined,
-    sink: () => undefined,
+    sink: (change) => {
+      changes.push(change);
+    },
     state: new ScriptItemState(),
     time: () => 0,
     trace: [],
@@ -87,6 +91,19 @@ function makeSquad() {
     rows
   );
   registerBoundObject(group);
+  const actor = new LuaBoundObject(
+    context,
+    new LuaItemWriter(context),
+    "_squad__dropship",
+    {
+      bundle: BUNDLE,
+      name: "_squad__dropship",
+      typeId: ActivityBundleItemType.Actor,
+      typeIndex: 62,
+    },
+    rows
+  );
+  registerBoundObject(actor);
   const callOn =
     (target: LuaBoundObject) =>
     (method: string, ...args: LuaValue[]): LuaValue => {
@@ -104,6 +121,11 @@ function makeSquad() {
       ticks += by;
     },
     bodies: () => context.state.bodiesFor(BUNDLE, 7),
+    actor: callOn(actor),
+    actorState: () => {
+      const last = changes.filter((c) => c.kind === "actor").at(-1);
+      return last?.kind === "actor" ? last.state : undefined;
+    },
     call: callOn(squad),
     client,
     group: callOn(group),
@@ -171,5 +193,20 @@ describe("a wiped squad's respawn", () => {
     call("respawn");
     expect(bodies()).toBe(4);
     expect(call("alive_count")).toBe(2);
+  });
+
+  // Retail's Last Array wave ship flew its exit and came back for the next
+  // wave as a new actor: ActorAuth [0] 1 -> 2 -> 3, nothing left to drop.
+  it("places an already placed actor afresh, its drops cleared", () => {
+    const { actor, actorState, squad } = makeSquad();
+    actor("place");
+    expect(actorState()?.incarnation).toBeUndefined();
+    actor("drop_squad", squad);
+    expect(actorState()?.drop?.squads).toHaveLength(1);
+    actor("place");
+    expect(actorState()?.incarnation).toBe(2);
+    expect(actorState()?.drop).toBeUndefined();
+    actor("place");
+    expect(actorState()?.incarnation).toBe(3);
   });
 });

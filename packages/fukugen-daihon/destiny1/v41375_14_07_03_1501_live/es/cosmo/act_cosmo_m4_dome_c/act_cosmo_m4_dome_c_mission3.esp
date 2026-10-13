@@ -22,7 +22,8 @@ thread main:
     sleep(5)
     obj_m4_o3a.objective_begin_immediate(nil)
     seq_m_cue1.set_switch_mask(31)
-    sleep_until(last_wave_alive_count() > 0)
+    # the Knight drops last: the wave is over once it is in and all four are dead
+    sleep_until(sq_hive_assault_heavy03a.alive_count() > 0)
     sleep_until(last_wave_alive_count() == 0)
     seq_m_cue1.set_switch_mask(63)
     sleep(2)

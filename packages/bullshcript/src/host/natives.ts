@@ -513,6 +513,9 @@ export class LuaBoundObject {
   actorPlaced: boolean | undefined;
   // ActorAuth kill flag and epoch, bumped each call.
   actorKillEpoch: number | undefined;
+  // ActorAuth [0] without the kill flag: a place() of an actor already placed
+  // is a new one (retail's Last Array wave ship came back as 2, then 3).
+  actorIncarnation = 1;
   cinematicFinished = false;
   playerObjectiveNavPoint: NavPoint | undefined;
   // The generation must change for the client to re-resolve the ref.

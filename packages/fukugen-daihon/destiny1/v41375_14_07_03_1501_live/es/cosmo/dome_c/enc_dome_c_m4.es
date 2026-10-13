@@ -87,11 +87,19 @@ startup thread sc_dome_c:
     sc_console.wake()
     sc_assault.wake()
 
-# the console shows it is working once used
+# the console shows it is working once used, and so does the terminal once
+# mission 3 makes it
 thread sc_console:
     console = obj_placement_m4_o2._object
     sleep_until(console.is_active())
     console.set_device_position(0.28)
+    sc_terminal.wake()
+    sleep(7)
+    device_working(console)
+
+thread sc_terminal:
+    sleep_until(o_terminal_invis_device.is_alive())
+    device_working(o_terminal_invis_device)
 
 # the Fallen, corridor by corridor to the control room
 thread sc_corridors:
@@ -208,6 +216,18 @@ def hive_ship_pass(pilot, path):
 
 def hive_ship_leave(pilot, path):
     pilot.execute(cs_hive_ship_exit(path))
+
+# a working device: nudged between 0.29 and 0.28 at random, quick pairs with
+# longer rests between, for as long as the activity runs
+def device_working(device):
+    while true:
+        device.set_device_position(0.29)
+        sleep(0.3 + mathlib.random_real(0.4))
+        device.set_device_position(0.28)
+        if mathlib.random_real(1) <= 0.5:
+            sleep(1.7 + mathlib.random_real(1.3))
+        else:
+            sleep(0.3 + mathlib.random_real(0.4))
 
 def drop_on_task(pilot, sq, task):
     sq.set_task(task)
