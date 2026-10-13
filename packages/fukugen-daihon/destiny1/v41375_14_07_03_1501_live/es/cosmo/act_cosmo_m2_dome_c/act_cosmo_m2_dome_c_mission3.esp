@@ -1,0 +1,31 @@
+# es\cosmo\act_cosmo_m2_dome_c\act_cosmo_m2_dome_c_mission3.esp
+#
+# Mission 3, dome_c: find the console and use it. The Ghost's line plays
+# while the objective is up and the music's first cue starts as it ends (88 s in this run).
+# The Fallen on the way are enc_dome_c_m2's.
+
+interactable_objective obj_m2_o3 bind("0x9DF3A02E")
+c_sequence_host seq_d_o2_s005
+c_sequence_host seq_d_o2_s01
+c_sequence_host seq_m_cue2
+
+thread init: pass
+
+thread complete: pass
+
+thread main:
+    sleep(0.9)
+    seq_d_o2_s005.start()
+    sc_music.wake()
+    obj_m2_o3.objective_begin()
+    sleep_until(obj_m2_o3.is_complete())
+    obj_m2_o3.objective_end_silent()
+    sleep(1.5)
+    seq_d_o2_s01.start()
+    # the phase holds a while longer before the waves (this run's wait)
+    sleep(6.2)
+
+thread sc_music:
+    sleep(88)
+    seq_m_cue2.start()
+    seq_m_cue2.set_switch_mask(1)

@@ -1,0 +1,32 @@
+# es\moon\act_moon_m5_strength\act_moon_m5_strength_mission1.esp
+#
+# Mission 1, the Hellmouth. The activity goes active once the players are in,
+# and the first objective goes up a moment later. Its four objects never
+# reach the wire and nothing the client sent completes it: in the one run it
+# cleared two seconds after the Ghost's last line (seq_d_o1_s08), so this
+# run's clock stands in for the rule until another run shows it.
+#
+# The objective goes to state 1 on the wire, then active nine seconds later with
+# the Ghost still talking, and is cleared 82 seconds after that. State 1 has no
+# verb in the host (it is not incoming), so it is left out.
+#
+# obj_m5_multi_interact has no archetype in the TU0 table (TU0's utility
+# scripts have no multi-object interact), so the phase drives its rows itself.
+
+c_encounter_handle obj_m5_multi_interact
+
+thread init: pass
+
+thread complete: pass
+
+thread main:
+    sleep_until(c_player_script_utilities.all_players_are_ready())
+    c_lifetime_script_utilities.get_lifetime_sensor().set_state(e_activity_lifetime_state.active)
+    sleep(1)
+    # the wire shows state 1 (before incoming; no verb for it), then active
+    sleep(9)
+    obj_m5_multi_interact._player_objective.set_active()
+    obj_m5_multi_interact._player_objective.nav_point_activate(obj_m5_multi_interact._nav_point)
+    # one run: the Ghost's lines run their course, then the objective clears
+    sleep(82)
+    obj_m5_multi_interact._player_objective.clear()

@@ -1,0 +1,48 @@
+# es\venus\act_venus_m07_northern_tides\act_venus_m07_northern_tides_mission4.esp
+#
+# Mission 4, the boss: summon the Gatelord at the altar, then kill it. The
+# altar is the pillar switch: it charges while a player stands in its volume
+# (7 s in the one run) and the music builds as it completes. Three seconds
+# later the respawn volume is swapped, the Ghost speaks and the north tides
+# encounter brings the Gatelord through the big warpgate. The kill objective
+# clears a couple of seconds after it dies. In the capture the altar already
+# stands when the tides load (about 100 s before this phase); the pillar rows
+# have no archetype in TU0's table, so the replay does not project them.
+
+generic_objective pf_summon_gatekeeper
+generic_objective pf_kill_gatekeeper
+venus_raid_pillar_switch pf_boss_pillar bind(7)
+c_nav_point_host ap_boss
+c_trigger_group_host tg_boss_fight_respawn
+c_location_sensor_host northern_tides
+c_player_monitor_sensor_host pm_bubble_northern_tides bind(northern_tides)
+c_encounter_handle enc_north_tides_m07
+c_squad_sensor_host sq_boss
+c_squad_member_sensor_host sq_boss__ultra_minotaur
+c_sequence_host venus_m07_music_cue2
+c_sequence_host md_vn07_020_80
+
+# the altar stands from the start, like the alpha's warpgate device
+startup thread ss_boss_pillar:
+    pf_boss_pillar.create()
+
+thread init: pass
+
+thread complete: pass
+
+thread main:
+    pf_summon_gatekeeper.objective_begin(ap_boss)
+    pf_boss_pillar.activate()
+    sleep_until(pf_boss_pillar.succeed)
+    venus_m07_music_cue2.set_switch_mask(7)
+    pf_summon_gatekeeper.objective_end()
+    tg_boss_fight_respawn.activate()
+    md_vn07_020_80.start()
+    enc_north_tides_m07.sc_gatelord.wake()
+    sleep(1)
+    pf_boss_pillar.de_activate()
+    pf_kill_gatekeeper.objective_begin(nil)
+    sleep_until(sq_boss__ultra_minotaur.is_bound())
+    sleep_until(not sq_boss__ultra_minotaur.is_bound())
+    venus_m07_music_cue2.set_switch_mask(15)
+    pf_kill_gatekeeper.objective_end()

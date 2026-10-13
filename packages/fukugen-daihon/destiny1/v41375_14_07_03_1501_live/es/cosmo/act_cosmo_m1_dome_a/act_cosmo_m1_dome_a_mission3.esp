@@ -1,0 +1,17 @@
+# es\cosmo\act_cosmo_m1_dome_a\act_cosmo_m1_dome_a_mission3.esp
+#
+# Mission 3, the way out: no objective. The activity ends a moment after
+# the player reaches the far end of the upper floor (the outro plays off the
+# same trigger, unknown_8bd80dbe's).
+
+c_player_trigger_sensor_host pt_upper_rush02_spawn
+
+thread init: pass
+
+thread complete:
+    c_lifetime_script_utilities.get_lifetime_sensor().end_game(30)
+
+thread main:
+    sleep_until(pt_upper_rush02_spawn.is_triggered())
+    sleep(1.7)
+    set_activity_complete()

@@ -1,0 +1,40 @@
+# es\mars\act_mars_m07_lowergarden\act_mars_m07_lowergarden_mission4.esp
+#
+# Mission 4, the upper garden: get down to the pit, then kill the hydra
+# that warps in there. The encounter brings the hydra in and opens the
+# door to the lower garden once it dies; the objective clears four
+# seconds after.
+
+trigger_volume_objective sp_objective_pit
+generic_objective sp_objective_kill
+c_nav_point_host np_pit
+c_encounter_handle enc_uppergarden_m07
+c_sequence_host seq_dialog_catacombs_wander
+c_sequence_host seq_music_garden
+c_sequence_host seq_music_garden_ambience
+c_sequence_host seq_dialog_uppergarden_kill
+c_sequence_host seq_dialog_uppergarden_kill_complete
+c_sequence_host seq_dialog_lowergarden_arena
+
+thread init: pass
+
+thread complete: pass
+
+thread main:
+    sp_objective_pit.objective_begin()
+    sleep_until(sp_objective_pit.is_complete())
+    seq_dialog_catacombs_wander.stop()
+    sp_objective_pit.objective_end_silent()
+    sp_objective_kill.objective_begin(np_pit)
+    boss = enc_uppergarden_m07.sq_boss
+    sleep_until(boss.alive_count() > 0)
+    sleep_until(boss.alive_count() == 0)
+    sleep(1)
+    seq_music_garden.stop()
+    seq_music_garden_ambience.start()
+    seq_music_garden_ambience.set_switch_mask(1)
+    seq_dialog_uppergarden_kill.stop()
+    sleep(3)
+    seq_dialog_uppergarden_kill_complete.start()
+    seq_dialog_lowergarden_arena.start()
+    sp_objective_kill.objective_end_silent()

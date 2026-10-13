@@ -1,6 +1,7 @@
 # es\venus\strike_1_activity\venus_strike_1_mission3.esp
 #
-# Mission 3, the dig site: cross it to the far trigger volume.
+# Mission 3, the dig site: cross it to the far trigger volume. The dig site
+# encounter runs its own Fallen.
 
 trigger_volume_objective trigger_volume_dig_site
 

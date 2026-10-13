@@ -1,0 +1,26 @@
+# es\cosmo\act_cosmo_m2_dome_c\act_cosmo_m2_dome_c_mission4.esp
+#
+# Mission 4, the Fallen waves: after the console the waves come in at the
+# dome and the objective stays up until the third is dead. The music cue
+# moves on with it and stops when the objective ends. The waves are
+# enc_dome_c_m2's. The wait after the last kill is this run's.
+
+generic_objective obj_m2_o4a
+c_sequence_host seq_m_cue2
+c_squad_sensor_host sq_fallen_wave03a
+c_squad_sensor_host sq_fallen_wave03b
+
+thread init: pass
+
+thread complete: pass
+
+thread main:
+    sleep(4)
+    obj_m2_o4a.objective_begin(nil)
+    seq_m_cue2.set_switch_mask(3)
+    sleep_until(sq_fallen_wave03b.alive_count() > 0)
+    sleep_until(sq_fallen_wave03a.alive_count() + sq_fallen_wave03b.alive_count() == 0)
+    sleep(7.1)
+    seq_m_cue2.stop()
+    obj_m2_o4a.objective_end_silent()
+    sleep(1.1)

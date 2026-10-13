@@ -1,0 +1,47 @@
+# es\mars\act_mars_m05_warbase\act_mars_m05_warbase_mission7.esp
+#
+# Mission 7, phase_7_5_warbase: up the bridge into the warbase, then clear
+# the yard. The Cabal on the bridge and in the yard are unknown_f305afe6's;
+# the yard counts as clear three seconds after the last of them dies. The
+# first climax trigger group is up for the phase.
+
+trigger_volume_objective pf_trigger_ascend
+c_trigger_group_host tg_mars_m5_climax_1_so
+generic_objective pf_gen_obj_clear
+c_nav_point_host ap_clear_obj
+c_sequence_host seq_d_o3_s03
+c_sequence_host seq_d_o3_s04
+c_sequence_host seq_d_o3_s06
+c_squad_sensor_host sq_bridge_a_a
+c_squad_sensor_host sq_bridge_a_b
+c_squad_sensor_host sq_bridge_b_a
+c_squad_sensor_host sq_bridge_b_b
+c_squad_sensor_host sq_bridge_b_c
+c_squad_sensor_host sq_lastline
+c_squad_sensor_host sq_lastline_top_a
+c_squad_sensor_host sq_preboss1
+c_squad_sensor_host sq_preboss2
+
+thread init: pass
+
+thread complete: pass
+
+thread main:
+    seq_d_o3_s03.start()
+    seq_d_o3_s04.start()
+    pf_trigger_ascend.objective_begin()
+    tg_mars_m5_climax_1_so.activate()
+    sleep_until(pf_trigger_ascend.is_complete())
+    sleep(1)
+    pf_trigger_ascend.objective_end_silent()
+    seq_d_o3_s03.stop()
+    seq_d_o3_s04.stop()
+    seq_d_o3_s06.start()
+    pf_gen_obj_clear.objective_begin(ap_clear_obj)
+    sleep_until(yard_alive_count() == 0)
+    sleep(3)
+    pf_gen_obj_clear.objective_end_silent()
+    tg_mars_m5_climax_1_so.deactivate()
+
+def yard_alive_count():
+    return sq_bridge_a_a.alive_count() + sq_bridge_a_b.alive_count() + sq_bridge_b_a.alive_count() + sq_bridge_b_b.alive_count() + sq_bridge_b_c.alive_count() + sq_lastline.alive_count() + sq_lastline_top_a.alive_count() + sq_preboss1.alive_count() + sq_preboss2.alive_count()

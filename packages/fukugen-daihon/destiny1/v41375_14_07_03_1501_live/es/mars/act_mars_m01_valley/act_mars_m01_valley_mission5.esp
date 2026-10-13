@@ -1,0 +1,29 @@
+# es\mars\act_mars_m01_valley\act_mars_m01_valley_mission5.esp
+#
+# Mission 5, the checkpoint boss. The console calls a dropship
+# (enc_checkpoint_m01); the objective comes up when the boss is dropped and
+# clears when he dies.
+#
+# One run: the objective cleared with the boss's death, not with a pickup,
+# so the loot is left to the archetype. The 3 s after is the gap to the
+# next phase.
+
+collect_loot_objective sp_objective_loot bind("0x0CD4D5F7", 1)
+c_nav_point_host np_choke
+c_squad_sensor_host sq_boss
+c_squad_member_sensor_host sq_boss__boss
+c_sequence_host seq_music_checkpoint
+
+thread init: pass
+
+thread complete: pass
+
+thread main:
+    insertion_point()
+    seq_music_checkpoint.set_switch_mask(7)
+    sleep_until(sq_boss__boss.is_bound())
+    sp_objective_loot.objective_begin()
+    sleep_until(not sq_boss__boss.is_bound())
+    sp_objective_loot.objective_end_silent()
+    seq_music_checkpoint.stop()
+    sleep(3)

@@ -1,0 +1,21 @@
+# es\venus\act_venus_m07_northern_tides\act_venus_m07_northern_tides_mission2.esp
+#
+# Mission 2, "go to the northern tides": cross the southern tides. The Vex
+# there belong to enc_south_tides_m07. The Ghost's line runs while the
+# objective is up and stops when it clears at the far trigger.
+
+trigger_volume_objective pf_goto_northern_tides
+c_location_sensor_host southern_tides
+c_player_trigger_sensor_host pt_southern_tides bind(southern_tides)
+c_sequence_host md_vn07_020_10
+
+thread init: pass
+
+thread complete: pass
+
+thread main:
+    md_vn07_020_10.start()
+    pf_goto_northern_tides.objective_begin()
+    sleep_until(pf_goto_northern_tides.is_complete())
+    pf_goto_northern_tides.objective_end()
+    md_vn07_020_10.stop()

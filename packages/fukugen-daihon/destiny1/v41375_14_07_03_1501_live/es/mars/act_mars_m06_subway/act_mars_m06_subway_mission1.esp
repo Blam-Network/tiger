@@ -1,0 +1,19 @@
+# es\mars\act_mars_m06_subway\act_mars_m06_subway_mission1.esp
+#
+# Mission 1, "Go to the Battleground". Starts once the player is in and
+# clears when they reach the battleground bubble, the first public bubble
+# past the landing zone.
+
+c_location_sensor_host battleground
+trigger_bubble_objective pf_objective_battleground_goto bind(battleground)
+
+thread init: pass
+
+thread complete: pass
+
+thread main:
+    sleep_until(c_player_script_utilities.all_players_are_ready())
+    c_lifetime_script_utilities.get_lifetime_sensor().set_state(e_activity_lifetime_state.active)
+    pf_objective_battleground_goto.objective_begin()
+    sleep_until(pf_objective_battleground_goto.is_complete())
+    pf_objective_battleground_goto.objective_end_silent()

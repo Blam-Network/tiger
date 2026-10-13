@@ -1,0 +1,48 @@
+# es\cosmo\act_cosmo_m2_dome_c\act_cosmo_m2_dome_c_mission2.esp
+#
+# Mission 2, the Dry Sea: reach the sea (a trigger volume), then walk on to
+# the dome with the Ghost talking the whole way. The second objective has no
+# completion rule in the table; it ends a moment after the Ghost's long line
+# finishes (72 s after it begins in this run). The Ghost's lines tied to the walk run from
+# here. The gaps between lines are this run's waits.
+
+trigger_volume_objective obj_m2_o2a
+generic_objective obj_m2_o2b
+c_sequence_host seq_d_o1_s02
+c_sequence_host seq_d_o1_s032a
+c_sequence_host seq_d_o1_s032b
+c_sequence_host seq_d_o1_s036a
+c_sequence_host seq_d_o1_s036b
+c_sequence_host seq_d_o1_s04a
+c_sequence_host seq_d_o1_s04b
+c_sequence_host seq_d_o1_s05
+
+thread init: pass
+
+thread complete: pass
+
+thread main:
+    sleep(1.7)
+    sc_walk_lines.wake()
+    obj_m2_o2a.objective_begin()
+    sleep_until(obj_m2_o2a.is_complete())
+    obj_m2_o2a.objective_end()
+    obj_m2_o2b.objective_begin(nil)
+    sleep(69.6)
+    seq_d_o1_s04a.start()
+    seq_d_o1_s04b.start()
+    sleep(0.4)
+    obj_m2_o2b.objective_end()
+    sleep(4)
+    seq_d_o1_s05.start()
+
+# the long line starts as the sea loads and four more join it halfway; two
+# follow it when it ends, which main starts
+thread sc_walk_lines:
+    sleep(52.8)
+    seq_d_o1_s02.start()
+    sleep(39.2)
+    seq_d_o1_s032a.start()
+    seq_d_o1_s032b.start()
+    seq_d_o1_s036a.start()
+    seq_d_o1_s036b.start()

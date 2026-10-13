@@ -1,0 +1,30 @@
+# es\moon\act_moon_m5_strength\act_moon_m5_strength_mission7.esp
+#
+# Mission 7, the ritual. Kill the three wizards, then hold the chamber
+# through the Hive waves until the ogre falls. The chamber script runs the
+# ritual and the waves; this phase runs the objectives and the climax's
+# trigger group around them.
+
+c_encounter_handle unknown_d53aaa20
+kill_squad_objective pf_objective_kill bind("0x27C686D5", 3)
+c_trigger_group_host tg_moon_m5_climax_so
+generic_objective pf_gen_obj_jammer
+c_nav_point_host ap_obj_4_damage
+
+thread init: pass
+
+thread complete: pass
+
+thread main:
+    enc = unknown_d53aaa20
+    enc.sc_ritual.wake()
+    pf_objective_kill.objective_begin()
+    tg_moon_m5_climax_so.activate()
+    sleep_until(pf_objective_kill.is_complete())
+    pf_objective_kill.objective_end_silent()
+    enc.sc_waves.wake()
+    pf_gen_obj_jammer.objective_begin(ap_obj_4_damage)
+    sleep_until(enc.waves_complete)
+    sleep(1)
+    pf_gen_obj_jammer.objective_end_silent()
+    tg_moon_m5_climax_so.deactivate()

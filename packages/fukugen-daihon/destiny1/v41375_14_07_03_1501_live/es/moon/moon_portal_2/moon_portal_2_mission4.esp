@@ -1,0 +1,14 @@
+# es\moon\moon_portal_2\moon_portal_2_mission4.esp
+#
+# Mission 4, the lower citadel: cross it to the wormway.
+
+trigger_volume_objective pf_tv_wormway_entrance
+
+thread init: pass
+
+thread complete: pass
+
+thread main:
+    pf_tv_wormway_entrance.objective_begin()
+    sleep_until(pf_tv_wormway_entrance.is_complete())
+    pf_tv_wormway_entrance.objective_end_silent()
