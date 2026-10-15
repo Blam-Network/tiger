@@ -1,0 +1,5519 @@
+{
+  "format": "fukugen-row-facts-v1",
+  "note": "Row facts 01.29's group records do not carry, by bundle name hash and row name: an Encounter row's archetype (child_script, es/utility_scripts/<name>.esu) and a row's import identifier (import_ident, what links an encounter binding to the placed object it names). Seeded from TU0's tables, whose own archetypes were joined by row name from the alpha script tags.",
+  "bundles": {
+    "0x01e519cc": {
+      "sq_n_pit_anchor1__hydra": {
+        "import_ident": 3891926327
+      }
+    },
+    "0x022112bb": {
+      "globals": {
+        "child_script": "u_globals"
+      }
+    },
+    "0x062dd95d": {
+      "obj_placement_m0_m05._object": {
+        "import_ident": 3831232800
+      }
+    },
+    "0x07de2805": {
+      "globals": {
+        "child_script": "u_globals"
+      },
+      "sq_ds_fallen_dome_c02__dropship": {
+        "import_ident": 132903764
+      }
+    },
+    "0x0a302429": {
+      "dig_site_phase.trigger_volume_dig_site": {
+        "child_script": "trigger_volume_objective"
+      },
+      "end_phase.utils": {
+        "child_script": "u_globals"
+      },
+      "engineering_phase.engineering_bubble_objective": {
+        "child_script": "trigger_bubble_objective"
+      },
+      "engineering_phase.kill_squad_engineering": {
+        "child_script": "kill_squad_objective"
+      },
+      "engineering_phase.kill_squad_engineering._squad": {
+        "import_ident": 3985373028
+      },
+      "engineering_phase.sq_objective01": {
+        "import_ident": 3985373028
+      },
+      "engineering_phase.sq_objective02": {
+        "import_ident": 3985373028
+      },
+      "engineering_phase.sq_objective03": {
+        "import_ident": 3985373028
+      },
+      "engineering_phase.sq_objective04": {
+        "import_ident": 3985373028
+      },
+      "engineering_phase.sq_objective05": {
+        "import_ident": 3985373028
+      },
+      "engineering_phase.sq_objective06": {
+        "import_ident": 3985373028
+      },
+      "engineering_phase.sq_objective07": {
+        "import_ident": 3985373028
+      },
+      "engineering_phase.sq_objective08": {
+        "import_ident": 3985373028
+      },
+      "engineering_phase.utils": {
+        "child_script": "u_globals"
+      },
+      "engineering_trans_phase.obj_generic_engineering": {
+        "child_script": "generic_objective"
+      },
+      "ruins_phase.kill_squad_ruins": {
+        "child_script": "kill_squad_objective"
+      },
+      "ruins_phase.kill_squad_ruins._squad": {
+        "import_ident": 545004410
+      },
+      "ruins_phase.sq_boss": {
+        "import_ident": 545004410
+      },
+      "ruins_phase.sq_boss__ultra_hydra": {
+        "import_ident": 2713970764
+      },
+      "ruins_phase.trigger_volume_ruins": {
+        "child_script": "trigger_volume_objective"
+      },
+      "ruins_phase.utils": {
+        "child_script": "u_globals"
+      },
+      "ruins_phase.warpstorm01__storm": {
+        "import_ident": 1686739424
+      },
+      "ruins_phase.warpstorm02__storm": {
+        "import_ident": 1686739424
+      },
+      "ruins_phase.warpstorm03__storm": {
+        "import_ident": 1686739424
+      }
+    },
+    "0x0b2207ec": {
+      "vex_warp_gate01": {
+        "child_script": "vex_warp_gate"
+      },
+      "vex_warp_gate01._squad": {
+        "import_ident": 792837218
+      },
+      "vex_warp_gate01._squad__gate": {
+        "import_ident": 1121922920
+      },
+      "vex_warp_gate02": {
+        "child_script": "vex_warp_gate"
+      },
+      "vex_warp_gate02._squad": {
+        "import_ident": 792837218
+      },
+      "vex_warp_gate02._squad__gate": {
+        "import_ident": 1121922920
+      },
+      "vex_warp_gate03": {
+        "child_script": "vex_warp_gate"
+      },
+      "vex_warp_gate03._squad": {
+        "import_ident": 792837218
+      },
+      "vex_warp_gate03._squad__gate": {
+        "import_ident": 1121922920
+      },
+      "vex_warp_gate05._squad": {
+        "import_ident": 792837218
+      },
+      "vex_warp_gate05._squad__gate": {
+        "import_ident": 1121922920
+      },
+      "vex_warp_gate06._squad": {
+        "import_ident": 792837218
+      },
+      "vex_warp_gate06._squad__gate": {
+        "import_ident": 1121922920
+      },
+      "vex_warp_gate_pocket._squad": {
+        "import_ident": 792837218
+      },
+      "vex_warp_gate_pocket._squad__gate": {
+        "import_ident": 1121922920
+      }
+    },
+    "0x0c4fdbf5": {
+      "phase_m06_battleground.pf_objective_battleground_interact": {
+        "child_script": "interactable_objective"
+      },
+      "phase_m06_battleground.pf_objective_battleground_interact._object": {
+        "import_ident": 442023885
+      },
+      "phase_m06_battleground_goto.pf_objective_battleground_goto": {
+        "child_script": "trigger_bubble_objective"
+      },
+      "phase_m06_lobby_goto.pf_objective_lobby_goto": {
+        "child_script": "trigger_bubble_objective"
+      },
+      "phase_m06_lobby_n.pf_objective_lobby_n_trigger": {
+        "child_script": "trigger_volume_objective"
+      },
+      "phase_m06_lobby_s.pf_objective_lobby_s_trigger": {
+        "child_script": "trigger_volume_objective"
+      },
+      "phase_m06_subway.pf_objective_generic_clear": {
+        "child_script": "generic_objective"
+      },
+      "phase_m06_subway.pf_objective_kill_warp_gates": {
+        "child_script": "kill_squad_objective"
+      },
+      "phase_m06_subway.pf_objective_kill_warp_gates._squad": {
+        "import_ident": 4181720106
+      },
+      "phase_m06_subway_close.pf_objective_subway_interact": {
+        "child_script": "interactable_objective"
+      },
+      "phase_m06_subway_close.pf_objective_subway_interact._object": {
+        "import_ident": 2956098177
+      },
+      "phase_m06_subway_close.pf_placement_subway_interact": {
+        "child_script": "interactable_placement"
+      },
+      "phase_m06_subway_close.pf_placement_subway_interact._object": {
+        "import_ident": 2956098177
+      },
+      "phase_m06_subway_goto.pf_objective_subway_goto": {
+        "child_script": "trigger_volume_objective"
+      }
+    },
+    "0x0eac8b67": {
+      "pf_event_countdown_dropship[0]": {
+        "child_script": "u_event_countdown"
+      },
+      "pf_event_countdown_dropship[0].event_globals": {
+        "child_script": "u_event_globals"
+      },
+      "pf_event_countdown_dropship[0].o_event_countdown_ghost": {
+        "import_ident": 1305454890
+      },
+      "pf_event_countdown_dropship[0].pf_impact": {
+        "child_script": "u_event_countdown_impact"
+      },
+      "pf_event_countdown_dropship[0].pf_point[0].sq_event_dropship_pilot__pilot": {
+        "import_ident": 1842327993
+      },
+      "pf_event_countdown_dropship[0].pf_point[1].sq_event_dropship_pilot__pilot": {
+        "import_ident": 1842327993
+      },
+      "pf_event_countdown_dropship[0].pf_point[2].sq_event_dropship_pilot__pilot": {
+        "import_ident": 1842327993
+      },
+      "pf_event_countdown_dropship[0].pf_preset": {
+        "child_script": "u_event_countdown_preset"
+      },
+      "pf_event_countdown_dropship[0].pf_preset.po_event_countdown": {
+        "import_ident": 3935697789
+      },
+      "pf_event_countdown_dropship[0].sq_event_countdown_wave[0]": {
+        "import_ident": 2026775680
+      },
+      "pf_event_countdown_dropship[0].sq_event_countdown_wave[1]": {
+        "import_ident": 2026775680
+      },
+      "pf_event_countdown_dropship[0].sq_event_countdown_wave[2]": {
+        "import_ident": 2026775680
+      },
+      "pf_event_countdown_dropship[0].sq_event_countdown_wave[3]": {
+        "import_ident": 2026775680
+      },
+      "pf_event_countdown_dropship[0].sq_event_countdown_wave[4]": {
+        "import_ident": 2026775680
+      },
+      "pf_event_countdown_dropship[0].sq_event_countdown_wave[5]": {
+        "import_ident": 2026775680
+      },
+      "pf_event_countdown_dropship[0].sq_event_countdown_wave[6]": {
+        "import_ident": 2026775680
+      },
+      "pf_event_countdown_dropship[0].sq_event_countdown_wave[7]": {
+        "import_ident": 2026775680
+      },
+      "pf_event_dropship_multipoint_fallen[0].event_globals": {
+        "child_script": "u_event_globals"
+      },
+      "pf_event_dropship_multipoint_fallen[0].pf_point[0].sq_event_dropship_troops": {
+        "import_ident": 1076587154
+      },
+      "pf_event_dropship_multipoint_fallen[0].pf_point[1].sq_event_dropship_troops": {
+        "import_ident": 1076587154
+      },
+      "pf_event_dropship_multipoint_fallen[0].pf_point[2].sq_event_dropship_troops": {
+        "import_ident": 1076587154
+      },
+      "pf_event_dropship_multipoint_fallen[0].pf_preset.po_event_dropship_multipoint": {
+        "import_ident": 1670136383
+      },
+      "pf_event_dropship_multipoint_fallen[0].sq_event_dropship_pilot__pilot": {
+        "import_ident": 1842327993
+      },
+      "pf_event_dropship_multipoint_fallen[1].event_globals": {
+        "child_script": "u_event_globals"
+      },
+      "pf_event_dropship_multipoint_fallen[1].pf_point[0].sq_event_dropship_troops": {
+        "import_ident": 1076587154
+      },
+      "pf_event_dropship_multipoint_fallen[1].pf_point[1].sq_event_dropship_troops": {
+        "import_ident": 1076587154
+      },
+      "pf_event_dropship_multipoint_fallen[1].pf_point[2].sq_event_dropship_troops": {
+        "import_ident": 1076587154
+      },
+      "pf_event_dropship_multipoint_fallen[1].pf_preset.po_event_dropship_multipoint": {
+        "import_ident": 1670136383
+      },
+      "pf_event_dropship_multipoint_fallen[1].sq_event_dropship_pilot__pilot": {
+        "import_ident": 1842327993
+      },
+      "pf_event_patrol[0].event_globals": {
+        "child_script": "u_event_globals"
+      },
+      "pf_event_patrol[0].pf_preset.po_event_patrol": {
+        "import_ident": 2191926545
+      },
+      "pf_event_patrol[0].sq_boss": {
+        "import_ident": 151868465
+      },
+      "pf_event_patrol[0].sq_boss__cell_boss": {
+        "import_ident": 1286168223
+      },
+      "pf_event_patrol[1].event_globals": {
+        "child_script": "u_event_globals"
+      },
+      "pf_event_patrol[1].pf_preset.po_event_patrol": {
+        "import_ident": 2191926545
+      },
+      "pf_event_patrol[1].sq_boss": {
+        "import_ident": 151868465
+      },
+      "pf_event_patrol[1].sq_boss__cell_boss": {
+        "import_ident": 1286168223
+      }
+    },
+    "0x0f0dd50d": {
+      "globals": {
+        "child_script": "u_globals"
+      }
+    },
+    "0x0fda9035": {
+      "globals": {
+        "child_script": "u_globals"
+      },
+      "vex_mega_warpgate.sq_vex_warpgate_large__gate": {
+        "import_ident": 1121922920
+      }
+    },
+    "0x1200a031": {
+      "cosmo_m0_5_phase00_delta_s.obj_m0_5_o1": {
+        "child_script": "interactable_objective"
+      },
+      "cosmo_m0_5_phase00_delta_s.obj_m0_5_o1._object": {
+        "import_ident": 1711789050
+      },
+      "cosmo_m0_5_phase00_delta_s.obj_m0_5_o2": {
+        "child_script": "interactable_objective"
+      },
+      "cosmo_m0_5_phase00_delta_s.obj_m0_5_o2._object": {
+        "import_ident": 3725145051
+      },
+      "cosmo_m0_5_phase00_delta_s.obj_m0_5_o3": {
+        "child_script": "trigger_volume_objective"
+      },
+      "cosmo_m0_5_phase01_hangar.obj_m0_5_goto_hangar": {
+        "child_script": "trigger_bubble_objective"
+      },
+      "cosmo_m0_5_phase01_hangar.obj_m0_5_loot": {
+        "child_script": "collect_loot_objective"
+      },
+      "cosmo_m0_5_phase01_hangar.obj_m0_5_loot._squad": {
+        "import_ident": 607754656
+      },
+      "cosmo_m0_5_phase02_hangar.obj_m0_5_generic": {
+        "child_script": "generic_objective"
+      },
+      "globals": {
+        "child_script": "u_globals"
+      }
+    },
+    "0x19d43443": {
+      "dead_orbit_standers__stander1": {
+        "import_ident": 2892387667
+      },
+      "dead_orbit_standers__stander2": {
+        "import_ident": 2892387664
+      },
+      "future_war_cult_sitters1__sitter1": {
+        "import_ident": 3015888445
+      },
+      "future_war_cult_sitters2__sitter1": {
+        "import_ident": 3015888445
+      },
+      "future_war_cult_sitters2__sitter2": {
+        "import_ident": 3015888446
+      },
+      "hunter_clubhouse_keyboarders1__keyboarder1": {
+        "import_ident": 237072952
+      },
+      "hunter_clubhouse_sitters1__sitter2": {
+        "import_ident": 3015888446
+      },
+      "hunter_clubhouse_sitters1__sitter3": {
+        "import_ident": 3015888447
+      },
+      "hunter_clubhouse_sitters2__sitter1": {
+        "import_ident": 3015888445
+      },
+      "hunter_clubhouse_sitters2__sitter2": {
+        "import_ident": 3015888446
+      },
+      "hunter_clubhouse_sitters2__sitter3": {
+        "import_ident": 3015888447
+      },
+      "ship_signalers__signaler1": {
+        "import_ident": 2566948317
+      },
+      "ship_welders__welder1": {
+        "import_ident": 3468629397
+      },
+      "ship_welders__welder2": {
+        "import_ident": 3468629398
+      },
+      "sq_droid_repair__repair1": {
+        "import_ident": 3050760775
+      },
+      "sq_military_droid_guard1__guard1": {
+        "import_ident": 683359261
+      },
+      "utils": {
+        "child_script": "u_globals"
+      },
+      "vendor_black_market__vendor_hangar": {
+        "import_ident": 4213920023
+      },
+      "vendor_black_market__vendor_hunter": {
+        "import_ident": 2137147708
+      },
+      "vendor_dead_orbit__vendor": {
+        "import_ident": 227140039
+      },
+      "vendor_future_war_cult__vendor": {
+        "import_ident": 227140039
+      },
+      "vendor_ships__vendor": {
+        "import_ident": 227140039
+      },
+      "vendor_ships_helpers1__helper1": {
+        "import_ident": 1267107338
+      },
+      "vendor_ships_helpers1__helper2": {
+        "import_ident": 1267107337
+      },
+      "vendor_vanguard__vendor": {
+        "import_ident": 227140039
+      },
+      "vendor_weapons_helpers1__helper1": {
+        "import_ident": 1267107338
+      },
+      "vendor_weapons_helpers1__helper2": {
+        "import_ident": 1267107337
+      },
+      "vendor_weapons_helpers1__helper3": {
+        "import_ident": 1267107336
+      }
+    },
+    "0x2045eded": {
+      "sq_fallen_lookout_mboss01": {
+        "import_ident": 2066817791
+      }
+    },
+    "0x20e6676d": {
+      "sp_placement_console._object": {
+        "import_ident": 1205660080
+      },
+      "sq_boss": {
+        "import_ident": 215274999
+      },
+      "sq_boss__boss": {
+        "import_ident": 1560169506
+      },
+      "sq_dropship_boss__pilot": {
+        "import_ident": 1842327993
+      },
+      "sq_road_front_legionary__legionary_a": {
+        "import_ident": 22375263
+      },
+      "sq_road_front_legionary__legionary_b": {
+        "import_ident": 22375260
+      },
+      "sq_road_front_legionary__legionary_c": {
+        "import_ident": 22375261
+      }
+    },
+    "0x21709520": {
+      "globals": {
+        "child_script": "u_globals"
+      },
+      "sq_drop_assault__pilot": {
+        "import_ident": 1842327993
+      },
+      "sq_drop_flyover__pilot": {
+        "import_ident": 1842327993
+      },
+      "sq_m01_major": {
+        "import_ident": 816882121
+      }
+    },
+    "0x22859cf8": {
+      "dropship_entrance": {
+        "child_script": "dropship_encounter"
+      },
+      "dropship_entrance._dropship_squad__pilot": {
+        "import_ident": 1842327993
+      },
+      "dropship_outpost": {
+        "child_script": "dropship_encounter"
+      },
+      "dropship_outpost._dropship_squad__pilot": {
+        "import_ident": 1842327993
+      },
+      "pf_sensor01": {
+        "child_script": "interactable_placement"
+      },
+      "pf_sensor01._object": {
+        "import_ident": 1820477330
+      },
+      "pf_sensor02": {
+        "child_script": "interactable_placement"
+      },
+      "pf_sensor02._object": {
+        "import_ident": 1820477329
+      },
+      "simple_entrance": {
+        "child_script": "simple_encounter"
+      },
+      "simple_headlands": {
+        "child_script": "simple_encounter"
+      },
+      "simple_outpost": {
+        "child_script": "simple_encounter"
+      },
+      "simple_street01": {
+        "child_script": "simple_encounter"
+      },
+      "simple_street02": {
+        "child_script": "simple_encounter"
+      },
+      "sq_dropship_baby_shat__skiff": {
+        "import_ident": 33941320
+      },
+      "utils": {
+        "child_script": "u_globals"
+      }
+    },
+    "0x236d4b2b": {
+      "simple_encounter1": {
+        "child_script": "simple_encounter"
+      }
+    },
+    "0x2495f541": {
+      "pf_placement_button_a": {
+        "child_script": "interactable_placement"
+      },
+      "pf_placement_button_a._object": {
+        "import_ident": 1431695682
+      },
+      "pf_placement_button_b": {
+        "child_script": "interactable_placement"
+      },
+      "pf_placement_button_b._object": {
+        "import_ident": 1431695681
+      },
+      "sq_dropship_east__pilot": {
+        "import_ident": 1842327993
+      },
+      "sq_dropship_west__pilot": {
+        "import_ident": 1842327993
+      },
+      "sq_interior_back__dreg_pistol": {
+        "import_ident": 2731934275
+      },
+      "sq_interior_back__dreg_pistol_1": {
+        "import_ident": 1784699107
+      },
+      "sq_interior_back__dreg_pistol_2": {
+        "import_ident": 1784699104
+      },
+      "sq_interior_front__dreg_pistol": {
+        "import_ident": 2731934275
+      },
+      "sq_interior_front__dreg_pistol_1": {
+        "import_ident": 1784699107
+      },
+      "sq_interior_front__dreg_pistol_2": {
+        "import_ident": 1784699104
+      },
+      "sq_interior_front__vandal": {
+        "import_ident": 1958608619
+      },
+      "sq_interior_melee__dreg_knife": {
+        "import_ident": 2617527353
+      }
+    },
+    "0x25211add": {
+      "pf_event_countdown_dropship[0]": {
+        "child_script": "u_event_countdown"
+      },
+      "pf_event_countdown_dropship[0].event_globals": {
+        "child_script": "u_event_globals"
+      },
+      "pf_event_countdown_dropship[0].o_event_countdown_ghost": {
+        "import_ident": 1305454890
+      },
+      "pf_event_countdown_dropship[0].pf_impact": {
+        "child_script": "u_event_countdown_impact"
+      },
+      "pf_event_countdown_dropship[0].pf_point[0].sq_event_dropship_pilot__pilot": {
+        "import_ident": 1842327993
+      },
+      "pf_event_countdown_dropship[0].pf_point[1].sq_event_dropship_pilot__pilot": {
+        "import_ident": 1842327993
+      },
+      "pf_event_countdown_dropship[0].pf_point[2].sq_event_dropship_pilot__pilot": {
+        "import_ident": 1842327993
+      },
+      "pf_event_countdown_dropship[0].pf_preset": {
+        "child_script": "u_event_countdown_preset"
+      },
+      "pf_event_countdown_dropship[0].pf_preset.po_event_countdown": {
+        "import_ident": 3935697789
+      },
+      "pf_event_countdown_dropship[0].sq_event_countdown_wave[0]": {
+        "import_ident": 2026775680
+      },
+      "pf_event_countdown_dropship[0].sq_event_countdown_wave[1]": {
+        "import_ident": 2026775680
+      },
+      "pf_event_countdown_dropship[0].sq_event_countdown_wave[2]": {
+        "import_ident": 2026775680
+      },
+      "pf_event_countdown_dropship[0].sq_event_countdown_wave[3]": {
+        "import_ident": 2026775680
+      },
+      "pf_event_countdown_dropship[0].sq_event_countdown_wave[4]": {
+        "import_ident": 2026775680
+      },
+      "pf_event_countdown_dropship[0].sq_event_countdown_wave[5]": {
+        "import_ident": 2026775680
+      },
+      "pf_event_countdown_dropship[0].sq_event_countdown_wave[6]": {
+        "import_ident": 2026775680
+      },
+      "pf_event_countdown_dropship[0].sq_event_countdown_wave[7]": {
+        "import_ident": 2026775680
+      },
+      "pf_event_countdown_dropship[1]": {
+        "child_script": "u_event_countdown"
+      },
+      "pf_event_countdown_dropship[1].event_globals": {
+        "child_script": "u_event_globals"
+      },
+      "pf_event_countdown_dropship[1].o_event_countdown_ghost": {
+        "import_ident": 1305454890
+      },
+      "pf_event_countdown_dropship[1].pf_impact": {
+        "child_script": "u_event_countdown_impact"
+      },
+      "pf_event_countdown_dropship[1].pf_point[0].sq_event_dropship_pilot__pilot": {
+        "import_ident": 1842327993
+      },
+      "pf_event_countdown_dropship[1].pf_point[1].sq_event_dropship_pilot__pilot": {
+        "import_ident": 1842327993
+      },
+      "pf_event_countdown_dropship[1].pf_preset": {
+        "child_script": "u_event_countdown_preset"
+      },
+      "pf_event_countdown_dropship[1].pf_preset.po_event_countdown": {
+        "import_ident": 3935697789
+      },
+      "pf_event_countdown_dropship[1].sq_event_countdown_wave[0]": {
+        "import_ident": 2026775680
+      },
+      "pf_event_countdown_dropship[1].sq_event_countdown_wave[1]": {
+        "import_ident": 2026775680
+      },
+      "pf_event_countdown_dropship[1].sq_event_countdown_wave[2]": {
+        "import_ident": 2026775680
+      },
+      "pf_event_countdown_dropship[1].sq_event_countdown_wave[3]": {
+        "import_ident": 2026775680
+      },
+      "pf_event_countdown_dropship[1].sq_event_countdown_wave[4]": {
+        "import_ident": 2026775680
+      },
+      "pf_event_countdown_dropship[1].sq_event_countdown_wave[5]": {
+        "import_ident": 2026775680
+      },
+      "pf_event_countdown_dropship[1].sq_event_countdown_wave[6]": {
+        "import_ident": 2026775680
+      },
+      "pf_event_countdown_dropship[1].sq_event_countdown_wave[7]": {
+        "import_ident": 2026775680
+      },
+      "pf_event_countdown_dropship[2]": {
+        "child_script": "u_event_countdown"
+      },
+      "pf_event_countdown_dropship[2].event_globals": {
+        "child_script": "u_event_globals"
+      },
+      "pf_event_countdown_dropship[2].o_event_countdown_ghost": {
+        "import_ident": 1305454890
+      },
+      "pf_event_countdown_dropship[2].pf_impact": {
+        "child_script": "u_event_countdown_impact"
+      },
+      "pf_event_countdown_dropship[2].pf_point[0].sq_event_dropship_pilot__pilot": {
+        "import_ident": 1842327993
+      },
+      "pf_event_countdown_dropship[2].pf_point[1].sq_event_dropship_pilot__pilot": {
+        "import_ident": 1842327993
+      },
+      "pf_event_countdown_dropship[2].pf_point[2].sq_event_dropship_pilot__pilot": {
+        "import_ident": 1842327993
+      },
+      "pf_event_countdown_dropship[2].pf_preset": {
+        "child_script": "u_event_countdown_preset"
+      },
+      "pf_event_countdown_dropship[2].pf_preset.po_event_countdown": {
+        "import_ident": 3935697789
+      },
+      "pf_event_countdown_dropship[2].sq_event_countdown_wave[0]": {
+        "import_ident": 2026775680
+      },
+      "pf_event_countdown_dropship[2].sq_event_countdown_wave[1]": {
+        "import_ident": 2026775680
+      },
+      "pf_event_countdown_dropship[2].sq_event_countdown_wave[2]": {
+        "import_ident": 2026775680
+      },
+      "pf_event_countdown_dropship[2].sq_event_countdown_wave[3]": {
+        "import_ident": 2026775680
+      },
+      "pf_event_countdown_dropship[2].sq_event_countdown_wave[4]": {
+        "import_ident": 2026775680
+      },
+      "pf_event_countdown_dropship[2].sq_event_countdown_wave[5]": {
+        "import_ident": 2026775680
+      },
+      "pf_event_countdown_dropship[2].sq_event_countdown_wave[6]": {
+        "import_ident": 2026775680
+      },
+      "pf_event_countdown_dropship[2].sq_event_countdown_wave[7]": {
+        "import_ident": 2026775680
+      },
+      "pf_event_dropship_multipoint_fallen[0].event_globals": {
+        "child_script": "u_event_globals"
+      },
+      "pf_event_dropship_multipoint_fallen[0].pf_point[0].sq_event_dropship_troops": {
+        "import_ident": 1076587154
+      },
+      "pf_event_dropship_multipoint_fallen[0].pf_point[1].sq_event_dropship_troops": {
+        "import_ident": 1076587154
+      },
+      "pf_event_dropship_multipoint_fallen[0].pf_point[2].sq_event_dropship_troops": {
+        "import_ident": 1076587154
+      },
+      "pf_event_dropship_multipoint_fallen[0].pf_preset.po_event_dropship_multipoint": {
+        "import_ident": 1670136383
+      },
+      "pf_event_dropship_multipoint_fallen[0].sq_event_dropship_pilot__pilot": {
+        "import_ident": 1842327993
+      }
+    },
+    "0x260d22ff": {
+      "sq_hive_celebrant01__knight": {
+        "import_ident": 2837605046
+      },
+      "sq_hive_cleavers01__knight01": {
+        "import_ident": 3479489543
+      },
+      "sq_hive_cleavers01__knight02": {
+        "import_ident": 3479489540
+      }
+    },
+    "0x26f3186d": {
+      "globals": {
+        "child_script": "u_globals"
+      }
+    },
+    "0x288128f1": {
+      "pf_door_hack._object": {
+        "import_ident": 2289393931
+      },
+      "pf_vex_block._object": {
+        "import_ident": 2358057068
+      },
+      "sq_cloud01__cloud": {
+        "import_ident": 1350606868
+      },
+      "sq_cloud02__cloud": {
+        "import_ident": 1350606868
+      },
+      "sq_cloud03__cloud": {
+        "import_ident": 1350606868
+      },
+      "sq_cloud04__cloud": {
+        "import_ident": 1350606868
+      },
+      "sq_cloud05__cloud": {
+        "import_ident": 1350606868
+      },
+      "sq_left_ledge_cloud__cloud": {
+        "import_ident": 1350606868
+      },
+      "sq_march01__goblin01": {
+        "import_ident": 3539138441
+      },
+      "sq_march01__goblin02": {
+        "import_ident": 3539138442
+      },
+      "sq_march01__goblin03": {
+        "import_ident": 3539138443
+      },
+      "sq_march01__goblin04": {
+        "import_ident": 3539138444
+      },
+      "sq_march02__goblin01": {
+        "import_ident": 3539138441
+      },
+      "sq_march02__goblin02": {
+        "import_ident": 3539138442
+      },
+      "sq_march02__goblin03": {
+        "import_ident": 3539138443
+      },
+      "sq_march02__goblin04": {
+        "import_ident": 3539138444
+      },
+      "sq_march03__goblin01": {
+        "import_ident": 3539138441
+      },
+      "sq_march03__goblin02": {
+        "import_ident": 3539138442
+      },
+      "sq_march03__goblin03": {
+        "import_ident": 3539138443
+      },
+      "sq_march03__goblin04": {
+        "import_ident": 3539138444
+      },
+      "sq_right_ledge_cloud__cloud": {
+        "import_ident": 1350606868
+      }
+    },
+    "0x29585157": {
+      "globals": {
+        "child_script": "u_globals"
+      }
+    },
+    "0x29cbd99a": {
+      "loot_venus_baby_shat_1": {
+        "child_script": "loot_baby_shat"
+      }
+    },
+    "0x2fe7dbe6": {
+      "cine_106_trv_phase.cine_106_trv": {
+        "child_script": "cinematic_midmission"
+      },
+      "cine_107_twr_phase.cine_107_twr": {
+        "child_script": "cinematic_midmission"
+      }
+    },
+    "0x33ccb0f0": {
+      "phase_1_rubicon_goto.pf_objective_goto": {
+        "child_script": "trigger_bubble_objective"
+      },
+      "phase_3_mesa_goto.pf_objective_goto": {
+        "child_script": "trigger_bubble_objective"
+      },
+      "phase_4_mesa.pf_objective_button": {
+        "child_script": "interactable_objective"
+      },
+      "phase_4_mesa.pf_objective_button._object": {
+        "import_ident": 1209628643
+      },
+      "phase_5_gatehouse_goto.pf_objective_goto": {
+        "child_script": "trigger_bubble_objective"
+      },
+      "phase_6_gatehouse.pf_gen_obj_ambush": {
+        "child_script": "generic_objective"
+      },
+      "phase_6_gatehouse.pf_objective_button_door": {
+        "child_script": "interactable_objective"
+      },
+      "phase_6_gatehouse.pf_objective_button_door._object": {
+        "import_ident": 1532280988
+      },
+      "phase_6_gatehouse.pf_placement_button_door": {
+        "child_script": "interactable_placement"
+      },
+      "phase_6_gatehouse.pf_placement_button_door._object": {
+        "import_ident": 1532280988
+      },
+      "phase_6_gatehouse.pf_trigger_wall": {
+        "child_script": "trigger_volume_objective"
+      },
+      "phase_7_5_warbase.pf_gen_obj_clear": {
+        "child_script": "generic_objective"
+      },
+      "phase_7_5_warbase.pf_trigger_ascend": {
+        "child_script": "trigger_volume_objective"
+      },
+      "phase_7_warbase_goto.pf_objective_goto": {
+        "child_script": "trigger_bubble_objective"
+      },
+      "phase_8_warbase.pf_kill_boss": {
+        "child_script": "kill_squad_objective"
+      },
+      "phase_8_warbase.pf_kill_boss._squad": {
+        "import_ident": 4131749444
+      },
+      "phase_8_warbase.pf_objective_button_b": {
+        "child_script": "interactable_objective"
+      },
+      "phase_8_warbase.pf_objective_button_b._object": {
+        "import_ident": 142784861
+      },
+      "phase_8_warbase.pf_objective_button_c": {
+        "child_script": "interactable_objective"
+      },
+      "phase_8_warbase.pf_objective_button_c._object": {
+        "import_ident": 142784860
+      },
+      "phase_8_warbase.pf_placement_button_b": {
+        "child_script": "interactable_placement"
+      },
+      "phase_8_warbase.pf_placement_button_b._object": {
+        "import_ident": 142784861
+      },
+      "phase_8_warbase.pf_placement_button_c": {
+        "child_script": "interactable_placement"
+      },
+      "phase_8_warbase.pf_placement_button_c._object": {
+        "import_ident": 142784860
+      }
+    },
+    "0x34e80eed": {
+      "amb_ambush_underpad": {
+        "child_script": "ambush_encounter"
+      },
+      "amb_smpl_fallen_domec01": {
+        "child_script": "simple_encounter"
+      },
+      "amb_smpl_fallen_helipad01": {
+        "child_script": "simple_encounter"
+      },
+      "amb_smpl_fallen_valley01": {
+        "child_script": "simple_encounter"
+      },
+      "amb_smpl_hive_basement02": {
+        "child_script": "simple_encounter"
+      },
+      "amb_smpl_hive_domec01": {
+        "child_script": "simple_encounter"
+      },
+      "amb_smpl_hive_frontdoor01": {
+        "child_script": "simple_encounter"
+      },
+      "amb_smpl_hive_helipad01": {
+        "child_script": "simple_encounter"
+      },
+      "amb_wave_hive_basement": {
+        "child_script": "wave_encounter"
+      },
+      "sq_strike2_captain": {
+        "import_ident": 3317379957
+      },
+      "sq_strike2_dropship__pilot": {
+        "import_ident": 1842327993
+      },
+      "utils": {
+        "child_script": "u_globals"
+      }
+    },
+    "0x358ebae1": {
+      "pf_event_countdown_dropship_only[0]": {
+        "child_script": "u_event_countdown"
+      },
+      "pf_event_countdown_dropship_only[0].event_globals": {
+        "child_script": "u_event_globals"
+      },
+      "pf_event_countdown_dropship_only[0].o_event_countdown_ghost": {
+        "import_ident": 1305454890
+      },
+      "pf_event_countdown_dropship_only[0].pf_impact": {
+        "child_script": "u_event_countdown_impact"
+      },
+      "pf_event_countdown_dropship_only[0].pf_point[0].sq_event_dropship_pilot__pilot": {
+        "import_ident": 1842327993
+      },
+      "pf_event_countdown_dropship_only[0].pf_point[1].sq_event_dropship_pilot__pilot": {
+        "import_ident": 1842327993
+      },
+      "pf_event_countdown_dropship_only[0].pf_point[2].sq_event_dropship_pilot__pilot": {
+        "import_ident": 1842327993
+      },
+      "pf_event_countdown_dropship_only[0].pf_preset": {
+        "child_script": "u_event_countdown_preset"
+      },
+      "pf_event_countdown_dropship_only[0].pf_preset.po_event_countdown": {
+        "import_ident": 3935697789
+      },
+      "pf_event_countdown_dropship_only[0].sq_event_countdown_wave[0]": {
+        "import_ident": 2026775680
+      },
+      "pf_event_countdown_dropship_only[0].sq_event_countdown_wave[1]": {
+        "import_ident": 2026775680
+      },
+      "pf_event_countdown_dropship_only[0].sq_event_countdown_wave[2]": {
+        "import_ident": 2026775680
+      },
+      "pf_event_countdown_dropship_only[0].sq_event_countdown_wave[3]": {
+        "import_ident": 2026775680
+      },
+      "pf_event_countdown_dropship_only[0].sq_event_countdown_wave[4]": {
+        "import_ident": 2026775680
+      },
+      "pf_event_countdown_dropship_only[0].sq_event_countdown_wave[5]": {
+        "import_ident": 2026775680
+      },
+      "pf_event_countdown_dropship_only[0].sq_event_countdown_wave[6]": {
+        "import_ident": 2026775680
+      },
+      "pf_event_countdown_dropship_only[0].sq_event_countdown_wave[7]": {
+        "import_ident": 2026775680
+      },
+      "pf_event_countdown_dropship_only[1]": {
+        "child_script": "u_event_countdown"
+      },
+      "pf_event_countdown_dropship_only[1].event_globals": {
+        "child_script": "u_event_globals"
+      },
+      "pf_event_countdown_dropship_only[1].o_event_countdown_ghost": {
+        "import_ident": 1305454890
+      },
+      "pf_event_countdown_dropship_only[1].pf_impact": {
+        "child_script": "u_event_countdown_impact"
+      },
+      "pf_event_countdown_dropship_only[1].pf_point[0].sq_event_dropship_pilot__pilot": {
+        "import_ident": 1842327993
+      },
+      "pf_event_countdown_dropship_only[1].pf_point[1].sq_event_dropship_pilot__pilot": {
+        "import_ident": 1842327993
+      },
+      "pf_event_countdown_dropship_only[1].pf_point[2].sq_event_dropship_pilot__pilot": {
+        "import_ident": 1842327993
+      },
+      "pf_event_countdown_dropship_only[1].pf_preset": {
+        "child_script": "u_event_countdown_preset"
+      },
+      "pf_event_countdown_dropship_only[1].pf_preset.po_event_countdown": {
+        "import_ident": 3935697789
+      },
+      "pf_event_countdown_dropship_only[1].sq_event_countdown_wave[0]": {
+        "import_ident": 2026775680
+      },
+      "pf_event_countdown_dropship_only[1].sq_event_countdown_wave[1]": {
+        "import_ident": 2026775680
+      },
+      "pf_event_countdown_dropship_only[1].sq_event_countdown_wave[2]": {
+        "import_ident": 2026775680
+      },
+      "pf_event_countdown_dropship_only[1].sq_event_countdown_wave[3]": {
+        "import_ident": 2026775680
+      },
+      "pf_event_countdown_dropship_only[1].sq_event_countdown_wave[4]": {
+        "import_ident": 2026775680
+      },
+      "pf_event_countdown_dropship_only[1].sq_event_countdown_wave[5]": {
+        "import_ident": 2026775680
+      },
+      "pf_event_countdown_dropship_only[1].sq_event_countdown_wave[6]": {
+        "import_ident": 2026775680
+      },
+      "pf_event_countdown_dropship_only[1].sq_event_countdown_wave[7]": {
+        "import_ident": 2026775680
+      },
+      "pf_event_dropship_multipoint_fallen[0].event_globals": {
+        "child_script": "u_event_globals"
+      },
+      "pf_event_dropship_multipoint_fallen[0].pf_point[0].sq_event_dropship_troops": {
+        "import_ident": 1076587154
+      },
+      "pf_event_dropship_multipoint_fallen[0].pf_point[1].sq_event_dropship_troops": {
+        "import_ident": 1076587154
+      },
+      "pf_event_dropship_multipoint_fallen[0].pf_point[2].sq_event_dropship_troops": {
+        "import_ident": 1076587154
+      },
+      "pf_event_dropship_multipoint_fallen[0].pf_preset.po_event_dropship_multipoint": {
+        "import_ident": 1670136383
+      },
+      "pf_event_dropship_multipoint_fallen[0].sq_event_dropship_pilot__pilot": {
+        "import_ident": 1842327993
+      },
+      "pf_event_dropship_multipoint_fallen[1].event_globals": {
+        "child_script": "u_event_globals"
+      },
+      "pf_event_dropship_multipoint_fallen[1].pf_point[0].sq_event_dropship_troops": {
+        "import_ident": 1076587154
+      },
+      "pf_event_dropship_multipoint_fallen[1].pf_point[1].sq_event_dropship_troops": {
+        "import_ident": 1076587154
+      },
+      "pf_event_dropship_multipoint_fallen[1].pf_point[2].sq_event_dropship_troops": {
+        "import_ident": 1076587154
+      },
+      "pf_event_dropship_multipoint_fallen[1].pf_preset.po_event_dropship_multipoint": {
+        "import_ident": 1670136383
+      },
+      "pf_event_dropship_multipoint_fallen[1].sq_event_dropship_pilot__pilot": {
+        "import_ident": 1842327993
+      },
+      "pf_event_patrol[0].event_globals": {
+        "child_script": "u_event_globals"
+      },
+      "pf_event_patrol[0].pf_preset.po_event_patrol": {
+        "import_ident": 2191926545
+      },
+      "pf_event_patrol[0].sq_boss": {
+        "import_ident": 151868465
+      },
+      "pf_event_patrol[0].sq_boss__cell_boss": {
+        "import_ident": 1286168223
+      }
+    },
+    "0x36756164": {
+      "globals": {
+        "child_script": "u_globals"
+      }
+    },
+    "0x369a44dd": {
+      "sp_placement_glyphs._objects[0]": {
+        "import_ident": 764352479
+      },
+      "sp_placement_glyphs._objects[1]": {
+        "import_ident": 4081639578
+      },
+      "sp_placement_kiosk._object": {
+        "import_ident": 3806855492
+      },
+      "sp_specops_heart.sq_bg_mino_a__ultra_mino_a": {
+        "import_ident": 1010512139
+      },
+      "sp_specops_heart.sq_bg_mino_b__ultra_mino_b": {
+        "import_ident": 1010512136
+      },
+      "sp_specops_heart.sq_bg_mino_c__ultra_mino_c": {
+        "import_ident": 1010512137
+      },
+      "sq_cloud_minions__pilot": {
+        "import_ident": 1842327993
+      },
+      "sq_glyph_a_anchor__minotaur": {
+        "import_ident": 2719492022
+      },
+      "sq_glyph_b_anchor__minotaur": {
+        "import_ident": 2719492022
+      }
+    },
+    "0x38ec3ea6": {
+      "dig_site_ambush_encounter01": {
+        "child_script": "ambush_encounter"
+      },
+      "dig_site_ambush_encounter02": {
+        "child_script": "ambush_encounter"
+      },
+      "dig_site_simple_encounter01": {
+        "child_script": "simple_encounter"
+      }
+    },
+    "0x3c3ec728": {
+      "phase00.obj_s1_phase00_m1": {
+        "child_script": "trigger_volume_objective"
+      },
+      "phase00.utils": {
+        "child_script": "u_globals"
+      },
+      "phase01.obj_s1_phase01_m1": {
+        "child_script": "trigger_volume_objective"
+      },
+      "phase01.obj_s1_phase01_m2": {
+        "child_script": "generic_objective"
+      },
+      "phase01.utils": {
+        "child_script": "u_globals"
+      },
+      "phase02.obj_s1_phase02_m1": {
+        "child_script": "countdown_objective"
+      },
+      "phase02.obj_s1_phase02_m1._object": {
+        "import_ident": 474286653
+      },
+      "phase02.utils": {
+        "child_script": "u_globals"
+      },
+      "phase03.obj_s1_phase03_m1": {
+        "child_script": "trigger_volume_objective"
+      },
+      "phase03.utils": {
+        "child_script": "u_globals"
+      },
+      "phase04.obj_s1_phase04_m1": {
+        "child_script": "generic_objective"
+      },
+      "phase05.obj_s1_phase05_m1": {
+        "child_script": "trigger_volume_objective"
+      },
+      "phase05.obj_s1_phase05_m2": {
+        "child_script": "generic_objective"
+      },
+      "phase06.obj_s1_phase06_m1": {
+        "child_script": "generic_objective"
+      },
+      "phase07.obj_s1_phase07_m1": {
+        "child_script": "generic_objective"
+      },
+      "utils": {
+        "child_script": "u_globals"
+      }
+    },
+    "0x3c609d99": {
+      "globals": {
+        "child_script": "u_globals"
+      },
+      "sq_garage_psion_a": {
+        "import_ident": 3631819139
+      },
+      "sq_garage_psion_b": {
+        "import_ident": 3631819139
+      },
+      "sq_garage_psion_c": {
+        "import_ident": 3631819139
+      },
+      "sq_garage_psion_major": {
+        "import_ident": 3631819139
+      },
+      "sq_outpost_dropship__pilot": {
+        "import_ident": 1842327993
+      }
+    },
+    "0x3d2fa81a": {
+      "pf_event_patrol[0].event_globals": {
+        "child_script": "u_event_globals"
+      },
+      "pf_event_patrol[0].pf_preset.po_event_patrol": {
+        "import_ident": 2191926545
+      },
+      "pf_event_patrol[0].sq_boss": {
+        "import_ident": 151868465
+      },
+      "pf_event_patrol[0].sq_boss__cell_boss": {
+        "import_ident": 1286168223
+      },
+      "pf_event_patrol[1].event_globals": {
+        "child_script": "u_event_globals"
+      },
+      "pf_event_patrol[1].pf_preset.po_event_patrol": {
+        "import_ident": 2191926545
+      },
+      "pf_event_patrol[1].sq_boss": {
+        "import_ident": 151868465
+      },
+      "pf_event_patrol[1].sq_boss__cell_boss": {
+        "import_ident": 1286168223
+      },
+      "pf_event_skirmish[0].event_globals": {
+        "child_script": "u_event_globals"
+      },
+      "pf_event_skirmish[0].pf_preset.po_event_skirmish_end": {
+        "import_ident": 619511055
+      },
+      "pf_event_skirmish[0].pf_preset.po_event_skirmish_intro": {
+        "import_ident": 619511055
+      },
+      "pf_event_skirmish[0].pf_preset.po_event_skirmish_mid": {
+        "import_ident": 619511055
+      },
+      "pf_event_skirmish[0].sq_a_end_anchor": {
+        "import_ident": 2013753375
+      },
+      "pf_event_skirmish[0].sq_a_end_wave[0]": {
+        "import_ident": 2013753375
+      },
+      "pf_event_skirmish[0].sq_a_intro_anchor": {
+        "import_ident": 1125047177
+      },
+      "pf_event_skirmish[0].sq_a_intro_wave[0]": {
+        "import_ident": 1125047177
+      },
+      "pf_event_skirmish[0].sq_a_mid_anchor": {
+        "import_ident": 1125047177
+      },
+      "pf_event_skirmish[0].sq_a_mid_wave[0]": {
+        "import_ident": 1125047177
+      },
+      "pf_event_skirmish[0].sq_a_mid_wave[1]": {
+        "import_ident": 1125047177
+      },
+      "pf_event_skirmish[0].sq_b_end_anchor": {
+        "import_ident": 2013753375
+      },
+      "pf_event_skirmish[0].sq_b_end_wave[0]": {
+        "import_ident": 2013753375
+      },
+      "pf_event_skirmish[0].sq_b_intro_anchor": {
+        "import_ident": 1125047177
+      },
+      "pf_event_skirmish[0].sq_b_intro_wave[0]": {
+        "import_ident": 1125047177
+      },
+      "pf_event_skirmish[0].sq_b_mid_anchor": {
+        "import_ident": 1125047177
+      },
+      "pf_event_skirmish[0].sq_b_mid_wave[0]": {
+        "import_ident": 1125047177
+      },
+      "pf_event_skirmish[0].sq_b_mid_wave[1]": {
+        "import_ident": 1125047177
+      }
+    },
+    "0x3e3c20e0": {
+      "phase00.pf_i_door": {
+        "child_script": "interactable_objective"
+      },
+      "phase00.pf_i_door._object": {
+        "import_ident": 2150195974
+      },
+      "phase00.pf_tv_objective_entrance": {
+        "child_script": "trigger_volume_objective"
+      },
+      "phase00.pf_tv_uppercitadel_entrance": {
+        "child_script": "trigger_volume_objective"
+      },
+      "phase00.utils": {
+        "child_script": "u_globals"
+      },
+      "phase01.pf_countdown_survive": {
+        "child_script": "countdown_objective"
+      },
+      "phase01.utils": {
+        "child_script": "u_globals"
+      },
+      "phase02.pf_tv_lowercitadel_entrance": {
+        "child_script": "trigger_volume_objective"
+      },
+      "phase02.utils": {
+        "child_script": "u_globals"
+      },
+      "phase03.pf_tv_wormway_entrance": {
+        "child_script": "trigger_volume_objective"
+      },
+      "phase03.utils": {
+        "child_script": "u_globals"
+      },
+      "phase04.pf_go_ogre": {
+        "child_script": "generic_objective"
+      },
+      "utils": {
+        "child_script": "u_globals"
+      }
+    },
+    "0x41d61611": {
+      "sq_fallen_upper_anchors01": {
+        "import_ident": 233026525
+      }
+    },
+    "0x41d61614": {
+      "obj_placement_m1_o1b": {
+        "child_script": "interactable_placement"
+      },
+      "obj_placement_m1_o1b._object": {
+        "import_ident": 1051069757
+      },
+      "sq_hive_basement_thrall01__thrall1": {
+        "import_ident": 817550623
+      },
+      "sq_hive_basement_thrall01__thrall2": {
+        "import_ident": 817550620
+      },
+      "sq_hive_basement_thrall01__thrall3": {
+        "import_ident": 817550621
+      },
+      "sq_hive_basement_thrall01__thrall4": {
+        "import_ident": 817550618
+      },
+      "sq_hive_basement_thrall01__thrall5": {
+        "import_ident": 817550619
+      },
+      "sq_hive_basement_thrall01__thrall6": {
+        "import_ident": 817550616
+      },
+      "sq_hive_basement_thrall01__thrall7": {
+        "import_ident": 817550617
+      },
+      "sq_hive_basement_troopers01__trooper1": {
+        "import_ident": 1249775783
+      },
+      "sq_hive_basement_troopers01__trooper2": {
+        "import_ident": 1249775780
+      },
+      "sq_hive_basement_troopers01__trooper3": {
+        "import_ident": 1249775781
+      },
+      "sq_hive_scare01__thrall": {
+        "import_ident": 2412202714
+      },
+      "sq_hive_scare02a__thrall": {
+        "import_ident": 2412202714
+      },
+      "sq_hive_scare02b__thrall": {
+        "import_ident": 2412202714
+      },
+      "sq_hive_scare02c__thrall": {
+        "import_ident": 2412202714
+      },
+      "sq_hive_scare02d__thrall": {
+        "import_ident": 2412202714
+      },
+      "sq_hive_upper_wizard01": {
+        "import_ident": 3261352970
+      },
+      "sq_hive_upper_wizard01__wizard": {
+        "import_ident": 3202541808
+      }
+    },
+    "0x420903e4": {
+      "sp_placement_control._object": {
+        "import_ident": 2396647449
+      },
+      "sp_placement_vent._object": {
+        "import_ident": 1600310327
+      },
+      "sq_dropship_base__pilot": {
+        "import_ident": 1842327993
+      },
+      "sq_dropship_sand__pilot": {
+        "import_ident": 1842327993
+      }
+    },
+    "0x43f9e8c0": {
+      "sq_court_high_b": {
+        "import_ident": 1039858199
+      },
+      "sq_court_high_b__major": {
+        "import_ident": 1245009076
+      },
+      "sq_court_high_b_melee__thrall1": {
+        "import_ident": 817550623
+      },
+      "sq_court_high_b_melee__thrall2": {
+        "import_ident": 817550620
+      },
+      "sq_court_high_b_melee__thrall3": {
+        "import_ident": 817550621
+      },
+      "sq_gate_knights__knight": {
+        "import_ident": 2837605046
+      },
+      "sq_gate_knights__trooper_a": {
+        "import_ident": 225733642
+      },
+      "sq_gate_knights__trooper_b": {
+        "import_ident": 225733641
+      },
+      "sq_gate_knights__trooper_c": {
+        "import_ident": 225733640
+      },
+      "sq_gate_thrall_intro__thrall_a": {
+        "import_ident": 656277634
+      },
+      "sq_gate_thrall_intro__thrall_b": {
+        "import_ident": 656277633
+      },
+      "sq_gate_thrall_intro__thrall_c": {
+        "import_ident": 656277632
+      }
+    },
+    "0x43f9e8c3": {
+      "globals": {
+        "child_script": "u_globals"
+      },
+      "sq_gate_thrall_intro__thrall_a": {
+        "import_ident": 656277634
+      },
+      "sq_gate_thrall_intro__thrall_b": {
+        "import_ident": 656277633
+      },
+      "sq_gate_thrall_intro__thrall_c": {
+        "import_ident": 656277632
+      }
+    },
+    "0x4b13d95c": {
+      "pf_encounter_dropship_bunker": {
+        "child_script": "dropship_encounter"
+      },
+      "pf_encounter_dropship_bunker._dropship_squad__pilot": {
+        "import_ident": 1842327993
+      },
+      "pf_encounter_simple_crossroad": {
+        "child_script": "simple_encounter"
+      },
+      "pf_encounter_simple_deck_a": {
+        "child_script": "simple_encounter"
+      },
+      "pf_encounter_simple_deck_b": {
+        "child_script": "simple_encounter"
+      },
+      "pf_encounter_simple_overlook": {
+        "child_script": "simple_encounter"
+      },
+      "pf_encounter_simple_path": {
+        "child_script": "simple_encounter"
+      },
+      "pf_encounter_simple_perch": {
+        "child_script": "simple_encounter"
+      },
+      "pf_encounter_simple_pit": {
+        "child_script": "simple_encounter"
+      },
+      "pf_encounter_simple_roof": {
+        "child_script": "simple_encounter"
+      },
+      "pf_encounter_simple_skybridge": {
+        "child_script": "simple_encounter"
+      },
+      "pf_encounter_simple_tower_anchor": {
+        "child_script": "simple_encounter"
+      },
+      "pf_encounter_simple_tower_support": {
+        "child_script": "simple_encounter"
+      },
+      "pf_placement_m03_button._object": {
+        "import_ident": 154045461
+      },
+      "second_story_wave_encounter": {
+        "child_script": "wave_encounter"
+      },
+      "utils": {
+        "child_script": "u_globals"
+      }
+    },
+    "0x4c63792c": {
+      "sp_placement_array._object": {
+        "import_ident": 474286653
+      },
+      "sq_objective_fallen01d__shank01": {
+        "import_ident": 123396073
+      },
+      "sq_objective_fallen01d__shank02": {
+        "import_ident": 123396074
+      },
+      "sq_objective_fallen01d__shank03": {
+        "import_ident": 123396075
+      },
+      "sq_objective_fallen01d__shank04": {
+        "import_ident": 123396076
+      },
+      "sq_objective_fallen01e__shank01": {
+        "import_ident": 123396073
+      },
+      "sq_objective_fallen01e__shank02": {
+        "import_ident": 123396074
+      },
+      "sq_objective_fallen01e__shank03": {
+        "import_ident": 123396075
+      },
+      "sq_objective_fallen01e__shank04": {
+        "import_ident": 123396076
+      },
+      "sq_objective_fallen03c__captain_major": {
+        "import_ident": 1065499381
+      },
+      "utils": {
+        "child_script": "u_globals"
+      }
+    },
+    "0x4e11ec55": {
+      "globals": {
+        "child_script": "u_globals"
+      }
+    },
+    "0x51f665ba": {
+      "amb_smpl_ch4": {
+        "child_script": "simple_encounter"
+      },
+      "amb_smpl_pit01": {
+        "child_script": "simple_encounter"
+      },
+      "amb_smpl_pit02": {
+        "child_script": "simple_encounter"
+      },
+      "amb_smpl_refinery01": {
+        "child_script": "simple_encounter"
+      },
+      "amb_smpl_rocketyard01": {
+        "child_script": "simple_encounter"
+      },
+      "amb_smpl_rocketyard02": {
+        "child_script": "simple_encounter"
+      },
+      "amb_smpl_ship01": {
+        "child_script": "simple_encounter"
+      },
+      "globals": {
+        "child_script": "u_globals"
+      },
+      "obj_placement_ch4_m03._object": {
+        "import_ident": 1304751620
+      },
+      "sq_dropship_tank__dropship": {
+        "import_ident": 132903764
+      },
+      "sq_tank__tank": {
+        "import_ident": 3206747537
+      }
+    },
+    "0x5617fd19": {
+      "pf_event_dropship_multipoint_fallen[0].event_globals": {
+        "child_script": "u_event_globals"
+      },
+      "pf_event_dropship_multipoint_fallen[0].pf_point[0].sq_event_dropship_troops": {
+        "import_ident": 1076587154
+      },
+      "pf_event_dropship_multipoint_fallen[0].pf_point[1].sq_event_dropship_troops": {
+        "import_ident": 1076587154
+      },
+      "pf_event_dropship_multipoint_fallen[0].pf_point[2].sq_event_dropship_troops": {
+        "import_ident": 1076587154
+      },
+      "pf_event_dropship_multipoint_fallen[0].pf_preset.po_event_dropship_multipoint": {
+        "import_ident": 1670136383
+      },
+      "pf_event_dropship_multipoint_fallen[0].sq_event_dropship_pilot__pilot": {
+        "import_ident": 1842327993
+      },
+      "pf_event_pike_gang[0].sq_event_pike[0]": {
+        "import_ident": 2026775680
+      },
+      "pf_event_tank_drop[0].event_globals": {
+        "child_script": "u_event_globals"
+      },
+      "pf_event_tank_drop[0].pf_preset.po_event_tank": {
+        "import_ident": 2778998515
+      },
+      "pf_event_tank_drop[0].sq_fodder_dropship": {
+        "import_ident": 3325557034
+      },
+      "pf_event_tank_drop[0].sq_fodder_dropship__pilot": {
+        "import_ident": 1842327993
+      },
+      "pf_event_tank_drop[0].sq_tank": {
+        "import_ident": 3325557034
+      },
+      "pf_event_tank_drop[0].sq_tank__tank": {
+        "import_ident": 3206747537
+      },
+      "pf_event_tank_drop[0].sq_tank_dropship": {
+        "import_ident": 3325557034
+      },
+      "pf_event_tank_drop[0].sq_tank_dropship__pilot": {
+        "import_ident": 1842327993
+      },
+      "pf_event_tank_drop[0].sq_tank_fodder": {
+        "import_ident": 3325557034
+      },
+      "pf_event_tank_drop[0].sq_tank_fodder_hard": {
+        "import_ident": 3325557034
+      },
+      "pf_event_tank_drop[0].sq_tank_minions": {
+        "import_ident": 3325557034
+      }
+    },
+    "0x5de7d8e2": {
+      "utils": {
+        "child_script": "u_globals"
+      }
+    },
+    "0x5e4d227e": {
+      "pf_event_patrol[0].event_globals": {
+        "child_script": "u_event_globals"
+      },
+      "pf_event_patrol[0].pf_preset.po_event_patrol": {
+        "import_ident": 2191926545
+      },
+      "pf_event_patrol[0].sq_boss": {
+        "import_ident": 151868465
+      },
+      "pf_event_patrol[0].sq_boss__cell_boss": {
+        "import_ident": 1286168223
+      },
+      "pf_event_patrol[1].event_globals": {
+        "child_script": "u_event_globals"
+      },
+      "pf_event_patrol[1].pf_preset.po_event_patrol": {
+        "import_ident": 2191926545
+      },
+      "pf_event_patrol[1].sq_boss": {
+        "import_ident": 151868465
+      },
+      "pf_event_patrol[1].sq_boss__cell_boss": {
+        "import_ident": 1286168223
+      },
+      "pf_event_vex_block[0]": {
+        "child_script": "u_event_vex_block"
+      },
+      "pf_event_vex_block[0].event_globals": {
+        "child_script": "u_event_globals"
+      },
+      "pf_event_vex_block[0].pf_point[0].sq_vex_cloud__pilot": {
+        "import_ident": 1842327993
+      },
+      "pf_event_vex_block[0].pf_point[1].sq_vex_cloud__pilot": {
+        "import_ident": 1842327993
+      },
+      "pf_event_vex_block[0].pf_point[2].sq_vex_cloud__pilot": {
+        "import_ident": 1842327993
+      },
+      "pf_event_vex_block[0].pf_preset.po_event_vex_block": {
+        "import_ident": 701439538
+      },
+      "pf_event_vex_block[0].sq_big_wave_1st": {
+        "import_ident": 71328258
+      },
+      "pf_event_vex_block[0].sq_big_wave_2nd": {
+        "import_ident": 71328258
+      },
+      "pf_event_vex_block[0].sq_big_wave_3rd": {
+        "import_ident": 71328258
+      },
+      "pf_event_vex_block[0].sq_goblin_double": {
+        "import_ident": 71328258
+      },
+      "pf_event_vex_block[0].sq_goblin_triple": {
+        "import_ident": 71328258
+      },
+      "pf_event_vex_block[0].sq_harpies": {
+        "import_ident": 71328258
+      },
+      "pf_event_vex_block[0].sq_hobgoblin_goblin_double": {
+        "import_ident": 71328258
+      },
+      "pf_event_vex_block[0].sq_hydra": {
+        "import_ident": 71328258
+      },
+      "pf_event_vex_block[0].sq_initial_vex": {
+        "import_ident": 3575775016
+      },
+      "pf_event_vex_block[0].sq_minotaur_goblin_double": {
+        "import_ident": 71328258
+      },
+      "pf_event_vex_block[0].sq_minotaur_single": {
+        "import_ident": 71328258
+      },
+      "pf_event_vex_block[1].event_globals": {
+        "child_script": "u_event_globals"
+      },
+      "pf_event_vex_block[1].pf_point[0].sq_vex_cloud__pilot": {
+        "import_ident": 1842327993
+      },
+      "pf_event_vex_block[1].pf_point[1].sq_vex_cloud__pilot": {
+        "import_ident": 1842327993
+      },
+      "pf_event_vex_block[1].pf_point[2].sq_vex_cloud__pilot": {
+        "import_ident": 1842327993
+      },
+      "pf_event_vex_block[1].pf_preset.po_event_vex_block": {
+        "import_ident": 701439538
+      },
+      "pf_event_vex_block[1].sq_big_wave_1st": {
+        "import_ident": 71328258
+      },
+      "pf_event_vex_block[1].sq_big_wave_2nd": {
+        "import_ident": 71328258
+      },
+      "pf_event_vex_block[1].sq_big_wave_3rd": {
+        "import_ident": 71328258
+      },
+      "pf_event_vex_block[1].sq_goblin_double": {
+        "import_ident": 71328258
+      },
+      "pf_event_vex_block[1].sq_goblin_triple": {
+        "import_ident": 71328258
+      },
+      "pf_event_vex_block[1].sq_harpies": {
+        "import_ident": 71328258
+      },
+      "pf_event_vex_block[1].sq_hobgoblin_goblin_double": {
+        "import_ident": 71328258
+      },
+      "pf_event_vex_block[1].sq_hydra": {
+        "import_ident": 71328258
+      },
+      "pf_event_vex_block[1].sq_initial_vex": {
+        "import_ident": 3575775016
+      },
+      "pf_event_vex_block[1].sq_minotaur_goblin_double": {
+        "import_ident": 71328258
+      },
+      "pf_event_vex_block[1].sq_minotaur_single": {
+        "import_ident": 71328258
+      },
+      "pf_event_vex_block[2].event_globals": {
+        "child_script": "u_event_globals"
+      },
+      "pf_event_vex_block[2].pf_point[0].sq_vex_cloud__pilot": {
+        "import_ident": 1842327993
+      },
+      "pf_event_vex_block[2].pf_point[1].sq_vex_cloud__pilot": {
+        "import_ident": 1842327993
+      },
+      "pf_event_vex_block[2].pf_point[2].sq_vex_cloud__pilot": {
+        "import_ident": 1842327993
+      },
+      "pf_event_vex_block[2].pf_preset.po_event_vex_block": {
+        "import_ident": 701439538
+      },
+      "pf_event_vex_block[2].sq_big_wave_1st": {
+        "import_ident": 71328258
+      },
+      "pf_event_vex_block[2].sq_big_wave_2nd": {
+        "import_ident": 71328258
+      },
+      "pf_event_vex_block[2].sq_big_wave_3rd": {
+        "import_ident": 71328258
+      },
+      "pf_event_vex_block[2].sq_goblin_double": {
+        "import_ident": 71328258
+      },
+      "pf_event_vex_block[2].sq_goblin_triple": {
+        "import_ident": 71328258
+      },
+      "pf_event_vex_block[2].sq_harpies": {
+        "import_ident": 71328258
+      },
+      "pf_event_vex_block[2].sq_hobgoblin_goblin_double": {
+        "import_ident": 71328258
+      },
+      "pf_event_vex_block[2].sq_hydra": {
+        "import_ident": 71328258
+      },
+      "pf_event_vex_block[2].sq_initial_vex": {
+        "import_ident": 3575775016
+      },
+      "pf_event_vex_block[2].sq_minotaur_goblin_double": {
+        "import_ident": 71328258
+      },
+      "pf_event_vex_block[2].sq_minotaur_single": {
+        "import_ident": 71328258
+      }
+    },
+    "0x6071a5f0": {
+      "amb_hive_small_cave01": {
+        "child_script": "simple_encounter"
+      },
+      "globals": {
+        "child_script": "u_globals"
+      }
+    },
+    "0x61b7ee6b": {
+      "globals": {
+        "child_script": "u_globals"
+      },
+      "sq_cutter__pilot": {
+        "import_ident": 1842327993
+      }
+    },
+    "0x61f2c2cd": {
+      "cloud_d_dropship_encounter": {
+        "child_script": "dropship_encounter"
+      },
+      "cloud_d_dropship_encounter._dropship_squad__pilot": {
+        "import_ident": 1842327993
+      },
+      "pf_cloud_dunes_vex": {
+        "child_script": "dropship_encounter"
+      },
+      "pf_cloud_dunes_vex._dropship_squad__pilot": {
+        "import_ident": 1842327993
+      },
+      "pf_cloud_pressure_a": {
+        "child_script": "dropship_encounter"
+      },
+      "pf_cloud_pressure_a._dropship_squad__pilot": {
+        "import_ident": 1842327993
+      },
+      "pf_cloud_pressure_b": {
+        "child_script": "dropship_encounter"
+      },
+      "pf_cloud_pressure_b._dropship_squad__pilot": {
+        "import_ident": 1842327993
+      },
+      "pf_cloud_pressure_c": {
+        "child_script": "dropship_encounter"
+      },
+      "pf_cloud_pressure_c._dropship_squad__pilot": {
+        "import_ident": 1842327993
+      },
+      "pf_dropship_cmd_a": {
+        "child_script": "dropship_encounter"
+      },
+      "pf_dropship_cmd_a._dropship_squad__pilot": {
+        "import_ident": 1842327993
+      },
+      "pf_dropship_cmd_c": {
+        "child_script": "dropship_encounter"
+      },
+      "pf_dropship_cmd_c._dropship_squad__pilot": {
+        "import_ident": 1842327993
+      },
+      "pf_dropship_dunes_cabal": {
+        "child_script": "dropship_encounter"
+      },
+      "pf_dropship_dunes_cabal._dropship_squad__pilot": {
+        "import_ident": 1842327993
+      },
+      "pf_dropship_trenchmid": {
+        "child_script": "dropship_encounter"
+      },
+      "pf_dropship_trenchmid._dropship_squad__pilot": {
+        "import_ident": 1842327993
+      },
+      "pf_placement_m06_interact._object": {
+        "import_ident": 442023885
+      },
+      "pf_simple_cmd_b": {
+        "child_script": "simple_encounter"
+      },
+      "pf_simple_gate_bridge": {
+        "child_script": "simple_encounter"
+      },
+      "pf_simple_gate_low": {
+        "child_script": "simple_encounter"
+      },
+      "pf_simple_trenchleft1": {
+        "child_script": "simple_encounter"
+      },
+      "pf_simple_trenchright1": {
+        "child_script": "simple_encounter"
+      },
+      "pf_wave_gate": {
+        "child_script": "wave_encounter"
+      },
+      "utils": {
+        "child_script": "u_globals"
+      }
+    },
+    "0x6231d8aa": {
+      "globals": {
+        "child_script": "u_globals"
+      }
+    },
+    "0x629bdcee": {
+      "globals": {
+        "child_script": "u_globals"
+      },
+      "sq_corner_cloud_a__pilot": {
+        "import_ident": 1842327993
+      },
+      "sq_corner_cloud_b__pilot": {
+        "import_ident": 1842327993
+      }
+    },
+    "0x62b032e4": {
+      "mns01_010_020_trigger": {
+        "child_script": "dialog_trigger"
+      },
+      "mns01_010_030_trigger": {
+        "child_script": "dialog_trigger"
+      },
+      "mns01_020_010_trigger": {
+        "child_script": "dialog_trigger"
+      },
+      "mns01_020_020_trigger": {
+        "child_script": "dialog_trigger"
+      },
+      "mns01_020_030_trigger": {
+        "child_script": "dialog_trigger"
+      },
+      "mns01_020_040_trigger": {
+        "child_script": "dialog_trigger"
+      },
+      "mns01_020_050_trigger": {
+        "child_script": "dialog_trigger"
+      },
+      "mns01_020_060_trigger": {
+        "child_script": "dialog_trigger"
+      },
+      "mns01_030_010_trigger": {
+        "child_script": "dialog_trigger"
+      },
+      "mns01_040_010_trigger": {
+        "child_script": "dialog_trigger"
+      },
+      "mns01_040_020_trigger": {
+        "child_script": "dialog_trigger"
+      },
+      "mns01_040_030_trigger": {
+        "child_script": "dialog_trigger"
+      }
+    },
+    "0x634863c2": {
+      "sq_dropship_tank__dropship": {
+        "import_ident": 132903764
+      },
+      "sq_tank__tank": {
+        "import_ident": 3206747537
+      }
+    },
+    "0x651ac41f": {
+      "globals": {
+        "child_script": "u_globals"
+      },
+      "sq_arena": {
+        "import_ident": 2537013074
+      },
+      "sq_arena__boss": {
+        "import_ident": 1560169506
+      },
+      "sq_arena_minions__trooper1": {
+        "import_ident": 1249775783
+      },
+      "sq_arena_minions__trooper2": {
+        "import_ident": 1249775780
+      },
+      "sq_arena_minions__wizard": {
+        "import_ident": 3202541808
+      },
+      "sq_drop_strength_cutter__pilot": {
+        "import_ident": 1842327993
+      },
+      "sq_drop_wisdom_cutter__pilot": {
+        "import_ident": 1842327993
+      }
+    },
+    "0x6b779e60": {
+      "pf_event_skirmish[0].event_globals": {
+        "child_script": "u_event_globals"
+      },
+      "pf_event_skirmish[0].pf_preset.po_event_skirmish_end": {
+        "import_ident": 619511055
+      },
+      "pf_event_skirmish[0].pf_preset.po_event_skirmish_intro": {
+        "import_ident": 619511055
+      },
+      "pf_event_skirmish[0].pf_preset.po_event_skirmish_mid": {
+        "import_ident": 619511055
+      },
+      "pf_event_skirmish[0].sq_a_end_anchor": {
+        "import_ident": 2013753375
+      },
+      "pf_event_skirmish[0].sq_a_end_wave[0]": {
+        "import_ident": 2013753375
+      },
+      "pf_event_skirmish[0].sq_a_intro_anchor": {
+        "import_ident": 1125047177
+      },
+      "pf_event_skirmish[0].sq_a_intro_wave[0]": {
+        "import_ident": 1125047177
+      },
+      "pf_event_skirmish[0].sq_a_mid_anchor": {
+        "import_ident": 1125047177
+      },
+      "pf_event_skirmish[0].sq_a_mid_wave[0]": {
+        "import_ident": 1125047177
+      },
+      "pf_event_skirmish[0].sq_a_mid_wave[1]": {
+        "import_ident": 1125047177
+      },
+      "pf_event_skirmish[0].sq_b_end_anchor": {
+        "import_ident": 2013753375
+      },
+      "pf_event_skirmish[0].sq_b_end_wave[0]": {
+        "import_ident": 2013753375
+      },
+      "pf_event_skirmish[0].sq_b_intro_anchor": {
+        "import_ident": 1125047177
+      },
+      "pf_event_skirmish[0].sq_b_intro_wave[0]": {
+        "import_ident": 1125047177
+      },
+      "pf_event_skirmish[0].sq_b_mid_anchor": {
+        "import_ident": 1125047177
+      },
+      "pf_event_skirmish[0].sq_b_mid_wave[0]": {
+        "import_ident": 1125047177
+      },
+      "pf_event_skirmish[0].sq_b_mid_wave[1]": {
+        "import_ident": 1125047177
+      }
+    },
+    "0x7029bd3d": {
+      "phase_1_accelerator.pf_gen_obj_defend": {
+        "child_script": "generic_objective"
+      },
+      "phase_1_accelerator.pf_gen_obj_explore": {
+        "child_script": "generic_objective"
+      },
+      "phase_1_accelerator.pf_objective_button_a": {
+        "child_script": "interactable_objective"
+      },
+      "phase_1_accelerator.pf_objective_button_a._object": {
+        "import_ident": 261351756
+      },
+      "phase_1_accelerator.pf_placement_button_a": {
+        "child_script": "interactable_placement"
+      },
+      "phase_1_accelerator.pf_placement_button_a._object": {
+        "import_ident": 261351756
+      },
+      "phase_3_launchtubes.pf_gen_obj_find_guardian": {
+        "child_script": "generic_objective"
+      },
+      "phase_3_launchtubes.pf_objective_button_false": {
+        "child_script": "interactable_objective"
+      },
+      "phase_3_launchtubes.pf_objective_button_false._object": {
+        "import_ident": 3049455057
+      },
+      "phase_3_launchtubes.pf_placement_button_false": {
+        "child_script": "interactable_placement"
+      },
+      "phase_3_launchtubes.pf_placement_button_false._object": {
+        "import_ident": 3049455057
+      },
+      "phase_4_launchtubes.pf_cine_110_mst": {
+        "child_script": "cinematic_midmission"
+      },
+      "phase_5_launchtubes.pf_objective_kill": {
+        "child_script": "kill_squad_objective"
+      },
+      "phase_5_launchtubes.pf_objective_kill._squad": {
+        "import_ident": 1039858199
+      },
+      "phase_5_launchtubes.pf_trigger_ghost": {
+        "child_script": "trigger_volume_objective"
+      },
+      "phase_door_launchtubes.pf_gen_obj_kill_all": {
+        "child_script": "generic_objective"
+      },
+      "phase_goto_launchtubes.pf_objective_goto": {
+        "child_script": "trigger_bubble_objective"
+      },
+      "phase_intro_cin.pf_cine_109_mnr": {
+        "child_script": "cinematic_midmission"
+      },
+      "phase_launchtubes_complete.pf_objective_button_ghost": {
+        "child_script": "interactable_objective"
+      },
+      "phase_launchtubes_complete.pf_objective_button_ghost._object": {
+        "import_ident": 1744527689
+      },
+      "phase_launchtubes_complete.pf_placement_button_ghost": {
+        "child_script": "interactable_placement"
+      },
+      "phase_launchtubes_complete.pf_placement_button_ghost._object": {
+        "import_ident": 1744527689
+      },
+      "phase_moonbase.pf_obj_moonbase_m1_terminal": {
+        "child_script": "interactable_objective"
+      },
+      "phase_moonbase.pf_obj_moonbase_m1_terminal._object": {
+        "import_ident": 2204260717
+      }
+    },
+    "0x706f79f3": {
+      "globals": {
+        "child_script": "u_globals"
+      }
+    },
+    "0x726e51de": {
+      "center_switch_pillar": {
+        "child_script": "venus_raid_pillar_switch"
+      },
+      "left_switch_pillar": {
+        "child_script": "venus_raid_pillar_switch"
+      },
+      "right_switch_pillar": {
+        "child_script": "venus_raid_pillar_switch"
+      },
+      "simple_encounter_1": {
+        "child_script": "simple_encounter"
+      },
+      "simple_encounter_2": {
+        "child_script": "simple_encounter"
+      },
+      "simple_encounter_3": {
+        "child_script": "simple_encounter"
+      },
+      "simple_encounter_4": {
+        "child_script": "simple_encounter"
+      },
+      "simple_encounter_5": {
+        "child_script": "simple_encounter"
+      },
+      "simple_encounter_6": {
+        "child_script": "simple_encounter"
+      },
+      "sq_raid_phase00_center_leader__minotaurs": {
+        "import_ident": 3792077809
+      },
+      "sq_raid_phase00_cloud__pilot": {
+        "import_ident": 1842327993
+      },
+      "sq_raid_phase00_left_cloud__pilot": {
+        "import_ident": 1842327993
+      },
+      "sq_raid_phase00_left_leader__minotaurs": {
+        "import_ident": 3792077809
+      },
+      "sq_raid_phase00_right_cloud__pilot": {
+        "import_ident": 1842327993
+      },
+      "sq_raid_phase00_right_leader__minotaurs": {
+        "import_ident": 3792077809
+      },
+      "utils": {
+        "child_script": "u_globals"
+      }
+    },
+    "0x75179c09": {
+      "pf_placement_m02_countdown._object": {
+        "import_ident": 3465960924
+      },
+      "pf_placement_m02_interact._object": {
+        "import_ident": 240107657
+      },
+      "sp_encounter_simple_base_rear": {
+        "child_script": "simple_encounter"
+      },
+      "sp_encounter_simple_base_trench": {
+        "child_script": "simple_encounter"
+      },
+      "sp_encounter_simple_central": {
+        "child_script": "simple_encounter"
+      },
+      "sp_encounter_simple_crater_flat": {
+        "child_script": "simple_encounter"
+      },
+      "sp_encounter_simple_crater_outpost": {
+        "child_script": "simple_encounter"
+      },
+      "sp_encounter_simple_dune": {
+        "child_script": "simple_encounter"
+      },
+      "sp_encounter_simple_s_bunker_wave1": {
+        "child_script": "wave_encounter"
+      },
+      "sp_encounter_simple_s_bunker_wave2": {
+        "child_script": "wave_encounter"
+      },
+      "sp_encounter_simple_vex_lower": {
+        "child_script": "simple_encounter"
+      },
+      "sp_encounter_wave_s_bunker": {
+        "child_script": "wave_encounter"
+      },
+      "utils": {
+        "child_script": "u_globals"
+      }
+    },
+    "0x7556a7bb": {
+      "globals": {
+        "child_script": "u_globals"
+      }
+    },
+    "0x77e0c26a": {
+      "pf_obj_mesa_garage_placement._object": {
+        "import_ident": 2367098486
+      },
+      "pf_placement_button._object": {
+        "import_ident": 1209628643
+      },
+      "pf_placement_ch3_button._object": {
+        "import_ident": 1810661213
+      },
+      "sp_dropship_grotto": {
+        "child_script": "dropship_encounter"
+      },
+      "sp_dropship_grotto._dropship_squad__pilot": {
+        "import_ident": 1842327993
+      },
+      "sp_dropship_lz_east": {
+        "child_script": "dropship_encounter"
+      },
+      "sp_dropship_lz_east._dropship_squad__pilot": {
+        "import_ident": 1842327993
+      },
+      "sp_dropship_lz_path": {
+        "child_script": "dropship_encounter"
+      },
+      "sp_dropship_lz_path._dropship_squad__pilot": {
+        "import_ident": 1842327993
+      },
+      "sp_dropship_lz_west": {
+        "child_script": "dropship_encounter"
+      },
+      "sp_dropship_lz_west._dropship_squad__pilot": {
+        "import_ident": 1842327993
+      },
+      "sp_simple_carrot": {
+        "child_script": "simple_encounter"
+      },
+      "sp_simple_garage_ext": {
+        "child_script": "simple_encounter"
+      },
+      "sp_simple_garage_int": {
+        "child_script": "simple_encounter"
+      },
+      "sp_simple_garage_psions": {
+        "child_script": "simple_encounter"
+      },
+      "sp_simple_tower1": {
+        "child_script": "simple_encounter"
+      },
+      "sp_simple_tower2": {
+        "child_script": "simple_encounter"
+      },
+      "sp_simple_tunnel_front": {
+        "child_script": "simple_encounter"
+      },
+      "sp_simple_tunnel_rear": {
+        "child_script": "simple_encounter"
+      },
+      "sp_wave_tower": {
+        "child_script": "wave_encounter"
+      },
+      "sp_wave_tunnel": {
+        "child_script": "wave_encounter"
+      },
+      "utils": {
+        "child_script": "u_globals"
+      }
+    },
+    "0x79d97fdd": {
+      "cosmo_m2_phase00_delta_n.obj_m2_o1": {
+        "child_script": "interactable_objective"
+      },
+      "cosmo_m2_phase00_delta_n.obj_m2_o1._object": {
+        "import_ident": 3936565668
+      },
+      "cosmo_m2_phase01_dry_sea.obj_m2_o2a": {
+        "child_script": "trigger_volume_objective"
+      },
+      "cosmo_m2_phase01_dry_sea.obj_m2_o2b._objects[0]": {
+        "import_ident": 3382889080
+      },
+      "cosmo_m2_phase01_dry_sea.obj_m2_o2b._objects[1]": {
+        "import_ident": 2537740637
+      },
+      "cosmo_m2_phase02_dome_c.obj_m2_o3": {
+        "child_script": "interactable_objective"
+      },
+      "cosmo_m2_phase02_dome_c.obj_m2_o3._object": {
+        "import_ident": 2649989166
+      },
+      "cosmo_m2_phase03_dome_c.obj_m2_o4a": {
+        "child_script": "generic_objective"
+      },
+      "cosmo_m2_phase04_dome_c.obj_m2_o4b._object": {
+        "import_ident": 912239641
+      },
+      "globals": {
+        "child_script": "u_globals"
+      }
+    },
+    "0x7ae7a451": {
+      "sq_bossbattle_boss01": {
+        "import_ident": 3066424140
+      },
+      "sq_bossbattle_boss01__ogre": {
+        "import_ident": 3461823680
+      },
+      "sq_bossbattle_hive03__thrall": {
+        "import_ident": 2412202714
+      },
+      "sq_bossbattle_hive03__thrall_1": {
+        "import_ident": 656277714
+      },
+      "sq_bossbattle_hive03__thrall_2": {
+        "import_ident": 656277713
+      },
+      "sq_bossbattle_hive04__thrall": {
+        "import_ident": 2412202714
+      },
+      "sq_bossbattle_hive04__thrall_1": {
+        "import_ident": 656277714
+      },
+      "sq_bossbattle_hive04__thrall_2": {
+        "import_ident": 656277713
+      },
+      "sq_dropship_hive01__pilot": {
+        "import_ident": 1842327993
+      },
+      "utils": {
+        "child_script": "u_globals"
+      }
+    },
+    "0x7b7ae5f8": {
+      "phase_engineering_outro.pf_113_str": {
+        "child_script": "cinematic_midmission"
+      },
+      "phase_entrance_goto.pf_enter_academy": {
+        "child_script": "generic_objective"
+      },
+      "phase_entrance_resist_vex.pf_resist_vex": {
+        "child_script": "generic_objective"
+      },
+      "phase_entrance_vex_conflux.pf_kill_vex": {
+        "child_script": "generic_objective"
+      },
+      "phase_entrance_vex_conflux.pf_vex_block": {
+        "child_script": "countdown_objective"
+      },
+      "phase_entrance_vex_conflux.pf_vex_block._object": {
+        "import_ident": 2358057068
+      },
+      "phase_shattered_coast_intro.pf_112_vnr": {
+        "child_script": "cinematic_midmission"
+      },
+      "phase_shattered_coast_sensors.pf_sensor01": {
+        "child_script": "countdown_objective"
+      },
+      "phase_shattered_coast_sensors.pf_sensor01._object": {
+        "import_ident": 1820477330
+      },
+      "phase_shattered_coast_sensors.pf_sensor02": {
+        "child_script": "countdown_objective"
+      },
+      "phase_shattered_coast_sensors.pf_sensor02._object": {
+        "import_ident": 1820477329
+      }
+    },
+    "0x7c2845cf": {
+      "pf_event_tank_drop[0].event_globals": {
+        "child_script": "u_event_globals"
+      },
+      "pf_event_tank_drop[0].pf_preset.po_event_tank": {
+        "import_ident": 2778998515
+      },
+      "pf_event_tank_drop[0].sq_fodder_dropship": {
+        "import_ident": 3325557034
+      },
+      "pf_event_tank_drop[0].sq_fodder_dropship__pilot": {
+        "import_ident": 1842327993
+      },
+      "pf_event_tank_drop[0].sq_tank": {
+        "import_ident": 3325557034
+      },
+      "pf_event_tank_drop[0].sq_tank__tank": {
+        "import_ident": 3206747537
+      },
+      "pf_event_tank_drop[0].sq_tank_dropship": {
+        "import_ident": 3325557034
+      },
+      "pf_event_tank_drop[0].sq_tank_dropship__pilot": {
+        "import_ident": 1842327993
+      },
+      "pf_event_tank_drop[0].sq_tank_fodder": {
+        "import_ident": 3325557034
+      },
+      "pf_event_tank_drop[0].sq_tank_fodder_hard": {
+        "import_ident": 3325557034
+      },
+      "pf_event_tank_drop[0].sq_tank_minions": {
+        "import_ident": 3325557034
+      },
+      "pf_event_tank_drop[1].event_globals": {
+        "child_script": "u_event_globals"
+      },
+      "pf_event_tank_drop[1].pf_preset.po_event_tank": {
+        "import_ident": 2778998515
+      },
+      "pf_event_tank_drop[1].sq_fodder_dropship": {
+        "import_ident": 3325557034
+      },
+      "pf_event_tank_drop[1].sq_fodder_dropship__pilot": {
+        "import_ident": 1842327993
+      },
+      "pf_event_tank_drop[1].sq_tank": {
+        "import_ident": 3325557034
+      },
+      "pf_event_tank_drop[1].sq_tank__tank": {
+        "import_ident": 3206747537
+      },
+      "pf_event_tank_drop[1].sq_tank_dropship": {
+        "import_ident": 3325557034
+      },
+      "pf_event_tank_drop[1].sq_tank_dropship__pilot": {
+        "import_ident": 1842327993
+      },
+      "pf_event_tank_drop[1].sq_tank_fodder": {
+        "import_ident": 3325557034
+      },
+      "pf_event_tank_drop[1].sq_tank_fodder_hard": {
+        "import_ident": 3325557034
+      },
+      "pf_event_tank_drop[1].sq_tank_minions": {
+        "import_ident": 3325557034
+      },
+      "pf_event_tank_drop[2].event_globals": {
+        "child_script": "u_event_globals"
+      },
+      "pf_event_tank_drop[2].pf_preset.po_event_tank": {
+        "import_ident": 2778998515
+      },
+      "pf_event_tank_drop[2].sq_fodder_dropship": {
+        "import_ident": 3325557034
+      },
+      "pf_event_tank_drop[2].sq_fodder_dropship__pilot": {
+        "import_ident": 1842327993
+      },
+      "pf_event_tank_drop[2].sq_tank": {
+        "import_ident": 3325557034
+      },
+      "pf_event_tank_drop[2].sq_tank__tank": {
+        "import_ident": 3206747537
+      },
+      "pf_event_tank_drop[2].sq_tank_dropship": {
+        "import_ident": 3325557034
+      },
+      "pf_event_tank_drop[2].sq_tank_dropship__pilot": {
+        "import_ident": 1842327993
+      },
+      "pf_event_tank_drop[2].sq_tank_fodder": {
+        "import_ident": 3325557034
+      },
+      "pf_event_tank_drop[2].sq_tank_fodder_hard": {
+        "import_ident": 3325557034
+      },
+      "pf_event_tank_drop[2].sq_tank_minions": {
+        "import_ident": 3325557034
+      }
+    },
+    "0x7da1d578": {
+      "sq_m3_exploder1__thrall_exploder_1": {
+        "import_ident": 825867366
+      },
+      "sq_m3_exploder1__thrall_exploder_2": {
+        "import_ident": 825867365
+      },
+      "sq_m3_exploder1__thrall_exploder_3": {
+        "import_ident": 825867364
+      },
+      "sq_m3_exploder1__thrall_exploder_4": {
+        "import_ident": 825867363
+      },
+      "sq_m3_exploder2__thrall_exploder_1": {
+        "import_ident": 825867366
+      },
+      "sq_m3_exploder2__thrall_exploder_2": {
+        "import_ident": 825867365
+      },
+      "sq_m3_exploder2__thrall_exploder_3": {
+        "import_ident": 825867364
+      },
+      "sq_m3_exploder2__thrall_exploder_4": {
+        "import_ident": 825867363
+      },
+      "sq_m3_exploder3__thrall_exploder_1": {
+        "import_ident": 825867366
+      },
+      "sq_m3_exploder3__thrall_exploder_2": {
+        "import_ident": 825867365
+      },
+      "sq_m3_exploder3__thrall_exploder_3": {
+        "import_ident": 825867364
+      },
+      "sq_m3_exploder3__thrall_exploder_4": {
+        "import_ident": 825867363
+      },
+      "sq_m3_exploder4__thrall_exploder_1": {
+        "import_ident": 825867366
+      },
+      "sq_m3_exploder4__thrall_exploder_2": {
+        "import_ident": 825867365
+      },
+      "sq_m3_exploder4__thrall_exploder_3": {
+        "import_ident": 825867364
+      },
+      "sq_m3_exploder4__thrall_exploder_4": {
+        "import_ident": 825867363
+      },
+      "sq_m3_guard_front": {
+        "import_ident": 3494336739
+      },
+      "sq_m3_guard_front__trooper": {
+        "import_ident": 3223577298
+      },
+      "sq_m3_guard_front__trooper_1": {
+        "import_ident": 225733722
+      },
+      "sq_m3_guard_front__trooper_2": {
+        "import_ident": 225733721
+      },
+      "sq_m3_guard_front__trooper_3": {
+        "import_ident": 225733720
+      },
+      "sq_m3_guard_rear": {
+        "import_ident": 3494336739
+      },
+      "sq_m3_guard_rear__knight": {
+        "import_ident": 2837605046
+      },
+      "sq_m3_guard_rear__knight_1": {
+        "import_ident": 4200927190
+      },
+      "sq_m3_guard_rear__trooper": {
+        "import_ident": 3223577298
+      },
+      "sq_m3_guard_rear__trooper_1": {
+        "import_ident": 225733722
+      },
+      "sq_m3_push_a_b__trooper1": {
+        "import_ident": 1249775783
+      },
+      "sq_m3_push_a_b__trooper2": {
+        "import_ident": 1249775780
+      },
+      "sq_m3_push_b_b__knight_cleaver1": {
+        "import_ident": 4200095842
+      },
+      "sq_m3_push_b_b__knight_cleaver2": {
+        "import_ident": 4200095841
+      },
+      "sq_m3_thrall_a__thrall_a": {
+        "import_ident": 656277634
+      },
+      "sq_m3_thrall_a__thrall_b": {
+        "import_ident": 656277633
+      },
+      "sq_m3_thrall_a__thrall_c": {
+        "import_ident": 656277632
+      },
+      "sq_m3_thrall_a__thrall_d": {
+        "import_ident": 656277639
+      }
+    },
+    "0x7da1d57e": {
+      "sq_cutter__pilot": {
+        "import_ident": 1842327993
+      }
+    },
+    "0x83105ee7": {
+      "sq_queen_vendor__queens_guard": {
+        "import_ident": 4028443914
+      }
+    },
+    "0x85639451": {
+      "obj_placement_m2_o3a": {
+        "child_script": "interactable_placement"
+      },
+      "obj_placement_m2_o3a._object": {
+        "import_ident": 2649989166
+      },
+      "obj_placement_m2_o4b._object": {
+        "import_ident": 912239641
+      },
+      "sq_fallen_guards01": {
+        "import_ident": 1966922687
+      },
+      "sq_fallen_guards02a__vandal": {
+        "import_ident": 1958608619
+      },
+      "sq_fallen_guards02b__vandal": {
+        "import_ident": 1958608619
+      },
+      "sq_fallen_guards02c__vandal": {
+        "import_ident": 1958608619
+      },
+      "sq_fallen_guards02d__vandal": {
+        "import_ident": 1958608619
+      },
+      "sq_fallen_wave03a__servitor": {
+        "import_ident": 49946181
+      },
+      "sq_fallen_wave03b__servitor": {
+        "import_ident": 49946181
+      },
+      "sq_fallen_wave03c__servitor": {
+        "import_ident": 49946181
+      },
+      "sq_t2_fallen_guards01": {
+        "import_ident": 1966922687
+      },
+      "sq_t2_fallen_stairs_ambush01__vandal": {
+        "import_ident": 1958608619
+      }
+    },
+    "0x85639457": {
+      "obj_placement_m4_finish": {
+        "child_script": "countdown_placement"
+      },
+      "obj_placement_m4_finish._object": {
+        "import_ident": 1016583029
+      },
+      "obj_placement_m4_o2": {
+        "child_script": "countdown_placement"
+      },
+      "obj_placement_m4_o2._object": {
+        "import_ident": 1287431547
+      },
+      "sq_ds_fallen_landing01__dropship": {
+        "import_ident": 132903764
+      },
+      "sq_ds_hive_assault01__dropship": {
+        "import_ident": 132903764
+      },
+      "sq_ds_hive_assault02__dropship": {
+        "import_ident": 132903764
+      },
+      "sq_ds_hive_assault03__dropship": {
+        "import_ident": 132903764
+      },
+      "sq_fallen_corridor01c1__vandal": {
+        "import_ident": 1958608619
+      },
+      "sq_fallen_corridor01c2__vandal": {
+        "import_ident": 1958608619
+      },
+      "sq_fallen_ctrlambush01__vandal": {
+        "import_ident": 1958608619
+      },
+      "sq_fallen_ctrlambush02__vandal": {
+        "import_ident": 1958608619
+      },
+      "sq_fallen_ctrlambush03__vandal": {
+        "import_ident": 1958608619
+      }
+    },
+    "0x866b68df": {
+      "scp_placement_monitor._object": {
+        "import_ident": 3174459270
+      },
+      "scp_simple_outpost_back": {
+        "child_script": "simple_encounter"
+      },
+      "scp_simple_outpost_back2": {
+        "child_script": "simple_encounter"
+      },
+      "scp_simple_outpost_front": {
+        "child_script": "simple_encounter"
+      },
+      "scp_simple_outpost_left": {
+        "child_script": "simple_encounter"
+      },
+      "scp_simple_strike_anchor": {
+        "child_script": "simple_encounter"
+      },
+      "scp_simple_strike_back": {
+        "child_script": "simple_encounter"
+      },
+      "scp_simple_strike_left": {
+        "child_script": "simple_encounter"
+      },
+      "scp_simple_strike_mid": {
+        "child_script": "simple_encounter"
+      },
+      "scp_simple_strike_right": {
+        "child_script": "simple_encounter"
+      },
+      "scp_vexcloud_gate": {
+        "child_script": "dropship_encounter"
+      },
+      "scp_vexcloud_gate._dropship_squad__pilot": {
+        "import_ident": 1842327993
+      },
+      "utils": {
+        "child_script": "u_globals"
+      }
+    },
+    "0x8a6309ee": {
+      "sp_enc_forest_crossroads": {
+        "child_script": "simple_encounter"
+      }
+    },
+    "0x8cc31436": {
+      "fallen_simple_encounter01": {
+        "child_script": "simple_encounter"
+      },
+      "fallen_simple_encounter02": {
+        "child_script": "simple_encounter"
+      },
+      "fallen_simple_encounter03": {
+        "child_script": "simple_encounter"
+      },
+      "pf_ia_interact._object": {
+        "import_ident": 2475336575
+      },
+      "pf_placement_m03_countdown._object": {
+        "import_ident": 2895298546
+      },
+      "sq_plaza_droid_greeters__guard1": {
+        "import_ident": 683359261
+      },
+      "sq_plaza_temp__lothar": {
+        "import_ident": 1143153871
+      },
+      "sq_plaza_temp__queens_guard": {
+        "import_ident": 4028443914
+      },
+      "sq_plaza_vendor_city_bounty__vendor1": {
+        "import_ident": 386821236
+      },
+      "sq_plaza_vendor_cryptarch__vendor1": {
+        "import_ident": 386821236
+      },
+      "sq_plaza_vendor_gunsmith__vendor1": {
+        "import_ident": 386821236
+      },
+      "sq_plaza_vendor_mtx__vendor1": {
+        "import_ident": 386821236
+      },
+      "sq_plaza_vendor_postmaster__vendor1": {
+        "import_ident": 386821236
+      },
+      "sq_underwatch_artcite__artcite": {
+        "import_ident": 669755957
+      },
+      "sq_underwatch_cannon_workers__worker1": {
+        "import_ident": 1927789516
+      },
+      "sq_underwatch_cannon_workers__worker2": {
+        "import_ident": 1927789519
+      },
+      "sq_underwatch_crate_workers__supervisor1": {
+        "import_ident": 2386772536
+      },
+      "sq_underwatch_crate_workers__worker1": {
+        "import_ident": 1927789516
+      },
+      "sq_underwatch_crate_workers__worker2": {
+        "import_ident": 1927789519
+      },
+      "sq_underwatch_droid_greeters__guard1": {
+        "import_ident": 683359261
+      },
+      "sq_underwatch_shaxx__shaxx": {
+        "import_ident": 2886222845
+      },
+      "sq_underwatch_shaxx__shaxx_helper": {
+        "import_ident": 2971020296
+      },
+      "sq_underwatch_vendor_black_market__vendor_mentors": {
+        "import_ident": 4170899168
+      },
+      "sq_underwatch_vendor_black_market__vendor_shaxx": {
+        "import_ident": 1487352220
+      },
+      "sq_underwatch_vendor_guardian_mentor__vendor_table1": {
+        "import_ident": 1391256179
+      },
+      "sq_underwatch_vendor_hunter_mentor__vendor_table1": {
+        "import_ident": 1391256179
+      },
+      "sq_underwatch_vendor_warlock_mentor__vendor_table1": {
+        "import_ident": 1391256179
+      },
+      "sq_underwatch_welder_workers__supervisor1": {
+        "import_ident": 2386772536
+      },
+      "sq_underwatch_welder_workers__worker1": {
+        "import_ident": 1927789516
+      },
+      "sq_underwatch_workstation_workers__worker_monitor1": {
+        "import_ident": 3375170777
+      },
+      "sq_underwatch_workstation_workers__worker_monitor2": {
+        "import_ident": 3375170778
+      },
+      "sq_underwatch_workstation_workers__worker_typist1": {
+        "import_ident": 3062959708
+      },
+      "sq_underwatch_workstation_workers__worker_typist2": {
+        "import_ident": 3062959711
+      },
+      "utils": {
+        "child_script": "u_globals"
+      },
+      "vex_simple_encounter01": {
+        "child_script": "simple_encounter"
+      },
+      "vex_simple_encounter02": {
+        "child_script": "simple_encounter"
+      },
+      "vex_simple_encounter03": {
+        "child_script": "simple_encounter"
+      }
+    },
+    "0x8d3f1166": {
+      "sq_boulevard_civ_box_sitters1__sitter1": {
+        "import_ident": 3015888445
+      },
+      "sq_boulevard_civ_box_sitters1__sitter1_alt": {
+        "import_ident": 2367395985
+      },
+      "sq_boulevard_civ_couch_sitters1__sitter1": {
+        "import_ident": 3015888445
+      },
+      "sq_boulevard_civ_couch_sitters1__sitter2": {
+        "import_ident": 3015888446
+      },
+      "sq_boulevard_civ_couch_sitters1__sitter3": {
+        "import_ident": 3015888447
+      },
+      "sq_boulevard_civ_kneelers1__kneeler1": {
+        "import_ident": 2691216606
+      },
+      "sq_boulevard_civ_railing_inward1__leaner1": {
+        "import_ident": 1047218385
+      },
+      "sq_boulevard_civ_railing_outward1__leaner1": {
+        "import_ident": 1047218385
+      },
+      "sq_boulevard_civ_railing_outward1__leaner1_alt": {
+        "import_ident": 937303373
+      },
+      "sq_boulevard_civ_railing_outward1__leaner2": {
+        "import_ident": 1047218386
+      },
+      "sq_boulevard_civ_standers_arms_at_sides1__stander1": {
+        "import_ident": 2892387667
+      },
+      "sq_boulevard_civ_standers_arms_at_sides1__stander2": {
+        "import_ident": 2892387664
+      },
+      "sq_boulevard_civ_standers_arms_at_sides1__stander2_alt": {
+        "import_ident": 1342640028
+      },
+      "sq_boulevard_civ_standers_arms_behind_back1__stander1": {
+        "import_ident": 2892387667
+      },
+      "sq_boulevard_civ_standers_arms_behind_back1__stander2": {
+        "import_ident": 2892387664
+      },
+      "sq_boulevard_civ_standers_arms_folded1__stander1": {
+        "import_ident": 2892387667
+      },
+      "sq_boulevard_civ_walkers1__walker1": {
+        "import_ident": 811913596
+      },
+      "sq_boulevard_civ_walkers2__walker1": {
+        "import_ident": 811913596
+      },
+      "sq_boulevard_droid_greeters__guard1": {
+        "import_ident": 683359261
+      },
+      "sq_boulevard_the_mask__mask_a": {
+        "import_ident": 3355128685
+      },
+      "sq_boulevard_the_mask__mask_b": {
+        "import_ident": 3355128686
+      },
+      "sq_boulevard_the_mask__mask_c": {
+        "import_ident": 3355128687
+      },
+      "sq_boulevard_vendor_avatar__vendor1": {
+        "import_ident": 386821236
+      },
+      "sq_boulevard_vendor_black_market__vendor_door": {
+        "import_ident": 1914258934
+      },
+      "sq_boulevard_vendor_black_market__vendor_rail": {
+        "import_ident": 554871774
+      },
+      "sq_boulevard_vendor_nm__vendor1": {
+        "import_ident": 386821236
+      },
+      "sq_boulevard_vendor_playtest__vendor": {
+        "import_ident": 227140039
+      },
+      "utils": {
+        "child_script": "u_globals"
+      }
+    },
+    "0x900b8f02": {
+      "pf_event_vex_block[0]": {
+        "child_script": "u_event_vex_block"
+      },
+      "pf_event_vex_block[0].event_globals": {
+        "child_script": "u_event_globals"
+      },
+      "pf_event_vex_block[0].pf_point[0].sq_vex_cloud__pilot": {
+        "import_ident": 1842327993
+      },
+      "pf_event_vex_block[0].pf_point[1].sq_vex_cloud__pilot": {
+        "import_ident": 1842327993
+      },
+      "pf_event_vex_block[0].pf_point[2].sq_vex_cloud__pilot": {
+        "import_ident": 1842327993
+      },
+      "pf_event_vex_block[0].pf_preset.po_event_vex_block": {
+        "import_ident": 701439538
+      },
+      "pf_event_vex_block[0].sq_big_wave_1st": {
+        "import_ident": 71328258
+      },
+      "pf_event_vex_block[0].sq_big_wave_2nd": {
+        "import_ident": 71328258
+      },
+      "pf_event_vex_block[0].sq_big_wave_3rd": {
+        "import_ident": 71328258
+      },
+      "pf_event_vex_block[0].sq_goblin_double": {
+        "import_ident": 71328258
+      },
+      "pf_event_vex_block[0].sq_goblin_triple": {
+        "import_ident": 71328258
+      },
+      "pf_event_vex_block[0].sq_harpies": {
+        "import_ident": 71328258
+      },
+      "pf_event_vex_block[0].sq_hobgoblin_goblin_double": {
+        "import_ident": 71328258
+      },
+      "pf_event_vex_block[0].sq_hydra": {
+        "import_ident": 71328258
+      },
+      "pf_event_vex_block[0].sq_initial_vex": {
+        "import_ident": 3575775016
+      },
+      "pf_event_vex_block[0].sq_minotaur_goblin_double": {
+        "import_ident": 71328258
+      },
+      "pf_event_vex_block[0].sq_minotaur_single": {
+        "import_ident": 71328258
+      },
+      "pf_event_vex_block[1].event_globals": {
+        "child_script": "u_event_globals"
+      },
+      "pf_event_vex_block[1].pf_point[0].sq_vex_cloud__pilot": {
+        "import_ident": 1842327993
+      },
+      "pf_event_vex_block[1].pf_point[1].sq_vex_cloud__pilot": {
+        "import_ident": 1842327993
+      },
+      "pf_event_vex_block[1].pf_point[2].sq_vex_cloud__pilot": {
+        "import_ident": 1842327993
+      },
+      "pf_event_vex_block[1].pf_preset.po_event_vex_block": {
+        "import_ident": 701439538
+      },
+      "pf_event_vex_block[1].sq_big_wave_1st": {
+        "import_ident": 71328258
+      },
+      "pf_event_vex_block[1].sq_big_wave_2nd": {
+        "import_ident": 71328258
+      },
+      "pf_event_vex_block[1].sq_big_wave_3rd": {
+        "import_ident": 71328258
+      },
+      "pf_event_vex_block[1].sq_goblin_double": {
+        "import_ident": 71328258
+      },
+      "pf_event_vex_block[1].sq_goblin_triple": {
+        "import_ident": 71328258
+      },
+      "pf_event_vex_block[1].sq_harpies": {
+        "import_ident": 71328258
+      },
+      "pf_event_vex_block[1].sq_hobgoblin_goblin_double": {
+        "import_ident": 71328258
+      },
+      "pf_event_vex_block[1].sq_hydra": {
+        "import_ident": 71328258
+      },
+      "pf_event_vex_block[1].sq_initial_vex": {
+        "import_ident": 3575775016
+      },
+      "pf_event_vex_block[1].sq_minotaur_goblin_double": {
+        "import_ident": 71328258
+      },
+      "pf_event_vex_block[1].sq_minotaur_single": {
+        "import_ident": 71328258
+      },
+      "pf_event_vex_block[2].event_globals": {
+        "child_script": "u_event_globals"
+      },
+      "pf_event_vex_block[2].pf_point[0].sq_vex_cloud__pilot": {
+        "import_ident": 1842327993
+      },
+      "pf_event_vex_block[2].pf_point[1].sq_vex_cloud__pilot": {
+        "import_ident": 1842327993
+      },
+      "pf_event_vex_block[2].pf_point[2].sq_vex_cloud__pilot": {
+        "import_ident": 1842327993
+      },
+      "pf_event_vex_block[2].pf_preset.po_event_vex_block": {
+        "import_ident": 701439538
+      },
+      "pf_event_vex_block[2].sq_big_wave_1st": {
+        "import_ident": 71328258
+      },
+      "pf_event_vex_block[2].sq_big_wave_2nd": {
+        "import_ident": 71328258
+      },
+      "pf_event_vex_block[2].sq_big_wave_3rd": {
+        "import_ident": 71328258
+      },
+      "pf_event_vex_block[2].sq_goblin_double": {
+        "import_ident": 71328258
+      },
+      "pf_event_vex_block[2].sq_goblin_triple": {
+        "import_ident": 71328258
+      },
+      "pf_event_vex_block[2].sq_harpies": {
+        "import_ident": 71328258
+      },
+      "pf_event_vex_block[2].sq_hobgoblin_goblin_double": {
+        "import_ident": 71328258
+      },
+      "pf_event_vex_block[2].sq_hydra": {
+        "import_ident": 71328258
+      },
+      "pf_event_vex_block[2].sq_initial_vex": {
+        "import_ident": 3575775016
+      },
+      "pf_event_vex_block[2].sq_minotaur_goblin_double": {
+        "import_ident": 71328258
+      },
+      "pf_event_vex_block[2].sq_minotaur_single": {
+        "import_ident": 71328258
+      }
+    },
+    "0x916e81ae": {
+      "phase_2_hellmouth.obj_m5_multi_interact._objects[0]": {
+        "import_ident": 3813940675
+      },
+      "phase_2_hellmouth.obj_m5_multi_interact._objects[1]": {
+        "import_ident": 4016116702
+      },
+      "phase_3_launchtubes.pf_obj_cine_trigger": {
+        "child_script": "trigger_volume_objective"
+      },
+      "phase_4_strength.pf_gen_obj_jammer": {
+        "child_script": "generic_objective"
+      },
+      "phase_4_strength.pf_objective_kill": {
+        "child_script": "kill_squad_objective"
+      },
+      "phase_4_strength.pf_objective_kill._squad": {
+        "import_ident": 667322069
+      },
+      "phase_cinematic.pf_cine_110a_mrt": {
+        "child_script": "cinematic_midmission"
+      },
+      "phase_goto_launchtubes.pf_objective_goto": {
+        "child_script": "trigger_bubble_objective"
+      },
+      "phase_goto_strength.pf_objective_goto": {
+        "child_script": "trigger_bubble_objective"
+      },
+      "phase_strength_complete.pf_objective_button_a": {
+        "child_script": "interactable_objective"
+      },
+      "phase_strength_complete.pf_objective_button_a._object": {
+        "import_ident": 178605248
+      },
+      "phase_strength_complete.pf_placement_button_a": {
+        "child_script": "interactable_placement"
+      },
+      "phase_strength_complete.pf_placement_button_a._object": {
+        "import_ident": 178605248
+      },
+      "phase_strength_start.pf_obj_ritual_trigger": {
+        "child_script": "trigger_volume_objective"
+      }
+    },
+    "0x9243dffb": {
+      "sq_fallen_dropship_1__pilot": {
+        "import_ident": 1842327993
+      },
+      "sq_fallen_dropship_2__pilot": {
+        "import_ident": 1842327993
+      },
+      "sq_fallen_dropship_3__pilot": {
+        "import_ident": 1842327993
+      },
+      "sq_fallen_dropship_4__pilot": {
+        "import_ident": 1842327993
+      },
+      "sq_fallen_dropship_tank__pilot": {
+        "import_ident": 1842327993
+      },
+      "sq_fallen_m0_dropdown__dreg_a": {
+        "import_ident": 1829795379
+      }
+    },
+    "0x9297a442": {
+      "globals": {
+        "child_script": "u_globals"
+      }
+    },
+    "0x952f313e": {
+      "phase_lowercitadel.pf_obj_ultra_trigger": {
+        "child_script": "trigger_volume_objective"
+      },
+      "phase_lowercitadel.pf_objective_loot": {
+        "child_script": "collect_loot_objective"
+      },
+      "phase_lowercitadel.pf_objective_loot._squad": {
+        "import_ident": 2537013074
+      },
+      "phase_strength.pf_objective_goto": {
+        "child_script": "trigger_bubble_objective"
+      },
+      "phase_strength.pf_objective_kill": {
+        "child_script": "kill_squad_objective"
+      },
+      "phase_strength.pf_objective_kill._squad": {
+        "import_ident": 3494336739
+      },
+      "phase_strength_b.pf_obj_strength_defend": {
+        "child_script": "generic_objective"
+      },
+      "phase_strength_b.pf_obj_strength_interact": {
+        "child_script": "interactable_objective"
+      },
+      "phase_strength_b.pf_obj_strength_interact._object": {
+        "import_ident": 2634733543
+      },
+      "phase_strength_b.pf_obj_strength_interact_place": {
+        "child_script": "interactable_placement"
+      },
+      "phase_strength_b.pf_obj_strength_interact_place._object": {
+        "import_ident": 2634733543
+      },
+      "phase_wisdom.pf_objective_goto": {
+        "child_script": "trigger_bubble_objective"
+      }
+    },
+    "0x96268dc5": {
+      "amb_smpl_bigcave01": {
+        "child_script": "simple_encounter"
+      },
+      "amb_smpl_caveopening01": {
+        "child_script": "simple_encounter"
+      },
+      "amb_smpl_domecshed01": {
+        "child_script": "simple_encounter"
+      },
+      "amb_smpl_fallen_deltan01": {
+        "child_script": "simple_encounter"
+      },
+      "amb_smpl_hiveshore01": {
+        "child_script": "simple_encounter"
+      },
+      "amb_smpl_mainship01": {
+        "child_script": "simple_encounter"
+      },
+      "amb_smpl_pikes01": {
+        "child_script": "simple_encounter"
+      },
+      "amb_smpl_raspisland01": {
+        "child_script": "simple_encounter"
+      },
+      "amb_smpl_rockplateau01": {
+        "child_script": "simple_encounter"
+      },
+      "amb_smpl_shipnose01": {
+        "child_script": "simple_encounter"
+      },
+      "amb_smpl_southshore": {
+        "child_script": "simple_encounter"
+      },
+      "ip_bounty_dry_sea2._object": {
+        "import_ident": 2209336568
+      },
+      "obj_m2_o2b_placement._objects[0]": {
+        "import_ident": 3382889080
+      },
+      "obj_m2_o2b_placement._objects[1]": {
+        "import_ident": 2537740637
+      },
+      "utils": {
+        "child_script": "u_globals"
+      }
+    },
+    "0x97438d09": {
+      "utils": {
+        "child_script": "u_globals"
+      }
+    },
+    "0x975aff36": {
+      "sq_boss__hydra_major": {
+        "import_ident": 1687271849
+      },
+      "sq_cloud_boss__pilot": {
+        "import_ident": 1842327993
+      },
+      "sq_cloud_gulch__pilot": {
+        "import_ident": 1842327993
+      },
+      "sq_cloud_gulch_cyclops__pilot": {
+        "import_ident": 1842327993
+      },
+      "sq_gulch_cyclops__cyclops": {
+        "import_ident": 3220956788
+      }
+    },
+    "0x992bb471": {
+      "cosmo_m0_phase00_highway.obj_m0_phase00_m1": {
+        "child_script": "trigger_volume_objective"
+      },
+      "cosmo_m0_phase00_highway_intro.pf_104_res": {
+        "child_script": "cinematic_midmission"
+      },
+      "cosmo_m0_phase00_highway_intro.pf_104_res_fp": {
+        "child_script": "cinematic_midmission"
+      },
+      "cosmo_m0_phase01_breach.obj_get_weapon": {
+        "child_script": "trigger_volume_objective"
+      },
+      "cosmo_m0_phase01_breach.obj_investigate_wall": {
+        "child_script": "trigger_volume_objective"
+      },
+      "cosmo_m0_phase01b_breach.obj_goto_graveyard": {
+        "child_script": "trigger_volume_objective"
+      },
+      "cosmo_m0_phase02_graveyard.obj_m0_m04": {
+        "child_script": "generic_objective"
+      },
+      "cosmo_m0_phase02_graveyard.obj_m0_m04._object": {
+        "import_ident": 2653655899
+      },
+      "cosmo_m0_phase03_hangar.obj_m0_goto_hangar": {
+        "child_script": "trigger_bubble_objective"
+      },
+      "cosmo_m0_phase03_hangar.obj_m0_m04a": {
+        "child_script": "trigger_volume_objective"
+      },
+      "cosmo_m0_phase03_hangar.obj_m0_m04b": {
+        "child_script": "generic_objective"
+      },
+      "cosmo_m0_phase04_outro.pf_105_cto": {
+        "child_script": "cinematic_midmission"
+      },
+      "globals": {
+        "child_script": "u_globals"
+      }
+    },
+    "0x9c231daf": {
+      "sq_room3_up_anchor1__gladiator": {
+        "import_ident": 3214271884
+      }
+    },
+    "0x9cf47ad5": {
+      "loot_venus_ruins_1": {
+        "child_script": "loot_ruins"
+      }
+    },
+    "0x9f5429a5": {
+      "pf_event_cabal_drill[0].event_globals": {
+        "child_script": "u_event_globals"
+      },
+      "pf_event_cabal_drill[0].pf_preset.po_event_dropship_multipoint": {
+        "import_ident": 1263035436
+      },
+      "pf_event_cabal_drill[0].pf_waves[0]": {
+        "child_script": "wave_encounter"
+      },
+      "pf_event_cabal_drill[0].pf_waves[0].sq_wave_a": {
+        "import_ident": 1949952540
+      },
+      "pf_event_cabal_drill[0].pf_waves[0].sq_wave_b": {
+        "import_ident": 1949952540
+      },
+      "pf_event_cabal_drill[0].pf_waves[0].sq_wave_leader": {
+        "import_ident": 1949952540
+      },
+      "pf_event_cabal_drill[0].pf_waves[1]": {
+        "child_script": "wave_encounter"
+      },
+      "pf_event_cabal_drill[0].pf_waves[1].sq_wave_a": {
+        "import_ident": 1076587154
+      },
+      "pf_event_cabal_drill[0].pf_waves[1].sq_wave_b": {
+        "import_ident": 1076587154
+      },
+      "pf_event_cabal_drill[0].pf_waves[1].sq_wave_leader": {
+        "import_ident": 1076587154
+      },
+      "pf_event_cabal_drill[0].pf_waves[2]": {
+        "child_script": "wave_encounter"
+      },
+      "pf_event_cabal_drill[0].pf_waves[2].sq_wave_a": {
+        "import_ident": 1076587154
+      },
+      "pf_event_cabal_drill[0].pf_waves[2].sq_wave_b": {
+        "import_ident": 1076587154
+      },
+      "pf_event_cabal_drill[0].pf_waves[2].sq_wave_leader": {
+        "import_ident": 1076587154
+      },
+      "pf_event_cabal_drill[0].sq_event_dropship_pilot__pilot": {
+        "import_ident": 1842327993
+      },
+      "pf_event_cabal_drill[1].event_globals": {
+        "child_script": "u_event_globals"
+      },
+      "pf_event_cabal_drill[1].pf_preset.po_event_dropship_multipoint": {
+        "import_ident": 1263035436
+      },
+      "pf_event_cabal_drill[1].pf_waves[0]": {
+        "child_script": "wave_encounter"
+      },
+      "pf_event_cabal_drill[1].pf_waves[0].sq_wave_a": {
+        "import_ident": 1949952540
+      },
+      "pf_event_cabal_drill[1].pf_waves[0].sq_wave_b": {
+        "import_ident": 1949952540
+      },
+      "pf_event_cabal_drill[1].pf_waves[0].sq_wave_leader": {
+        "import_ident": 1949952540
+      },
+      "pf_event_cabal_drill[1].pf_waves[1]": {
+        "child_script": "wave_encounter"
+      },
+      "pf_event_cabal_drill[1].pf_waves[1].sq_wave_a": {
+        "import_ident": 1076587154
+      },
+      "pf_event_cabal_drill[1].pf_waves[1].sq_wave_b": {
+        "import_ident": 1076587154
+      },
+      "pf_event_cabal_drill[1].pf_waves[1].sq_wave_leader": {
+        "import_ident": 1076587154
+      },
+      "pf_event_cabal_drill[1].pf_waves[2]": {
+        "child_script": "wave_encounter"
+      },
+      "pf_event_cabal_drill[1].pf_waves[2].sq_wave_a": {
+        "import_ident": 1076587154
+      },
+      "pf_event_cabal_drill[1].pf_waves[2].sq_wave_b": {
+        "import_ident": 1076587154
+      },
+      "pf_event_cabal_drill[1].pf_waves[2].sq_wave_leader": {
+        "import_ident": 1076587154
+      },
+      "pf_event_cabal_drill[1].sq_event_dropship_pilot__pilot": {
+        "import_ident": 1842327993
+      },
+      "pf_event_countdown_dropship[0]": {
+        "child_script": "u_event_countdown"
+      },
+      "pf_event_countdown_dropship[0].event_globals": {
+        "child_script": "u_event_globals"
+      },
+      "pf_event_countdown_dropship[0].o_event_countdown_ghost": {
+        "import_ident": 1305454890
+      },
+      "pf_event_countdown_dropship[0].pf_impact": {
+        "child_script": "u_event_countdown_impact"
+      },
+      "pf_event_countdown_dropship[0].pf_point[0].sq_event_dropship_pilot__pilot": {
+        "import_ident": 1842327993
+      },
+      "pf_event_countdown_dropship[0].pf_point[1].sq_event_dropship_pilot__pilot": {
+        "import_ident": 1842327993
+      },
+      "pf_event_countdown_dropship[0].pf_point[2].sq_event_dropship_pilot__pilot": {
+        "import_ident": 1842327993
+      },
+      "pf_event_countdown_dropship[0].pf_preset": {
+        "child_script": "u_event_countdown_preset"
+      },
+      "pf_event_countdown_dropship[0].pf_preset.po_event_countdown": {
+        "import_ident": 3935697789
+      },
+      "pf_event_countdown_dropship[0].sq_event_countdown_wave[0]": {
+        "import_ident": 2026775680
+      },
+      "pf_event_countdown_dropship[0].sq_event_countdown_wave[1]": {
+        "import_ident": 2026775680
+      },
+      "pf_event_countdown_dropship[0].sq_event_countdown_wave[2]": {
+        "import_ident": 2026775680
+      },
+      "pf_event_countdown_dropship[0].sq_event_countdown_wave[3]": {
+        "import_ident": 2026775680
+      },
+      "pf_event_countdown_dropship[0].sq_event_countdown_wave[4]": {
+        "import_ident": 2026775680
+      },
+      "pf_event_countdown_dropship[0].sq_event_countdown_wave[5]": {
+        "import_ident": 2026775680
+      },
+      "pf_event_countdown_dropship[0].sq_event_countdown_wave[6]": {
+        "import_ident": 2026775680
+      },
+      "pf_event_countdown_dropship[0].sq_event_countdown_wave[7]": {
+        "import_ident": 2026775680
+      },
+      "pf_event_patrol[0].event_globals": {
+        "child_script": "u_event_globals"
+      },
+      "pf_event_patrol[0].pf_preset.po_event_patrol": {
+        "import_ident": 2191926545
+      },
+      "pf_event_patrol[0].sq_boss": {
+        "import_ident": 151868465
+      },
+      "pf_event_patrol[0].sq_boss__cell_boss": {
+        "import_ident": 1286168223
+      },
+      "pf_event_patrol[1].event_globals": {
+        "child_script": "u_event_globals"
+      },
+      "pf_event_patrol[1].pf_preset.po_event_patrol": {
+        "import_ident": 2191926545
+      },
+      "pf_event_patrol[1].sq_boss": {
+        "import_ident": 151868465
+      },
+      "pf_event_patrol[1].sq_boss__cell_boss": {
+        "import_ident": 1286168223
+      },
+      "pf_event_skirmish[0].event_globals": {
+        "child_script": "u_event_globals"
+      },
+      "pf_event_skirmish[0].pf_preset.po_event_skirmish_end": {
+        "import_ident": 619511055
+      },
+      "pf_event_skirmish[0].pf_preset.po_event_skirmish_intro": {
+        "import_ident": 619511055
+      },
+      "pf_event_skirmish[0].pf_preset.po_event_skirmish_mid": {
+        "import_ident": 619511055
+      },
+      "pf_event_skirmish[0].sq_a_end_anchor": {
+        "import_ident": 2013753375
+      },
+      "pf_event_skirmish[0].sq_a_end_wave[0]": {
+        "import_ident": 2013753375
+      },
+      "pf_event_skirmish[0].sq_a_intro_anchor": {
+        "import_ident": 1125047177
+      },
+      "pf_event_skirmish[0].sq_a_intro_wave[0]": {
+        "import_ident": 1125047177
+      },
+      "pf_event_skirmish[0].sq_a_mid_anchor": {
+        "import_ident": 1125047177
+      },
+      "pf_event_skirmish[0].sq_a_mid_wave[0]": {
+        "import_ident": 1125047177
+      },
+      "pf_event_skirmish[0].sq_a_mid_wave[1]": {
+        "import_ident": 1125047177
+      },
+      "pf_event_skirmish[0].sq_b_end_anchor": {
+        "import_ident": 2013753375
+      },
+      "pf_event_skirmish[0].sq_b_end_wave[0]": {
+        "import_ident": 2013753375
+      },
+      "pf_event_skirmish[0].sq_b_intro_anchor": {
+        "import_ident": 1125047177
+      },
+      "pf_event_skirmish[0].sq_b_intro_wave[0]": {
+        "import_ident": 1125047177
+      },
+      "pf_event_skirmish[0].sq_b_mid_anchor": {
+        "import_ident": 1125047177
+      },
+      "pf_event_skirmish[0].sq_b_mid_wave[0]": {
+        "import_ident": 1125047177
+      },
+      "pf_event_skirmish[0].sq_b_mid_wave[1]": {
+        "import_ident": 1125047177
+      }
+    },
+    "0xa15f3eaf": {
+      "pf_event_countdown_2factions[0].event_globals": {
+        "child_script": "u_event_globals"
+      },
+      "pf_event_countdown_2factions[0].o_event_countdown_ghost": {
+        "import_ident": 1305454890
+      },
+      "pf_event_countdown_2factions[0].pf_impact": {
+        "child_script": "u_event_countdown_impact"
+      },
+      "pf_event_countdown_2factions[0].pf_preset": {
+        "child_script": "u_event_countdown_preset"
+      },
+      "pf_event_countdown_2factions[0].pf_preset.po_event_countdown": {
+        "import_ident": 3935697789
+      },
+      "pf_event_countdown_2factions[0].sq_dropship_a__pilot": {
+        "import_ident": 1842327993
+      },
+      "pf_event_countdown_2factions[0].sq_dropship_b__pilot": {
+        "import_ident": 1842327993
+      },
+      "pf_event_countdown_2factions[0].sq_side_a_wave[0]": {
+        "import_ident": 2026775680
+      },
+      "pf_event_countdown_2factions[0].sq_side_a_wave[1]": {
+        "import_ident": 2026775680
+      },
+      "pf_event_countdown_2factions[0].sq_side_a_wave[2]": {
+        "import_ident": 2026775680
+      },
+      "pf_event_countdown_2factions[0].sq_side_a_wave[3]": {
+        "import_ident": 2026775680
+      },
+      "pf_event_countdown_2factions[0].sq_side_b_wave[0]": {
+        "import_ident": 2026775680
+      },
+      "pf_event_countdown_2factions[0].sq_side_b_wave[1]": {
+        "import_ident": 2026775680
+      },
+      "pf_event_countdown_2factions[0].sq_side_b_wave[2]": {
+        "import_ident": 2026775680
+      },
+      "pf_event_countdown_2factions[0].sq_side_b_wave[3]": {
+        "import_ident": 2026775680
+      },
+      "pf_event_patrol[0].event_globals": {
+        "child_script": "u_event_globals"
+      },
+      "pf_event_patrol[0].pf_preset.po_event_patrol": {
+        "import_ident": 2191926545
+      },
+      "pf_event_patrol[0].sq_boss": {
+        "import_ident": 151868465
+      },
+      "pf_event_patrol[0].sq_boss__cell_boss": {
+        "import_ident": 1286168223
+      },
+      "pf_event_patrol[1].event_globals": {
+        "child_script": "u_event_globals"
+      },
+      "pf_event_patrol[1].pf_preset.po_event_patrol": {
+        "import_ident": 2191926545
+      },
+      "pf_event_patrol[1].sq_boss": {
+        "import_ident": 151868465
+      },
+      "pf_event_patrol[1].sq_boss__cell_boss": {
+        "import_ident": 1286168223
+      }
+    },
+    "0xa2f66e1a": {
+      "amb_smpl_cave_domea01": {
+        "child_script": "simple_encounter"
+      },
+      "amb_smpl_cave_drysea01": {
+        "child_script": "simple_encounter"
+      },
+      "amb_smpl_cave_entrance_domea01": {
+        "child_script": "simple_encounter"
+      },
+      "amb_smpl_cluster_mid01": {
+        "child_script": "simple_encounter"
+      },
+      "amb_smpl_cluster_mound01": {
+        "child_script": "simple_encounter"
+      },
+      "amb_smpl_cluster_north01": {
+        "child_script": "simple_encounter"
+      },
+      "amb_smpl_domea01": {
+        "child_script": "simple_encounter"
+      },
+      "amb_smpl_lonemid_deltas01": {
+        "child_script": "simple_encounter"
+      },
+      "amb_smpl_lonetail_drysea01": {
+        "child_script": "simple_encounter"
+      },
+      "obj_placement_m2_o1": {
+        "child_script": "interactable_placement"
+      },
+      "obj_placement_m2_o1._object": {
+        "import_ident": 3936565668
+      },
+      "utils": {
+        "child_script": "u_globals"
+      }
+    },
+    "0xa8608b10": {
+      "md_s1_m3_d010_trigger": {
+        "child_script": "dialog_trigger"
+      }
+    },
+    "0xad076d44": {
+      "pf_cabal_drill[0].pf_preset.po_event_dropship_multipoint": {
+        "import_ident": 1263035436
+      },
+      "pf_cabal_drill[0].pf_waves[0]": {
+        "child_script": "wave_encounter"
+      },
+      "pf_cabal_drill[0].pf_waves[0].sq_wave_a": {
+        "import_ident": 1949952540
+      },
+      "pf_cabal_drill[0].pf_waves[0].sq_wave_b": {
+        "import_ident": 1949952540
+      },
+      "pf_cabal_drill[0].pf_waves[0].sq_wave_leader": {
+        "import_ident": 1949952540
+      },
+      "pf_cabal_drill[0].pf_waves[1]": {
+        "child_script": "wave_encounter"
+      },
+      "pf_cabal_drill[0].pf_waves[1].sq_wave_a": {
+        "import_ident": 1076587154
+      },
+      "pf_cabal_drill[0].pf_waves[1].sq_wave_b": {
+        "import_ident": 1076587154
+      },
+      "pf_cabal_drill[0].pf_waves[1].sq_wave_leader": {
+        "import_ident": 1076587154
+      },
+      "pf_cabal_drill[0].pf_waves[2]": {
+        "child_script": "wave_encounter"
+      },
+      "pf_cabal_drill[0].pf_waves[2].sq_wave_a": {
+        "import_ident": 1076587154
+      },
+      "pf_cabal_drill[0].pf_waves[2].sq_wave_b": {
+        "import_ident": 1076587154
+      },
+      "pf_cabal_drill[0].pf_waves[2].sq_wave_leader": {
+        "import_ident": 1076587154
+      },
+      "pf_cabal_drill[0].sq_event_dropship_pilot__pilot": {
+        "import_ident": 1842327993
+      },
+      "pf_event_patrol[0].event_globals": {
+        "child_script": "u_event_globals"
+      },
+      "pf_event_patrol[0].pf_preset.po_event_patrol": {
+        "import_ident": 2191926545
+      },
+      "pf_event_patrol[0].sq_boss": {
+        "import_ident": 151868465
+      },
+      "pf_event_patrol[0].sq_boss__cell_boss": {
+        "import_ident": 1286168223
+      },
+      "pf_event_patrol[1].event_globals": {
+        "child_script": "u_event_globals"
+      },
+      "pf_event_patrol[1].pf_preset.po_event_patrol": {
+        "import_ident": 2191926545
+      },
+      "pf_event_patrol[1].sq_boss": {
+        "import_ident": 151868465
+      },
+      "pf_event_patrol[1].sq_boss__cell_boss": {
+        "import_ident": 1286168223
+      }
+    },
+    "0xb257c7aa": {
+      "globals": {
+        "child_script": "u_globals"
+      }
+    },
+    "0xb41e2f1d": {
+      "sq_amb_fallen_ultra__ultra": {
+        "import_ident": 897430685
+      },
+      "sq_amb_fallen_vandal_1__vandal": {
+        "import_ident": 1958608619
+      },
+      "sq_amb_fallen_vandal_2__vandal": {
+        "import_ident": 1958608619
+      },
+      "sq_amb_fallen_vandal_3__vandal": {
+        "import_ident": 1958608619
+      },
+      "sq_amb_fallen_vandal_4__vandal": {
+        "import_ident": 1958608619
+      },
+      "sq_amb_fallen_vandal_5__vandal": {
+        "import_ident": 1958608619
+      },
+      "sq_amb_fallen_vandal_6__vandal": {
+        "import_ident": 1958608619
+      },
+      "sq_amb_fallen_vandal_7__vandal": {
+        "import_ident": 1958608619
+      }
+    },
+    "0xb63afda3": {
+      "simple_btm_ramp": {
+        "child_script": "simple_encounter"
+      },
+      "simple_entrance": {
+        "child_script": "simple_encounter"
+      },
+      "simple_pocket": {
+        "child_script": "simple_encounter"
+      },
+      "simple_tank_inf": {
+        "child_script": "simple_encounter"
+      },
+      "simple_thieves": {
+        "child_script": "simple_encounter"
+      },
+      "simple_thieves_hold": {
+        "child_script": "simple_encounter"
+      },
+      "utils": {
+        "child_script": "u_globals"
+      }
+    },
+    "0xb9d50318": {
+      "dropship_fallen_center_hill": {
+        "child_script": "dropship_encounter"
+      },
+      "dropship_fallen_center_hill._dropship_squad__pilot": {
+        "import_ident": 1842327993
+      },
+      "dropship_fallen_cliff_ruins": {
+        "child_script": "dropship_encounter"
+      },
+      "dropship_fallen_cliff_ruins._dropship_squad__pilot": {
+        "import_ident": 1842327993
+      },
+      "simple_fallen_overhang_hill": {
+        "child_script": "simple_encounter"
+      },
+      "simple_fallen_overhang_island": {
+        "child_script": "simple_encounter"
+      },
+      "simple_vex_pillars_cave": {
+        "child_script": "simple_encounter"
+      },
+      "utils": {
+        "child_script": "u_globals"
+      },
+      "vex_dropship_cliff_support": {
+        "child_script": "dropship_encounter"
+      },
+      "vex_dropship_cliff_support._dropship_squad__pilot": {
+        "import_ident": 1842327993
+      },
+      "vex_dropship_gate_steps": {
+        "child_script": "dropship_encounter"
+      },
+      "vex_dropship_gate_steps._dropship_squad__pilot": {
+        "import_ident": 1842327993
+      },
+      "vex_dropship_m2_cyclops": {
+        "child_script": "dropship_encounter"
+      },
+      "vex_dropship_m2_cyclops._dropship_squad__pilot": {
+        "import_ident": 1842327993
+      },
+      "vex_dropship_m2_cyclops._squad[0]": {
+        "import_ident": 2354234397
+      },
+      "vex_dropship_m2_fourth_wave": {
+        "child_script": "dropship_encounter"
+      },
+      "vex_dropship_m2_fourth_wave._dropship_squad__pilot": {
+        "import_ident": 1842327993
+      },
+      "vex_dropship_m2_second_wave": {
+        "child_script": "dropship_encounter"
+      },
+      "vex_dropship_m2_second_wave._dropship_squad__pilot": {
+        "import_ident": 1842327993
+      },
+      "vex_dropship_m2_third_wave": {
+        "child_script": "dropship_encounter"
+      },
+      "vex_dropship_m2_third_wave._dropship_squad__pilot": {
+        "import_ident": 1842327993
+      },
+      "vex_dropship_middle_support": {
+        "child_script": "dropship_encounter"
+      },
+      "vex_dropship_middle_support._dropship_squad__pilot": {
+        "import_ident": 1842327993
+      }
+    },
+    "0xbb01bfea": {
+      "obj_m5_multi_placement._objects[0]": {
+        "import_ident": 3813940675
+      },
+      "obj_m5_multi_placement._objects[1]": {
+        "import_ident": 4016116702
+      },
+      "pf_dropship_henge": {
+        "child_script": "dropship_encounter"
+      },
+      "pf_dropship_henge._dropship_squad__pilot": {
+        "import_ident": 1842327993
+      },
+      "pf_dropship_ledge": {
+        "child_script": "dropship_encounter"
+      },
+      "pf_dropship_ledge._dropship_squad__pilot": {
+        "import_ident": 1842327993
+      },
+      "pf_dropship_village": {
+        "child_script": "dropship_encounter"
+      },
+      "pf_dropship_village._dropship_squad__pilot": {
+        "import_ident": 1842327993
+      },
+      "pf_encounter_simple_henge_wave1_a": {
+        "child_script": "wave_encounter"
+      },
+      "pf_encounter_simple_henge_wave1_b": {
+        "child_script": "wave_encounter"
+      },
+      "pf_encounter_simple_henge_wave1_b._squad[1]": {
+        "import_ident": 414834486
+      },
+      "pf_encounter_wave_henge1": {
+        "child_script": "wave_encounter"
+      },
+      "pf_simple_bridge": {
+        "child_script": "simple_encounter"
+      },
+      "pf_simple_gate": {
+        "child_script": "simple_encounter"
+      },
+      "pf_simple_hall_bouncers": {
+        "child_script": "simple_encounter"
+      },
+      "pf_simple_maw": {
+        "child_script": "simple_encounter"
+      },
+      "pf_simple_ridge": {
+        "child_script": "simple_encounter"
+      },
+      "pf_simple_village_anchor_a": {
+        "child_script": "simple_encounter"
+      },
+      "pf_simple_village_deck_a": {
+        "child_script": "simple_encounter"
+      },
+      "pf_simple_village_sniper_rear": {
+        "child_script": "simple_encounter"
+      },
+      "utils": {
+        "child_script": "u_globals"
+      }
+    },
+    "0xbdf3e29c": {
+      "amb_fallen_snowyhall01": {
+        "child_script": "simple_encounter"
+      },
+      "globals": {
+        "child_script": "u_globals"
+      },
+      "smpl_fallen_blast_transition_wave01": {
+        "child_script": "wave_encounter"
+      },
+      "smpl_fallen_blast_transition_wave02": {
+        "child_script": "wave_encounter"
+      },
+      "smpl_fallen_strike_arena01": {
+        "child_script": "simple_encounter"
+      },
+      "smpl_hive_crashed_pod01": {
+        "child_script": "simple_encounter"
+      },
+      "smpl_hive_shipping01": {
+        "child_script": "simple_encounter"
+      },
+      "smpl_hive_strike_arena01": {
+        "child_script": "simple_encounter"
+      }
+    },
+    "0xc1799e02": {
+      "phase_checkpoint.sp_objective_console": {
+        "child_script": "countdown_objective"
+      },
+      "phase_checkpoint.sp_objective_console._object": {
+        "import_ident": 1205660080
+      },
+      "phase_checkpoint.sp_objective_goto": {
+        "child_script": "trigger_volume_objective"
+      },
+      "phase_checkpoint_boss.sp_objective_loot": {
+        "child_script": "collect_loot_objective"
+      },
+      "phase_checkpoint_boss.sp_objective_loot._squad": {
+        "import_ident": 215274999
+      },
+      "phase_plains_base.sp_objective_kill": {
+        "child_script": "generic_objective"
+      },
+      "phase_plains_cinematic.sp_cinematic_bookend": {
+        "child_script": "cinematic_midmission"
+      },
+      "phase_plains_intro.sp_objective_control": {
+        "child_script": "countdown_objective"
+      },
+      "phase_plains_intro.sp_objective_control._object": {
+        "import_ident": 2396647449
+      },
+      "phase_plains_intro.sp_objective_vent": {
+        "child_script": "countdown_objective"
+      },
+      "phase_plains_intro.sp_objective_vent._object": {
+        "import_ident": 1600310327
+      },
+      "phase_valley.sp_objective_monitor": {
+        "child_script": "countdown_objective"
+      },
+      "phase_valley.sp_objective_monitor._object": {
+        "import_ident": 3174459270
+      }
+    },
+    "0xc1c8a8ac": {
+      "sq_foyer_minotaur_a__minotaur": {
+        "import_ident": 2719492022
+      },
+      "sq_hall_goblin_a__goblin_a": {
+        "import_ident": 1911709540
+      },
+      "sq_hall_goblin_a__goblin_b": {
+        "import_ident": 1911709543
+      },
+      "sq_hall_goblin_b__goblin_a": {
+        "import_ident": 1911709540
+      },
+      "sq_hall_goblin_b__goblin_b": {
+        "import_ident": 1911709543
+      },
+      "sq_pit_cloud__pilot": {
+        "import_ident": 1842327993
+      }
+    },
+    "0xc37ff456": {
+      "pf_event_countdown_dropship[0]": {
+        "child_script": "u_event_countdown"
+      },
+      "pf_event_countdown_dropship[0].event_globals": {
+        "child_script": "u_event_globals"
+      },
+      "pf_event_countdown_dropship[0].o_event_countdown_ghost": {
+        "import_ident": 1305454890
+      },
+      "pf_event_countdown_dropship[0].pf_impact": {
+        "child_script": "u_event_countdown_impact"
+      },
+      "pf_event_countdown_dropship[0].pf_point[0].sq_event_dropship_pilot__pilot": {
+        "import_ident": 1842327993
+      },
+      "pf_event_countdown_dropship[0].pf_point[1].sq_event_dropship_pilot__pilot": {
+        "import_ident": 1842327993
+      },
+      "pf_event_countdown_dropship[0].pf_point[2].sq_event_dropship_pilot__pilot": {
+        "import_ident": 1842327993
+      },
+      "pf_event_countdown_dropship[0].pf_preset": {
+        "child_script": "u_event_countdown_preset"
+      },
+      "pf_event_countdown_dropship[0].pf_preset.po_event_countdown": {
+        "import_ident": 3935697789
+      },
+      "pf_event_countdown_dropship[0].sq_event_countdown_wave[0]": {
+        "import_ident": 2026775680
+      },
+      "pf_event_countdown_dropship[0].sq_event_countdown_wave[1]": {
+        "import_ident": 2026775680
+      },
+      "pf_event_countdown_dropship[0].sq_event_countdown_wave[2]": {
+        "import_ident": 2026775680
+      },
+      "pf_event_countdown_dropship[0].sq_event_countdown_wave[3]": {
+        "import_ident": 2026775680
+      },
+      "pf_event_countdown_dropship[0].sq_event_countdown_wave[4]": {
+        "import_ident": 2026775680
+      },
+      "pf_event_countdown_dropship[0].sq_event_countdown_wave[5]": {
+        "import_ident": 2026775680
+      },
+      "pf_event_countdown_dropship[0].sq_event_countdown_wave[6]": {
+        "import_ident": 2026775680
+      },
+      "pf_event_countdown_dropship[0].sq_event_countdown_wave[7]": {
+        "import_ident": 2026775680
+      },
+      "pf_event_countdown_dropship_only[0]": {
+        "child_script": "u_event_countdown"
+      },
+      "pf_event_countdown_dropship_only[0].event_globals": {
+        "child_script": "u_event_globals"
+      },
+      "pf_event_countdown_dropship_only[0].o_event_countdown_ghost": {
+        "import_ident": 1305454890
+      },
+      "pf_event_countdown_dropship_only[0].pf_impact": {
+        "child_script": "u_event_countdown_impact"
+      },
+      "pf_event_countdown_dropship_only[0].pf_point[0].sq_event_dropship_pilot__pilot": {
+        "import_ident": 1842327993
+      },
+      "pf_event_countdown_dropship_only[0].pf_point[1].sq_event_dropship_pilot__pilot": {
+        "import_ident": 1842327993
+      },
+      "pf_event_countdown_dropship_only[0].pf_point[2].sq_event_dropship_pilot__pilot": {
+        "import_ident": 1842327993
+      },
+      "pf_event_countdown_dropship_only[0].pf_preset": {
+        "child_script": "u_event_countdown_preset"
+      },
+      "pf_event_countdown_dropship_only[0].pf_preset.po_event_countdown": {
+        "import_ident": 3935697789
+      },
+      "pf_event_countdown_dropship_only[0].sq_event_countdown_wave[0]": {
+        "import_ident": 2026775680
+      },
+      "pf_event_countdown_dropship_only[0].sq_event_countdown_wave[1]": {
+        "import_ident": 2026775680
+      },
+      "pf_event_countdown_dropship_only[0].sq_event_countdown_wave[2]": {
+        "import_ident": 2026775680
+      },
+      "pf_event_countdown_dropship_only[0].sq_event_countdown_wave[3]": {
+        "import_ident": 2026775680
+      },
+      "pf_event_countdown_dropship_only[0].sq_event_countdown_wave[4]": {
+        "import_ident": 2026775680
+      },
+      "pf_event_countdown_dropship_only[0].sq_event_countdown_wave[5]": {
+        "import_ident": 2026775680
+      },
+      "pf_event_countdown_dropship_only[0].sq_event_countdown_wave[6]": {
+        "import_ident": 2026775680
+      },
+      "pf_event_countdown_dropship_only[0].sq_event_countdown_wave[7]": {
+        "import_ident": 2026775680
+      },
+      "pf_event_patrol[0].event_globals": {
+        "child_script": "u_event_globals"
+      },
+      "pf_event_patrol[0].pf_preset.po_event_patrol": {
+        "import_ident": 2191926545
+      },
+      "pf_event_patrol[0].sq_boss": {
+        "import_ident": 151868465
+      },
+      "pf_event_patrol[0].sq_boss__cell_boss": {
+        "import_ident": 1286168223
+      },
+      "pf_event_tank_drop[0].event_globals": {
+        "child_script": "u_event_globals"
+      },
+      "pf_event_tank_drop[0].pf_preset.po_event_tank": {
+        "import_ident": 2778998515
+      },
+      "pf_event_tank_drop[0].sq_fodder_dropship": {
+        "import_ident": 3325557034
+      },
+      "pf_event_tank_drop[0].sq_fodder_dropship__pilot": {
+        "import_ident": 1842327993
+      },
+      "pf_event_tank_drop[0].sq_tank": {
+        "import_ident": 3325557034
+      },
+      "pf_event_tank_drop[0].sq_tank__tank": {
+        "import_ident": 3206747537
+      },
+      "pf_event_tank_drop[0].sq_tank_dropship": {
+        "import_ident": 3325557034
+      },
+      "pf_event_tank_drop[0].sq_tank_dropship__pilot": {
+        "import_ident": 1842327993
+      },
+      "pf_event_tank_drop[0].sq_tank_fodder": {
+        "import_ident": 3325557034
+      },
+      "pf_event_tank_drop[0].sq_tank_fodder_hard": {
+        "import_ident": 3325557034
+      },
+      "pf_event_tank_drop[0].sq_tank_minions": {
+        "import_ident": 3325557034
+      }
+    },
+    "0xc38f3243": {
+      "pf_warp_gate1._squad": {
+        "import_ident": 4181720106
+      },
+      "pf_warp_gate1._squad__gate": {
+        "import_ident": 1121922920
+      },
+      "pf_warp_gate2._squad": {
+        "import_ident": 4181720106
+      },
+      "pf_warp_gate2._squad__gate": {
+        "import_ident": 1121922920
+      },
+      "pf_warp_gate3._squad": {
+        "import_ident": 4181720106
+      },
+      "pf_warp_gate3._squad__gate": {
+        "import_ident": 1121922920
+      },
+      "pf_warp_gate4._squad": {
+        "import_ident": 4181720106
+      },
+      "pf_warp_gate4._squad__gate": {
+        "import_ident": 1121922920
+      },
+      "pf_warp_gate5._squad": {
+        "import_ident": 4181720106
+      },
+      "pf_warp_gate5._squad__gate": {
+        "import_ident": 1121922920
+      },
+      "sq_plat_wide_cloud__vex_cloud": {
+        "import_ident": 4105036944
+      }
+    },
+    "0xc46e75ef": {
+      "pf_event_countdown_dropship_only[0]": {
+        "child_script": "u_event_countdown"
+      },
+      "pf_event_countdown_dropship_only[0].event_globals": {
+        "child_script": "u_event_globals"
+      },
+      "pf_event_countdown_dropship_only[0].o_event_countdown_ghost": {
+        "import_ident": 1305454890
+      },
+      "pf_event_countdown_dropship_only[0].pf_impact": {
+        "child_script": "u_event_countdown_impact"
+      },
+      "pf_event_countdown_dropship_only[0].pf_point[0].sq_event_dropship_pilot__pilot": {
+        "import_ident": 1842327993
+      },
+      "pf_event_countdown_dropship_only[0].pf_point[1].sq_event_dropship_pilot__pilot": {
+        "import_ident": 1842327993
+      },
+      "pf_event_countdown_dropship_only[0].pf_point[2].sq_event_dropship_pilot__pilot": {
+        "import_ident": 1842327993
+      },
+      "pf_event_countdown_dropship_only[0].pf_preset": {
+        "child_script": "u_event_countdown_preset"
+      },
+      "pf_event_countdown_dropship_only[0].pf_preset.po_event_countdown": {
+        "import_ident": 3935697789
+      },
+      "pf_event_countdown_dropship_only[0].sq_event_countdown_wave[0]": {
+        "import_ident": 2026775680
+      },
+      "pf_event_countdown_dropship_only[0].sq_event_countdown_wave[1]": {
+        "import_ident": 2026775680
+      },
+      "pf_event_countdown_dropship_only[0].sq_event_countdown_wave[2]": {
+        "import_ident": 2026775680
+      },
+      "pf_event_countdown_dropship_only[0].sq_event_countdown_wave[3]": {
+        "import_ident": 2026775680
+      },
+      "pf_event_countdown_dropship_only[0].sq_event_countdown_wave[4]": {
+        "import_ident": 2026775680
+      },
+      "pf_event_countdown_dropship_only[0].sq_event_countdown_wave[5]": {
+        "import_ident": 2026775680
+      },
+      "pf_event_countdown_dropship_only[0].sq_event_countdown_wave[6]": {
+        "import_ident": 2026775680
+      },
+      "pf_event_countdown_dropship_only[0].sq_event_countdown_wave[7]": {
+        "import_ident": 2026775680
+      },
+      "pf_event_patrol[0].event_globals": {
+        "child_script": "u_event_globals"
+      },
+      "pf_event_patrol[0].pf_preset.po_event_patrol": {
+        "import_ident": 2191926545
+      },
+      "pf_event_patrol[0].sq_boss": {
+        "import_ident": 151868465
+      },
+      "pf_event_patrol[0].sq_boss__cell_boss": {
+        "import_ident": 1286168223
+      },
+      "pf_event_patrol[1].event_globals": {
+        "child_script": "u_event_globals"
+      },
+      "pf_event_patrol[1].pf_preset.po_event_patrol": {
+        "import_ident": 2191926545
+      },
+      "pf_event_patrol[1].sq_boss": {
+        "import_ident": 151868465
+      },
+      "pf_event_patrol[1].sq_boss__cell_boss": {
+        "import_ident": 1286168223
+      }
+    },
+    "0xc4e501ec": {
+      "pf_placement_m1_terminal": {
+        "child_script": "interactable_placement"
+      },
+      "pf_placement_m1_terminal._object": {
+        "import_ident": 2204260717
+      },
+      "sp_dropship_tower": {
+        "child_script": "dropship_encounter"
+      },
+      "sp_dropship_tower._dropship_squad__pilot": {
+        "import_ident": 1842327993
+      },
+      "sp_dropship_tower._squad[0]": {
+        "import_ident": 3983929750
+      },
+      "sp_simple_commtower_main": {
+        "child_script": "simple_encounter"
+      },
+      "sp_simple_commtower_main._squad[0]": {
+        "import_ident": 3983929750
+      },
+      "sp_simple_crossroads_big": {
+        "child_script": "simple_encounter"
+      },
+      "sp_simple_crossroads_big._squad[0]": {
+        "import_ident": 3983929750
+      },
+      "sp_simple_crossroads_small": {
+        "child_script": "simple_encounter"
+      },
+      "sp_simple_crossroads_small._squad[0]": {
+        "import_ident": 3983929750
+      },
+      "sp_simple_defense_large": {
+        "child_script": "simple_encounter"
+      },
+      "sp_simple_defense_large._squad[0]": {
+        "import_ident": 3983929750
+      },
+      "sp_simple_defense_small": {
+        "child_script": "simple_encounter"
+      },
+      "sp_simple_defense_small._squad[0]": {
+        "import_ident": 3983929750
+      },
+      "sp_simple_dome": {
+        "child_script": "simple_encounter"
+      },
+      "sp_simple_dome._squad[0]": {
+        "import_ident": 3983929750
+      },
+      "sp_simple_edge": {
+        "child_script": "simple_encounter"
+      },
+      "sp_simple_edge._squad[0]": {
+        "import_ident": 3983929750
+      },
+      "sp_simple_hab_1f": {
+        "child_script": "simple_encounter"
+      },
+      "sp_simple_hab_1f._squad[0]": {
+        "import_ident": 3983929750
+      },
+      "sp_simple_hab_2f": {
+        "child_script": "simple_encounter"
+      },
+      "sp_simple_hab_2f._squad[0]": {
+        "import_ident": 3983929750
+      },
+      "sp_simple_hab_2f._squad[1]": {
+        "import_ident": 3983929750
+      },
+      "sp_simple_hab_outer": {
+        "child_script": "simple_encounter"
+      },
+      "sp_simple_hab_outer._squad[0]": {
+        "import_ident": 3983929750
+      },
+      "sp_simple_hab_support": {
+        "child_script": "simple_encounter"
+      },
+      "sp_simple_loot_hab": {
+        "child_script": "simple_encounter"
+      },
+      "sp_simple_loot_hab._squad[0]": {
+        "import_ident": 1594379169
+      },
+      "sp_simple_loot_tower": {
+        "child_script": "simple_encounter"
+      },
+      "sp_simple_loot_tower._squad[0]": {
+        "import_ident": 1594379169
+      },
+      "sp_simple_lz_lurkers": {
+        "child_script": "simple_encounter"
+      },
+      "sp_simple_lz_lurkers._squad[0]": {
+        "import_ident": 3983929750
+      },
+      "sp_simple_tower_hill": {
+        "child_script": "simple_encounter"
+      },
+      "sp_simple_tower_hill._squad[0]": {
+        "import_ident": 3983929750
+      },
+      "sp_simple_tower_large": {
+        "child_script": "simple_encounter"
+      },
+      "sp_simple_tower_large._squad[0]": {
+        "import_ident": 3983929750
+      },
+      "sp_simple_tower_small": {
+        "child_script": "simple_encounter"
+      },
+      "sp_simple_tower_small._squad[0]": {
+        "import_ident": 3983929750
+      },
+      "sp_simple_tower_sniper": {
+        "child_script": "simple_encounter"
+      },
+      "sp_simple_tower_sniper._squad[0]": {
+        "import_ident": 3983929750
+      },
+      "utils": {
+        "child_script": "u_globals"
+      }
+    },
+    "0xc592553b": {
+      "pf_i_door_placement": {
+        "child_script": "interactable_placement"
+      },
+      "pf_i_door_placement._object": {
+        "import_ident": 2150195974
+      }
+    },
+    "0xc65adeef": {
+      "dt_play_m04_x10t": {
+        "child_script": "dialog_trigger"
+      },
+      "dt_play_s01_xx45t": {
+        "child_script": "dialog_trigger"
+      }
+    },
+    "0xc91e47bb": {
+      "pf_simple_accel_hco": {
+        "child_script": "simple_encounter"
+      },
+      "pf_simple_crater_ridge": {
+        "child_script": "simple_encounter"
+      },
+      "pf_simple_int_back_a": {
+        "child_script": "simple_encounter"
+      },
+      "pf_simple_int_back_b": {
+        "child_script": "simple_encounter"
+      },
+      "pf_simple_int_front": {
+        "child_script": "simple_encounter"
+      },
+      "pf_simple_loiter_left": {
+        "child_script": "simple_encounter"
+      },
+      "pf_simple_loiter_right": {
+        "child_script": "simple_encounter"
+      },
+      "pf_simple_loiter_stealth": {
+        "child_script": "simple_encounter"
+      },
+      "pf_simple_north_dome_a": {
+        "child_script": "simple_encounter"
+      },
+      "pf_simple_north_ridge": {
+        "child_script": "simple_encounter"
+      },
+      "pf_simple_west": {
+        "child_script": "simple_encounter"
+      },
+      "pf_simple_wisdom_bouncers": {
+        "child_script": "simple_encounter"
+      },
+      "pf_waves_dome": {
+        "child_script": "wave_encounter"
+      },
+      "pf_waves_int": {
+        "child_script": "wave_encounter"
+      },
+      "utils": {
+        "child_script": "u_globals"
+      }
+    },
+    "0xd2c22dcf": {
+      "pf_event_countdown_2factions[0].event_globals": {
+        "child_script": "u_event_globals"
+      },
+      "pf_event_countdown_2factions[0].o_event_countdown_ghost": {
+        "import_ident": 1305454890
+      },
+      "pf_event_countdown_2factions[0].pf_impact": {
+        "child_script": "u_event_countdown_impact"
+      },
+      "pf_event_countdown_2factions[0].pf_preset": {
+        "child_script": "u_event_countdown_preset"
+      },
+      "pf_event_countdown_2factions[0].pf_preset.po_event_countdown": {
+        "import_ident": 3935697789
+      },
+      "pf_event_countdown_2factions[0].sq_dropship_a__pilot": {
+        "import_ident": 1842327993
+      },
+      "pf_event_countdown_2factions[0].sq_dropship_b__pilot": {
+        "import_ident": 1842327993
+      },
+      "pf_event_countdown_2factions[0].sq_side_a_wave[0]": {
+        "import_ident": 2026775680
+      },
+      "pf_event_countdown_2factions[0].sq_side_a_wave[1]": {
+        "import_ident": 2026775680
+      },
+      "pf_event_countdown_2factions[0].sq_side_a_wave[2]": {
+        "import_ident": 2026775680
+      },
+      "pf_event_countdown_2factions[0].sq_side_a_wave[3]": {
+        "import_ident": 2026775680
+      },
+      "pf_event_countdown_2factions[0].sq_side_b_wave[0]": {
+        "import_ident": 2026775680
+      },
+      "pf_event_countdown_2factions[0].sq_side_b_wave[1]": {
+        "import_ident": 2026775680
+      },
+      "pf_event_countdown_2factions[0].sq_side_b_wave[2]": {
+        "import_ident": 2026775680
+      },
+      "pf_event_countdown_2factions[0].sq_side_b_wave[3]": {
+        "import_ident": 2026775680
+      },
+      "pf_event_countdown_dropship[0]": {
+        "child_script": "u_event_countdown"
+      },
+      "pf_event_countdown_dropship[0].event_globals": {
+        "child_script": "u_event_globals"
+      },
+      "pf_event_countdown_dropship[0].o_event_countdown_ghost": {
+        "import_ident": 1305454890
+      },
+      "pf_event_countdown_dropship[0].pf_impact": {
+        "child_script": "u_event_countdown_impact"
+      },
+      "pf_event_countdown_dropship[0].pf_point[0].sq_event_dropship_pilot__pilot": {
+        "import_ident": 1842327993
+      },
+      "pf_event_countdown_dropship[0].pf_point[1].sq_event_dropship_pilot__pilot": {
+        "import_ident": 1842327993
+      },
+      "pf_event_countdown_dropship[0].pf_point[2].sq_event_dropship_pilot__pilot": {
+        "import_ident": 1842327993
+      },
+      "pf_event_countdown_dropship[0].pf_preset": {
+        "child_script": "u_event_countdown_preset"
+      },
+      "pf_event_countdown_dropship[0].pf_preset.po_event_countdown": {
+        "import_ident": 3935697789
+      },
+      "pf_event_countdown_dropship[0].sq_event_countdown_wave[0]": {
+        "import_ident": 2026775680
+      },
+      "pf_event_countdown_dropship[0].sq_event_countdown_wave[1]": {
+        "import_ident": 2026775680
+      },
+      "pf_event_countdown_dropship[0].sq_event_countdown_wave[2]": {
+        "import_ident": 2026775680
+      },
+      "pf_event_countdown_dropship[0].sq_event_countdown_wave[3]": {
+        "import_ident": 2026775680
+      },
+      "pf_event_countdown_dropship[0].sq_event_countdown_wave[4]": {
+        "import_ident": 2026775680
+      },
+      "pf_event_countdown_dropship[0].sq_event_countdown_wave[5]": {
+        "import_ident": 2026775680
+      },
+      "pf_event_countdown_dropship[0].sq_event_countdown_wave[6]": {
+        "import_ident": 2026775680
+      },
+      "pf_event_countdown_dropship[0].sq_event_countdown_wave[7]": {
+        "import_ident": 2026775680
+      },
+      "pf_event_countdown_dropship[1]": {
+        "child_script": "u_event_countdown"
+      },
+      "pf_event_countdown_dropship[1].event_globals": {
+        "child_script": "u_event_globals"
+      },
+      "pf_event_countdown_dropship[1].o_event_countdown_ghost": {
+        "import_ident": 1305454890
+      },
+      "pf_event_countdown_dropship[1].pf_impact": {
+        "child_script": "u_event_countdown_impact"
+      },
+      "pf_event_countdown_dropship[1].pf_point[0].sq_event_dropship_pilot__pilot": {
+        "import_ident": 1842327993
+      },
+      "pf_event_countdown_dropship[1].pf_point[1].sq_event_dropship_pilot__pilot": {
+        "import_ident": 1842327993
+      },
+      "pf_event_countdown_dropship[1].pf_point[2].sq_event_dropship_pilot__pilot": {
+        "import_ident": 1842327993
+      },
+      "pf_event_countdown_dropship[1].pf_preset": {
+        "child_script": "u_event_countdown_preset"
+      },
+      "pf_event_countdown_dropship[1].pf_preset.po_event_countdown": {
+        "import_ident": 3935697789
+      },
+      "pf_event_countdown_dropship[1].sq_event_countdown_wave[0]": {
+        "import_ident": 2026775680
+      },
+      "pf_event_countdown_dropship[1].sq_event_countdown_wave[1]": {
+        "import_ident": 2026775680
+      },
+      "pf_event_countdown_dropship[1].sq_event_countdown_wave[2]": {
+        "import_ident": 2026775680
+      },
+      "pf_event_countdown_dropship[1].sq_event_countdown_wave[3]": {
+        "import_ident": 2026775680
+      },
+      "pf_event_countdown_dropship[1].sq_event_countdown_wave[4]": {
+        "import_ident": 2026775680
+      },
+      "pf_event_countdown_dropship[1].sq_event_countdown_wave[5]": {
+        "import_ident": 2026775680
+      },
+      "pf_event_countdown_dropship[1].sq_event_countdown_wave[6]": {
+        "import_ident": 2026775680
+      },
+      "pf_event_countdown_dropship[1].sq_event_countdown_wave[7]": {
+        "import_ident": 2026775680
+      },
+      "pf_event_skirmish[0].event_globals": {
+        "child_script": "u_event_globals"
+      },
+      "pf_event_skirmish[0].pf_preset.po_event_skirmish_end": {
+        "import_ident": 619511055
+      },
+      "pf_event_skirmish[0].pf_preset.po_event_skirmish_intro": {
+        "import_ident": 619511055
+      },
+      "pf_event_skirmish[0].pf_preset.po_event_skirmish_mid": {
+        "import_ident": 619511055
+      },
+      "pf_event_skirmish[0].sq_a_end_anchor": {
+        "import_ident": 2013753375
+      },
+      "pf_event_skirmish[0].sq_a_end_wave[0]": {
+        "import_ident": 2013753375
+      },
+      "pf_event_skirmish[0].sq_a_intro_anchor": {
+        "import_ident": 1125047177
+      },
+      "pf_event_skirmish[0].sq_a_intro_wave[0]": {
+        "import_ident": 1125047177
+      },
+      "pf_event_skirmish[0].sq_a_mid_anchor": {
+        "import_ident": 1125047177
+      },
+      "pf_event_skirmish[0].sq_a_mid_wave[0]": {
+        "import_ident": 1125047177
+      },
+      "pf_event_skirmish[0].sq_a_mid_wave[1]": {
+        "import_ident": 1125047177
+      },
+      "pf_event_skirmish[0].sq_b_end_anchor": {
+        "import_ident": 2013753375
+      },
+      "pf_event_skirmish[0].sq_b_end_wave[0]": {
+        "import_ident": 2013753375
+      },
+      "pf_event_skirmish[0].sq_b_intro_anchor": {
+        "import_ident": 1125047177
+      },
+      "pf_event_skirmish[0].sq_b_intro_wave[0]": {
+        "import_ident": 1125047177
+      },
+      "pf_event_skirmish[0].sq_b_mid_anchor": {
+        "import_ident": 1125047177
+      },
+      "pf_event_skirmish[0].sq_b_mid_wave[0]": {
+        "import_ident": 1125047177
+      },
+      "pf_event_skirmish[0].sq_b_mid_wave[1]": {
+        "import_ident": 1125047177
+      }
+    },
+    "0xd53aaa20": {
+      "sq_dark_ritual": {
+        "import_ident": 667322069
+      },
+      "sq_dark_ritual__wizard_a": {
+        "import_ident": 2666759292
+      },
+      "sq_dark_ritual__wizard_b": {
+        "import_ident": 2666759295
+      },
+      "sq_dark_ritual__wizard_c": {
+        "import_ident": 2666759294
+      }
+    },
+    "0xd6817c89": {
+      "phase_complex_scan_node.pf_vex_node01": {
+        "child_script": "countdown_objective"
+      },
+      "phase_complex_scan_node.pf_vex_node01._object": {
+        "import_ident": 2944578016
+      },
+      "phase_northern_tides_ascend_steps.pf_ascend_steps": {
+        "child_script": "generic_objective"
+      },
+      "phase_northern_tides_boss.pf_kill_gatekeeper": {
+        "child_script": "generic_objective"
+      },
+      "phase_northern_tides_boss.pf_summon_gatekeeper": {
+        "child_script": "generic_objective"
+      },
+      "phase_southern_tides_goto.pf_goto_northern_tides": {
+        "child_script": "trigger_volume_objective"
+      }
+    },
+    "0xd7f68da0": {
+      "amb_ambush_cablehive01": {
+        "child_script": "ambush_encounter"
+      },
+      "amb_ambush_comms01": {
+        "child_script": "ambush_encounter"
+      },
+      "amb_dropship_crashedship_1": {
+        "child_script": "dropship_encounter"
+      },
+      "amb_dropship_crashedship_1._dropship_squad__pilot": {
+        "import_ident": 1842327993
+      },
+      "amb_dropship_hangar_1": {
+        "child_script": "dropship_encounter"
+      },
+      "amb_dropship_hangar_1._dropship_squad__pilot": {
+        "import_ident": 1842327993
+      },
+      "amb_dropship_shack_1": {
+        "child_script": "dropship_encounter"
+      },
+      "amb_dropship_shack_1._dropship_squad__pilot": {
+        "import_ident": 1842327993
+      },
+      "amb_ptrl_smpl_road01": {
+        "child_script": "simple_encounter"
+      },
+      "amb_ptrl_smpl_south01": {
+        "child_script": "simple_encounter"
+      },
+      "amb_smpl_cliffshack01": {
+        "child_script": "simple_encounter"
+      },
+      "amb_smpl_comms01": {
+        "child_script": "simple_encounter"
+      },
+      "amb_smpl_crashedship01": {
+        "child_script": "simple_encounter"
+      },
+      "amb_smpl_overpass01": {
+        "child_script": "simple_encounter"
+      },
+      "amb_smpl_shack01": {
+        "child_script": "simple_encounter"
+      },
+      "amb_smpl_transit01": {
+        "child_script": "simple_encounter"
+      },
+      "obj_placement_cable._object": {
+        "import_ident": 3522179077
+      },
+      "obj_placement_m0_5_o1": {
+        "child_script": "interactable_placement"
+      },
+      "obj_placement_m0_5_o1._object": {
+        "import_ident": 1711789050
+      },
+      "obj_placement_m0_5_o2": {
+        "child_script": "interactable_placement"
+      },
+      "obj_placement_m0_5_o2._object": {
+        "import_ident": 3725145051
+      },
+      "utils": {
+        "child_script": "u_globals"
+      }
+    },
+    "0xd91bd9b8": {
+      "globals": {
+        "child_script": "u_globals"
+      }
+    },
+    "0xdb9e22b4": {
+      "sq_wave_1_a__leg1": {
+        "import_ident": 20887016
+      },
+      "sq_wave_1_a__leg2": {
+        "import_ident": 20887019
+      },
+      "sq_wave_1_a__psion1": {
+        "import_ident": 175057397
+      },
+      "sq_wave_1_a__psion2": {
+        "import_ident": 175057398
+      }
+    },
+    "0xdfdd0e7e": {
+      "globals": {
+        "child_script": "u_globals"
+      }
+    },
+    "0xe0984f46": {
+      "pf_event_patrol[0].event_globals": {
+        "child_script": "u_event_globals"
+      },
+      "pf_event_patrol[0].pf_preset.po_event_patrol": {
+        "import_ident": 2191926545
+      },
+      "pf_event_patrol[0].sq_boss": {
+        "import_ident": 151868465
+      },
+      "pf_event_patrol[0].sq_boss__cell_boss": {
+        "import_ident": 1286168223
+      }
+    },
+    "0xe2e79d8e": {
+      "sq_boss": {
+        "import_ident": 3573093416
+      },
+      "sq_boss__ultra_minotaur": {
+        "import_ident": 1684262863
+      },
+      "sq_cloud_adds__cloud": {
+        "import_ident": 1350606868
+      },
+      "sq_cloud_left_hobgoblin__cloud": {
+        "import_ident": 1350606868
+      },
+      "sq_cloud_mid_hill__cloud": {
+        "import_ident": 1350606868
+      },
+      "sq_cloud_right_hobgoblin01__cloud": {
+        "import_ident": 1350606868
+      },
+      "sq_cloud_right_hobgoblin02__cloud": {
+        "import_ident": 1350606868
+      },
+      "sq_cloud_top_hill__cloud": {
+        "import_ident": 1350606868
+      },
+      "utils": {
+        "child_script": "u_globals"
+      },
+      "vex_mega_warpgate.sq_vex_warpgate_large__gate": {
+        "import_ident": 1121922920
+      }
+    },
+    "0xe41428a3": {
+      "bus_simple_encounter": {
+        "child_script": "simple_encounter"
+      },
+      "corner_simple_encounter": {
+        "child_script": "simple_encounter"
+      },
+      "corner_simple_encounter2": {
+        "child_script": "simple_encounter"
+      },
+      "lobby_bouncers_simple_encounter": {
+        "child_script": "simple_encounter"
+      },
+      "lobby_bouncers_simple_encounter2": {
+        "child_script": "simple_encounter"
+      },
+      "lobby_bouncers_wave_encounter": {
+        "child_script": "wave_encounter"
+      },
+      "office_simple_encounter_wave1": {
+        "child_script": "wave_encounter"
+      },
+      "office_simple_encounter_wave2": {
+        "child_script": "wave_encounter"
+      },
+      "office_wave_encounter": {
+        "child_script": "wave_encounter"
+      },
+      "pf_encounter_simple_patrols_vip": {
+        "child_script": "simple_encounter"
+      },
+      "pf_encounter_simple_patrols_vip._squad[0]": {
+        "import_ident": 582909204
+      },
+      "pipe_room_simple_encounter_wave1": {
+        "child_script": "wave_encounter"
+      },
+      "pipe_room_simple_encounter_wave2": {
+        "child_script": "wave_encounter"
+      },
+      "pipe_room_wave_encounter": {
+        "child_script": "wave_encounter"
+      },
+      "plaza_simple_encounter": {
+        "child_script": "simple_encounter"
+      },
+      "plaza_simple_encounter2": {
+        "child_script": "simple_encounter"
+      },
+      "utils": {
+        "child_script": "u_globals"
+      }
+    },
+    "0xe7880c24": {
+      "pf_vex_node01._object": {
+        "import_ident": 2944578016
+      },
+      "simple_bridge_front": {
+        "child_script": "simple_encounter"
+      },
+      "simple_north_back_squad": {
+        "child_script": "simple_encounter"
+      },
+      "simple_north_hobs_and_gobs": {
+        "child_script": "simple_encounter"
+      },
+      "simple_north_snipers": {
+        "child_script": "simple_encounter"
+      },
+      "simple_south_goblins": {
+        "child_script": "simple_encounter"
+      },
+      "simple_south_minotaurs": {
+        "child_script": "simple_encounter"
+      },
+      "utils": {
+        "child_script": "u_globals"
+      },
+      "vexcloud_bridge_ambient": {
+        "child_script": "dropship_encounter"
+      },
+      "vexcloud_bridge_ambient._dropship_squad__pilot": {
+        "import_ident": 1842327993
+      },
+      "vexcloud_bridge_guardians": {
+        "child_script": "dropship_encounter"
+      },
+      "vexcloud_bridge_guardians._dropship_squad__pilot": {
+        "import_ident": 1842327993
+      },
+      "vexcloud_bridge_guardians._squad[0]": {
+        "import_ident": 2097673056
+      },
+      "vexcloud_hydra_bridge": {
+        "child_script": "dropship_encounter"
+      },
+      "vexcloud_hydra_bridge._dropship_squad__pilot": {
+        "import_ident": 1842327993
+      }
+    },
+    "0xe95e66c4": {
+      "pf_event_countdown_2factions[0].event_globals": {
+        "child_script": "u_event_globals"
+      },
+      "pf_event_countdown_2factions[0].o_event_countdown_ghost": {
+        "import_ident": 1305454890
+      },
+      "pf_event_countdown_2factions[0].pf_impact": {
+        "child_script": "u_event_countdown_impact"
+      },
+      "pf_event_countdown_2factions[0].pf_preset": {
+        "child_script": "u_event_countdown_preset"
+      },
+      "pf_event_countdown_2factions[0].pf_preset.po_event_countdown": {
+        "import_ident": 3935697789
+      },
+      "pf_event_countdown_2factions[0].sq_dropship_a__pilot": {
+        "import_ident": 1842327993
+      },
+      "pf_event_countdown_2factions[0].sq_dropship_b__pilot": {
+        "import_ident": 1842327993
+      },
+      "pf_event_countdown_2factions[0].sq_side_a_wave[0]": {
+        "import_ident": 2026775680
+      },
+      "pf_event_countdown_2factions[0].sq_side_a_wave[1]": {
+        "import_ident": 2026775680
+      },
+      "pf_event_countdown_2factions[0].sq_side_a_wave[2]": {
+        "import_ident": 2026775680
+      },
+      "pf_event_countdown_2factions[0].sq_side_a_wave[3]": {
+        "import_ident": 2026775680
+      },
+      "pf_event_countdown_2factions[0].sq_side_b_wave[0]": {
+        "import_ident": 2026775680
+      },
+      "pf_event_countdown_2factions[0].sq_side_b_wave[1]": {
+        "import_ident": 2026775680
+      },
+      "pf_event_countdown_2factions[0].sq_side_b_wave[2]": {
+        "import_ident": 2026775680
+      },
+      "pf_event_countdown_2factions[0].sq_side_b_wave[3]": {
+        "import_ident": 2026775680
+      },
+      "pf_event_dropship_multipoint_fallen[0].event_globals": {
+        "child_script": "u_event_globals"
+      },
+      "pf_event_dropship_multipoint_fallen[0].pf_point[0].sq_event_dropship_troops": {
+        "import_ident": 1076587154
+      },
+      "pf_event_dropship_multipoint_fallen[0].pf_point[1].sq_event_dropship_troops": {
+        "import_ident": 1076587154
+      },
+      "pf_event_dropship_multipoint_fallen[0].pf_point[2].sq_event_dropship_troops": {
+        "import_ident": 1076587154
+      },
+      "pf_event_dropship_multipoint_fallen[0].pf_point[3].sq_event_dropship_troops": {
+        "import_ident": 1076587154
+      },
+      "pf_event_dropship_multipoint_fallen[0].pf_preset.po_event_dropship_multipoint": {
+        "import_ident": 1670136383
+      },
+      "pf_event_dropship_multipoint_fallen[0].sq_event_dropship_pilot__pilot": {
+        "import_ident": 1842327993
+      },
+      "pf_event_patrol[0].event_globals": {
+        "child_script": "u_event_globals"
+      },
+      "pf_event_patrol[0].pf_preset.po_event_patrol": {
+        "import_ident": 2191926545
+      },
+      "pf_event_patrol[0].sq_boss": {
+        "import_ident": 151868465
+      },
+      "pf_event_patrol[0].sq_boss__cell_boss": {
+        "import_ident": 1286168223
+      },
+      "pf_event_patrol[1].event_globals": {
+        "child_script": "u_event_globals"
+      },
+      "pf_event_patrol[1].pf_preset.po_event_patrol": {
+        "import_ident": 2191926545
+      },
+      "pf_event_patrol[1].sq_boss": {
+        "import_ident": 151868465
+      },
+      "pf_event_patrol[1].sq_boss__cell_boss": {
+        "import_ident": 1286168223
+      },
+      "pf_event_patrol[2].event_globals": {
+        "child_script": "u_event_globals"
+      },
+      "pf_event_patrol[2].pf_preset.po_event_patrol": {
+        "import_ident": 2191926545
+      },
+      "pf_event_patrol[2].sq_boss": {
+        "import_ident": 151868465
+      },
+      "pf_event_patrol[2].sq_boss__cell_boss": {
+        "import_ident": 1286168223
+      }
+    },
+    "0xead551eb": {
+      "cosmo_m4_phase00_array.obj_m4_o1a": {
+        "child_script": "trigger_bubble_objective"
+      },
+      "cosmo_m4_phase00_array.obj_m4_o1b": {
+        "child_script": "collect_loot_objective"
+      },
+      "cosmo_m4_phase00_array.obj_m4_o1b._squad": {
+        "import_ident": 3664937074
+      },
+      "cosmo_m4_phase01_dome_c.obj_m4_o2": {
+        "child_script": "interactable_objective"
+      },
+      "cosmo_m4_phase01_dome_c.obj_m4_o2._object": {
+        "import_ident": 1287431547
+      },
+      "cosmo_m4_phase02_dome_c.obj_m4_o3a": {
+        "child_script": "generic_objective"
+      },
+      "cosmo_m4_phase02_dome_c.obj_m4_o3b": {
+        "child_script": "generic_objective"
+      },
+      "cosmo_m4_phase_end.obj_m4_finish": {
+        "child_script": "trigger_volume_objective"
+      },
+      "globals": {
+        "child_script": "u_globals"
+      }
+    },
+    "0xeb6a66ed": {
+      "amb_dropship_crossroads": {
+        "child_script": "dropship_encounter"
+      },
+      "amb_dropship_crossroads._dropship_squad__pilot": {
+        "import_ident": 1842327993
+      },
+      "amb_dropship_patrol_tank_yard": {
+        "child_script": "dropship_encounter"
+      },
+      "amb_dropship_patrol_tank_yard._dropship_squad__pilot": {
+        "import_ident": 1842327993
+      },
+      "amb_simple_far_building": {
+        "child_script": "simple_encounter"
+      },
+      "amb_simple_far_building_hill": {
+        "child_script": "simple_encounter"
+      },
+      "amb_simple_near_building": {
+        "child_script": "simple_encounter"
+      },
+      "amb_simple_patrol_shanks_back_area": {
+        "child_script": "simple_encounter"
+      },
+      "amb_simple_sniper_roof": {
+        "child_script": "simple_encounter"
+      },
+      "amb_simple_tank_side": {
+        "child_script": "simple_encounter"
+      },
+      "utils": {
+        "child_script": "u_globals"
+      }
+    },
+    "0xecf574b5": {
+      "globals": {
+        "child_script": "u_globals"
+      },
+      "sq_ghost__ghost": {
+        "import_ident": 4023194814
+      }
+    },
+    "0xed3c5b0a": {
+      "pf_event_dropship_multipoint_fallen[0].event_globals": {
+        "child_script": "u_event_globals"
+      },
+      "pf_event_dropship_multipoint_fallen[0].pf_point[0].sq_event_dropship_troops": {
+        "import_ident": 1076587154
+      },
+      "pf_event_dropship_multipoint_fallen[0].pf_point[1].sq_event_dropship_troops": {
+        "import_ident": 1076587154
+      },
+      "pf_event_dropship_multipoint_fallen[0].pf_point[2].sq_event_dropship_troops": {
+        "import_ident": 1076587154
+      },
+      "pf_event_dropship_multipoint_fallen[0].pf_preset.po_event_dropship_multipoint": {
+        "import_ident": 1670136383
+      },
+      "pf_event_dropship_multipoint_fallen[0].sq_event_dropship_pilot__pilot": {
+        "import_ident": 1842327993
+      },
+      "pf_event_dropship_multipoint_fallen[1].event_globals": {
+        "child_script": "u_event_globals"
+      },
+      "pf_event_dropship_multipoint_fallen[1].pf_point[0].sq_event_dropship_troops": {
+        "import_ident": 1076587154
+      },
+      "pf_event_dropship_multipoint_fallen[1].pf_point[1].sq_event_dropship_troops": {
+        "import_ident": 1076587154
+      },
+      "pf_event_dropship_multipoint_fallen[1].pf_point[2].sq_event_dropship_troops": {
+        "import_ident": 1076587154
+      },
+      "pf_event_dropship_multipoint_fallen[1].pf_preset.po_event_dropship_multipoint": {
+        "import_ident": 1670136383
+      },
+      "pf_event_dropship_multipoint_fallen[1].sq_event_dropship_pilot__pilot": {
+        "import_ident": 1842327993
+      },
+      "pf_event_dropship_multipoint_fallen[2].event_globals": {
+        "child_script": "u_event_globals"
+      },
+      "pf_event_dropship_multipoint_fallen[2].pf_point[0].sq_event_dropship_troops": {
+        "import_ident": 1076587154
+      },
+      "pf_event_dropship_multipoint_fallen[2].pf_point[1].sq_event_dropship_troops": {
+        "import_ident": 1076587154
+      },
+      "pf_event_dropship_multipoint_fallen[2].pf_preset.po_event_dropship_multipoint": {
+        "import_ident": 1670136383
+      },
+      "pf_event_dropship_multipoint_fallen[2].sq_event_dropship_pilot__pilot": {
+        "import_ident": 1842327993
+      }
+    },
+    "0xf2d4113c": {
+      "sq_n_cloud1__vex_cloud": {
+        "import_ident": 4105036944
+      },
+      "sq_n_cloud2__vex_cloud": {
+        "import_ident": 4105036944
+      },
+      "sq_n_pit_turret__cyclops": {
+        "import_ident": 3220956788
+      },
+      "sq_s_cloud1__vex_cloud": {
+        "import_ident": 4105036944
+      },
+      "sq_s_cloud2__vex_cloud": {
+        "import_ident": 4105036944
+      },
+      "sq_s_cloud3__vex_cloud": {
+        "import_ident": 4105036944
+      }
+    },
+    "0xf305afe6": {
+      "sq_boss": {
+        "import_ident": 4131749444
+      },
+      "sq_boss__boss": {
+        "import_ident": 1560169506
+      },
+      "sq_bridge_a_a__leg1": {
+        "import_ident": 20887016
+      },
+      "sq_bridge_a_a__leg2": {
+        "import_ident": 20887019
+      },
+      "sq_bridge_a_a__leg3": {
+        "import_ident": 20887018
+      },
+      "sq_bridge_a_a__leg4": {
+        "import_ident": 20887021
+      },
+      "sq_bridge_a_b__leg1": {
+        "import_ident": 20887016
+      },
+      "sq_bridge_a_b__leg2": {
+        "import_ident": 20887019
+      },
+      "sq_bridge_a_b__leg3": {
+        "import_ident": 20887018
+      },
+      "sq_bridge_a_b__leg4": {
+        "import_ident": 20887021
+      },
+      "sq_dropship__pilot": {
+        "import_ident": 1842327993
+      },
+      "sq_dropship_c1__pilot": {
+        "import_ident": 1842327993
+      },
+      "sq_dropship_c2__pilot": {
+        "import_ident": 1842327993
+      }
+    },
+    "0xf447f610": {
+      "amb_smpl_fallen_center01": {
+        "child_script": "simple_encounter"
+      },
+      "amb_smpl_fallen_command01": {
+        "child_script": "simple_encounter"
+      },
+      "amb_smpl_fallen_command02": {
+        "child_script": "simple_encounter"
+      },
+      "amb_smpl_fallen_front02": {
+        "child_script": "simple_encounter"
+      },
+      "amb_smpl_hive_center01": {
+        "child_script": "simple_encounter"
+      },
+      "amb_smpl_hive_center01._squad[1]": {
+        "import_ident": 1691468841
+      },
+      "amb_smpl_hive_front01": {
+        "child_script": "simple_encounter"
+      },
+      "amb_smpl_hive_front01._squad[1]": {
+        "import_ident": 1691468841
+      },
+      "amb_smpl_hive_platform01": {
+        "child_script": "simple_encounter"
+      },
+      "amb_smpl_hive_turntable01": {
+        "child_script": "simple_encounter"
+      },
+      "amb_smpl_hive_turntable01._squad[1]": {
+        "import_ident": 1691468841
+      },
+      "utils": {
+        "child_script": "u_globals"
+      }
+    },
+    "0xf687db0a": {
+      "sq_iron_banner_vendor__lothar": {
+        "import_ident": 1143153871
+      }
+    },
+    "0xf937a69b": {
+      "phase_catacombs.sp_objective_goto": {
+        "child_script": "trigger_bubble_objective"
+      },
+      "phase_lowergarden.sp_objective_glyphs._objects[0]": {
+        "import_ident": 764352479
+      },
+      "phase_lowergarden.sp_objective_glyphs._objects[1]": {
+        "import_ident": 4081639578
+      },
+      "phase_lowergarden.sp_objective_goto": {
+        "child_script": "trigger_volume_objective"
+      },
+      "phase_lowergarden.sp_objective_heart_goto": {
+        "child_script": "trigger_volume_objective"
+      },
+      "phase_lowergarden.sp_objective_kiosk": {
+        "child_script": "countdown_objective"
+      },
+      "phase_lowergarden.sp_objective_kiosk._object": {
+        "import_ident": 3806855492
+      },
+      "phase_lowergarden_cinematic.sp_cinematic_bookend": {
+        "child_script": "cinematic_midmission"
+      },
+      "phase_lowergarden_cinematic.sp_specops_heart.sq_bg_mino_a__ultra_mino_a": {
+        "import_ident": 1010512139
+      },
+      "phase_lowergarden_cinematic.sp_specops_heart.sq_bg_mino_b__ultra_mino_b": {
+        "import_ident": 1010512136
+      },
+      "phase_lowergarden_cinematic.sp_specops_heart.sq_bg_mino_c__ultra_mino_c": {
+        "import_ident": 1010512137
+      },
+      "phase_lowergarden_climax.sp_objective_kill": {
+        "child_script": "generic_objective"
+      },
+      "phase_lowergarden_darkness.sp_objective_kill": {
+        "child_script": "generic_objective"
+      },
+      "phase_lowergarden_hopdown.sp_objective_kill": {
+        "child_script": "generic_objective"
+      },
+      "phase_uppergarden.sp_objective_kill": {
+        "child_script": "generic_objective"
+      },
+      "phase_uppergarden.sp_objective_pit": {
+        "child_script": "trigger_volume_objective"
+      },
+      "phase_valley.sp_objective_gate": {
+        "child_script": "trigger_volume_objective"
+      },
+      "phase_valley.sp_objective_goto": {
+        "child_script": "trigger_volume_objective"
+      },
+      "phase_valley.sp_objective_kill": {
+        "child_script": "generic_objective"
+      }
+    },
+    "0xfc0e45a3": {
+      "globals": {
+        "child_script": "u_globals"
+      },
+      "sq_fallen_1c__dreg": {
+        "import_ident": 1979352003
+      },
+      "sq_fallen_2__dreg_a": {
+        "import_ident": 1829795379
+      },
+      "sq_fallen_2__dreg_b": {
+        "import_ident": 1829795376
+      },
+      "sq_fallen_2__dreg_c": {
+        "import_ident": 1829795377
+      },
+      "sq_fallen_bouncedown_a__vandal_blade": {
+        "import_ident": 2229885820
+      },
+      "sq_fallen_bouncedown_c__vandal_blade": {
+        "import_ident": 2229885820
+      },
+      "sq_fallen_dropdown_c__dreg": {
+        "import_ident": 1979352003
+      },
+      "sq_fallen_dropdown_e__dreg": {
+        "import_ident": 1979352003
+      },
+      "sq_fallen_dropdown_f__dreg": {
+        "import_ident": 1979352003
+      },
+      "sq_fallen_dropdown_f__dreg1": {
+        "import_ident": 2086497224
+      },
+      "sq_fallen_dropdown_g__dreg": {
+        "import_ident": 1979352003
+      },
+      "sq_fallen_floor_a__dreg": {
+        "import_ident": 1979352003
+      },
+      "sq_fallen_floor_b__dreg": {
+        "import_ident": 1979352003
+      },
+      "sq_fallen_floor_c__dreg": {
+        "import_ident": 1979352003
+      },
+      "sq_fallen_floor_f__dreg": {
+        "import_ident": 1979352003
+      },
+      "sq_fallen_garage_exit": {
+        "import_ident": 1016364373
+      },
+      "sq_fallen_garage_melee": {
+        "import_ident": 1016364373
+      },
+      "sq_fallen_garage_melee__dreg1": {
+        "import_ident": 2086497224
+      },
+      "sq_fallen_garage_melee__dreg2": {
+        "import_ident": 2086497227
+      },
+      "sq_fallen_garage_melee__dreg3": {
+        "import_ident": 2086497226
+      },
+      "sq_fallen_garage_obj": {
+        "import_ident": 1016364373
+      },
+      "sq_fallen_garage_obj__dreg1": {
+        "import_ident": 2086497224
+      },
+      "sq_fallen_garage_obj__dreg2": {
+        "import_ident": 2086497227
+      },
+      "sq_fallen_garage_obj__dreg3": {
+        "import_ident": 2086497226
+      },
+      "sq_fallen_garage_vandals_2": {
+        "import_ident": 1016364373
+      },
+      "sq_fallen_garage_vandals_2__vandal_2": {
+        "import_ident": 171909848
+      },
+      "sq_fallen_garage_vandals_3": {
+        "import_ident": 1016364373
+      },
+      "sq_fallen_garage_vandals_3__vandal_3": {
+        "import_ident": 171909849
+      },
+      "sq_fallen_nest1__crawler1": {
+        "import_ident": 4024862884
+      },
+      "sq_fallen_nest1__crawler2": {
+        "import_ident": 4024862887
+      },
+      "sq_fallen_nest1__crawler3": {
+        "import_ident": 4024862886
+      },
+      "sq_fallen_nest1__crawler4": {
+        "import_ident": 4024862881
+      },
+      "sq_fallen_nest1__crawler5": {
+        "import_ident": 4024862880
+      },
+      "sq_fallen_nest1__dropper1": {
+        "import_ident": 2136207396
+      },
+      "sq_fallen_nest1__runner1": {
+        "import_ident": 3526993060
+      },
+      "sq_fallen_nest1__swinger1": {
+        "import_ident": 2636364733
+      },
+      "sq_fallen_nest2__crawler6": {
+        "import_ident": 4024862883
+      },
+      "sq_fallen_nest2__crawler7": {
+        "import_ident": 4024862882
+      },
+      "sq_fallen_nest2__crawler8": {
+        "import_ident": 4024862893
+      },
+      "sq_fallen_nest2__runner3": {
+        "import_ident": 3526993062
+      },
+      "sq_fallen_nest2__runner4": {
+        "import_ident": 3526993057
+      },
+      "sq_fallen_nest2__shank1": {
+        "import_ident": 3071993801
+      },
+      "sq_fallen_nest2__shank2": {
+        "import_ident": 3071993802
+      },
+      "sq_fallen_wall_l_a__dreg": {
+        "import_ident": 1979352003
+      },
+      "sq_fallen_wall_l_b__dreg": {
+        "import_ident": 1979352003
+      },
+      "sq_fallen_wall_l_c__dreg": {
+        "import_ident": 1979352003
+      },
+      "sq_fallen_wall_l_g__dreg": {
+        "import_ident": 1979352003
+      },
+      "sq_fallen_wall_r_b__dreg": {
+        "import_ident": 1979352003
+      },
+      "sq_fallen_wall_r_f__dreg": {
+        "import_ident": 1979352003
+      },
+      "sq_nux_ghost__ghost": {
+        "import_ident": 4023194814
+      }
+    },
+    "0xfe8501fa": {
+      "sq_bossbattle_boss01__servitor": {
+        "import_ident": 49946181
+      },
+      "sq_dropship_fallen01__pilot": {
+        "import_ident": 1842327993
+      },
+      "utils": {
+        "child_script": "u_globals"
+      }
+    },
+    "0xff4a0c1a": {
+      "cosmo_m1_phase00_dome_a.obj_m1_o1a": {
+        "child_script": "trigger_volume_objective"
+      },
+      "cosmo_m1_phase00_dome_a.obj_m1_o1b": {
+        "child_script": "interactable_objective"
+      },
+      "cosmo_m1_phase00_dome_a.obj_m1_o1b._object": {
+        "import_ident": 1051069757
+      },
+      "cosmo_m1_phase00_dome_a.obj_m1_o1c": {
+        "child_script": "trigger_volume_objective"
+      },
+      "cosmo_m1_phase01_dome_a.obj_m1_o2": {
+        "child_script": "generic_objective"
+      },
+      "globals": {
+        "child_script": "u_globals"
+      }
+    }
+  }
+}

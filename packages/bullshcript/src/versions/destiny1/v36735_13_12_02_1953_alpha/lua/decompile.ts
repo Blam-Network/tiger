@@ -2,18 +2,18 @@
 // class 80800B48).
 
 import {
+  HKS_OPCODES,
   isTrailingWord,
-  LUA_OPCODES,
   opcodeName,
   trailingWordCount,
-} from "../../../../hks/opcodes.ts";
+} from "../../../../hks/bytecode/opcodes.ts";
 import type {
-  LuaChunk,
+  HksBytecode,
+  HksInstruction,
+  LocVar,
   LuaConstant,
-  LuaInstruction,
-  LuaLocalVariable,
-  LuaPrototype,
-} from "../../../../hks/types.ts";
+  Method,
+} from "../../../../hks/bytecode/proto.ts";
 
 const OP = {
   ADD: 40,
@@ -423,12 +423,12 @@ class PrototypeDecompiler {
   private readonly nextPcOf = new Map<number, number>();
   private readonly order: number[] = [];
   private readonly path: string;
-  private readonly proto: LuaPrototype;
+  private readonly proto: Method;
   private readonly registers: (Expr | undefined)[];
   private readonly slotOfPc = new Map<number, number>();
   private readonly writer: ChunkWriter;
 
-  constructor(writer: ChunkWriter, proto: LuaPrototype, path: string) {
+  constructor(writer: ChunkWriter, proto: Method, path: string) {
     this.writer = writer;
     this.proto = proto;
     this.path = path;
@@ -479,7 +479,7 @@ class PrototypeDecompiler {
     }
   }
 
-  private at(pc: number): LuaInstruction {
+  private at(pc: number): HksInstruction {
     return this.proto.code[pc];
   }
 
@@ -525,7 +525,7 @@ class PrototypeDecompiler {
 
   // Locals are listed in activation order and occupy registers in that same
   // order, so the n-th one active at a pc lives in register n.
-  private activeLocals(pc: number): LuaLocalVariable[] {
+  private activeLocals(pc: number): LocVar[] {
     return this.proto.locals.filter(
       (local) => local.startPc <= pc && pc < local.endPc
     );
@@ -540,7 +540,7 @@ class PrototypeDecompiler {
   // Everything that becomes a named local exactly at this pc, declared from
   // whatever its register already holds.
   private declareLocalsAt(pc: number): void {
-    const starting: LuaLocalVariable[] = [];
+    const starting: LocVar[] = [];
     this.proto.locals.forEach((local, index) => {
       if (local.startPc === pc && !this.handledLocals.has(index)) {
         starting.push(local);
@@ -1185,7 +1185,7 @@ class PrototypeDecompiler {
     return;
   }
 
-  private isPure(instruction: LuaInstruction): boolean {
+  private isPure(instruction: HksInstruction): boolean {
     if (PURE_OPCODES.has(instruction.opcode)) {
       return true;
     }
@@ -1509,7 +1509,7 @@ class PrototypeDecompiler {
       return;
     }
     const register = this.at(lastWrite).a;
-    if (LUA_OPCODES.get(this.at(lastWrite).opcode)?.writesA !== true) {
+    if (HKS_OPCODES.get(this.at(lastWrite).opcode)?.writesA !== true) {
       return;
     }
     return { block: { end: blockEnd, start: blockStart }, end, register };
@@ -1540,7 +1540,7 @@ class PrototypeDecompiler {
   private writesNamedLocal(pc: number): boolean {
     const instruction = this.at(pc);
     return (
-      LUA_OPCODES.get(instruction.opcode)?.writesA === true &&
+      HKS_OPCODES.get(instruction.opcode)?.writesA === true &&
       this.localNameAt(instruction.a, pc) !== undefined
     );
   }
@@ -2094,11 +2094,7 @@ class PrototypeDecompiler {
 
   // A closure as an expression, its body rendered to lines that the
   // statement consuming it carries along.
-  private functionExpression(
-    child: LuaPrototype,
-    path: string,
-    pc: number
-  ): Expr {
+  private functionExpression(child: Method, path: string, pc: number): Expr {
     const start = this.writer.lines.length;
     const indent = this.writer.indent;
     this.writer.indent = 0;
@@ -2118,7 +2114,7 @@ class PrototypeDecompiler {
   private closureStore(
     pc: number,
     register: number,
-    child: LuaPrototype
+    child: Method
   ): { hasSelf: boolean; header: string; storePc: number } | undefined {
     const storePc = this.next(pc);
     const opcode = this.opcodeAt(storePc);
@@ -2152,7 +2148,7 @@ class PrototypeDecompiler {
   }
 
   private emitFunction(
-    child: LuaPrototype,
+    child: Method,
     path: string,
     header: string,
     hasSelf: boolean,
@@ -2260,7 +2256,7 @@ function tryCollapseAt(out: Line[], index: number): boolean {
 }
 
 export function decompile(
-  chunk: LuaChunk,
+  chunk: HksBytecode,
   options: LuaDecompileOptions = {}
 ): LuaDecompileResult {
   const writer = new ChunkWriter(options);

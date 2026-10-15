@@ -1,0 +1,17 @@
+# es\cosmo\cine_reveal\cine_reveal_mission2.esp
+#
+# Mission 2, the Tower cinematic. The activity ends shortly after it
+# finishes.
+
+cinematic_midmission cine_107_twr
+
+thread init: pass
+
+thread complete:
+    c_lifetime_script_utilities.get_lifetime_sensor().end_game()
+
+thread main:
+    sleep(4)
+    set_activity_complete()
+    cine_107_twr.start()
+    sleep_until(cine_107_twr.is_complete())

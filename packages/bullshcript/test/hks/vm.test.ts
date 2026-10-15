@@ -1,9 +1,9 @@
 import { describe, expect, it } from "vitest";
-import type { LuaInstruction, LuaPrototype } from "../../src/hks/types.ts";
-import { LuaClosure, type LuaValue } from "../../src/hks/values.ts";
-import { LuaVm } from "../../src/hks/vm.ts";
+import type { HksInstruction, Method } from "../../src/hks/bytecode/proto.ts";
+import { LuaState } from "../../src/hks/vm/interpreter.ts";
+import { LuaClosure, type LuaValue } from "../../src/hks/vm/values.ts";
 
-function prototype(overrides: Partial<LuaPrototype> = {}): LuaPrototype {
+function prototype(overrides: Partial<Method> = {}): Method {
   return {
     offset: 0,
     endOffset: 0,
@@ -26,17 +26,17 @@ function prototype(overrides: Partial<LuaPrototype> = {}): LuaPrototype {
   };
 }
 
-function instruction(overrides: Partial<LuaInstruction>): LuaInstruction {
+function instruction(overrides: Partial<HksInstruction>): HksInstruction {
   return { raw: 0, opcode: 0, a: 0, b: 0, c: 0, bx: 0, sbx: 0, ...overrides };
 }
 
-function run(code: LuaInstruction[], constants: LuaPrototype["constants"]) {
+function run(code: HksInstruction[], constants: Method["constants"]) {
   const closure = new LuaClosure(
     prototype({ maxStackSize: 2, code, constants }),
     [],
     "TEST"
   );
-  return new LuaVm().call(closure);
+  return new LuaState().call(closure);
 }
 
 // R0 := false, then a TEST-shaped conditional on R0 with C=0, JMP to a

@@ -1,0 +1,16 @@
+# es\mars\act_mars_m07_lowergarden\act_mars_m07_lowergarden_mission6.esp
+#
+# Mission 6, the heart revealed: the bookend cinematic, a few seconds
+# after the player steps onto the ledge. The heart prefab's rows listed
+# under this phase are the lowergarden encounter's; nothing here moves them.
+
+cinematic_midmission sp_cinematic_bookend
+
+thread init: pass
+
+thread complete: pass
+
+thread main:
+    sleep(4)
+    sp_cinematic_bookend.start()
+    sleep_until(sp_cinematic_bookend.is_complete())

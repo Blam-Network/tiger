@@ -109,45 +109,50 @@ export {
   type BsRegistryEntry,
   IMPORT_REGISTRY,
 } from "../../bungiescript/types.ts";
+export * from "../../hks/bytecode/proto.ts";
+export { readBytecode, walkProtos } from "../../hks/bytecode/reader.ts";
+export * from "../../hks/bytecode/writer.ts";
 export {
   compile,
   compileLua,
   compileLuaChunk,
   LuaCompileError,
   type LuaCompileOptions,
-} from "../../hks/compile.ts";
-export * from "../../hks/encode.ts";
-export { missingGlobals, OBSERVED_GLOBALS } from "../../hks/host_env.ts";
-export { formatG, formatLuaNumber } from "../../hks/printf.ts";
-export { globalReads } from "../../hks/script_shape.ts";
-export * from "../../hks/script_source.ts";
-export * from "../../hks/types.ts";
-export { parseLuaChunk, walkPrototypes } from "../../hks/undump.ts";
-export type { ActivityOptionSet } from "../../host/activity_options.ts";
+} from "../../hks/compiler/compile.ts";
+export { missingGlobals, OBSERVED_GLOBALS } from "../../hks/env/host_env.ts";
+export { formatG, formatLuaNumber } from "../../hks/env/printf.ts";
+export { globalReads } from "../../hks/env/script_shape.ts";
+export * from "../../hks/source/script_source.ts";
 export type {
   ActivityPlayer,
-  LuaEncounterHostOptions,
-  LuaHostDebugSnapshot,
-} from "../../host/encounter_host.ts";
+  EncounterScriptHostOptions,
+  HostDebugSnapshot,
+} from "../../host/activity/encounter_host.ts";
 export {
   childScriptsFor,
-  LuaEncounterHost,
+  EncounterScriptHost,
   loadScriptGraph,
-} from "../../host/encounter_host.ts";
-export * from "../../host/item_key.ts";
-export * from "../../host/items.ts";
+} from "../../host/activity/encounter_host.ts";
+export {
+  missionNamespaces,
+  resolveInstanceField,
+  scriptNamespaces,
+} from "../../host/bound/bindings.ts";
 export {
   type LibraryNativeOptions,
-  LuaSchemaHandle,
-} from "../../host/library_natives.ts";
-export * from "../../host/name_hash.ts";
+  SchemaHandle,
+} from "../../host/natives/library_natives.ts";
 export type {
+  HostClock,
   KillAssist,
   KillFilterDetails,
   KillParty,
-  LuaHostClock,
-} from "../../host/natives.ts";
-export * from "../../host/tag_types.ts";
+} from "../../host/natives/natives.ts";
+export * from "../../host/state/items.ts";
+export type { ActivityOptionSet } from "../../host/tags/activity_options.ts";
+export * from "../../host/tags/item_key.ts";
+export * from "../../host/tags/name_hash.ts";
+export * from "../../host/tags/tag_types.ts";
 export * from "./v41375_14_07_03_1501_live/host/runtime.ts";
 export { ScriptRuntime as default } from "./v41375_14_07_03_1501_live/host/runtime.ts";
 export * from "./v41375_14_07_03_1501_live/host/tag_types.ts";

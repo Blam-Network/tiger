@@ -3,16 +3,16 @@ import {
   LuaHostFunction,
   LuaTable,
   type LuaValue,
-} from "../../src/hks/values.ts";
-import type { BoundRow } from "../../src/host/bindings.ts";
+} from "../../src/hks/vm/values.ts";
+import type { BoundRow } from "../../src/host/bound/bindings.ts";
 import {
+  CommandScriptBuilder,
   commandScriptBuilderOf,
   commandScriptIndex,
   controlPointAtoms,
-  LuaCommandScriptBuilder,
-} from "../../src/host/command_script.ts";
-import type { CommandScriptAtom } from "../../src/host/items.ts";
-import { fnv1 } from "../../src/host/name_hash.ts";
+} from "../../src/host/natives/command_script.ts";
+import type { CommandScriptAtom } from "../../src/host/state/items.ts";
+import { fnv1 } from "../../src/host/tags/name_hash.ts";
 import { ActivityBundleItemType } from "../../src/versions/destiny1/v41375_14_07_03_1501_live/host/tag_types.ts";
 
 const path: BoundRow = {
@@ -38,7 +38,7 @@ function builder() {
     rows.set(table, row);
     return table;
   };
-  const cs = new LuaCommandScriptBuilder(
+  const cs = new CommandScriptBuilder(
     ActivityBundleItemType,
     "enc.__cs",
     (value) => rows.get(value),

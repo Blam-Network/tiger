@@ -1,0 +1,39 @@
+# es\mars\act_mars_m07_lowergarden\act_mars_m07_lowergarden_mission2.esp
+#
+# Mission 2, the valley: reach it, clear the Vex at the gate, then step
+# through the gate. The Vex at the gate are the valley's ambient ones and
+# never show on the wire, so the gate's volume ends the kill objective
+# (one run: it took thirty seconds). The gate teleports the player to the
+# catacombs five seconds after they stand in it.
+
+trigger_volume_objective sp_objective_goto
+generic_objective sp_objective_kill
+c_trigger_volume_slot_host tv_gate
+c_player_trigger_sensor_host pt_gate bind(tv_gate)
+c_nav_point_host np_gate
+trigger_volume_objective sp_objective_gate
+c_sequence_host seq_music_garden
+c_sequence_host seq_dialog_valley_gate
+c_sequence_host seq_dialog_valley_teleport
+
+thread init: pass
+
+thread complete: pass
+
+thread main:
+    sp_objective_goto.objective_begin()
+    sleep_until(sp_objective_goto.is_complete())
+    sp_objective_goto.objective_end_silent()
+    seq_music_garden.start()
+    seq_music_garden.set_switch_mask(1)
+    sp_objective_kill.objective_begin(np_gate)
+    sleep_until_timeout(pt_gate.is_triggered(), 30)
+    sp_objective_kill.objective_end_silent()
+    seq_dialog_valley_teleport.start()
+    sp_objective_gate.objective_begin()
+    sleep_until(sp_objective_gate.is_complete())
+    sleep(5)
+    seq_dialog_valley_gate.stop()
+    seq_dialog_valley_teleport.stop()
+    seq_music_garden.set_switch_mask(3)
+    sp_objective_gate.objective_end_silent()

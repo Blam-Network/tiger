@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { compile } from "../../src/hks/compile.ts";
-import type { ScriptSource } from "../../src/hks/script_source.ts";
-import type { ItemChange } from "../../src/host/items.ts";
-import { fnv1 } from "../../src/host/name_hash.ts";
+import { compile } from "../../src/hks/compiler/compile.ts";
+import type { ScriptSource } from "../../src/hks/source/script_source.ts";
+import type { ItemChange } from "../../src/host/state/items.ts";
+import { fnv1 } from "../../src/host/tags/name_hash.ts";
 import { ScriptRuntime } from "../../src/versions/destiny1/v41375_14_07_03_1501_live/host/runtime.ts";
 import { ActivityBundleItemType } from "../../src/versions/destiny1/v41375_14_07_03_1501_live/host/tag_types.ts";
 

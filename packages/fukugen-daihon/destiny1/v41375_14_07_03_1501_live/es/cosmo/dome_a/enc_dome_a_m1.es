@@ -16,7 +16,7 @@ c_player_trigger_sensor_host pt_spawn_hive_intro02
 c_player_trigger_sensor_host pt_spawn_hive_intro02_force
 c_player_trigger_sensor_host pt_thrall_unfreeze
 c_sequence_host seq_hive_wave_announce
-interactable_placement obj_placement_m1_o1b
+interactable_placement obj_placement_m1_o1b bind("0x3EA60D3D")
 c_squad_sensor_host sq_hive_scare02a
 c_squad_sensor_host sq_hive_scare02b
 c_squad_sensor_host sq_hive_scare02c
@@ -34,9 +34,6 @@ c_squad_sensor_host sq_hive_upper_rush01
 c_squad_sensor_host sq_hive_upper_rush02
 
 startup thread sc_dome_a:
-    obj_placement_m1_o1b._object_filter.add_players_with_activity_flag(obj_placement_m1_o1b._object.import_identifier())
-    obj_placement_m1_o1b._object.set_enabled_player_filter(obj_placement_m1_o1b._object_filter)
-    obj_placement_m1_o1b._object.create()
     for sq in [sq_hive_scare02a, sq_hive_scare02b, sq_hive_scare02c, sq_hive_scare02d, sq_hive_basement_thrall01, sq_hive_basement_troopers01, sq_hive_basement_troopers02, sq_hive_upper_front01, sq_hive_upper_front02, sq_hive_upper_front03, sq_hive_upper_back01, sq_hive_upper_back02, sq_hive_upper_wizard01, sq_hive_upper_rush01, sq_hive_upper_rush02]:
         sq.set_objective(obj_hive_dome_a01)
     sc_scan.wake()

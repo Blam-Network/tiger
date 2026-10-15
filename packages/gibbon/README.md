@@ -42,6 +42,8 @@ If you know Halo's tags, Destiny's (the Tiger engine) will look familiar in shap
 |---|---|
 | `@blamnetwork/gibbon/destiny1/v36735_13_12_02_1953_alpha` | 36735.13.12.02.1953.alpha, 2013-12-02 (Xbox 360) |
 | `@blamnetwork/gibbon/destiny1/v41375_14_07_03_1501_live` | 41375.14.07.03.1501.live, 2014-07-03 (Xbox 360) |
+| `@blamnetwork/gibbon/destiny1/v52553_16_09_28_1551_evil` | 52553.16.09.28.1551.evil, 2016-09-28 (PS4 patch 01.29) |
+| `@blamnetwork/gibbon/destiny1/v56578_17_04_12_1251_evil` | 56578.17.04.12.1251.evil, 2017-04-12 (PS4 patch 1.33; 01.29's reader) |
 
 Each build is its own folder with the same layout. Tag class hashes are indices into the build's type table, so they differ between builds even where the layout doesn't; the structs carry the hashes they were read with.
 

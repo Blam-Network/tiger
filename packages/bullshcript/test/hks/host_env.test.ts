@@ -1,4 +1,10 @@
 import { describe, expect, it } from "vitest";
+import type {
+  HksBytecode,
+  HksInstruction,
+  Method,
+} from "../../src/hks/bytecode/proto.ts";
+import { LUA_TYPE_NAMES } from "../../src/hks/bytecode/reader.ts";
 import {
   applyUpvalueProvider,
   LuaHostEnvironment,
@@ -6,23 +12,17 @@ import {
   missingGlobals,
   OBSERVED_GLOBALS,
   runMainChunk,
-} from "../../src/hks/host_env.ts";
-import type {
-  LuaChunk,
-  LuaInstruction,
-  LuaPrototype,
-} from "../../src/hks/types.ts";
-import { LUA_TYPE_NAMES } from "../../src/hks/undump.ts";
+} from "../../src/hks/env/host_env.ts";
+import { LuaRuntimeError, LuaState } from "../../src/hks/vm/interpreter.ts";
 import {
   LuaClosure,
   LuaHostFunction,
   LuaTable,
   LuaUpvalue,
   type LuaValue,
-} from "../../src/hks/values.ts";
-import { LuaRuntimeError, LuaVm } from "../../src/hks/vm.ts";
+} from "../../src/hks/vm/values.ts";
 
-function prototype(overrides: Partial<LuaPrototype> = {}): LuaPrototype {
+function prototype(overrides: Partial<Method> = {}): Method {
   return {
     offset: 0,
     endOffset: 0,
@@ -180,7 +180,7 @@ describe("LuaHostObject", () => {
 
 describe("runMainChunk", () => {
   it("returns whatever the outermost prototype returns", () => {
-    const vm = new LuaVm();
+    const vm = new LuaState();
     const root = prototype({
       isVararg: 2,
       code: [
@@ -217,8 +217,8 @@ describe("applyUpvalueProvider", () => {
     upvalueNames: string[],
     upvalues: LuaUpvalue[],
     provided: [string, LuaValue][]
-  ): { module: LuaTable; vm: LuaVm } {
-    const vm = new LuaVm();
+  ): { module: LuaTable; vm: LuaState } {
+    const vm = new LuaState();
     const module = new LuaTable();
     const method = new LuaClosure(
       prototype({ nups: upvalueNames.length, upvalues: upvalueNames }),
@@ -296,7 +296,7 @@ describe("applyUpvalueProvider", () => {
   });
 
   it("does nothing when a module has no provider", () => {
-    expect(applyUpvalueProvider(new LuaVm(), new LuaTable())).toEqual({
+    expect(applyUpvalueProvider(new LuaState(), new LuaTable())).toEqual({
       applied: [],
       unused: [],
     });
@@ -305,19 +305,19 @@ describe("applyUpvalueProvider", () => {
   it("refuses a provider that is not a Lua closure", () => {
     const module = new LuaTable();
     module.set("upvalue_provider", new LuaHostFunction("p", () => []));
-    expect(() => applyUpvalueProvider(new LuaVm(), module)).toThrow(
+    expect(() => applyUpvalueProvider(new LuaState(), module)).toThrow(
       LuaRuntimeError
     );
   });
 });
 
-function word(opcode: number, a = 0, bx = 0): LuaInstruction {
+function word(opcode: number, a = 0, bx = 0): HksInstruction {
   return { opcode, a, b: 0, c: 0, bx, sbx: 0, raw: 0 };
 }
 
 describe("missingGlobals", () => {
   // GETGLOBAL (91) owns one trailing cache word (76); RETURN is 9.
-  const chunk = (names: string[]): LuaChunk => ({
+  const chunk = (names: string[]): HksBytecode => ({
     tagId: "00000000",
     totalBytes: 0,
     chunkBytes: 0,

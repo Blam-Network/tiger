@@ -15,14 +15,17 @@
 # The chamber's Hive are enc_strength_m3's (es\moon\strength); the arena's
 # are the Lower Citadel's ambient. unknown_e2388efa holds the music and
 # Ghost lines. The Grave's console is placed here so it is in the world from
-# the start; it only works for players holding the scan objective's flag.
+# the start; it only works for players holding the scan objective's flag
+# (pf_obj_strength_interact, mission 4, binds the same identifier).
 
-interactable_placement pf_obj_strength_interact_place  # archetype not authored on TU0
+act_moon_m3_lowercitadel_mission1 phase_wisdom
+act_moon_m3_lowercitadel_mission2 phase_lowercitadel
+act_moon_m3_lowercitadel_mission3 phase_strength
+act_moon_m3_lowercitadel_mission4 phase_strength_b
+act_moon_m3_lowercitadel_mission5 phase_strength_complete
+
+interactable_placement pf_obj_strength_interact_place bind("0x9D0AD7E7")
 
 startup thread ss_moon_m3_lowercitadel:
     print("script startup")
     c_lifetime_script_utilities.get_lifetime_sensor().set_state(e_activity_lifetime_state.pregame)
-    console = pf_obj_strength_interact_place._object
-    pf_obj_strength_interact_place._object_filter.add_players_with_activity_flag(console.import_identifier())
-    console.set_enabled_player_filter(pf_obj_strength_interact_place._object_filter)
-    console.create()

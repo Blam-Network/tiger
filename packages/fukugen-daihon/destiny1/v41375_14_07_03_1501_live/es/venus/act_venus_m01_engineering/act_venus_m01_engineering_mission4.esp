@@ -4,7 +4,7 @@
 # clouds. The kill objective stays up through the next mission's waves; its own
 # thread clears it once the entrance is quiet.
 
-countdown_objective pf_vex_block
+countdown_objective pf_vex_block bind("vex_block")
 c_interactable_incident_listener il_vex_block
 generic_objective pf_kill_vex
 c_trigger_volume_slot_host tv_kill_vex

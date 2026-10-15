@@ -1,18 +1,18 @@
 import { describe, expect, it } from "vitest";
-import { encodeLuaChunk } from "../../src/hks/encode.ts";
-import type { LuaConstant } from "../../src/hks/types.ts";
-import { LuaUndumpError } from "../../src/hks/types.ts";
+import type { LuaConstant } from "../../src/hks/bytecode/proto.ts";
+import { BytecodeError } from "../../src/hks/bytecode/proto.ts";
 import {
-  ByteReader,
+  BytecodeReader,
   decodeInstruction,
   encodeInstruction,
   LUA_TYPE_NAMES,
-  parseConstantPool,
   parseHeader,
-  parseLuaChunk,
   parseTypeTable,
-  walkPrototypes,
-} from "../../src/hks/undump.ts";
+  readBytecode,
+  readConstants,
+  walkProtos,
+} from "../../src/hks/bytecode/reader.ts";
+import { dumpBytecode } from "../../src/hks/bytecode/writer.ts";
 
 const HEADER = [
   0x1b, 0x4c, 0x75, 0x61, 0x51, 0x0e, 0x00, 0x04, 0x04, 0x04, 0x04, 0x00, 0x07,
@@ -151,7 +151,7 @@ function buildChunk(
 
 describe("parseHeader", () => {
   it("reads the measured 12-byte header", () => {
-    const reader = new ByteReader(Uint8Array.from(HEADER));
+    const reader = new BytecodeReader(Uint8Array.from(HEADER));
     const header = parseHeader(reader);
     expect(header).toEqual({
       luaVersion: 0x51,
@@ -169,19 +169,19 @@ describe("parseHeader", () => {
   it("throws naming the offset of the first mismatched byte", () => {
     const bad = [...HEADER];
     bad[5] = 0x00; // vanilla format byte instead of Bungie's 0x0e
-    const reader = new ByteReader(Uint8Array.from(bad));
+    const reader = new BytecodeReader(Uint8Array.from(bad));
     expect.assertions(1);
     try {
       parseHeader(reader);
     } catch (error) {
-      expect((error as LuaUndumpError).offset).toBe(5);
+      expect((error as BytecodeError).offset).toBe(5);
     }
   });
 });
 
 describe("parseTypeTable", () => {
   it("reads the 13-entry table with its leading count", () => {
-    const reader = new ByteReader(Uint8Array.from(typeTable()));
+    const reader = new BytecodeReader(Uint8Array.from(typeTable()));
     const table = parseTypeTable(reader);
     expect(table.names.size).toBe(13);
     expect(table.names.get(4)).toBe("TSTRING");
@@ -189,12 +189,12 @@ describe("parseTypeTable", () => {
   });
 
   it("rejects an implausible entry count", () => {
-    const reader = new ByteReader(Uint8Array.from(u32(9999)));
-    expect(() => parseTypeTable(reader)).toThrow(LuaUndumpError);
+    const reader = new BytecodeReader(Uint8Array.from(u32(9999)));
+    expect(() => parseTypeTable(reader)).toThrow(BytecodeError);
   });
 });
 
-describe("parseConstantPool", () => {
+describe("readConstants", () => {
   it("round-trips nil, boolean, number, and string constants", () => {
     const constants: LuaConstant[] = [
       { kind: "nil" },
@@ -208,8 +208,8 @@ describe("parseConstantPool", () => {
       ...u32(constants.length),
       ...constants.flatMap((c) => encodeConstant(c)),
     ];
-    const reader = new ByteReader(Uint8Array.from(bytes));
-    expect(parseConstantPool(reader)).toEqual(constants);
+    const reader = new BytecodeReader(Uint8Array.from(bytes));
+    expect(readConstants(reader)).toEqual(constants);
     expect(reader.position).toBe(bytes.length);
   });
 
@@ -222,15 +222,15 @@ describe("parseConstantPool", () => {
       ...u32(constants.length),
       ...constants.flatMap((c) => encodeConstant(c)),
     ];
-    const reader = new ByteReader(Uint8Array.from(bytes));
-    expect(parseConstantPool(reader)).toEqual(constants);
+    const reader = new BytecodeReader(Uint8Array.from(bytes));
+    expect(readConstants(reader)).toEqual(constants);
     expect(reader.position).toBe(bytes.length);
   });
 
   it("throws on a type that is not a legal constant", () => {
     const bytes = [...u32(1), 9]; // TIFUNCTION
-    const reader = new ByteReader(Uint8Array.from(bytes));
-    expect(() => parseConstantPool(reader)).toThrow(
+    const reader = new BytecodeReader(Uint8Array.from(bytes));
+    expect(() => readConstants(reader)).toThrow(
       /TIFUNCTION.*not a legal constant type/
     );
   });
@@ -264,7 +264,7 @@ describe("decodeInstruction", () => {
   });
 });
 
-describe("parseLuaChunk", () => {
+describe("readBytecode", () => {
   it("reads a prototype's scalar header, code, constants and debug block", () => {
     const chunk = buildChunk((at) =>
       prototype({
@@ -277,7 +277,7 @@ describe("parseLuaChunk", () => {
         locals: [{ name: "_M", startPc: 1, endPc: 2 }],
       })
     );
-    const parsed = parseLuaChunk(chunk, "TEST0001");
+    const parsed = readBytecode(chunk, "TEST0001");
     expect(parsed.chunkBytes).toBe(chunk.length);
     expect(parsed.root.source).toBe("@bs\\weapons\\weapon_types.bs");
     expect(parsed.root.name).toBe("(main chunk)");
@@ -306,9 +306,9 @@ describe("parseLuaChunk", () => {
         ],
       })
     );
-    const parsed = parseLuaChunk(chunk, "TEST0002");
+    const parsed = readBytecode(chunk, "TEST0002");
     expect(parsed.chunkBytes).toBe(chunk.length);
-    expect([...walkPrototypes(parsed.root)]).toHaveLength(2);
+    expect([...walkProtos(parsed.root)]).toHaveLength(2);
     const child = parsed.root.protos[0];
     expect(child.upvalues).toEqual(["print"]);
     expect(child.nups).toBe(1);
@@ -331,9 +331,9 @@ describe("parseLuaChunk", () => {
         ],
       })
     );
-    const parsed = parseLuaChunk(chunk, "TEST0003");
+    const parsed = readBytecode(chunk, "TEST0003");
     expect(parsed.structures).toEqual([]);
-    expect(encodeLuaChunk(parsed)).toEqual(chunk);
+    expect(dumpBytecode(parsed)).toEqual(chunk);
   });
 
   it("reads the structures section and re-encodes it", () => {
@@ -362,7 +362,7 @@ describe("parseLuaChunk", () => {
       (at) => prototype({ at, code: [0x12_02_00_00] }),
       section
     );
-    const parsed = parseLuaChunk(chunk, "TEST0005");
+    const parsed = readBytecode(chunk, "TEST0005");
     expect(parsed.chunkBytes).toBe(chunk.length);
     expect(parsed.structures).toEqual([
       {
@@ -376,7 +376,7 @@ describe("parseLuaChunk", () => {
         ],
       },
     ]);
-    expect(encodeLuaChunk(parsed)).toEqual(chunk);
+    expect(dumpBytecode(parsed)).toEqual(chunk);
   });
 
   it("rejects a structures section of another version", () => {
@@ -384,7 +384,7 @@ describe("parseLuaChunk", () => {
       (at) => prototype({ at, code: [0x12_02_00_00] }),
       [...u32(2), ...u32(0)]
     );
-    expect(() => parseLuaChunk(chunk, "TEST0006")).toThrow(
+    expect(() => readBytecode(chunk, "TEST0006")).toThrow(
       /Header mismatch when loading prototype declarations/
     );
   });
@@ -394,7 +394,7 @@ describe("parseLuaChunk", () => {
       (at) => prototype({ at, code: [0x12_02_00_00] }),
       []
     );
-    expect(() => parseLuaChunk(chunk, "TEST0007")).toThrow(LuaUndumpError);
+    expect(() => readBytecode(chunk, "TEST0007")).toThrow(BytecodeError);
   });
 
   it("throws with a byte offset when sizelineinfo contradicts sizecode", () => {
@@ -407,10 +407,10 @@ describe("parseLuaChunk", () => {
     bad[marker + 4 + 4 + 4 + 3] = 9; // sizelineinfo low byte
     expect.assertions(2);
     try {
-      parseLuaChunk(bad, "TEST0004");
+      readBytecode(bad, "TEST0004");
     } catch (error) {
-      expect(error).toBeInstanceOf(LuaUndumpError);
-      expect((error as LuaUndumpError).offset).toBeGreaterThan(0);
+      expect(error).toBeInstanceOf(BytecodeError);
+      expect((error as BytecodeError).offset).toBeGreaterThan(0);
     }
   });
 });

@@ -1,0 +1,51 @@
+# es\utility_scripts\venus_raid_pillar_switch.esu
+#
+# A switch a player charges by standing in its volume. Ported from the
+# alpha's: TU0's rows are one altar object in place of the alpha's zone and
+# pillar, and the charge is counted here rather than on an objective timer
+# (TU0 has no timer row). The altar's device shows the state: 0.2 armed,
+# 0.1 charging, 0 done. As in the alpha, charge drains while nobody stands
+# in it. bind(seconds) sets the charge time.
+
+c_object_sensor_host o_altar
+c_objective_sensor_host _ai_objective
+c_trigger_volume_slot_host _volume
+c_player_monitor_sensor_host pm_volume bind(_volume)
+int total_time
+int charge
+bool succeed
+bool bypass
+
+def import_only_bind(_time):
+    total_time = _time
+    return true
+
+def create():
+    o_altar.create()
+
+def activate():
+    print("ACTIVATING PILLAR")
+    o_altar.set_device_position(0.2)
+    bypass = false
+    main.restart()
+
+def de_activate():
+    print("DEACTIVATING PILLAR")
+    o_altar.set_device_position(0)
+    bypass = true
+
+thread main:
+    succeed = false
+    charge = 0
+    sleep_until(pm_volume.get_count() > 0)
+    o_altar.set_device_position(0.1)
+    while bypass == false and succeed == false:
+        sleep(1)
+        if pm_volume.get_count() > 0:
+            charge = charge + 1
+        elif charge > 0:
+            charge = charge - 1
+            print("LOSING PROGRESS")
+        if charge >= total_time:
+            succeed = true
+            print("RAID PILLAR COMPLETE")

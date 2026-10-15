@@ -7,7 +7,7 @@
 c_object_sensor_host o_hangar_gating_exit
 c_object_sensor_host o_ship
 c_object_sensor_host o_ship_wires
-interactable_placement obj_placement_m0_m05  # archetype not authored on TU0
+interactable_placement obj_placement_m0_m05
 c_squad_sensor_host sq_m0_fallen_init
 c_objective_sensor_host obj_m0_hangar_fallen  # true name unknown
 c_squad_sensor_host sq_m0_fallen_init_b
@@ -26,7 +26,6 @@ startup thread sc_hangar_main:
     o_hangar_gating_exit.create()
     o_ship.create()
     o_ship_wires.create()
-    obj_placement_m0_m05._object.create()
     sq_m0_fallen_init.set_objective(obj_m0_hangar_fallen)
     sq_m0_fallen_init_b.set_objective(obj_m0_hangar_fallen)
     sq_m0_fallen_gating.set_objective(obj_m0_hangar_fallen)

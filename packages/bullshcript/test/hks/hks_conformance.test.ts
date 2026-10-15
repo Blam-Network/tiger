@@ -1,14 +1,19 @@
 import { describe, expect, it } from "vitest";
-import { compileLua, compileLuaChunk } from "../../src/hks/compile.ts";
-import { encodeLuaChunk } from "../../src/hks/encode.ts";
-import { LuaHostEnvironment } from "../../src/hks/host_env.ts";
-import { formatG } from "../../src/hks/printf.ts";
 import type {
-  LuaChunk,
+  HksBytecode,
   LuaConstant,
-  LuaStructPrototype,
-} from "../../src/hks/types.ts";
-import { parseLuaChunk } from "../../src/hks/undump.ts";
+  StructProto,
+} from "../../src/hks/bytecode/proto.ts";
+import { readBytecode } from "../../src/hks/bytecode/reader.ts";
+import { dumpBytecode } from "../../src/hks/bytecode/writer.ts";
+import { compileLua, compileLuaChunk } from "../../src/hks/compiler/compile.ts";
+import { LuaHostEnvironment } from "../../src/hks/env/host_env.ts";
+import { formatG } from "../../src/hks/env/printf.ts";
+import {
+  LuaState,
+  type LuaThread,
+  YIELD_ACROSS_C_BOUNDARY,
+} from "../../src/hks/vm/interpreter.ts";
 import {
   LuaClosure,
   type LuaFunction,
@@ -17,14 +22,9 @@ import {
   type LuaValue,
   luaToString,
   typeName,
-} from "../../src/hks/values.ts";
-import {
-  type LuaThread,
-  LuaVm,
-  YIELD_ACROSS_C_BOUNDARY,
-} from "../../src/hks/vm.ts";
+} from "../../src/hks/vm/values.ts";
 
-// Conformance of vm.ts with the Havok Script VM: float32 numbers, "%0.8g",
+// Conformance of interpreter.ts with the Havok Script VM: float32 numbers, "%0.8g",
 // strtod coercion, error texts, the yield rule, structures and extra constants.
 
 const f32 = Math.fround;
@@ -34,7 +34,7 @@ function harness() {
   const environment = new LuaHostEnvironment({
     log: (message) => prints.push(message),
   });
-  const vm = new LuaVm({
+  const vm = new LuaState({
     globals: environment.globals,
     stringMetatable: environment.stringMetatable,
   });
@@ -203,7 +203,7 @@ describe("arithmetic on non-numbers", () => {
   });
 
   it("is stock hks without that metatable", () => {
-    const vm = new LuaVm();
+    const vm = new LuaState();
     const chunk = compileLuaChunk('return "Wave: " + 3');
     expect(() => vm.call(vm.loadChunk(chunk))).toThrow(
       "operator + is not supported for string + number"
@@ -265,7 +265,7 @@ describe("error texts", () => {
 });
 
 describe("yield rules", () => {
-  function thread(source: string): { thread: LuaThread; vm: LuaVm } {
+  function thread(source: string): { thread: LuaThread; vm: LuaState } {
     const { run, vm } = harness();
     const [body] = run(source);
     return { thread: vm.createThread(body as LuaFunction), vm };
@@ -288,7 +288,7 @@ describe("yield rules", () => {
     expect(t.resume()).toEqual({ status: "returned", values: [1] });
   });
 
-  it("refuses a yield inside a host-driven call (LuaVm.call)", () => {
+  it("refuses a yield inside a host-driven call (LuaState.call)", () => {
     const { run, vm } = harness();
     const [fn] = run("return function() __coro_yield() end");
     expect(() => vm.call(fn as LuaFunction)).toThrow(YIELD_ACROSS_C_BOUNDARY);
@@ -355,13 +355,13 @@ describe("chunk format", () => {
   it("ends every chunk with the empty structures section", () => {
     const bytes = compileLua("return 1");
     expect([...bytes.subarray(-8)]).toEqual([0, 0, 0, 1, 0, 0, 0, 0]);
-    const chunk = parseLuaChunk(bytes, "T");
+    const chunk = readBytecode(bytes, "T");
     expect(chunk.chunkBytes).toBe(bytes.length);
     expect(chunk.structures).toEqual([]);
   });
 
   it("round-trips a structure prototype", () => {
-    const vec3: LuaStructPrototype = {
+    const vec3: StructProto = {
       name: "vec3",
       id: 3,
       hasMeta: 0,
@@ -374,26 +374,26 @@ describe("chunk format", () => {
         position,
       })),
     };
-    const chunk: LuaChunk = {
+    const chunk: HksBytecode = {
       ...compileLuaChunk("return 1"),
       structures: [vec3],
     };
-    const bytes = encodeLuaChunk(chunk);
-    const again = parseLuaChunk(bytes, "T");
+    const bytes = dumpBytecode(chunk);
+    const again = readBytecode(bytes, "T");
     expect(again.structures).toEqual([vec3]);
     expect(again.chunkBytes).toBe(bytes.length);
-    expect(encodeLuaChunk(again)).toEqual(bytes);
+    expect(dumpBytecode(again)).toEqual(bytes);
   });
 
   // `return 1` compiled, with its one constant swapped
-  function withConstant(source: string, constant: LuaConstant): LuaChunk {
+  function withConstant(source: string, constant: LuaConstant): HksBytecode {
     const chunk = compileLuaChunk(source);
     const constants = [constant, ...chunk.root.constants.slice(1)];
     return { ...chunk, root: { ...chunk.root, constants } };
   }
 
   it("loads lightuserdata and ui64 constants as values of their own types", () => {
-    const vm = new LuaVm();
+    const vm = new LuaState();
     const [pointer] = vm.call(
       vm.loadChunk(
         withConstant("return 7", {
@@ -414,13 +414,13 @@ describe("chunk format", () => {
     expect(wide).toBeInstanceOf(LuaUi64);
     expect(typeName(wide)).toBe("ui64");
     expect(luaToString(wide)).toBe("0x0123456789abcdef");
-    expect(parseLuaChunk(encodeLuaChunk(big), "T").root.constants[0]).toEqual(
+    expect(readBytecode(dumpBytecode(big), "T").root.constants[0]).toEqual(
       big.root.constants[0]
     );
   });
 
   it("compares them by value and refuses arithmetic on them", () => {
-    const vm = new LuaVm();
+    const vm = new LuaState();
     expect(
       vm.call(
         vm.loadChunk(

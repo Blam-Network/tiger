@@ -1,0 +1,29 @@
+# es\moon\act_moon_m1_launchtubes\act_moon_m1_launchtubes_mission3.esp
+#
+# Mission 3, the moonbase terminal. The Ghost talks the player through the
+# base while the objective is up. One run, and no interaction on the wire:
+# the objective cleared 77 s after it came up, as the Ghost's lines stopped,
+# so this waits that long.
+
+interactable_objective pf_obj_moonbase_m1_terminal bind("0x8362596D")
+c_sequence_host seq_d_o1_s14
+c_sequence_host seq_d_o2_s02
+c_sequence_host seq_d_o2_s04
+c_sequence_host seq_d_o2_s05
+
+thread init: pass
+
+thread complete: pass
+
+thread main:
+    seq_d_o1_s14.start()
+    seq_d_o2_s02.start()
+    seq_d_o2_s04.start()
+    pf_obj_moonbase_m1_terminal.objective_begin()
+    sleep_until_timeout(pf_obj_moonbase_m1_terminal.is_complete(), 75)
+    seq_d_o2_s02.stop()
+    seq_d_o2_s04.stop()
+    sleep(1)
+    seq_d_o2_s05.start()
+    sleep(2)
+    pf_obj_moonbase_m1_terminal.objective_end_silent()

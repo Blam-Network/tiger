@@ -1,0 +1,16 @@
+# es\moon\act_moon_m5_strength\act_moon_m5_strength_mission2.esp
+#
+# Mission 2, on to the launch tubes. Clears when a player reaches the launch
+# tubes bubble.
+
+c_location_sensor_host launchtubes
+trigger_bubble_objective pf_objective_goto bind(launchtubes)
+
+thread init: pass
+
+thread complete: pass
+
+thread main:
+    pf_objective_goto.objective_begin()
+    sleep_until(pf_objective_goto.is_complete())
+    pf_objective_goto.objective_end_silent()

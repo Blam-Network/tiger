@@ -7,15 +7,15 @@ import { dirname, join } from "node:path";
 import {
   decompile,
   directoryScriptSource,
+  type HksBytecode,
   type LiftedDecl,
   type LiftedFile,
   type LiftedTypeDecl,
   type LiftScriptInput,
-  type LuaChunk,
-  type LuaPrototype,
   liftScript,
   loadScriptChunk,
-  parseLuaChunk,
+  type Method,
+  readBytecode,
   readLuaModule,
   renderLiftedFile,
   typeDeclLines,
@@ -55,13 +55,13 @@ const schemas = readAlphaSchemas(option("--packages") ?? packagesDir());
 // ---- the chunks, by decl ---------------------------------------------------
 
 interface DeclChunks {
-  readonly chunk: LuaChunk;
+  readonly chunk: HksBytecode;
   readonly path: string;
   readonly script: AlphaScriptTag;
   readonly tags: string[];
 }
 
-const chunks = new Map<string, LuaChunk>();
+const chunks = new Map<string, HksBytecode>();
 // tags with no chunk in them, by the module name of the decl they name
 const stubTags = new Map<string, string[]>();
 for (const tag of source.tags()) {
@@ -402,8 +402,8 @@ if (lineDiff !== undefined) {
   );
   const decl = result.decls.find((d) => d.modulePath === entry.script.declName);
   const lines = (sources.get(entry.path) ?? "").split("\n");
-  const compiled = parseLuaChunk(decl?.chunk as Uint8Array, entry.tags[0]);
-  const walk = (a: LuaPrototype, b: LuaPrototype, p: string) => {
+  const compiled = readBytecode(decl?.chunk as Uint8Array, entry.tags[0]);
+  const walk = (a: Method, b: Method, p: string) => {
     if (
       a.lineDefined !== b.lineDefined ||
       a.lastLineDefined !== b.lastLineDefined

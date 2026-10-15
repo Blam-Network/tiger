@@ -3,10 +3,10 @@
 import {
   compileBungieScript,
   directoryScriptSource,
-  type LuaChunk,
+  type HksBytecode,
   loadScriptChunk,
   loadScriptFolder,
-  parseLuaChunk,
+  readBytecode,
 } from "@blamnetwork/bullshcript/destiny1/v41375_14_07_03_1501_live";
 import { describe, expect, it } from "vitest";
 import { runGates } from "../tools/fukugen-daihon/alpha_lift/checks.ts";
@@ -117,7 +117,7 @@ const KNOWN_LINE_MISSES = new Set(["821B8023", "8228A009"]);
 describe.skipIf(!chunksDir)("alpha script sources against the chunks", () => {
   // a skipped suite still collects, so nothing reads the dumps until it runs
   const source = chunksDir ? directoryScriptSource(chunksDir) : undefined;
-  const originals = new Map<string, LuaChunk>();
+  const originals = new Map<string, HksBytecode>();
   for (const tag of source?.tags() ?? []) {
     const chunk = source && loadScriptChunk(source, tag);
     if (chunk) {
@@ -155,7 +155,7 @@ describe.skipIf(!chunksDir)("alpha script sources against the chunks", () => {
     for (const [tag, original] of originals) {
       const decl = compiledFor(tag);
       expect(decl?.chunk, tag).toBeDefined();
-      const actual = parseLuaChunk(decl?.chunk as Uint8Array, tag);
+      const actual = readBytecode(decl?.chunk as Uint8Array, tag);
       expect(diffChunks(original, actual), `${tag} ${decl?.name}`).toEqual([]);
       matched++;
     }
@@ -166,7 +166,7 @@ describe.skipIf(!chunksDir)("alpha script sources against the chunks", () => {
     const misses: string[] = [];
     for (const [tag, original] of originals) {
       const decl = compiledFor(tag);
-      const actual = parseLuaChunk(decl?.chunk as Uint8Array, tag);
+      const actual = readBytecode(decl?.chunk as Uint8Array, tag);
       if (diffChunks(original, actual, { lines: true }).length > 0) {
         misses.push(tag);
       }
@@ -186,7 +186,7 @@ describe.skipIf(!(chunksDir && packagesDir))(
     it("compiles every decl to the same schema as its tags", () => {
       const schemas = readAlphaSchemas(packagesDir ?? "");
       const source = directoryScriptSource(chunksDir ?? "");
-      const chunks = new Map<string, LuaChunk>();
+      const chunks = new Map<string, HksBytecode>();
       for (const tag of source.tags()) {
         const chunk = loadScriptChunk(source, tag);
         if (chunk) {

@@ -1,0 +1,69 @@
+# es\utility_scripts\vex_warp_gate.esu
+#
+# A Vex warp gate: a placed squad whose gate actor drops reinforcements.
+# Ported from the alpha's. The gate powers up through its channels, drops
+# a squad on request (drop_begin), and can keep reinforcing while it stands.
+
+c_squad_sensor_host _squad
+c_squad_member_sensor_host _squad__gate  # true name unknown
+bool drop_cue
+
+startup thread start_up_warpgate:
+    print("**** Shield State - 1 -- ON")
+
+def activate():
+    main.restart()
+
+def power_up():
+    init.restart()
+
+def drop_begin(sq):
+    if _squad.alive_count() > 0:
+        print("**** DROPPING SQUAD")
+        _squad__gate.set_channel_scalar("activate", 1)
+        sleep(2)
+        print("**** Shield State - 0 -- OFF")
+        _squad__gate.drop_squad(sq); sleep_until(not _squad__gate.is_dropping())
+
+def drop_end():
+    if _squad.alive_count() > 0:
+        print("**** Shield State - 1 -- ON")
+        sleep(2)
+        print("**** DEACTIVATING")
+        _squad__gate.set_channel_scalar("activate", 0)
+
+def deactivate():
+    drop_cue = false
+    print("**** Shield State - 1 -- ON")
+    _squad__gate.set_channel_scalar("power_state", 0.4)
+    print("**** Power State - 4 -- TURNING OFF")
+    sleep(5)
+    _squad__gate.set_channel_scalar("power_state", 0)
+
+thread main:
+    if _squad.alive_count() > 0:
+        _squad__gate.set_channel_scalar("power_state", 0.2)
+        print("**** Power State - 2 -- ON IDLE")
+        drop_cue = true
+
+thread init:
+    if _squad.alive_count() > 0:
+        _squad__gate.set_channel_scalar("power_state", 0.1)
+        print("**** Power State - 1 -- TURNING ON")
+        sleep(2)
+    if _squad.alive_count() > 0:
+        _squad__gate.set_channel_scalar("power_state", 0.2)
+        print("**** Power State - 2 -- ON IDLE")
+        sleep(5)
+        drop_cue = true
+
+def reinforce(sq):
+    while _squad__gate.is_alive() == true:
+        sleep(1)
+        sleep_until(sq.alive_count() <= 1 and _squad__gate.is_alive() == true)
+        sleep(mathlib.random_int_inclusive(5, 45))
+        if _squad__gate.is_alive() == true:
+            _squad__gate.set_channel_scalar("activate", 1)
+            _squad__gate.drop_squad(sq); sleep_until(not _squad__gate.is_dropping())
+            sleep(2)
+            _squad__gate.set_channel_scalar("activate", 0)

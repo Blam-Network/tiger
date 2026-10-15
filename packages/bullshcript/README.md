@@ -30,7 +30,7 @@ The game sends up incidents when the player does something (like killing mobs, p
 
 ## Tools
 
-- `decompile(chunk)` (alpha build) renders a parsed chunk (`parseLuaChunk`, or `loadScriptChunk` from a `ScriptSource`).
+- `decompile(chunk)` (alpha build) renders a parsed chunk (`readBytecode`, or `loadScriptChunk` from a `ScriptSource`).
 - `debugSnapshot()` on a running runtime lists threads, what each is waiting on, the encounters the director has scheduled, and recent calls.
 - `compileBungieScript(files)` compiles a set of BungieScript sources as one project to chunks, schemas and the intermediate Lua; `compileLua(source)` compiles plain Lua (both exported from the TU0 build, neither tied to it).
 

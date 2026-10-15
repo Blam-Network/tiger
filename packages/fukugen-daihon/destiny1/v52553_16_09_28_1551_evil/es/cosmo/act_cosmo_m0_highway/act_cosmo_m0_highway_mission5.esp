@@ -1,0 +1,31 @@
+# es\cosmo\act_cosmo_m0_highway\act_cosmo_m0_highway_mission5.esp
+#
+# Mission 5, "Fight Through the Fallen". Clears once the graveyard's Fallen
+# are dead, or when the player runs on past them.
+
+c_player_trigger_sensor_host pt_ketch  # true name unknown
+generic_objective obj_m0_m04
+c_trigger_volume_slot_host tv_obj_backup_adv
+c_player_trigger_sensor_host pt_obj_backup_adv bind(tv_obj_backup_adv)  # true name unknown
+c_squad_sensor_host sq_fallen_m0_upgrade
+c_squad_sensor_host sq_fallen_m0_drop_1
+c_squad_sensor_host sq_fallen_m0_drop_2
+c_squad_sensor_host sq_fallen_m0_drop_2_b
+c_squad_sensor_host sq_fallen_m0_sniper
+c_squad_sensor_host sq_fallen_m0_exit_shanks
+
+thread init: pass
+
+thread complete: pass
+
+thread main:
+    sleep_until(pt_ketch.is_triggered())
+    sleep(12)
+    obj_m0_m04.objective_begin(obj_m0_m04._nav_point)
+    sleep_until(pt_obj_backup_adv.is_triggered() or sq_fallen_m0_upgrade.alive_count() > 0)
+    sleep_until(pt_obj_backup_adv.is_triggered() or graveyard_alive_count() == 0)
+    sleep(1)
+    obj_m0_m04.objective_end_silent()
+
+def graveyard_alive_count():
+    return sq_fallen_m0_drop_1.alive_count() + sq_fallen_m0_drop_2.alive_count() + sq_fallen_m0_drop_2_b.alive_count() + sq_fallen_m0_sniper.alive_count() + sq_fallen_m0_upgrade.alive_count() + sq_fallen_m0_exit_shanks.alive_count()

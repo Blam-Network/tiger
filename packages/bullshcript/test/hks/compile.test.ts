@@ -1,39 +1,42 @@
 import { describe, expect, it } from "vitest";
 import {
+  opcodeName,
+  walkInstructions,
+} from "../../src/hks/bytecode/opcodes.ts";
+import type { Method } from "../../src/hks/bytecode/proto.ts";
+import { HEADER_BYTES, readBytecode } from "../../src/hks/bytecode/reader.ts";
+import { dumpBytecode } from "../../src/hks/bytecode/writer.ts";
+import {
   compile,
   compileLua,
   compileLuaChunk,
   LuaCompileError,
-} from "../../src/hks/compile.ts";
-import { encodeLuaChunk } from "../../src/hks/encode.ts";
+} from "../../src/hks/compiler/compile.ts";
 import {
   applyUpvalueProvider,
   LuaHostEnvironment,
-} from "../../src/hks/host_env.ts";
-import { opcodeName, walkInstructions } from "../../src/hks/opcodes.ts";
-import type { LuaPrototype } from "../../src/hks/types.ts";
-import { HEADER_BYTES, parseLuaChunk } from "../../src/hks/undump.ts";
-import { LuaTable, type LuaValue } from "../../src/hks/values.ts";
-import { LuaVm } from "../../src/hks/vm.ts";
+} from "../../src/hks/env/host_env.ts";
+import { LuaState } from "../../src/hks/vm/interpreter.ts";
+import { LuaTable, type LuaValue } from "../../src/hks/vm/values.ts";
 
-function run(source: string, vm = new LuaVm()): readonly LuaValue[] {
+function run(source: string, vm = new LuaState()): readonly LuaValue[] {
   return vm.call(vm.loadChunk(compileLuaChunk(source)));
 }
 
 // Real instructions in order, as mnemonics with their operands.
-function listing(proto: LuaPrototype): string[] {
+function listing(proto: Method): string[] {
   return [...walkInstructions(proto)].map(({ instruction: i }) =>
     [opcodeName(i.opcode), i.a, i.b, i.c].join(" ")
   );
 }
 
-function opcodes(proto: LuaPrototype): string[] {
+function opcodes(proto: Method): string[] {
   return [...walkInstructions(proto)].map(({ instruction }) =>
     opcodeName(instruction.opcode)
   );
 }
 
-function main(source: string): LuaPrototype {
+function main(source: string): Method {
   return compileLuaChunk(source).root;
 }
 
@@ -43,14 +46,14 @@ describe("the TU0 compiler's chunk format", () => {
     expect([...bytes.subarray(0, HEADER_BYTES.length)]).toEqual([
       ...HEADER_BYTES,
     ]);
-    const chunk = parseLuaChunk(bytes, "TEST");
+    const chunk = readBytecode(bytes, "TEST");
     expect(chunk.chunkBytes).toBe(bytes.length);
     expect(chunk.typeTable.names.get(12)).toBe("TSTRUCT");
     expect(chunk.root.source).toBe("@es\\test.es");
     expect(chunk.root.name).toBe("(main chunk)");
     expect(chunk.root.isVararg).toBe(2);
     expect(chunk.root.unknownAfterConstants).toBe(1);
-    expect(Buffer.from(encodeLuaChunk(chunk)).equals(Buffer.from(bytes))).toBe(
+    expect(Buffer.from(dumpBytecode(chunk)).equals(Buffer.from(bytes))).toBe(
       true
     );
   });
@@ -66,7 +69,7 @@ describe("the TU0 compiler's chunk format", () => {
     const name = "@es\\venus\\strike_1_activity\\strike_1_activity.es";
     const bytes = compile("return 1", { chunkName: name });
     expect(Buffer.isBuffer(bytes)).toBe(true);
-    expect(parseLuaChunk(bytes, "X").root.source).toBe(name);
+    expect(readBytecode(bytes, "X").root.source).toBe(name);
   });
 
   it("stores string constants as the UTF-8 bytes of the source", () => {
@@ -230,7 +233,7 @@ describe("functions", () => {
     const inner = root.protos[0];
     const closure = inner.code.findIndex((i) => i.opcode === 66);
     expect(inner.code[closure + 1]).toMatchObject({ opcode: 76, a: 2 });
-    const vm = new LuaVm();
+    const vm = new LuaState();
     expect(
       vm.call(
         vm.loadChunk(
@@ -296,7 +299,7 @@ describe("functions", () => {
   });
 
   it("reads and writes globals", () => {
-    const vm = new LuaVm();
+    const vm = new LuaState();
     expect(
       run("counter = 5; counter = counter + 1; return counter", vm)
     ).toEqual([6]);
@@ -551,7 +554,7 @@ describe("a Bungie-style module on the host", () => {
   it("loads, takes its imports and sleeps through __coro_yield", () => {
     const calls: string[] = [];
     const environment = new LuaHostEnvironment();
-    const vm = new LuaVm({ globals: environment.globals });
+    const vm = new LuaState({ globals: environment.globals });
     const bundlelib = new LuaTable();
     environment.bind("__class_definition_get", () => [bundlelib]);
     environment.bind("predicate_pack", (args) => [args[0]]);

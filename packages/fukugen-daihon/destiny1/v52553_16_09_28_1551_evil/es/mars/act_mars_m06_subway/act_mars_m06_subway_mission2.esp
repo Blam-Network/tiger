@@ -1,0 +1,19 @@
+# es\mars\act_mars_m06_subway\act_mars_m06_subway_mission2.esp
+#
+# Mission 2, "Scan the Battleground": the Ghost scans the Vex signal.
+# The scan placement belongs to the battleground's ambient bundle (61F2C2CD);
+# this phase only runs the objective, which the player's activity flag
+# unlocks. The Ghost's line about what it found plays out before the next
+# phase.
+
+interactable_objective pf_objective_battleground_interact bind("0x1A58BFCD")
+
+thread init: pass
+
+thread complete: pass
+
+thread main:
+    pf_objective_battleground_interact.objective_begin()
+    sleep_until(pf_objective_battleground_interact.is_complete())
+    pf_objective_battleground_interact.objective_end_silent()
+    sleep(8)

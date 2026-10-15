@@ -1,0 +1,17 @@
+# es\cosmo\cosmo_portal1_activity\cosmo_portal1_activity_mission1.esp
+#
+# Mission 1, the rocketyard: get to the refinery. The objective ends silently
+# when the player reaches the trigger.
+
+trigger_volume_objective obj_s1_phase00_m1
+
+thread init: pass
+
+thread complete: pass
+
+thread main:
+    sleep_until(c_player_script_utilities.all_players_are_ready())
+    c_lifetime_script_utilities.get_lifetime_sensor().set_state(e_activity_lifetime_state.active)
+    obj_s1_phase00_m1.objective_begin()
+    sleep_until(obj_s1_phase00_m1.is_complete())
+    obj_s1_phase00_m1.objective_end_silent()

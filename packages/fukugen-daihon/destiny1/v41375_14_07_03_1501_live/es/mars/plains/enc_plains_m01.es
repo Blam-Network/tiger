@@ -52,8 +52,6 @@ c_squad_sensor_host sq_anchor_centurion
 startup thread sc_plains_main:
     o_door.create()
     o_lights.create()
-    sp_placement_vent._object.create()
-    sp_placement_control._object.create()
     seq_ambience_a.start()
     for sq in [sq_base_phalanx, sq_base_legionary_a, sq_base_legionary_b, sq_base_legionary_c, sq_backup_legionary_a, sq_backup_legionary_b, sq_sand_legionary_a, sq_sand_legionary_b, sq_sand_legionary_c, sq_anchor_phalanx, sq_anchor_centurion]:
         sq.set_objective(obj_plains_m01)

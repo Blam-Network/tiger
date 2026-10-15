@@ -82,7 +82,7 @@ const SIMPLE_ESCAPES: Readonly<Record<string, string>> = {
   v: "\v",
 };
 
-export class LuaLexer {
+export class CompilerLexer {
   readonly chunkName: string;
   // line of the last token consumed; what lcode stamps on an instruction
   lastline = 1;

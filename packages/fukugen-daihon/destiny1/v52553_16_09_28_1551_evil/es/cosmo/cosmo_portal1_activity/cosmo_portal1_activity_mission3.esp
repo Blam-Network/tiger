@@ -1,0 +1,36 @@
+# es\cosmo\cosmo_portal1_activity\cosmo_portal1_activity_mission3.esp
+#
+# Mission 3, the Ghost's scan: use the console, then repel the Fallen while
+# the hack brings down the three laser webs. The refinery encounter runs the
+# hack and the waves.
+
+c_encounter_handle enc_refinery_portal1  # true name unknown
+countdown_objective obj_s1_phase02_m1
+c_player_objective_sensor_host po_repel_fallen01
+c_nav_point_host ap_alarm01  # true name unknown
+
+thread init: pass
+
+thread complete: pass
+
+thread main:
+    enc = enc_refinery_portal1
+    enc.sc_hack.wake()
+    obj_s1_phase02_m1.objective_begin()
+    sleep_until(enc.sp_placement_array._object.get_device_position() > 0)
+    obj_s1_phase02_m1.complete()
+    obj_s1_phase02_m1.objective_end_silent()
+    po_repel_fallen01.set_active()
+    po_repel_fallen01.nav_point_activate(ap_alarm01)
+    sleep(3)
+    po_repel_fallen01.progress_activate(0, 3)
+    wait_for_web(enc.o_laserweb01, 1)
+    wait_for_web(enc.o_laserweb02, 2)
+    wait_for_web(enc.o_laserweb03, 3)
+    sleep(3)
+    po_repel_fallen01.nav_point_clear()
+    po_repel_fallen01.clear()
+
+def wait_for_web(web, count):
+    sleep_until(not web.is_alive())
+    po_repel_fallen01.progress_update(count)

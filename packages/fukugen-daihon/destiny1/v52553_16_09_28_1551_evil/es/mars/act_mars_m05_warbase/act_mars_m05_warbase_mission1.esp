@@ -1,0 +1,24 @@
+# es\mars\act_mars_m05_warbase\act_mars_m05_warbase_mission1.esp
+#
+# Mission 1, phase_1_rubicon_goto: get to the Rubicon. The objective comes
+# up once the players are in, and clears as the first of them enters the
+# Rubicon's bubble (a public bubble, enc_rubicon_amb1's Cabal). The Ghost's
+# opening line stops when it does.
+
+c_location_sensor_host rubicon
+trigger_bubble_objective pf_objective_goto bind(rubicon)
+c_sequence_host seq_d_o1_s03
+
+thread init: pass
+
+thread complete: pass
+
+thread main:
+    sleep_until(c_player_script_utilities.all_players_are_ready())
+    c_lifetime_script_utilities.get_lifetime_sensor().set_state(e_activity_lifetime_state.active)
+    sleep(1.5)
+    pf_objective_goto.objective_begin()
+    sleep_until(pf_objective_goto.is_complete())
+    sleep(1)
+    pf_objective_goto.objective_end_silent()
+    seq_d_o1_s03.stop()

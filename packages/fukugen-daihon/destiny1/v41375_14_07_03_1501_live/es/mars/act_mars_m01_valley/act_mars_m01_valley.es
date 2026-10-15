@@ -17,6 +17,13 @@
 #
 # From one capture run: every timing here is a single-run fact.
 
+act_mars_m01_valley_mission1 phase_plains_cinematic
+act_mars_m01_valley_mission2 phase_plains_intro
+act_mars_m01_valley_mission3 phase_plains_base
+act_mars_m01_valley_mission4 phase_checkpoint
+act_mars_m01_valley_mission5 phase_checkpoint_boss
+act_mars_m01_valley_mission6 phase_valley
+
 startup thread ss_mars_m01_valley:
     print("script startup")
     c_lifetime_script_utilities.get_lifetime_sensor().set_state(e_activity_lifetime_state.pregame)

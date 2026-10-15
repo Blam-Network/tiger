@@ -6,8 +6,8 @@ import { ScriptDebugger } from "../../src/debug/debugger.ts";
 import {
   formatScriptTag,
   type ScriptSource,
-} from "../../src/hks/script_source.ts";
-import { fnv1 } from "../../src/host/name_hash.ts";
+} from "../../src/hks/source/script_source.ts";
+import { fnv1 } from "../../src/host/tags/name_hash.ts";
 import { ScriptRuntime } from "../../src/versions/destiny1/v41375_14_07_03_1501_live/host/runtime.ts";
 
 const ROOT = "es/test/act_t/act_t.es";

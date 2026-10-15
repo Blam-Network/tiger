@@ -27,14 +27,20 @@ export function bsFileKind(path: string): BsFileKind | undefined {
   return FILE_KINDS.find((kind) => kind === extension);
 }
 
-// "es/venus/x/enc_x_amb1.es" -> "enc_x_amb1"
+// "es/venus/x/enc_x_amb1.es" -> "enc_x_amb1", as is a chunk's source path
+// "@es\venus\x\enc_x_amb1.es". A script's name: what other scripts, handles
+// and its bundle hash know it by.
 export function scriptStem(path: string): string {
-  const name = path.slice(path.lastIndexOf("/") + 1);
-  return name.slice(0, name.lastIndexOf("."));
+  const cut = Math.max(path.lastIndexOf("/"), path.lastIndexOf("\\"));
+  const base = path.slice(cut + 1);
+  const name = base.startsWith("@") ? base.slice(1) : base;
+  const dot = name.lastIndexOf(".");
+  return dot < 0 ? name : name.slice(0, dot);
 }
 
 // The one class an es-family file declares: `.es` files get the compiler's
-// `c_encounter__` prefix, `.esp`/`.esu` are named after the file.
+// `c_encounter__` prefix, `.esp`/`.esu` are named after the file. The class
+// name only; the script itself is still known by its stem.
 export function implicitDeclName(path: string, kind: BsFileKind): string {
   return kind === "es" ? `c_encounter__${scriptStem(path)}` : scriptStem(path);
 }

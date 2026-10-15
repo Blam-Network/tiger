@@ -1,0 +1,38 @@
+# es\cosmo\act_cosmo_m2_dome_c\act_cosmo_m2_dome_c_mission5.esp
+#
+# Mission 5, the beacon: with the waves dead the Ghost speaks and the
+# objective sends the player to destroy the beacon. Once it is down the
+# outro plays, the activity ends, and the Ghost and Rasputin close it out.
+# The pauses between the closing lines are this run's.
+
+destructible_objective obj_m2_o4b bind("0x365FAC19")
+c_sequence_host seq_d_o2_s03
+c_sequence_host seq_m_outro
+c_sequence_host seq_d_o2_s034
+c_sequence_host seq_cosmo2_rasputin
+c_sequence_host seq_d_o2_s04
+
+thread init: pass
+
+thread complete:
+    c_lifetime_script_utilities.get_lifetime_sensor().end_game(30)
+
+thread main:
+    seq_d_o2_s03.start()
+    sleep(4.2)
+    obj_m2_o4b.objective_begin()
+    sleep_until(obj_m2_o4b.is_complete())
+    sleep(0.4)
+    obj_m2_o4b.objective_end_silent()
+    sleep(1.2)
+    seq_m_outro.start()
+    sc_closing_lines.wake()
+    set_activity_complete()
+
+thread sc_closing_lines:
+    sleep(1.3)
+    seq_d_o2_s034.start()
+    sleep(8.2)
+    seq_cosmo2_rasputin.start()
+    sleep(2.3)
+    seq_d_o2_s04.start()

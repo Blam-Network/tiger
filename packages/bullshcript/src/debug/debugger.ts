@@ -3,23 +3,30 @@
 // see. Transport-free: a client is anything with a send() for DAP messages.
 //
 // Pausing. A breakpoint stops a coroutine before the instruction at it
-// (LuaVm.debugHook) and gates it, then stops its whole target: no other
+// (LuaState.debugHook) and gates it, then stops its whole target: no other
 // thread is resumed and the host's clock holds (LuaScheduler.paused). The game
 // stays connected; only the scripts stand still. A thread inside a host call
 // (a gate predicate, an import, an activate) cannot be suspended, so a
 // breakpoint met there reports what it saw (tiger/hit) and carries on.
 
+import type { Method } from "../hks/bytecode/proto.ts";
 import {
   gateUntilPredicate,
   type LuaScriptThread,
   type LuaThreadGate,
-} from "../hks/coroutines.ts";
-import type { LuaPrototype } from "../hks/types.ts";
-import { isTruthy, LuaTable, luaToString } from "../hks/values.ts";
-import type { LuaDebugHook, LuaFrame, LuaThread } from "../hks/vm.ts";
-import type { LuaEncounterHost } from "../host/encounter_host.ts";
-import type { ItemChange } from "../host/items.ts";
-import { jumpToPhase, restartThread } from "../host/scheduling_threads.ts";
+} from "../hks/scheduler/scheduler.ts";
+import type {
+  ActivationRecord,
+  LuaDebugHook,
+  LuaThread,
+} from "../hks/vm/interpreter.ts";
+import { isTruthy, LuaTable, luaToString } from "../hks/vm/values.ts";
+import type { EncounterScriptHost } from "../host/activity/encounter_host.ts";
+import {
+  jumpToPhase,
+  restartThread,
+} from "../host/schedule/scheduling_threads.ts";
+import type { ItemChange } from "../host/state/items.ts";
 import { evaluate } from "./evaluate.ts";
 import { activeLocals, Inspector, instanceLabel } from "./inspect.ts";
 import type {
@@ -125,7 +132,7 @@ interface Step {
 interface Target {
   readonly bundleInfo: (bundle: number) => BundleInfo | undefined;
   readonly debugHook: LuaDebugHook;
-  readonly host: LuaEncounterHost;
+  readonly host: EncounterScriptHost;
   // the last hit reported per breakpoint in a host call, by tick
   readonly hostCallHits: Map<number, number>;
   readonly id: string;
@@ -143,7 +150,7 @@ interface Target {
 }
 
 interface FrameRef {
-  frame: LuaFrame;
+  frame: ActivationRecord;
   pc: number;
   target: Target;
 }
@@ -196,7 +203,7 @@ export class ScriptDebugger {
   // Every breakpoint, by path, as the client last set them.
   private readonly breakpoints = new Map<string, Breakpoint[]>();
   // Where they landed: per prototype, pc -> breakpoint.
-  private breakAt = new WeakMap<LuaPrototype, Map<number, Breakpoint>>();
+  private breakAt = new WeakMap<Method, Map<number, Breakpoint>>();
   private nextBreakpointId = 1;
   private nextThreadId = 1;
   private readonly threadIds = new WeakMap<LuaScriptThread, number>();
@@ -251,7 +258,7 @@ export class ScriptDebugger {
   attach(
     id: string,
     label: string,
-    host: LuaEncounterHost,
+    host: EncounterScriptHost,
     options: AttachOptions = {}
   ): void {
     this.detach(id);
@@ -471,7 +478,7 @@ export class ScriptDebugger {
   private resolveAll(): void {
     this.breakAt = new WeakMap();
     for (const [path, list] of this.breakpoints) {
-      const prototypes = new Set<LuaPrototype>();
+      const prototypes = new Set<Method>();
       for (const target of this.targets.values()) {
         for (const prototype of target.sources.prototypesOf(path)) {
           prototypes.add(prototype);
@@ -522,7 +529,7 @@ export class ScriptDebugger {
   private beforeInstruction(
     target: Target,
     thread: LuaThread,
-    frame: LuaFrame
+    frame: ActivationRecord
   ): "continue" | "pause" {
     if (this.evaluating) {
       return "continue";
@@ -557,7 +564,7 @@ export class ScriptDebugger {
   private atBreakpoint(
     target: Target,
     thread: LuaThread,
-    frame: LuaFrame,
+    frame: ActivationRecord,
     bp: Breakpoint
   ): "continue" | "pause" | undefined {
     if (bp.condition) {
@@ -623,7 +630,7 @@ export class ScriptDebugger {
   private reportHostCallHit(
     target: Target,
     thread: LuaThread,
-    frame: LuaFrame,
+    frame: ActivationRecord,
     bp: Breakpoint
   ): void {
     if (target.hostCallHits.get(bp.id) === target.host.ticks) {
@@ -655,7 +662,7 @@ export class ScriptDebugger {
   }
 
   // Every Lua frame of every resume in flight, outermost first.
-  private *resumingFrames(target: Target): Generator<LuaFrame> {
+  private *resumingFrames(target: Target): Generator<ActivationRecord> {
     for (const thread of target.host.vm.resuming) {
       yield* thread.debugFrames();
     }
@@ -1021,7 +1028,7 @@ export class ScriptDebugger {
   private tryEvaluate(
     target: Target,
     expression: string,
-    frame: LuaFrame | undefined,
+    frame: ActivationRecord | undefined,
     pc: number | undefined
   ):
     | { ok: true; value: ReturnType<typeof evaluate> }

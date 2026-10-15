@@ -3,8 +3,8 @@ import { readFileSync, writeFileSync } from "node:fs";
 import { basename, join } from "node:path";
 import {
   decompile,
-  type LuaChunk,
-  parseLuaChunk,
+  type HksBytecode,
+  readBytecode,
   scriptChunkOffset,
 } from "./versions/destiny1/v36735_13_12_02_1953_alpha.ts";
 import {
@@ -36,14 +36,14 @@ const TAG_ID_END = /[_.]/;
 const LUA_EXTENSION = /\.lua$/;
 const PROJECT_ROOT = /(?:^|[\\/])((?:bs|es)[\\/].*)$/;
 
-function readChunk(path: string): LuaChunk {
+function readChunk(path: string): HksBytecode {
   const bytes = readFileSync(path);
   const at = scriptChunkOffset(bytes);
   if (at < 0) {
     throw new Error(`${path}: no Lua chunk in it`);
   }
   const tagId = basename(path).split(TAG_ID_END)[0].toUpperCase();
-  return parseLuaChunk(new Uint8Array(bytes.subarray(at)), tagId);
+  return readBytecode(new Uint8Array(bytes.subarray(at)), tagId);
 }
 
 function option(args: string[], name: string): string | undefined {

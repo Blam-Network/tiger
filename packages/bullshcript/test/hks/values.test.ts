@@ -13,10 +13,10 @@ import {
   luaToString,
   toNumber,
   typeName,
-} from "../../src/hks/values.ts";
+} from "../../src/hks/vm/values.ts";
 
 describe("truth and type", () => {
-  it("counts only nil and false as false", () => {
+  it("counts only nil and false", () => {
     expect(isTruthy(undefined)).toBe(false);
     expect(isTruthy(false)).toBe(false);
     expect(isTruthy(0)).toBe(true);

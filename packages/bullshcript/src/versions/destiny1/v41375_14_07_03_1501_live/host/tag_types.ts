@@ -1,7 +1,7 @@
 // TU0's row type ids (80800533 bundles). Types from 40 up are the alpha's +1
 // (new types in 36..40 and 62); TU0-only types with no entry: 18, 26, 36,
 // 37, 38, 39, 62. True names unknown.
-import type { ActivityBundleItemTypes } from "../../../../host/tag_types.ts";
+import type { ActivityBundleItemTypes } from "../../../../host/tags/tag_types.ts";
 
 export const ActivityBundleItemType = {
   Squad: 1,

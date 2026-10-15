@@ -14,8 +14,8 @@ c_object_sensor_host o_basement_door01
 c_player_trigger_sensor_host pt_fallen_guards_spawn01
 c_player_trigger_sensor_host pt_fallen_guards_spawn02
 c_sequence_host seq_fallen_wave_announce
-interactable_placement obj_placement_m2_o3a
-destructible_placement obj_placement_m2_o4b
+interactable_placement obj_placement_m2_o3a bind("0x9DF3A02E")
+destructible_placement obj_placement_m2_o4b bind("0x365FAC19")
 c_squad_sensor_host sq_fallen_piperoom01a
 c_squad_sensor_host sq_fallen_piperoom01b
 c_squad_sensor_host sq_fallen_piperoom02a
@@ -38,9 +38,6 @@ c_squad_sensor_host sq_fallen_wave03a
 c_squad_sensor_host sq_fallen_wave03b
 
 startup thread sc_dome_c_m2:
-    obj_placement_m2_o3a._object_filter.add_players_with_activity_flag(obj_placement_m2_o3a._object.import_identifier())
-    obj_placement_m2_o3a._object.set_enabled_player_filter(obj_placement_m2_o3a._object_filter)
-    obj_placement_m2_o3a._object.create()
     for sq in [sq_fallen_piperoom01a, sq_fallen_piperoom01b, sq_fallen_piperoom02a, sq_fallen_piperoom02b, sq_fallen_piperoom_reinf01]:
         sq.set_objective(obj_fallen_dome_c_m2_piperoom)
     for sq in [sq_fallen_guards01, sq_fallen_guards02a, sq_fallen_guards02b, sq_fallen_guards02c, sq_fallen_guards02d, sq_fallen_wave01a, sq_fallen_wave01b, sq_fallen_wave01c, sq_fallen_wave02a, sq_fallen_wave02b, sq_fallen_wave02c, sq_fallen_wave02d, sq_fallen_wave02e, sq_fallen_wave03a, sq_fallen_wave03b]:

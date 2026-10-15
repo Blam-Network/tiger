@@ -16,6 +16,13 @@
 # (unknown_529d4bdc) are scripts of their own. Authored from one capture:
 # every timing and wave rule in these files is unconfirmed.
 
+act_venus_m01_engineering_mission1 phase_shattered_coast_intro
+act_venus_m01_engineering_mission2 phase_shattered_coast_sensors
+act_venus_m01_engineering_mission3 phase_entrance_goto
+act_venus_m01_engineering_mission4 phase_entrance_vex_conflux
+act_venus_m01_engineering_mission5 phase_entrance_resist_vex
+act_venus_m01_engineering_mission6 phase_engineering_outro
+
 c_location_sensor_host baby_shat
 c_player_trigger_sensor_host pt_in_baby_shat bind(baby_shat)
 

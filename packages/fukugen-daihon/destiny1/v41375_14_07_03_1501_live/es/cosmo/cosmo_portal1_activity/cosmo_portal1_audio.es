@@ -9,7 +9,7 @@ c_player_trigger_sensor_host pt_wake_trash01  # true name unknown
 c_sequence_host s01_xx40  # true name unknown
 trigger_volume_objective obj_s1_phase01_m1
 c_sequence_host s01_xx45  # true name unknown
-interactable_placement sp_placement_array  # archetype not authored on TU0
+c_encounter_handle enc_refinery_portal1
 c_sequence_host cue1  # true name unknown
 c_sequence_host s01_xx50  # true name unknown
 c_squad_sensor_host sq_objective_fallen01d
@@ -58,7 +58,8 @@ startup thread sc_playfight_line:
     s01_xx45.start()
 
 startup thread sc_scan:
-    sleep_until(sp_placement_array._object.get_device_position() > 0)
+    console = enc_refinery_portal1.sp_placement_array._object
+    sleep_until(console.get_device_position() > 0)
     cue1.start()
     cue1.set_switch_mask(1)
     sleep(3)
@@ -75,7 +76,7 @@ startup thread sc_scan:
     s01_xx80.start()
     sleep(2)
     cue1.set_switch_mask(4)
-    sleep_until(sp_placement_array._object.get_device_position() >= 1)
+    sleep_until(console.get_device_position() >= 1)
     s01_xx90.start()
     sleep_until(not o_laserweb03.is_alive())
     m02_alarm.stop()

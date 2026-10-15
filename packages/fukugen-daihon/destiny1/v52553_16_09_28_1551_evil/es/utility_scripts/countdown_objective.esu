@@ -1,0 +1,53 @@
+# es\utility_scripts\countdown_objective.esu
+#
+# An objective on something the player uses (the Ghost's scan console).
+# The activity flag it raises is what lets the player use the console, so
+# don't drop it.
+
+c_encounter_binding_host _object  # true name unknown
+bool _complete
+c_player_objective_sensor_host _player_objective
+c_sequence_host _incoming_sequence  # true name unknown
+c_nav_point_host _nav_point  # true name unknown
+c_activity_flag _activity_flag  # true name unknown
+c_sequence_host _completion_sequence  # true name unknown
+
+def import_only_bind(identifier):
+    return _object.import_only_bind_object(identifier)
+
+def is_complete():
+    return _complete == true
+
+def complete():
+    _complete = true
+
+def objective_begin():
+    _player_objective.set_incoming()
+    sleep(2)
+    _incoming_sequence.start()
+    sleep_until_timeout(_incoming_sequence.is_done(), 10)
+    objective_begin_immediate()
+
+def objective_begin_immediate():
+    _complete = false
+    _player_objective.set_active()
+    _player_objective.nav_point_activate_with_fallback(_object, _nav_point)
+    _activity_flag.import_only_bind(_object.import_identifier())
+    _activity_flag.activate()
+
+def cleanup():
+    _activity_flag.clear()
+
+def objective_end():
+    cleanup()
+    _player_objective.nav_point_clear()
+    _completion_sequence.start()
+    sleep_until_timeout(_completion_sequence.is_done(), 10)
+    _player_objective.set_complete()
+    sleep(2)
+    _player_objective.clear()
+
+def objective_end_silent():
+    cleanup()
+    _player_objective.nav_point_clear()
+    _player_objective.clear()

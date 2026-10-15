@@ -1,0 +1,45 @@
+# es\moon\act_moon_m3_lowercitadel\act_moon_m3_lowercitadel_mission3.esp
+#
+# Mission 3, the strength chamber: reach it, then kill the eight Hive guarding
+# the library (enc_strength_m3's two guard squads share the kill identifier).
+# The Ghost's lines for both objectives play while they are up and stop with
+# the kill.
+
+c_location_sensor_host strength
+trigger_bubble_objective pf_objective_goto bind(strength)
+kill_squad_objective pf_objective_kill bind("0xD04758E3", 8)
+c_sequence_host seq_d_o1_s07
+c_sequence_host seq_d_o2_s01
+c_sequence_host seq_d_o2_s02
+c_sequence_host seq_strength_music
+c_player_trigger_sensor_host pt_music_str_start
+c_player_trigger_sensor_host pt_music_str_alt
+
+thread init: pass
+
+thread complete: pass
+
+thread main:
+    seq_d_o1_s07.start()
+    pf_objective_goto.objective_begin()
+    seq_d_o2_s01.start()
+    sleep_until(pf_objective_goto.is_complete())
+    pf_objective_goto.objective_end_silent()
+    pf_objective_kill.objective_begin()
+    seq_d_o2_s02.start()
+    sleep_until(pf_objective_kill.is_complete())
+    pf_objective_kill.objective_end_silent()
+    seq_d_o2_s01.stop()
+    seq_d_o2_s02.stop()
+
+# the chamber's music starts as the players come in, then steps up once they
+# are further in (one run)
+startup thread sc_strength_music:
+    sleep_until(pt_music_str_start.is_triggered())
+    seq_strength_music.start()
+    seq_strength_music.set_switch_mask(1)
+
+startup thread sc_strength_music_alt:
+    sleep_until(pt_music_str_alt.is_triggered())
+    sleep(1)
+    seq_strength_music.set_switch_mask(3)

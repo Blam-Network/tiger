@@ -162,7 +162,7 @@ export function readSlices({ build, dictionary: dictionaryDir, packages, scenari
         regionHash: hex(state.region_name_hash),
         spawnPoints: spawnPoints(
           { g, key: `${packages}|${build}|${dictionaryDir ?? ""}`, names, read, set },
-          worldRoots.get(descriptor.unknown08 >>> 0),
+          worldRoots.get((descriptor.world_hash ?? descriptor.unknown08) >>> 0),
           descriptor.bubble_index
         ),
         state: stateIndex,

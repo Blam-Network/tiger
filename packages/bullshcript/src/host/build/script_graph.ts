@@ -1,0 +1,177 @@
+// The chunk graph: which scripts a bundle set runs, and how enum_of and enum
+// definitions read. Free of any host instance.
+
+import { scriptStem } from "../../bungiescript/parser.ts";
+import type { HksBytecode } from "../../hks/bytecode/proto.ts";
+import {
+  formatScriptTag,
+  loadScriptChunk,
+  type ScriptSource,
+  scriptReferences,
+} from "../../hks/source/script_source.ts";
+import { LuaHostFunction, LuaTable, type LuaValue } from "../../hks/vm/values.ts";
+import type { EncounterScriptHostOptions } from "../activity/host_context.ts";
+import type {
+  ActivityBundleItemTypes,
+  ActivityBundleTag,
+} from "../tags/tag_types.ts";
+
+// enum_of(t): the compiler's generic-for generator, indexed from 0.
+const ENUM_OF_STEP = new LuaHostFunction("enum_of.step", (args) => {
+  const table = args[0];
+  const index = (typeof args[1] === "number" ? args[1] : -1) + 1;
+  const value = table instanceof LuaTable ? table.get(index) : undefined;
+  return value === undefined ? [] : [index, value];
+});
+export const ENUM_OF = new LuaHostFunction("enum_of", (args) => [
+  ENUM_OF_STEP,
+  args[0],
+  -1,
+]);
+
+// Member meanings are unknown.
+export class EnumDefinition extends LuaTable {
+  private readonly enumName: string;
+
+  constructor(enumName: string) {
+    super();
+    this.enumName = enumName;
+  }
+
+  override get(key: LuaValue): LuaValue {
+    const own = super.get(key);
+    if (own !== undefined || typeof key !== "string") {
+      return own;
+    }
+    return `${this.enumName}.${key}`;
+  }
+}
+
+// Each bundle's own script (Link A) plus the closure of what it references
+// (Link B); siblings resolve by name (Link C). `rowOwners` is the bundle each
+// root speaks for, and each mission (phase script) a root references.
+export function loadScriptGraph(
+  scripts: ScriptSource,
+  scriptFor: (bundleTag: number) => number | undefined,
+  bundles: readonly ActivityBundleTag[]
+): {
+  chunks: HksBytecode[];
+  chunkOwners: Map<string, number>;
+  rootTags: Set<string>;
+  rowOwners: Map<string, number>;
+} {
+  const chunks: HksBytecode[] = [];
+  const chunkOwners = new Map<string, number>();
+  const rootTags = new Set<string>();
+  const referencedBy = new Map<string, number>();
+  const rowOwners = new Map<string, number>();
+  const seen = new Set<string>();
+  const queue: string[] = [];
+  for (const bundle of bundles) {
+    const script = scriptFor(bundle.tag);
+    if (script !== undefined) {
+      const tagId = formatScriptTag(script);
+      rootTags.add(tagId);
+      if (!chunkOwners.has(tagId)) {
+        chunkOwners.set(tagId, bundle.bundle);
+      }
+      queue.push(tagId);
+    }
+  }
+  while (queue.length > 0) {
+    const tagId = queue.shift();
+    if (tagId === undefined || seen.has(tagId)) {
+      continue;
+    }
+    seen.add(tagId);
+    const chunk = loadScriptChunk(scripts, tagId);
+    if (chunk === undefined) {
+      continue;
+    }
+    chunks.push(chunk);
+    const refs = scriptReferences(scripts, tagId);
+    const owner = chunkOwners.get(tagId);
+    const mission = referencedBy.get(tagId);
+    if (owner !== undefined) {
+      rowOwners.set(tagId, owner);
+      for (const ref of refs) {
+        if (!referencedBy.has(ref)) {
+          referencedBy.set(ref, owner);
+        }
+      }
+    } else if (
+      mission !== undefined &&
+      chunk.root.source?.toLowerCase().endsWith(".esp") === true
+    ) {
+      rowOwners.set(tagId, mission);
+    }
+    queue.push(...refs);
+  }
+  return { chunkOwners, chunks, rootTags, rowOwners };
+}
+
+// From the Encounter row's 8080047B lookup tag (the child's script name),
+// else childScriptSchemaMap.
+export function childScriptsFor(
+  types: ActivityBundleItemTypes,
+  scripts: ScriptSource,
+  chunks: readonly HksBytecode[],
+  bundles: readonly ActivityBundleTag[],
+  scriptBundles: readonly ActivityBundleTag[],
+  childScriptSchemaMap: EncounterScriptHostOptions["childScriptSchemaMap"] = {}
+): ReadonlyMap<string, HksBytecode> {
+  const slots = new Map<string, HksBytecode>();
+  const byName = new Map<string, HksBytecode>();
+  for (const chunk of chunks) {
+    byName.set(scriptName(chunk), chunk);
+  }
+  const rowBundles = new Map<number, ActivityBundleTag>();
+  for (const bundle of [...bundles, ...scriptBundles]) {
+    rowBundles.set(bundle.tag, bundle);
+  }
+  for (const bundle of rowBundles.values()) {
+    for (const row of bundle.rows) {
+      if (
+        row.typeId !== types.Encounter ||
+        row.childScript === undefined ||
+        row.name === undefined
+      ) {
+        continue;
+      }
+      const child = byName.get(row.childScript);
+      if (child) {
+        // The slot key is the row name's last segment.
+        slots.set(row.name.split(".").at(-1) ?? row.name, child);
+      }
+    }
+  }
+  for (const chunk of chunks) {
+    const entry = childScriptSchemaMap?.[chunk.tagId.toUpperCase()];
+    if (entry === undefined) {
+      continue;
+    }
+    for (const [slot, childTag] of Object.entries(entry)) {
+      if (slots.has(slot)) {
+        continue;
+      }
+      const child = loadScriptChunk(scripts, childTag);
+      if (child) {
+        slots.set(slot, child);
+      }
+    }
+  }
+  return slots;
+}
+
+// The script a chunk was compiled from, by its source path's stem:
+// `@es\venus\academy_entrance\enc_entrance_ch2m1.es` is enc_entrance_ch2m1.
+// Its `_M.decl_name` is the class (`c_encounter__enc_entrance_ch2m1`).
+export function scriptName(chunk: HksBytecode): string {
+  const source = chunk.root.source;
+  if (source === undefined || source === "") {
+    throw new Error(
+      `script chunk ${chunk.tagId} has no source path, so no script name`
+    );
+  }
+  return scriptStem(source);
+}

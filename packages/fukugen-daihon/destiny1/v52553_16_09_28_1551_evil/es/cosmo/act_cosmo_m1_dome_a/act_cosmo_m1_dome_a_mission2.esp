@@ -1,0 +1,25 @@
+# es\cosmo\act_cosmo_m1_dome_a\act_cosmo_m1_dome_a_mission2.esp
+#
+# Mission 2, the upper floor: the objective stays up until the Hive wizard
+# is dead, and the Ghost's lines and the music cue stop with it. The wizard
+# and the rest of the upper floor are enc_dome_a_m1's.
+
+generic_objective obj_m1_o2
+c_squad_sensor_host sq_hive_upper_wizard01
+c_sequence_host seq_d_o3_s012
+c_sequence_host seq_d_o3_s016
+c_sequence_host seq_m_cue1
+
+thread init: pass
+
+thread complete: pass
+
+thread main:
+    obj_m1_o2.objective_begin(nil)
+    sleep_until(sq_hive_upper_wizard01.alive_count() > 0)
+    sleep_until(sq_hive_upper_wizard01.alive_count() == 0)
+    sleep(0.8)
+    seq_d_o3_s012.stop()
+    seq_d_o3_s016.stop()
+    seq_m_cue1.stop()
+    obj_m1_o2.objective_end_silent()

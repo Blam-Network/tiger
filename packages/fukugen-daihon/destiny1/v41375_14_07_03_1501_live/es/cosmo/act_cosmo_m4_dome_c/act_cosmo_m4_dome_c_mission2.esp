@@ -11,7 +11,7 @@ c_sequence_host seq_d_o2_s01
 c_sequence_host seq_d_o2_s014
 c_sequence_host seq_d_o2_s016
 c_sequence_host seq_d_o2_s02
-c_player_monitor_sensor_host pm_trigger_volume
+c_encounter_handle unknown_f9e600a7
 
 thread init: pass
 
@@ -33,5 +33,5 @@ thread main:
     sleep(6)
 
 thread sc_control_room:
-    sleep_until(pm_trigger_volume.test_any_inside())
+    sleep_until(unknown_f9e600a7.pm_trigger_volume.test_any_inside())
     seq_m_cue1.set_switch_mask(15)

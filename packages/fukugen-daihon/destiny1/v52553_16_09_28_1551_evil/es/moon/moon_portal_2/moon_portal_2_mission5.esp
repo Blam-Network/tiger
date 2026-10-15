@@ -1,0 +1,35 @@
+# es\moon\moon_portal_2\moon_portal_2_mission5.esp
+#
+# Mission 5, the wormway: kill Phogoth. The roar and the fight start at the
+# chamber's trigger; the wormway encounter runs the Hive, the tomb ship and
+# the reinforcements. The ogre's death can read as a short 0 in the squad
+# sense, so it has to hold for a moment before this clears.
+
+c_encounter_handle enc_wormway_portal2
+generic_objective pf_go_ogre
+c_nav_point_host ap_go_ogre
+c_trigger_volume_slot_host tv_ogreroar03
+c_player_trigger_sensor_host pt_ogreroar03 bind(tv_ogreroar03)
+c_sequence_host moon_portal2_ogreroar03
+
+thread init: pass
+
+thread complete: pass
+
+thread main:
+    enc = enc_wormway_portal2
+    pf_go_ogre.objective_begin(ap_go_ogre)
+    sleep_until(pt_ogreroar03.is_triggered())
+    moon_portal2_ogreroar03.start()
+    enc.sc_boss_fight.wake()
+    sleep_until(enc.sq_bossbattle_boss01.alive_count() > 0)
+    sleep_until_boss_dead()
+    pf_go_ogre.objective_end_silent()
+
+def sleep_until_boss_dead():
+    enc = enc_wormway_portal2
+    while true:
+        sleep_until(enc.sq_bossbattle_boss01.alive_count() == 0)
+        sleep(2)
+        if enc.sq_bossbattle_boss01.alive_count() == 0:
+            break

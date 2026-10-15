@@ -1,16 +1,16 @@
 import { describe, expect, it } from "vitest";
 import {
+  HKS_OPCODES,
   isTrailingWord,
-  LUA_OPCODES,
   opcodeName,
   TRAILING_WORD_OPCODE,
   trailingWordCount,
   walkInstructions,
-} from "../../src/hks/opcodes.ts";
-import type { LuaPrototype } from "../../src/hks/types.ts";
-import { decodeInstruction } from "../../src/hks/undump.ts";
+} from "../../src/hks/bytecode/opcodes.ts";
+import type { Method } from "../../src/hks/bytecode/proto.ts";
+import { decodeInstruction } from "../../src/hks/bytecode/reader.ts";
 
-function prototype(overrides: Partial<LuaPrototype> = {}): LuaPrototype {
+function prototype(overrides: Partial<Method> = {}): Method {
   return {
     offset: 0,
     endOffset: 0,
@@ -35,7 +35,7 @@ function prototype(overrides: Partial<LuaPrototype> = {}): LuaPrototype {
 
 describe("opcode table", () => {
   it("keys every row by its own opcode number", () => {
-    for (const [opcode, entry] of LUA_OPCODES) {
+    for (const [opcode, entry] of HKS_OPCODES) {
       expect(entry.opcode).toBe(opcode);
     }
   });

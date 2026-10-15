@@ -1,0 +1,26 @@
+# es\moon\act_moon_m3_lowercitadel\act_moon_m3_lowercitadel_mission2.esp
+#
+# Mission 2, the Lower Citadel: into the arena, then take the key off the
+# Hive. The arena's ultra and its minions are the Lower Citadel's ambient
+# encounter; the loot objective is bound to its boss squad (sq_arena) and
+# clears on the pickup. The pause after it is the run's gap before the next
+# objective comes up.
+
+trigger_volume_objective pf_obj_ultra_trigger
+collect_loot_objective pf_objective_loot bind("0x9737BF52", 1)
+c_sequence_host seq_d_o1_s05
+
+thread init: pass
+
+thread complete: pass
+
+thread main:
+    pf_obj_ultra_trigger.objective_begin()
+    sleep_until(pf_obj_ultra_trigger.is_complete())
+    pf_obj_ultra_trigger.objective_end_silent()
+    # the last of the wisdom hall's lines stops at the arena
+    seq_d_o1_s05.stop()
+    pf_objective_loot.objective_begin()
+    sleep_until(pf_objective_loot.is_complete())
+    pf_objective_loot.objective_end()
+    sleep(2)

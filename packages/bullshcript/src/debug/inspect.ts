@@ -3,21 +3,21 @@
 // script instance's unresolved fields stay unresolved (its get() resolves
 // rows lazily and notes it), and only raw entries are listed.
 
-import { LuaHostObject } from "../hks/host_env.ts";
+import { LuaHostObject } from "../hks/env/host_env.ts";
+import type { ActivationRecord } from "../hks/vm/interpreter.ts";
 import {
   LuaClosure,
   LuaHostFunction,
   LuaTable,
   type LuaValue,
   luaToString,
-} from "../hks/values.ts";
-import type { LuaFrame } from "../hks/vm.ts";
-import type { LuaEncounterHost } from "../host/encounter_host.ts";
+} from "../hks/vm/values.ts";
+import type { EncounterScriptHost } from "../host/activity/encounter_host.ts";
 import {
+  type BoundInstance,
   boundObjectOf,
   describe,
-  type LuaBoundObject,
-} from "../host/natives.ts";
+} from "../host/natives/natives.ts";
 import type { DapVariable } from "./protocol.ts";
 import type { SourceIndex } from "./sources.ts";
 
@@ -26,7 +26,7 @@ const SOURCE_NAME = /^[A-Za-z_][A-Za-z0-9_]*$/;
 const MAX_CHILDREN = 500;
 // Handles kept before the oldest are dropped.
 const MAX_HANDLES = 50_000;
-// LuaBoundObject members that are plumbing, not state.
+// BoundInstance members that are plumbing, not state.
 const BOUND_PLUMBING = new Set([
   "object",
   "context",
@@ -41,16 +41,21 @@ const BOUND_PLUMBING = new Set([
 ]);
 
 export interface InspectTarget {
-  host: LuaEncounterHost;
+  host: EncounterScriptHost;
   sources: SourceIndex;
 }
 
 type Handle =
   | { kind: "lua"; target: InspectTarget; value: LuaValue }
   | { kind: "js"; target: InspectTarget; value: unknown }
-  | { kind: "bound"; target: InspectTarget; bound: LuaBoundObject }
-  | { kind: "locals"; target: InspectTarget; frame: LuaFrame; pc: number }
-  | { kind: "upvalues"; target: InspectTarget; frame: LuaFrame };
+  | { kind: "bound"; target: InspectTarget; bound: BoundInstance }
+  | {
+      kind: "locals";
+      target: InspectTarget;
+      frame: ActivationRecord;
+      pc: number;
+    }
+  | { kind: "upvalues"; target: InspectTarget; frame: ActivationRecord };
 
 export class Handles {
   private next = 1;
@@ -78,7 +83,7 @@ export class Handles {
 // The locals live at pc: Lua 5.1 numbers them into registers in the order
 // they are declared.
 export function activeLocals(
-  frame: LuaFrame,
+  frame: ActivationRecord,
   pc: number
 ): { name: string; register: number }[] {
   const out: { name: string; register: number }[] = [];
@@ -91,7 +96,7 @@ export function activeLocals(
 }
 
 export function instanceLabel(
-  host: LuaEncounterHost,
+  host: EncounterScriptHost,
   table: LuaTable
 ): string | undefined {
   const prefix = host.instancePrefix.get(table);
@@ -109,11 +114,40 @@ export function instanceLabel(
   return "(script)";
 }
 
+// The script owning the shared archetype instance a member names, when the
+// member's holder is not that owner: the host runs one instance per
+// Encounter row and every other script declaring the row holds a reference.
+function sharedOwner(
+  host: EncounterScriptHost,
+  holder: LuaTable,
+  value: LuaTable
+): string | undefined {
+  for (const shared of host.sharedArchetypes.values()) {
+    if (shared.table !== value) {
+      continue;
+    }
+    // the owner built it at <its prefix>.<slot>; a top-level owner by name
+    const dot = shared.path.lastIndexOf(".");
+    const ownerPrefix = dot < 0 ? "" : shared.path.slice(0, dot);
+    const prefix = host.instancePrefix.get(holder);
+    const owns =
+      prefix === ownerPrefix &&
+      (prefix !== "" || instanceLabel(host, holder) === shared.owner);
+    return owns ? undefined : shared.owner;
+  }
+}
+
 export class Inspector {
   readonly handles = new Handles();
 
-  // One line for a value, and a handle when it has children.
-  present(target: InspectTarget, name: string, value: LuaValue): DapVariable {
+  // One line for a value, and a handle when it has children. holder is the
+  // script instance the value is a member of.
+  present(
+    target: InspectTarget,
+    name: string,
+    value: LuaValue,
+    holder?: LuaTable
+  ): DapVariable {
     const bound = boundObjectOf(value);
     if (bound) {
       return {
@@ -157,7 +191,10 @@ export class Inspector {
       ).length;
       let text = `table [${count}]`;
       if (label !== undefined) {
-        text = `instance ${label}`;
+        const owner = holder && sharedOwner(target.host, holder, value);
+        text = owner
+          ? `instance ${label} (shared, owned by ${owner})`
+          : `instance ${label}`;
       } else if (value instanceof LuaHostObject) {
         text = `host ${value.hostName}`;
       }
@@ -280,7 +317,8 @@ export class Inspector {
         this.present(
           target,
           typeof key === "string" ? key : `[${luaToString(key)}]`,
-          value
+          value,
+          instance ? table : undefined
         )
       );
     if (entries.length > MAX_CHILDREN) {
@@ -295,7 +333,7 @@ export class Inspector {
 
   private boundChildren(
     target: InspectTarget,
-    bound: LuaBoundObject
+    bound: BoundInstance
   ): DapVariable[] {
     const out: DapVariable[] = [
       { name: "path", value: bound.path, variablesReference: 0 },

@@ -1,0 +1,13 @@
+# es\moon\moon_portal_2\moon_portal_2_mission6.esp
+#
+# Mission 6, the end of the strike: a beat after Phogoth dies the strike
+# completes, the results show, then the activity ends.
+
+thread init: pass
+
+thread complete:
+    c_lifetime_script_utilities.get_lifetime_sensor().end_game(30)
+
+thread main:
+    sleep(9)
+    set_activity_complete()

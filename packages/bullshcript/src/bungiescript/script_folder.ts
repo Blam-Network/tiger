@@ -4,8 +4,8 @@
 import { readdirSync, readFileSync, realpathSync } from "node:fs";
 import { join, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { formatScriptTag } from "../hks/script_source.ts";
-import { fnv1 } from "../host/name_hash.ts";
+import { formatScriptTag } from "../hks/source/script_source.ts";
+import { fnv1 } from "../host/tags/name_hash.ts";
 import type { BsDeclKind, BsFileKind } from "./ast.ts";
 import { BsCompileError } from "./lexer.ts";
 import { bsFileKind, implicitDeclName, scriptStem } from "./parser.ts";

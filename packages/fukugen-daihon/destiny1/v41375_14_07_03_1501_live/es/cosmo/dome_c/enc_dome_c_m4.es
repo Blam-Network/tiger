@@ -23,8 +23,8 @@ c_object_sensor_host o_terminal_invis_device
 c_object_sensor_host o_auto_door02
 c_object_sensor_host o_hei_satellite_event_a01
 c_object_sensor_host o_hei_satellite_event_a02
-interactable_placement obj_placement_m4_o2
-interactable_placement obj_placement_m4_finish
+interactable_placement obj_placement_m4_o2 bind("0x4CBCA57B")
+interactable_placement obj_placement_m4_finish bind("0x3C97D375")
 c_squad_member_sensor_host sq_ds_fallen_landing01__dropship
 c_control_point_set_sensor_host cps_ds_fallen_landing01_enter
 c_control_point_set_sensor_host cps_ds_fallen_landing01
@@ -71,10 +71,6 @@ startup thread sc_dome_c:
     for satellite in [o_hei_satellite_event_a01, o_hei_satellite_event_a02]:
         satellite.create()
         satellite.set_device_position(0)
-    for placement in [obj_placement_m4_o2, obj_placement_m4_finish]:
-        placement._object_filter.add_players_with_activity_flag(placement._object.import_identifier())
-        placement._object.set_enabled_player_filter(placement._object_filter)
-        placement._object.create()
     for sq in [sq_fallen_corridor01a, sq_fallen_corridor01b, sq_fallen_corridor01c1, sq_fallen_corridor01d, sq_fallen_corridor02a, sq_fallen_corridor02b, sq_fallen_flank01, sq_fallen_raised01, sq_fallen_landing01, sq_fallen_controlentrance01, sq_fallen_controlentrance_shanks, sq_fallen_controlentrance_guards, sq_fallen_ctrlambush01, sq_fallen_ctrlambush02, sq_fallen_ctrlambush03]:
         sq.set_objective(obj_dome_c_m4_fallen)
     for sq in [sq_hive_assault_thrall_first1, sq_hive_assault_thrall_first2, sq_hive_assault_thrall[0], sq_hive_assault_thrall[1], sq_hive_assault_heavy01a, sq_hive_assault_trooper02a, sq_hive_assault_trooper02b, sq_hive_assault_heavy02a, sq_hive_assault_trooper03a, sq_hive_assault_trooper03b, sq_hive_assault_trooper03c, sq_hive_assault_heavy03a]:

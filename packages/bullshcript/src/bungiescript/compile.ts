@@ -2,7 +2,7 @@
 // compiles to (lines mapped back to the source), the schema description and the
 // import list.
 
-import { compileLua, sourceBytes } from "../hks/compile.ts";
+import { compileLua, sourceBytes } from "../hks/compiler/compile.ts";
 import type { BsDeclKind, BsFile, BsFileKind } from "./ast.ts";
 import { type BsDiagnostic, generateLua } from "./codegen.ts";
 import { BsCompileError } from "./lexer.ts";

@@ -2,9 +2,9 @@
 // a script knows it by. BungieScript line numbers are already in lineInfo
 // (the compiler maps them), so a frame's line is lineInfo[pc].
 
-import type { LuaChunk, LuaPrototype } from "../hks/types.ts";
-import { walkPrototypes } from "../hks/undump.ts";
-import { LuaClosure, type LuaTable } from "../hks/values.ts";
+import type { HksBytecode, Method } from "../hks/bytecode/proto.ts";
+import { walkProtos } from "../hks/bytecode/reader.ts";
+import { LuaClosure, type LuaTable } from "../hks/vm/values.ts";
 
 const THREAD_IMPL_SUFFIX = "_d_execute_impl";
 const SOURCE_PREFIX = /^[@=]/;
@@ -18,19 +18,19 @@ export function sourcePath(source: string | undefined): string | undefined {
 }
 
 export class SourceIndex {
-  private readonly paths = new WeakMap<LuaPrototype, string>();
-  private readonly names = new WeakMap<LuaPrototype, string>();
-  private readonly byPath = new Map<string, LuaPrototype[]>();
-  private readonly seen = new WeakSet<LuaChunk>();
+  private readonly paths = new WeakMap<Method, string>();
+  private readonly names = new WeakMap<Method, string>();
+  private readonly byPath = new Map<string, Method[]>();
+  private readonly seen = new WeakSet<HksBytecode>();
 
-  addChunk(chunk: LuaChunk): void {
+  addChunk(chunk: HksBytecode): void {
     if (this.seen.has(chunk)) {
       return;
     }
     this.seen.add(chunk);
     const path = sourcePath(chunk.root.source) ?? chunk.tagId;
     const list = this.byPath.get(path) ?? [];
-    for (const prototype of walkPrototypes(chunk.root)) {
+    for (const prototype of walkProtos(chunk.root)) {
       this.paths.set(prototype, path);
       list.push(prototype);
     }
@@ -56,11 +56,11 @@ export class SourceIndex {
     }
   }
 
-  pathOf(prototype: LuaPrototype): string | undefined {
+  pathOf(prototype: Method): string | undefined {
     return this.paths.get(prototype);
   }
 
-  nameOf(prototype: LuaPrototype): string {
+  nameOf(prototype: Method): string {
     const name = this.names.get(prototype) ?? prototype.name;
     if (name !== undefined && name !== "(main chunk)") {
       return name;
@@ -70,7 +70,7 @@ export class SourceIndex {
       : `function@${prototype.lineDefined}`;
   }
 
-  prototypesOf(path: string): readonly LuaPrototype[] {
+  prototypesOf(path: string): readonly Method[] {
     return this.byPath.get(path) ?? [];
   }
 

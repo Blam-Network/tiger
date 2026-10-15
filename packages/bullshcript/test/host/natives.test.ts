@@ -1,11 +1,22 @@
 import { describe, expect, it } from "vitest";
-import type { LuaHostObject } from "../../src/hks/host_env.ts";
-import { LuaHostFunction, type LuaValue } from "../../src/hks/values.ts";
-import { type BoundRow, squadRosterSize } from "../../src/host/bindings.ts";
-import { LuaCommandScriptBuilder } from "../../src/host/command_script.ts";
-import { registerIncidentMetadata } from "../../src/host/incident_natives.ts";
-import { itemKey } from "../../src/host/item_key.ts";
-import { ScriptItemState } from "../../src/host/item_state.ts";
+import type { LuaHostObject } from "../../src/hks/env/host_env.ts";
+import { LuaHostFunction, type LuaValue } from "../../src/hks/vm/values.ts";
+import {
+  type BoundRow,
+  squadRosterSize,
+} from "../../src/host/bound/bindings.ts";
+import { CommandScriptBuilder } from "../../src/host/natives/command_script.ts";
+import { registerIncidentMetadata } from "../../src/host/natives/incident_natives.ts";
+import {
+  BoundInstance,
+  type HostContext,
+  ItemWriter,
+  type KillFilterDetails,
+  type RowFacts,
+  registerBoundObject,
+  resolveStringHash,
+} from "../../src/host/natives/natives.ts";
+import { ScriptItemState } from "../../src/host/state/item_state.ts";
 import {
   type ActorState,
   type ItemChange,
@@ -13,17 +24,9 @@ import {
   PlayerObjectiveStage,
   type PlayerObjectiveState,
   type ScoreboardDefinition,
-} from "../../src/host/items.ts";
-import { fnv1 } from "../../src/host/name_hash.ts";
-import {
-  type KillFilterDetails,
-  LuaBoundObject,
-  type LuaHostContext,
-  LuaItemWriter,
-  type LuaRowFacts,
-  registerBoundObject,
-  resolveStringHash,
-} from "../../src/host/natives.ts";
+} from "../../src/host/state/items.ts";
+import { itemKey } from "../../src/host/tags/item_key.ts";
+import { fnv1 } from "../../src/host/tags/name_hash.ts";
 import { ActivityBundleItemType } from "../../src/versions/destiny1/v41375_14_07_03_1501_live/host/tag_types.ts";
 
 const BUNDLE = 0x1234;
@@ -32,7 +35,7 @@ function makeObjective() {
   const changes: ItemChange[] = [];
   const trace: string[] = [];
   let ticks = 0;
-  const context: LuaHostContext = {
+  const context: HostContext = {
     types: ActivityBundleItemType,
     activityFlagChanged: () => undefined,
     clock: { activityTicks: () => ticks },
@@ -70,9 +73,9 @@ function makeObjective() {
     typeId: ActivityBundleItemType.PlayerObjective,
     typeIndex: 47,
   };
-  const bound = new LuaBoundObject(
+  const bound = new BoundInstance(
     context,
-    new LuaItemWriter(context),
+    new ItemWriter(context),
     "po_event_countdown",
     row,
     {
@@ -226,7 +229,7 @@ describe("a player objective's stage", () => {
 // placement, whichever the item is.
 function makeWaypointObjective() {
   const changes: ItemChange[] = [];
-  const context: LuaHostContext = {
+  const context: HostContext = {
     types: ActivityBundleItemType,
     activityFlagChanged: () => undefined,
     clock: { activityTicks: () => 0 },
@@ -261,7 +264,7 @@ function makeWaypointObjective() {
   const squadSpawn = { x: 1, y: 2, z: 3 };
   const objectPlacement = { x: 10, y: 20, z: 30 };
   const bakedNav = { x: 100, y: 200, z: 300 };
-  const rows: LuaRowFacts = {
+  const rows: RowFacts = {
     navPointPosition: (row) =>
       row.typeId === ActivityBundleItemType.NavPoint ? bakedNav : undefined,
     objectPosition: (row) =>
@@ -274,10 +277,10 @@ function makeWaypointObjective() {
     squadSpawnPoint: (row) =>
       row.typeId === ActivityBundleItemType.Squad ? squadSpawn : undefined,
   };
-  const writer = new LuaItemWriter(context);
+  const writer = new ItemWriter(context);
   const bind = (row: BoundRow) =>
     registerBoundObject(
-      new LuaBoundObject(context, writer, row.name, row, rows)
+      new BoundInstance(context, writer, row.name, row, rows)
     );
   const objective = bind({
     bundle: BUNDLE,
@@ -372,7 +375,7 @@ function makeGate() {
   let deaths = 0;
   const changes: ItemChange[] = [];
   const state = new ScriptItemState();
-  const context: LuaHostContext = {
+  const context: HostContext = {
     types: ActivityBundleItemType,
     activityFlagChanged: () => undefined,
     clock: { activityTicks: () => 0 },
@@ -428,9 +431,9 @@ function makeGate() {
     resolveByIdentifier: () => undefined,
     roster: () => 1,
   };
-  const writer = new LuaItemWriter(context);
+  const writer = new ItemWriter(context);
   const bind = (row: BoundRow) => {
-    const bound = new LuaBoundObject(context, writer, row.name, row, rows);
+    const bound = new BoundInstance(context, writer, row.name, row, rows);
     registerBoundObject(bound);
     return (method: string, ...args: LuaValue[]) => {
       const fn = bound.object.get(method);
@@ -468,7 +471,7 @@ function makeGate() {
 function makeTallySquad() {
   let tally: readonly number[] | undefined;
   let incidentDeaths: number | undefined;
-  const context: LuaHostContext = {
+  const context: HostContext = {
     types: ActivityBundleItemType,
     activityFlagChanged: () => undefined,
     clock: { activityTicks: () => 0 },
@@ -508,7 +511,7 @@ function makeTallySquad() {
     typeId: ActivityBundleItemType.Squad,
     typeIndex: 9,
   };
-  const rows: LuaRowFacts = {
+  const rows: RowFacts = {
     defaultBodies: () => 6,
     namedMembers: () => [],
     navPointPosition: () => undefined,
@@ -516,9 +519,9 @@ function makeTallySquad() {
     resolveByIdentifier: () => undefined,
     roster: () => 6,
   };
-  const bound = new LuaBoundObject(
+  const bound = new BoundInstance(
     context,
-    new LuaItemWriter(context),
+    new ItemWriter(context),
     squadRow.name,
     squadRow,
     rows
@@ -649,7 +652,7 @@ function makeCarrier() {
     deaths: number;
   } = { deaths: 0 };
   const state = new ScriptItemState();
-  const context: LuaHostContext = {
+  const context: HostContext = {
     types: ActivityBundleItemType,
     activityFlagChanged: () => undefined,
     clock: { activityTicks: () => 0 },
@@ -700,20 +703,16 @@ function makeCarrier() {
     // Every dropped squad authors three bodies.
     roster: () => 3,
   };
-  const writer = new LuaItemWriter(context);
+  const writer = new ItemWriter(context);
   const bind = (bound: BoundRow) => {
-    const object = new LuaBoundObject(context, writer, bound.name, bound, rows);
+    const object = new BoundInstance(context, writer, bound.name, bound, rows);
     registerBoundObject(object);
     return object;
   };
   const gate = bind(row(ActivityBundleItemType.Actor, 72, "_squad__gate"));
   const squad = (typeIndex: number) =>
     bind(row(ActivityBundleItemType.Squad, typeIndex, `sq_${typeIndex}`));
-  const call = (
-    object: LuaBoundObject,
-    method: string,
-    ...args: LuaValue[]
-  ) => {
+  const call = (object: BoundInstance, method: string, ...args: LuaValue[]) => {
     const fn = object.object.get(method);
     if (!(fn instanceof LuaHostFunction)) {
       throw new Error(`${method} did not resolve to a host function`);
@@ -732,7 +731,7 @@ function makeCarrier() {
         )
         .at(-1) as { state: ActorState } | undefined
     )?.state;
-  const drop = (target: LuaBoundObject) =>
+  const drop = (target: BoundInstance) =>
     call(gate, "drop_squad", target.object);
   const dropping = () => call(gate, "is_dropping");
   const squadState = (typeIndex: number) =>
@@ -844,7 +843,7 @@ describe("an event interactable", () => {
   function makeInteractable() {
     const changes: ItemChange[] = [];
     const sense: { current?: { used: boolean; usedStamp: number } } = {};
-    const context: LuaHostContext = {
+    const context: HostContext = {
       types: ActivityBundleItemType,
       activityFlagChanged: () => undefined,
       clock: { activityTicks: () => 0 },
@@ -883,9 +882,9 @@ describe("an event interactable", () => {
       typeId: ActivityBundleItemType.Object,
       typeIndex: 67,
     };
-    const bound = new LuaBoundObject(
+    const bound = new BoundInstance(
       context,
-      new LuaItemWriter(context),
+      new ItemWriter(context),
       "int_event_countdown_object",
       row,
       {
@@ -983,7 +982,7 @@ describe("a command script the client never primed", () => {
     const changes: ItemChange[] = [];
     const trace: string[] = [];
     const holder: { report?: Report } = {};
-    const context: LuaHostContext = {
+    const context: HostContext = {
       types: ActivityBundleItemType,
       activityFlagChanged: () => undefined,
       clock: { activityTicks: () => 0 },
@@ -1021,9 +1020,9 @@ describe("a command script the client never primed", () => {
       typeId: ActivityBundleItemType.ActionPoint,
       typeIndex: 246,
     };
-    const bound = new LuaBoundObject(
+    const bound = new BoundInstance(
       context,
-      new LuaItemWriter(context),
+      new ItemWriter(context),
       "sq_vex_sniper01__sniper",
       {
         bundle: BUNDLE,
@@ -1053,7 +1052,7 @@ describe("a command script the client never primed", () => {
         requestYield: () => undefined,
       })?.[0];
     };
-    const cs = new LuaCommandScriptBuilder(
+    const cs = new CommandScriptBuilder(
       ActivityBundleItemType,
       "__cs",
       (value) => (value === "ps_snipe01" ? snipePoint : undefined),
@@ -1164,14 +1163,14 @@ describe("squadRosterSize", () => {
 // A context with every report settable, and handles bound to rows of any
 // type against the same row facts.
 function makeRows(
-  facts: Partial<LuaRowFacts> = {},
-  reports: Partial<LuaHostContext["reports"]> = {},
-  contextOverrides: Partial<LuaHostContext> = {}
+  facts: Partial<RowFacts> = {},
+  reports: Partial<HostContext["reports"]> = {},
+  contextOverrides: Partial<HostContext> = {}
 ) {
   const changes: ItemChange[] = [];
   const trace: string[] = [];
   const handlerCalls: { args: readonly LuaValue[]; handler: LuaValue }[] = [];
-  const context: LuaHostContext = {
+  const context: HostContext = {
     types: ActivityBundleItemType,
     activityFlagChanged: () => undefined,
     clock: { activityTicks: () => 0 },
@@ -1205,14 +1204,14 @@ function makeRows(
     trace,
     ...contextOverrides,
   };
-  const rows: LuaRowFacts = {
+  const rows: RowFacts = {
     navPointPosition: () => undefined,
     owningSquad: () => undefined,
     resolveByIdentifier: () => undefined,
     roster: () => 1,
     ...facts,
   };
-  const writer = new LuaItemWriter(context);
+  const writer = new ItemWriter(context);
   const bind = (
     path: string,
     typeId?: ActivityBundleItemType,
@@ -1222,7 +1221,7 @@ function makeRows(
       typeId === undefined
         ? undefined
         : { bundle: BUNDLE, name: path, typeId, typeIndex };
-    const bound = new LuaBoundObject(context, writer, path, row, rows);
+    const bound = new BoundInstance(context, writer, path, row, rows);
     registerBoundObject(bound);
     const call = (method: string, ...args: LuaValue[]) => {
       const fn = bound.object.get(method);
@@ -1871,7 +1870,7 @@ describe("Fireteam t30_hack_bind_host and nav_point_clear_all", () => {
 
 describe("Actor.is_bound", () => {
   it("is bound while placed and alive or awaiting its first report", () => {
-    const rows: Partial<LuaRowFacts> = {
+    const rows: Partial<RowFacts> = {
       owningSquad: (row) =>
         row.typeId === ActivityBundleItemType.Actor
           ? {
@@ -2609,7 +2608,7 @@ describe("an activity flag named by a row's import identifier", () => {
   function makeRows() {
     const changes: ItemChange[] = [];
     const flags: [number, boolean][] = [];
-    const context: LuaHostContext = {
+    const context: HostContext = {
       types: ActivityBundleItemType,
       activityFlagChanged: (hash, active) => flags.push([hash, active]),
       clock: { activityTicks: () => 0 },
@@ -2650,9 +2649,9 @@ describe("an activity flag named by a row's import identifier", () => {
       resolveByIdentifier: () => undefined,
       roster: () => 1,
     };
-    const writer = new LuaItemWriter(context);
+    const writer = new ItemWriter(context);
     const make = (path: string, row: BoundRow | undefined) => {
-      const bound = new LuaBoundObject(context, writer, path, row, facts);
+      const bound = new BoundInstance(context, writer, path, row, facts);
       registerBoundObject(bound);
       return bound;
     };
@@ -2670,7 +2669,7 @@ describe("an activity flag named by a row's import identifier", () => {
     });
     const flag = make("sp_placement_array._activity_flag", undefined);
     const call = (
-      bound: LuaBoundObject,
+      bound: BoundInstance,
       method: string,
       ...args: LuaValue[]
     ) => {

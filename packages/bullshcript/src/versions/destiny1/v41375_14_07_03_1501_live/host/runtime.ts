@@ -2,7 +2,7 @@
 import {
   ScriptRuntime as SharedScriptRuntime,
   type ScriptRuntimeOptions as SharedScriptRuntimeOptions,
-} from "../../../../host/runtime.ts";
+} from "../../../../host/activity/runtime.ts";
 import { ActivityBundleItemType } from "./tag_types.ts";
 
 export type ScriptRuntimeOptions = Omit<SharedScriptRuntimeOptions, "types">;

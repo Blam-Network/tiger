@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { compile } from "../../src/hks/compile.ts";
-import type { ScriptSource } from "../../src/hks/script_source.ts";
+import { compile } from "../../src/hks/compiler/compile.ts";
+import type { ScriptSource } from "../../src/hks/source/script_source.ts";
 import { ScriptRuntime } from "../../src/versions/destiny1/v41375_14_07_03_1501_live/host/runtime.ts";
 
 // The thread natives against the xex's semantics: wake, kill, is_running =

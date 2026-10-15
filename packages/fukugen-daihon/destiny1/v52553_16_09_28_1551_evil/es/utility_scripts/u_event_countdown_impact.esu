@@ -1,0 +1,22 @@
+# es\utility_scripts\u_event_countdown_impact.esu
+#
+# The Warsat coming down (a countdown event's pf_impact): five looping impact
+# sequences, played together from the moment the satellite lands until the
+# event's timer starts. Not in the alpha, whose countdown has no impact.
+
+c_sequence_host seq_warsat_invis_impact1
+c_sequence_host seq_warsat_invis_impact2
+c_sequence_host seq_warsat_invis_impact3
+c_sequence_host seq_warsat_invis_impact4
+c_sequence_host seq_warsat_invis_impact5
+
+def impacts():
+    return [seq_warsat_invis_impact1, seq_warsat_invis_impact2, seq_warsat_invis_impact3, seq_warsat_invis_impact4, seq_warsat_invis_impact5]
+
+def play_impacts():
+    for impact in impacts():
+        impact.start()
+
+def stop_impacts():
+    for impact in impacts():
+        impact.stop()

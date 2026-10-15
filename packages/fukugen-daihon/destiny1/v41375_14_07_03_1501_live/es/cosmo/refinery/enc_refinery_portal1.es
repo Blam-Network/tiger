@@ -23,7 +23,7 @@ c_object_sensor_host o_laserweb_behavior0202
 c_object_sensor_host o_laserweb_behavior0203
 c_object_sensor_host o_laserweb_behavior0301
 c_object_sensor_host o_laserweb_behavior0302
-interactable_placement sp_placement_array  # archetype not authored on TU0
+interactable_placement sp_placement_array bind("0x1C450A3D")
 c_squad_sensor_host sq_trash01_hive01
 c_objective_sensor_host obj_trash  # true name unknown
 c_squad_sensor_host sq_trash01_hive02
@@ -96,10 +96,6 @@ startup thread sc_refinery_main:
     o_laserweb_behavior0203.create()
     o_laserweb_behavior0301.create()
     o_laserweb_behavior0302.create()
-    console = sp_placement_array
-    console._object_filter.add_players_with_activity_flag(console._object.import_identifier())
-    console._object.set_enabled_player_filter(console._object_filter)
-    console._object.create()
     sq_trash01_hive01.set_objective(obj_trash)
     sq_trash01_hive02.set_objective(obj_trash)
     sq_trash01_hive03.set_objective(obj_trash)

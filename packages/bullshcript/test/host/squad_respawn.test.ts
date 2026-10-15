@@ -2,17 +2,17 @@
 // (retail's dome A Fallen went 2 -> 4), and alive_count holds at what was
 // asked for until the client reports them.
 import { describe, expect, it } from "vitest";
-import { LuaHostFunction, type LuaValue } from "../../src/hks/values.ts";
-import type { BoundRow } from "../../src/host/bindings.ts";
-import { ScriptItemState } from "../../src/host/item_state.ts";
-import type { ItemChange } from "../../src/host/items.ts";
+import { LuaHostFunction, type LuaValue } from "../../src/hks/vm/values.ts";
+import type { BoundRow } from "../../src/host/bound/bindings.ts";
 import {
-  LuaBoundObject,
-  type LuaHostContext,
-  LuaItemWriter,
-  type LuaRowFacts,
+  BoundInstance,
+  type HostContext,
+  ItemWriter,
+  type RowFacts,
   registerBoundObject,
-} from "../../src/host/natives.ts";
+} from "../../src/host/natives/natives.ts";
+import { ScriptItemState } from "../../src/host/state/item_state.ts";
+import type { ItemChange } from "../../src/host/state/items.ts";
 import { ActivityBundleItemType } from "../../src/versions/destiny1/v41375_14_07_03_1501_live/host/tag_types.ts";
 
 const BUNDLE = 0x34e80eed;
@@ -25,7 +25,7 @@ function makeSquad() {
   } = {};
   let ticks = 100;
   const changes: ItemChange[] = [];
-  const context: LuaHostContext = {
+  const context: HostContext = {
     types: ActivityBundleItemType,
     activityFlagChanged: () => undefined,
     clock: { activityTicks: () => ticks },
@@ -67,7 +67,7 @@ function makeSquad() {
     typeId: ActivityBundleItemType.Squad,
     typeIndex: 7,
   };
-  const rows: LuaRowFacts = {
+  const rows: RowFacts = {
     defaultBodies: () => 2,
     namedMembers: () => [],
     navPointPosition: () => undefined,
@@ -75,25 +75,25 @@ function makeSquad() {
     resolveByIdentifier: () => undefined,
     roster: () => 2,
   };
-  const squad = new LuaBoundObject(
+  const squad = new BoundInstance(
     context,
-    new LuaItemWriter(context),
+    new ItemWriter(context),
     row.name,
     row,
     rows
   );
   registerBoundObject(squad);
-  const group = new LuaBoundObject(
+  const group = new BoundInstance(
     context,
-    new LuaItemWriter(context),
+    new ItemWriter(context),
     "_squad_group",
     undefined,
     rows
   );
   registerBoundObject(group);
-  const actor = new LuaBoundObject(
+  const actor = new BoundInstance(
     context,
-    new LuaItemWriter(context),
+    new ItemWriter(context),
     "_squad__dropship",
     {
       bundle: BUNDLE,
@@ -105,7 +105,7 @@ function makeSquad() {
   );
   registerBoundObject(actor);
   const callOn =
-    (target: LuaBoundObject) =>
+    (target: BoundInstance) =>
     (method: string, ...args: LuaValue[]): LuaValue => {
       const fn = target.object.get(method);
       if (!(fn instanceof LuaHostFunction)) {

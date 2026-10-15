@@ -1,0 +1,17 @@
+# es\venus\act_venus_m01_engineering\act_venus_m01_engineering_mission1.esp
+#
+# Mission 1, the intro: the arrival cinematic (112_vnr). The lifetime holds
+# for it; the player spawns on the Shattered Coast once it is over.
+
+cinematic_midmission pf_112_vnr
+
+thread init: pass
+
+thread complete: pass
+
+thread main:
+    # the capture starts it ten seconds after the script; what it waits for
+    # is not on the wire
+    sleep(10)
+    pf_112_vnr.start()
+    sleep_until(pf_112_vnr.is_complete())

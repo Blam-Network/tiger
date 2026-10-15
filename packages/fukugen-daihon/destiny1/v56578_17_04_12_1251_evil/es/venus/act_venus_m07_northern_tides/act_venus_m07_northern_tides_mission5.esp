@@ -1,0 +1,25 @@
+# es\venus\act_venus_m07_northern_tides\act_venus_m07_northern_tides_mission5.esp
+#
+# Mission 5, the outro. The boss music fades, the Ghost's last two lines
+# play with the ascent music, then the activity completes and the results
+# come up 30 seconds on.
+
+c_sequence_host venus_m07_music_cue2
+c_sequence_host md_vn07_020_120
+c_sequence_host md_vn07_020_130
+c_sequence_host venus_m07_music_ascent
+
+thread init: pass
+
+thread complete:
+    c_lifetime_script_utilities.get_lifetime_sensor().end_game(30)
+
+thread main:
+    sleep(6)
+    venus_m07_music_cue2.stop()
+    sleep(1)
+    md_vn07_020_120.start()
+    sleep(4)
+    md_vn07_020_130.start()
+    venus_m07_music_ascent.start()
+    set_activity_complete()

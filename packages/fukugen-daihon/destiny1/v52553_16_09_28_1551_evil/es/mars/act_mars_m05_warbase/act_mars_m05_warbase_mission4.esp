@@ -1,0 +1,26 @@
+# es\mars\act_mars_m05_warbase\act_mars_m05_warbase_mission4.esp
+#
+# Mission 4, phase_5_gatehouse_goto: from the mesa to the gatehouse. The
+# alarm the console set off runs ten seconds; the Ghost's line about the
+# gatehouse plays while the objective is up and stops at the gatehouse
+# (mission 5 stops it). Clears as a player enters the gatehouse's bubble.
+
+c_location_sensor_host gatehouse
+trigger_bubble_objective pf_objective_goto bind(gatehouse)
+c_sequence_host seq_d_o1_s09
+c_sequence_host seq_d_o2_s01
+c_sequence_host seq_alarm_mesa
+
+thread init: pass
+
+thread complete: pass
+
+thread main:
+    seq_d_o1_s09.start()
+    pf_objective_goto.objective_begin()
+    seq_d_o2_s01.start()
+    sleep(5)
+    seq_alarm_mesa.stop()
+    sleep_until(pf_objective_goto.is_complete())
+    sleep(1)
+    pf_objective_goto.objective_end_silent()

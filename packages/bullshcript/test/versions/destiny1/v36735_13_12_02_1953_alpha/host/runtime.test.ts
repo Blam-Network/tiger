@@ -1,24 +1,24 @@
 import { describe, expect, it } from "vitest";
+import type { HksBytecode } from "../../../../../src/hks/bytecode/proto.ts";
 import {
   directoryScriptSource,
   loadScriptChunk,
   type ScriptSource,
   scriptReferences,
-} from "../../../../../src/hks/script_source.ts";
-import type { LuaChunk } from "../../../../../src/hks/types.ts";
+} from "../../../../../src/hks/source/script_source.ts";
 import {
   type LuaHostFunction,
   LuaTable,
   type LuaValue,
   luaLessThan,
-} from "../../../../../src/hks/values.ts";
+} from "../../../../../src/hks/vm/values.ts";
 import {
   type ActivityPlayer,
-  LuaEncounterHost,
-} from "../../../../../src/host/encounter_host.ts";
-import type { ItemChange } from "../../../../../src/host/items.ts";
-import { fnv1 } from "../../../../../src/host/name_hash.ts";
-import { scoreboardSensor } from "../../../../../src/host/scheduling_threads.ts";
+  EncounterScriptHost,
+} from "../../../../../src/host/activity/encounter_host.ts";
+import { scoreboardSensor } from "../../../../../src/host/schedule/scheduling_threads.ts";
+import type { ItemChange } from "../../../../../src/host/state/items.ts";
+import { fnv1 } from "../../../../../src/host/tags/name_hash.ts";
 import {
   ScriptRuntime,
   type ScriptRuntimeOptions,
@@ -454,7 +454,7 @@ describe("host natives with no item", () => {
     expect(instance.trace).toContain("encounters: script activated");
   });
 
-  // LuaRowFacts.sequenceDuration reads the tag row's own
+  // RowFacts.sequenceDuration reads the tag row's own
   // sequenceDurationSeconds, which the caller's bundle reader fills in.
   it("reads a Sequence row's own duration off the tag data", () => {
     const { instance } = runtime({
@@ -511,7 +511,7 @@ describe("host natives with no item", () => {
     ).toBeUndefined();
   });
 
-  // LuaRowFacts.hasSequence reads the tag row's own
+  // RowFacts.hasSequence reads the tag row's own
   // sequenceHasBlueprint the same way sequenceDuration reads its duration.
   it("reads a Sequence row's own has_sequence off the tag data", () => {
     const { instance } = runtime({
@@ -619,10 +619,10 @@ describe.skipIf(chunkDir === undefined)("the alpha's scripts", () => {
       ];
     });
     const changes: ItemChange[] = [];
-    new LuaEncounterHost({
+    new EncounterScriptHost({
       types: ActivityBundleItemType,
       bundles: [{ bundle: 0x5176_41f1, rows, tag: 0x809b_800d }],
-      childScripts: new Map([["vex_warp_gate", warpGate as LuaChunk]]),
+      childScripts: new Map([["vex_warp_gate", warpGate as HksBytecode]]),
       chunks: [],
       clock: { activityTicks: () => 0 },
       onItemChange: (change) => changes.push(change),

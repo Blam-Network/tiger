@@ -1,0 +1,22 @@
+# es\cosmo\act_cosmo_m0_highway\act_cosmo_m0_highway_mission1.esp
+#
+# Mission 1, the intro: the Ghost revives the player.
+# The player doesn't spawn until the highway encounter lets them. The
+# skeleton the Ghost finds is removed when the phase ends.
+
+c_object_sensor_host skeleton_static_1
+cinematic_midmission pf_104_res
+cinematic_midmission pf_104_res_fp
+
+thread init: pass
+
+thread complete: pass
+
+thread main:
+    sleep(1)
+    skeleton_static_1.create()
+    pf_104_res.start()
+    sleep_until(pf_104_res.is_complete())
+    pf_104_res_fp.start()
+    sleep_until(pf_104_res_fp.is_complete())
+    skeleton_static_1.delete_object()

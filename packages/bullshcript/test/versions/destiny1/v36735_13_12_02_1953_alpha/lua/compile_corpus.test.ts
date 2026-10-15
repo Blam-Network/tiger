@@ -1,13 +1,16 @@
 import { beforeAll, describe, expect, it } from "vitest";
-import { compileLua } from "../../../../../src/hks/compile.ts";
+import type {
+  HksBytecode,
+  Method,
+} from "../../../../../src/hks/bytecode/proto.ts";
+import { readBytecode } from "../../../../../src/hks/bytecode/reader.ts";
+import { compileLua } from "../../../../../src/hks/compiler/compile.ts";
 import {
   directoryScriptSource,
   type ScriptSource,
   scriptChunkOffset,
-} from "../../../../../src/hks/script_source.ts";
-import type { LuaChunk, LuaPrototype } from "../../../../../src/hks/types.ts";
-import { parseLuaChunk } from "../../../../../src/hks/undump.ts";
-import type { ItemChange } from "../../../../../src/host/items.ts";
+} from "../../../../../src/hks/source/script_source.ts";
+import type { ItemChange } from "../../../../../src/host/state/items.ts";
 import { ScriptRuntime } from "../../../../../src/versions/destiny1/v36735_13_12_02_1953_alpha/host/runtime.ts";
 import { decompile } from "../../../../../src/versions/destiny1/v36735_13_12_02_1953_alpha/lua/decompile.ts";
 
@@ -20,14 +23,14 @@ const LINE_NOTE = / -- lines \d+-\d+/g;
 
 interface Entry {
   at: number;
-  chunk: LuaChunk;
+  chunk: HksBytecode;
   recompiled: Uint8Array;
   source: string;
   tag: Uint8Array;
 }
 
 // Everything but line info, which the decompiled layout does not keep.
-function codeOf(proto: LuaPrototype): unknown {
+function codeOf(proto: Method): unknown {
   return {
     code: proto.code.map((i) => i.raw),
     constants: proto.constants,
@@ -55,7 +58,7 @@ describe.skipIf(chunkDir === undefined)("the compiler on the corpus", () => {
       if (at < 0) {
         continue;
       }
-      const chunk = parseLuaChunk(tag.subarray(at), tagId);
+      const chunk = readBytecode(tag.subarray(at), tagId);
       const source = decompile(chunk).source;
       const recompiled = compileLua(source, { chunkName: chunk.root.source });
       entries.set(tagId, { at, chunk, recompiled, source, tag });
@@ -73,7 +76,7 @@ describe.skipIf(chunkDir === undefined)("the compiler on the corpus", () => {
     expect(entries.size).toBeGreaterThan(0);
     const differ: string[] = [];
     for (const [tagId, { chunk, recompiled }] of entries) {
-      const again = parseLuaChunk(recompiled, tagId);
+      const again = readBytecode(recompiled, tagId);
       if (
         JSON.stringify(codeOf(again.root)) !==
         JSON.stringify(codeOf(chunk.root))
@@ -86,7 +89,7 @@ describe.skipIf(chunkDir === undefined)("the compiler on the corpus", () => {
 
   it("decompiles the recompiled chunk to the same source", () => {
     for (const [tagId, { recompiled, source }] of entries) {
-      const again = decompile(parseLuaChunk(recompiled, tagId)).source;
+      const again = decompile(readBytecode(recompiled, tagId)).source;
       expect(again.replace(LINE_NOTE, ""), tagId).toBe(
         source.replace(LINE_NOTE, "")
       );

@@ -5,7 +5,7 @@
 # hack and the waves.
 
 c_encounter_handle enc_refinery_portal1  # true name unknown
-countdown_objective obj_s1_phase02_m1
+countdown_objective obj_s1_phase02_m1 bind("0x1C450A3D")
 c_player_objective_sensor_host po_repel_fallen01
 c_nav_point_host ap_alarm01  # true name unknown
 

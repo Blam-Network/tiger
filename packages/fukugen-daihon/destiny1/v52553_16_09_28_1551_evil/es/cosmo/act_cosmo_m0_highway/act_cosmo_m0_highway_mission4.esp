@@ -1,0 +1,15 @@
+# es\cosmo\act_cosmo_m0_highway\act_cosmo_m0_highway_mission4.esp
+#
+# Mission 4, "Fight Through the Wall". Clears when the player reaches the
+# edge of the graveyard. The Fallen on the way belong to the breach encounter.
+
+trigger_volume_objective obj_goto_graveyard
+
+thread init: pass
+
+thread complete: pass
+
+thread main:
+    obj_goto_graveyard.objective_begin()
+    sleep_until(obj_goto_graveyard.is_complete())
+    obj_goto_graveyard.objective_end_silent()

@@ -1,15 +1,15 @@
 // The alpha checks: every decl compiles to the same code as its chunks, to
 // the same bytes (line tables included), and to the same schema as its tags.
 import type {
+  HksBytecode,
   LiftMember,
   LiftSide,
-  LuaChunk,
 } from "@blamnetwork/bullshcript/destiny1/v36735_13_12_02_1953_alpha";
 import {
   formatScriptTag,
   nativeBaseById,
   nativeTypeById,
-  parseLuaChunk,
+  readBytecode,
 } from "@blamnetwork/bullshcript/destiny1/v36735_13_12_02_1953_alpha";
 import type {
   BsCompiledDecl,
@@ -102,7 +102,7 @@ function isThread(m: LiftMember): boolean {
   return m.type === THREAD_DEFINITION || m.type === THREAD_INSTANCE;
 }
 
-function differingLines(expected: LuaChunk, actual: LuaChunk): number[] {
+function differingLines(expected: HksBytecode, actual: HksBytecode): number[] {
   const lines = new Set<number>();
   const walk = (a: typeof expected.root, b: typeof actual.root) => {
     for (let pc = 0; pc < Math.min(a.code.length, b.code.length); pc++) {
@@ -372,7 +372,7 @@ function compareSchema(
 export function runGates(
   result: BsCompileResult,
   schemas: AlphaSchemas,
-  chunks: ReadonlyMap<string, LuaChunk>
+  chunks: ReadonlyMap<string, HksBytecode>
 ): GateReport {
   const diagnostics = result.diagnostics.map(
     (d) => `${d.path}:${d.line}: ${d.severity}: ${d.message}`
@@ -410,7 +410,7 @@ export function runGates(
       });
       continue;
     }
-    const compiled = parseLuaChunk(decl.chunk, tag);
+    const compiled = readBytecode(decl.chunk, tag);
     const codeDiff = diffChunks(original, compiled);
     if (codeDiff.length === 0) {
       codeIdentical++;

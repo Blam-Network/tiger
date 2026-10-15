@@ -20,6 +20,17 @@
 # follow the fights; the lines tied to an objective are its mission's.
 # The ending cinematic is its own activity (cine_end), not this script's.
 
+act_mars_m07_lowergarden_mission1 phase_plains
+act_mars_m07_lowergarden_mission2 phase_valley
+act_mars_m07_lowergarden_mission3 phase_catacombs
+act_mars_m07_lowergarden_mission4 phase_uppergarden
+act_mars_m07_lowergarden_mission5 phase_lowergarden
+act_mars_m07_lowergarden_mission6 phase_lowergarden_cinematic
+act_mars_m07_lowergarden_mission7 phase_lowergarden_hopdown
+act_mars_m07_lowergarden_mission8 phase_lowergarden_darkness
+act_mars_m07_lowergarden_mission9 phase_lowergarden_climax
+act_mars_m07_lowergarden_mission10 phase_lowergarden_final
+
 startup thread ss_mars_m07_lowergarden:
     print("script startup")
     c_lifetime_script_utilities.get_lifetime_sensor().set_state(e_activity_lifetime_state.pregame)

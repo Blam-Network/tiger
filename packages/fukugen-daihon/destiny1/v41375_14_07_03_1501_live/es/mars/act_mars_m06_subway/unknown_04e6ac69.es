@@ -43,11 +43,7 @@ trigger_volume_objective pf_objective_lobby_n_trigger
 c_player_trigger_sensor_host pt_n_plat_spawn
 c_player_trigger_sensor_host pt_warpgate1
 c_player_trigger_sensor_host pt_warpgate3and4and5
-vex_warp_gate pf_warp_gate1
-vex_warp_gate pf_warp_gate2
-vex_warp_gate pf_warp_gate3
-vex_warp_gate pf_warp_gate4
-vex_warp_gate pf_warp_gate5
+c_encounter_handle enc_subway_m06
 c_squad_sensor_host sq_warpgate3_support1
 c_squad_sensor_host sq_warpgate3_support2
 c_squad_sensor_host sq_warpgate4_major_anchor1
@@ -121,7 +117,8 @@ startup thread sc_subway_lines:
     seq_d_subway_obj_s01.start()
 
 def gates_alive_count():
-    return pf_warp_gate1._squad.alive_count() + pf_warp_gate2._squad.alive_count() + pf_warp_gate3._squad.alive_count() + pf_warp_gate4._squad.alive_count() + pf_warp_gate5._squad.alive_count()
+    enc = enc_subway_m06
+    return enc.pf_warp_gate1._squad.alive_count() + enc.pf_warp_gate2._squad.alive_count() + enc.pf_warp_gate3._squad.alive_count() + enc.pf_warp_gate4._squad.alive_count() + enc.pf_warp_gate5._squad.alive_count()
 
 def maint_alive_count():
     return sq_warpgate3_support1.alive_count() + sq_warpgate3_support2.alive_count() + sq_warpgate4_major_anchor1.alive_count() + sq_warpgate4_support1.alive_count() + sq_warpgate5_support1.alive_count() + sq_warpgate5_support2.alive_count()

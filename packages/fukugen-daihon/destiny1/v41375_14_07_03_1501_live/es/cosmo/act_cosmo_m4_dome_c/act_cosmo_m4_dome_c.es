@@ -11,6 +11,11 @@
 # The area encounters (dome_a, dome_c) are scripts of their own.
 # unknown_f9e600a7 holds the music and Ghost lines. From one retail capture
 
+act_cosmo_m4_dome_c_mission1 cosmo_m4_phase00_array
+act_cosmo_m4_dome_c_mission2 cosmo_m4_phase01_dome_c
+act_cosmo_m4_dome_c_mission3 cosmo_m4_phase02_dome_c
+act_cosmo_m4_dome_c_mission4 cosmo_m4_phase_end
+
 startup thread ss_cosmo_m4_dome_c:
     print("script startup")
     c_lifetime_script_utilities.get_lifetime_sensor().set_state(e_activity_lifetime_state.pregame)

@@ -3,11 +3,11 @@ import {
   compileBungieScript,
   lineMapper,
 } from "../../src/bungiescript/compile.ts";
-import { compileLuaChunk } from "../../src/hks/compile.ts";
-import { LuaHostEnvironment } from "../../src/hks/host_env.ts";
-import { parseLuaChunk } from "../../src/hks/undump.ts";
-import { LuaHostFunction, LuaTable } from "../../src/hks/values.ts";
-import { LuaVm } from "../../src/hks/vm.ts";
+import { readBytecode } from "../../src/hks/bytecode/reader.ts";
+import { compileLuaChunk } from "../../src/hks/compiler/compile.ts";
+import { LuaHostEnvironment } from "../../src/hks/env/host_env.ts";
+import { LuaState } from "../../src/hks/vm/interpreter.ts";
+import { LuaHostFunction, LuaTable } from "../../src/hks/vm/values.ts";
 
 // Small sources through the whole front end; test/fukugen_daihon_alpha.test.ts
 // proves them on real decls.
@@ -218,7 +218,7 @@ describe("the BungieScript code generator", () => {
         "end",
       ].join("\n")
     );
-    const chunk = parseLuaChunk(decl.chunk as Uint8Array, "T");
+    const chunk = readBytecode(decl.chunk as Uint8Array, "T");
     const cs = chunk.root.protos[0];
     expect([cs.lineDefined, cs.lastLineDefined]).toEqual([1, 1]);
     expect(cs.lineInfo[0]).toBe(1);
@@ -263,7 +263,7 @@ describe("the BungieScript code generator", () => {
     const { decl } = compileOne(
       "c_squad_sensor_host sq\n\ndef f():\n\n    sq.place()\n"
     );
-    const chunk = parseLuaChunk(decl.chunk as Uint8Array, "T");
+    const chunk = readBytecode(decl.chunk as Uint8Array, "T");
     expect([chunk.root.lineDefined, chunk.root.lastLineDefined]).toEqual([
       3, 3,
     ]);
@@ -415,7 +415,7 @@ describe("list literals", () => {
       return value === undefined ? [] : [index, value];
     });
     environment.bind("enum_of", (args) => [step, args[0], -1]);
-    const vm = new LuaVm({ globals: environment.globals });
+    const vm = new LuaState({ globals: environment.globals });
     const squad = (name: string) => {
       const table = new LuaTable();
       table.set(

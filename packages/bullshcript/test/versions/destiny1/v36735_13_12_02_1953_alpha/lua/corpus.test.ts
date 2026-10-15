@@ -1,17 +1,17 @@
 import { beforeAll, describe, expect, it } from "vitest";
-import { encodeLuaChunk } from "../../../../../src/hks/encode.ts";
+import type { HksBytecode } from "../../../../../src/hks/bytecode/proto.ts";
+import { readBytecode } from "../../../../../src/hks/bytecode/reader.ts";
+import { dumpBytecode } from "../../../../../src/hks/bytecode/writer.ts";
 import {
   applyUpvalueProvider,
   missingGlobals,
   runMainChunk,
-} from "../../../../../src/hks/host_env.ts";
+} from "../../../../../src/hks/env/host_env.ts";
 import {
   directoryScriptSource,
   type ScriptSource,
   scriptChunkOffset,
-} from "../../../../../src/hks/script_source.ts";
-import type { LuaChunk } from "../../../../../src/hks/types.ts";
-import { parseLuaChunk } from "../../../../../src/hks/undump.ts";
+} from "../../../../../src/hks/source/script_source.ts";
 import { ScriptRuntime } from "../../../../../src/versions/destiny1/v36735_13_12_02_1953_alpha/host/runtime.ts";
 import { decompile } from "../../../../../src/versions/destiny1/v36735_13_12_02_1953_alpha/lua/decompile.ts";
 
@@ -20,7 +20,7 @@ const chunkDir = process.env.TIGER_LUA_CHUNKS;
 
 describe.skipIf(chunkDir === undefined)("the TU0 script corpus", () => {
   let source: ScriptSource;
-  const chunks: { chunk: LuaChunk; raw: Uint8Array }[] = [];
+  const chunks: { chunk: HksBytecode; raw: Uint8Array }[] = [];
   beforeAll(() => {
     source = directoryScriptSource(chunkDir as string);
     // Stub script tags carry no chunk; everything else has to parse.
@@ -29,7 +29,7 @@ describe.skipIf(chunkDir === undefined)("the TU0 script corpus", () => {
       const at = scriptChunkOffset(tag);
       if (at >= 0) {
         const raw = tag.subarray(at);
-        chunks.push({ chunk: parseLuaChunk(raw, tagId), raw });
+        chunks.push({ chunk: readBytecode(raw, tagId), raw });
       }
     }
   });
@@ -38,7 +38,7 @@ describe.skipIf(chunkDir === undefined)("the TU0 script corpus", () => {
     expect(chunks.length).toBeGreaterThan(0);
     for (const { chunk, raw } of chunks) {
       expect(
-        Buffer.from(encodeLuaChunk(chunk)).equals(
+        Buffer.from(dumpBytecode(chunk)).equals(
           Buffer.from(raw.subarray(0, chunk.chunkBytes))
         ),
         chunk.tagId

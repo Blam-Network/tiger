@@ -1,13 +1,13 @@
 import { describe, expect, it } from "vitest";
-import type { ScriptSource } from "../../src/hks/script_source.ts";
+import type { ScriptSource } from "../../src/hks/source/script_source.ts";
 import {
   type LuaHostFunction,
   LuaTable,
   type LuaValue,
   luaLessThan,
-} from "../../src/hks/values.ts";
-import type { ActivityPlayer } from "../../src/host/encounter_host.ts";
-import type { ItemChange } from "../../src/host/items.ts";
+} from "../../src/hks/vm/values.ts";
+import type { ActivityPlayer } from "../../src/host/activity/encounter_host.ts";
+import type { ItemChange } from "../../src/host/state/items.ts";
 import {
   ScriptRuntime,
   type ScriptRuntimeOptions,
@@ -439,7 +439,7 @@ describe("host natives with no item", () => {
     expect(instance.trace).toContain("encounters: script activated");
   });
 
-  // LuaRowFacts.sequenceDuration reads the tag row's own
+  // RowFacts.sequenceDuration reads the tag row's own
   // sequenceDurationSeconds, which the caller's bundle reader fills in.
   it("reads a Sequence row's own duration off the tag data", () => {
     const { instance } = runtime({
@@ -496,7 +496,7 @@ describe("host natives with no item", () => {
     ).toBeUndefined();
   });
 
-  // LuaRowFacts.hasSequence reads the tag row's own
+  // RowFacts.hasSequence reads the tag row's own
   // sequenceHasBlueprint the same way sequenceDuration reads its duration.
   it("reads a Sequence row's own has_sequence off the tag data", () => {
     const { instance } = runtime({
@@ -565,12 +565,12 @@ describe("trigger fires across a re-arm", () => {
       instance.tick();
     }
     instance.forgetStaleTriggerFire(key);
-    expect(instance.triggersFired.has(key)).toBe(true);
+    expect(instance.world.at(key)?.triggerFiredAt).toBeDefined();
     for (let i = 0; i < 11; i++) {
       instance.tick();
     }
     instance.forgetStaleTriggerFire(key);
-    expect(instance.triggersFired.has(key)).toBe(false);
+    expect(instance.world.at(key)?.triggerFiredAt).toBeUndefined();
   });
 
   it("hands a client incident to the listeners by name hash", () => {

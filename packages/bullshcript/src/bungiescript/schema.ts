@@ -1,7 +1,7 @@
 // The declaration half of a decl: its members in order, with the kind, type,
 // side, default and flags the definition and instance schemas carry.
 
-import { fnv1, parseHashLiteral } from "../host/name_hash.ts";
+import { fnv1, parseHashLiteral } from "../host/tags/name_hash.ts";
 import type { BsDecl, BsExpr, BsField, BsType } from "./ast.ts";
 import { type BsNativeKind, nativeTypeNamed } from "./native_types.ts";
 import {

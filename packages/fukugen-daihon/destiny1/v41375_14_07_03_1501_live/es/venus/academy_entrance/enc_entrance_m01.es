@@ -15,8 +15,8 @@
 
 c_objective_sensor_host obj_entrance_m01
 c_object_sensor_host o_vex_block_network_a
-interactable_placement pf_vex_block
-interactable_placement pf_door_hack
+interactable_placement pf_vex_block bind("vex_block")
+interactable_placement pf_door_hack bind("ghost_door_hack")
 static_array<c_object_sensor_host, 15> candy_dynamic_objects
 static_array<c_object_sensor_host, 5> candy_explosive_objects
 c_trigger_volume_slot_host tv_spawn02

@@ -1,0 +1,23 @@
+# es\moon\act_moon_m1_launchtubes\act_moon_m1_launchtubes_mission9.esp
+#
+# Mission 9, the end: take the dead Guardian's Ghost. The activity completes
+# on the pickup, and the game ends half a minute later.
+
+interactable_objective pf_objective_button_ghost bind("0x67FB6149")
+interactable_placement pf_placement_button_ghost bind("0x67FB6149")
+c_sequence_host seq_music_ascent
+c_sequence_host seq_d_o2_s11
+
+thread init: pass
+
+thread complete:
+    c_lifetime_script_utilities.get_lifetime_sensor().end_game(30)
+    sleep(3)
+    seq_d_o2_s11.start()
+
+thread main:
+    pf_objective_button_ghost.objective_begin()
+    sleep_until(pf_objective_button_ghost.is_complete())
+    seq_music_ascent.start()
+    pf_objective_button_ghost.objective_end_silent()
+    set_activity_complete()

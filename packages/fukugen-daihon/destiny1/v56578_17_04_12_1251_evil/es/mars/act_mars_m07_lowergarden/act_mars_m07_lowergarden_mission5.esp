@@ -1,0 +1,70 @@
+# es\mars\act_mars_m07_lowergarden\act_mars_m07_lowergarden_mission5.esp
+#
+# Mission 5, the lower garden: reach the arena, scan the two glyphs, scan
+# the kiosk, then go through the door to the heart. The glyph objective has
+# no archetype on TU0 (its rows are an object set), so this phase drives
+# its rows itself: the activity flags are what let the player use the
+# glyphs. The lowergarden encounter runs the scans, the block, the key and
+# the door; this phase follows what it makes. Ghost cages, glyph surges and
+# the door open twenty-six seconds after the key appears, all one run's.
+
+trigger_volume_objective sp_objective_goto
+c_encounter_handle sp_objective_glyphs
+c_activity_flag af_glyph_a
+c_activity_flag af_glyph_b
+countdown_objective sp_objective_kiosk bind("0xE2E80144")
+trigger_volume_objective sp_objective_heart_goto
+c_encounter_handle enc_lowergarden_m07
+c_sequence_host seq_dialog_lowergarden_door_open
+c_sequence_host seq_sound_lowergarden_darkness
+c_sequence_host seq_music_garden_ambience
+
+thread init: pass
+
+thread complete: pass
+
+thread main:
+    enc = enc_lowergarden_m07
+    sp_objective_goto.objective_begin()
+    sleep_until(sp_objective_goto.is_complete())
+    sp_objective_goto.objective_end_silent()
+    glyphs_begin()
+    # the second glyph's scan starts the moment the Ghost's cage appears
+    sleep_until(enc.o_east_ghost_cage.is_alive())
+    glyphs_end()
+    # the hydra falls and the block comes up in front of the kiosk
+    sleep_until(enc.o_block.is_alive())
+    sleep(1)
+    sp_objective_kiosk.objective_begin()
+    sleep_until(enc.sp_specops_door.o_key.is_alive())
+    sleep(1)
+    sp_objective_kiosk.complete()
+    sp_objective_kiosk.objective_end_silent()
+    sleep(26)
+    seq_dialog_lowergarden_door_open.start()
+    seq_sound_lowergarden_darkness.start()
+    sp_objective_heart_goto.objective_begin()
+    sleep_until(sp_objective_heart_goto.is_complete())
+    sleep_until(enc.pm_ledge.test_any_inside())
+    sleep(3)
+    seq_music_garden_ambience.stop()
+    sp_objective_heart_goto.objective_end_silent()
+
+def glyphs_begin():
+    po = sp_objective_glyphs._player_objective
+    po.set_incoming()
+    sleep(2)
+    sp_objective_glyphs._incoming_sequence.start()
+    sleep_until_timeout(sp_objective_glyphs._incoming_sequence.is_done(), 10)
+    po.set_active()
+    po.nav_point_activate(sp_objective_glyphs._nav_point)
+    af_glyph_a.import_only_bind("0x2D8F17DF")
+    af_glyph_b.import_only_bind("0xF348E09A")
+    af_glyph_a.activate()
+    af_glyph_b.activate()
+
+def glyphs_end():
+    af_glyph_a.clear()
+    af_glyph_b.clear()
+    sp_objective_glyphs._player_objective.nav_point_clear()
+    sp_objective_glyphs._player_objective.clear()

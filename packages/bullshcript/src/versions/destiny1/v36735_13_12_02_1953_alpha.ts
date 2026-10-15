@@ -3,31 +3,31 @@
 // the hks layer, the host and the compiler are shared at package level.
 export const k_build_string = "36735.13.12.02.1953.alpha";
 
-export * from "../../hks/encode.ts";
-export * from "../../hks/script_source.ts";
-export * from "../../hks/types.ts";
-export { parseLuaChunk, walkPrototypes } from "../../hks/undump.ts";
-export type { ActivityOptionSet } from "../../host/activity_options.ts";
+export * from "../../hks/bytecode/proto.ts";
+export { readBytecode, walkProtos } from "../../hks/bytecode/reader.ts";
+export * from "../../hks/bytecode/writer.ts";
+export * from "../../hks/source/script_source.ts";
 export type {
   ActivityPlayer,
-  LuaEncounterHostOptions,
-  LuaHostDebugSnapshot,
-} from "../../host/encounter_host.ts";
+  EncounterScriptHostOptions,
+  HostDebugSnapshot,
+} from "../../host/activity/encounter_host.ts";
 export {
   childScriptsFor,
-  LuaEncounterHost,
+  EncounterScriptHost,
   loadScriptGraph,
-} from "../../host/encounter_host.ts";
-export * from "../../host/item_key.ts";
-export * from "../../host/items.ts";
-export * from "../../host/name_hash.ts";
+} from "../../host/activity/encounter_host.ts";
 export type {
+  HostClock,
   KillAssist,
   KillFilterDetails,
   KillParty,
-  LuaHostClock,
-} from "../../host/natives.ts";
-export * from "../../host/tag_types.ts";
+} from "../../host/natives/natives.ts";
+export * from "../../host/state/items.ts";
+export type { ActivityOptionSet } from "../../host/tags/activity_options.ts";
+export * from "../../host/tags/item_key.ts";
+export * from "../../host/tags/name_hash.ts";
+export * from "../../host/tags/tag_types.ts";
 export {
   type LiftContext,
   type LiftedDecl,

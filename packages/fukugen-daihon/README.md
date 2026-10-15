@@ -20,6 +20,7 @@ The BungieScript syntax to my knowledge has never been shared, so this repositor
 |:---------:|:-------:|:--------|
 | 36735.13.12.02.1953.alpha | Leaked Alpha | Scripts decompiled from packages.|
 | 41375.14.07.03.1501.live | Release TU0 |  |
+| 52553.16.09.28.1551.evil | Release 01.29 | |
 
 > More to come.
 

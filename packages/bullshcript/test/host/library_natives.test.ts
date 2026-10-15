@@ -1,15 +1,15 @@
 import { describe, expect, it } from "vitest";
-import { LuaHostEnvironment } from "../../src/hks/host_env.ts";
+import { LuaHostEnvironment } from "../../src/hks/env/host_env.ts";
 import {
   LuaHostFunction,
   LuaTable,
   type LuaValue,
-} from "../../src/hks/values.ts";
+} from "../../src/hks/vm/values.ts";
 import {
   bindLibraryNatives,
   formatEventMessage,
-  LuaSchemaHandle,
-} from "../../src/host/library_natives.ts";
+  SchemaHandle,
+} from "../../src/host/natives/library_natives.ts";
 
 function environment(enumValue?: (member: string) => number | undefined) {
   const lines: string[] = [];
@@ -28,7 +28,7 @@ describe("library natives", () => {
   it("gives one handle per schema name", () => {
     const { call } = environment();
     const first = call("__schema_get", "native.spasahalib.i_weapon");
-    expect(first).toBeInstanceOf(LuaSchemaHandle);
+    expect(first).toBeInstanceOf(SchemaHandle);
     expect(call("__schema_get", "native.spasahalib.i_weapon")).toBe(first);
     expect(call("__schema_get", "native.spasahalib.i_weapon_barrel")).not.toBe(
       first

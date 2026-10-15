@@ -20,6 +20,15 @@
 # Authored from one capture run: every timing below is a single-run fact,
 # unconfirmed.
 
+act_moon_m5_strength_mission1 phase_2_hellmouth
+act_moon_m5_strength_mission2 phase_goto_launchtubes
+act_moon_m5_strength_mission3 phase_3_launchtubes
+act_moon_m5_strength_mission4 phase_cinematic
+act_moon_m5_strength_mission5 phase_goto_strength
+act_moon_m5_strength_mission6 phase_strength_start
+act_moon_m5_strength_mission7 phase_4_strength
+act_moon_m5_strength_mission8 phase_strength_complete
+
 startup thread ss_moon_m5_strength:
     print("script startup")
     c_lifetime_script_utilities.get_lifetime_sensor().set_state(e_activity_lifetime_state.pregame)

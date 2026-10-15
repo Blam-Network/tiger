@@ -14,8 +14,8 @@ import {
   OP,
   type UnOpr,
   VARARG_ISVARARG,
-} from "./code.ts";
-import { LuaLexer, type LuaTokenKind } from "./lexer.ts";
+} from "./codegen.ts";
+import { CompilerLexer, type LuaTokenKind } from "./lexer.ts";
 
 const MAX_VARS = 200;
 const MAX_UPVALUES = 60;
@@ -78,13 +78,13 @@ interface LhsAssign {
   v: ExpDesc;
 }
 
-export class LuaParser {
+export class Parser {
   private fs!: FuncState;
-  private readonly ls: LuaLexer;
+  private readonly ls: CompilerLexer;
   private nesting = 0;
 
   constructor(source: string, chunkName: string) {
-    this.ls = new LuaLexer(source, chunkName);
+    this.ls = new CompilerLexer(source, chunkName);
   }
 
   parseChunk(): CompiledProto {

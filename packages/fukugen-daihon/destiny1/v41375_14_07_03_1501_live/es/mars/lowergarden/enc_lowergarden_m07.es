@@ -67,7 +67,7 @@ c_squad_sensor_host sq_minions_c_goblin_a
 c_squad_sensor_host sq_minions_c_goblin_b
 c_sequence_host seq_vex_announce
 c_encounter_handle sp_placement_glyphs
-c_encounter_handle sp_placement_kiosk
+interactable_placement sp_placement_kiosk bind("0xE2E80144")
 c_encounter_handle sp_specops_door
 c_encounter_handle sp_specops_heart
 c_player_trigger_sensor_host pt_foyer
@@ -90,10 +90,6 @@ startup thread sc_lowergarden:
         sp_placement_glyphs._object_filters[i].add_players_with_activity_flag(glyph.import_identifier())
         glyph.set_enabled_player_filter(sp_placement_glyphs._object_filters[i])
         glyph.create()
-    kiosk = sp_placement_kiosk._object
-    sp_placement_kiosk._object_filter.add_players_with_activity_flag(kiosk.import_identifier())
-    kiosk.set_enabled_player_filter(sp_placement_kiosk._object_filter)
-    kiosk.create()
     for sq in [sq_foyer_goblin_a, sq_foyer_goblin_b, sq_foyer_hobgoblin, sq_center_hydra, sq_glyph_a_hobgoblin, sq_glyph_a_goblin_a, sq_glyph_a_goblin_b, sq_glyph_a_anchor, sq_glyph_b_harpy_a, sq_glyph_b_harpy_b, sq_glyph_b_harpy_c, sq_glyph_b_harpy_d, sq_glyph_b_anchor, sq_nexus_a, sq_nexus_b]:
         sq.set_objective(obj_lowergarden_m07)
     for sq in [sq_minions_init_goblin_a, sq_minions_init_goblin_b, sq_minions_init_goblin_c, sq_minions_init_goblin_d, sq_minions_init_goblin_e, sq_minions_init_goblin_f, sq_minions_init_goblin_g, sq_minions_init_goblin_h, sq_minions_init_goblin_i, sq_minions_init_hobgoblin_a, sq_minions_init_hobgoblin_b, sq_minions_init_hobgoblin_c]:

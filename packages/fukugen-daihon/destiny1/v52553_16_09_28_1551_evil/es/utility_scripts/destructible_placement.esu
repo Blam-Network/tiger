@@ -1,0 +1,29 @@
+# es\utility_scripts\destructible_placement.esu
+#
+# Something the players destroy (the Cosmodrome's Fallen beacon). Ported from
+# the alpha's: the object is made once and, while its objective's flag is up,
+# belongs to the players' enemy so it can be shot; it comes back a while after
+# it dies. TU0's row is the object; the flag and faction are the script's own.
+
+c_object_sensor_host _object
+real _minimum_time_to_respawn = 10
+c_activity_flag _activity_flag
+c_faction_host _object_faction bind(_object)
+
+def import_only_bind(identifier):
+    return _object.import_only_bind(identifier) and _activity_flag.import_only_bind(identifier)
+
+startup thread main:
+    _object.create()
+
+    while true:
+        if _object.is_alive():
+            if _activity_flag.is_active():
+                _object_faction.set_faction(1)
+            else:
+                _object_faction.set_faction(0)
+        else:
+            sleep(_minimum_time_to_respawn)
+            sleep_until(_activity_flag.is_active())
+            _object.create()
+        sleep(1)

@@ -1,0 +1,37 @@
+# es\cosmo\act_cosmo_m4_dome_c\act_cosmo_m4_dome_c_mission2.esp
+#
+# Mission 2, dome_c: find the console and use it. The music's dome_c section
+# and the Ghost's lines on the way in play while the objective is up; the
+# music moves on when a player first reaches the control room. The
+# Fallen on the way belong to enc_dome_c_m4.
+
+interactable_objective obj_m4_o2 bind("0x4CBCA57B")
+c_sequence_host seq_m_cue1
+c_sequence_host seq_d_o2_s01
+c_sequence_host seq_d_o2_s014
+c_sequence_host seq_d_o2_s016
+c_sequence_host seq_d_o2_s02
+c_player_monitor_sensor_host pm_trigger_volume
+
+thread init: pass
+
+thread complete: pass
+
+thread main:
+    seq_m_cue1.start()
+    seq_m_cue1.set_switch_mask(7)
+    sc_control_room.wake()
+    for line in [seq_d_o2_s01, seq_d_o2_s014, seq_d_o2_s016]:
+        line.start()
+    obj_m4_o2.objective_begin()
+    sleep_until(obj_m4_o2.is_complete())
+    for line in [seq_d_o2_s01, seq_d_o2_s014, seq_d_o2_s016]:
+        line.stop()
+    seq_d_o2_s02.start()
+    obj_m4_o2.objective_end_silent()
+    # the Ghost's line before the Hive arrive (one run)
+    sleep(6)
+
+thread sc_control_room:
+    sleep_until(pm_trigger_volume.test_any_inside())
+    seq_m_cue1.set_switch_mask(15)

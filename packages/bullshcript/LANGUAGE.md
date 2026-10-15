@@ -79,7 +79,7 @@ c_squad_sensor_host sq_boss
 Two optional extras:
 
 - **`static`** in front of a member shares it between every copy of the class, like a static in C++.
-- **`bind(...)`** after a member connects it to another one when the script loads: `pt_x bind(tv_x)`.
+- **`bind(...)`** after a member connects it to another one when the script loads: `pt_x bind(tv_x)`. A string binds an identifier by its authored name, which the host hashes with FNV-1: an objective and the placement it unlocks share one (`bind("vex_block")`). A name never cracked is written as its hash, `bind("0x8C8D186C")`.
 
 **Rows are declared by hand.** Every squad, objective or trigger a script uses has its own member line. The bundle's rows were made to match the script, not the other way round, so some declared rows are never used by the code. A squad's individual actors are declared as `<squad>__<actor>`.
 
@@ -180,6 +180,8 @@ Scripts do very little themselves. Almost everything is a call to the engine, a 
 The server runs on a fixed tick. Each tick, every paused thread that's ready to continue (its time is up, or its condition is true) carries on, one after another, until it pauses again. Between ticks, things that happen in the game (kills, triggers, pickups) update what the natives see.
 
 A mission's phases (`.esp` files) all load at the start, but only one runs at a time. The next one starts when the current phase's `main` thread finishes.
+
+The activity's root script names each phase with a member: the mission's class as the type, the bundle's phase row as the name (`venus_strike_1_mission1 engineering_phase`). A mission's members are that phase's rows (`engineering_phase.utils`). A mission the root does not name is `phaseNN` by its number (`mission1` is `phase00`).
 
 ### Things to watch for
 

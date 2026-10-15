@@ -8,11 +8,11 @@
 // not side-effect free.
 
 import { compileScriptFiles } from "../bungiescript/script_files.ts";
-import { applyUpvalueProvider, runMainChunk } from "../hks/host_env.ts";
-import { parseLuaChunk } from "../hks/undump.ts";
-import { LuaClosure, LuaTable, type LuaValue } from "../hks/values.ts";
-import type { LuaFrame, LuaVm } from "../hks/vm.ts";
-import type { LuaEncounterHost } from "../host/encounter_host.ts";
+import { readBytecode } from "../hks/bytecode/reader.ts";
+import { applyUpvalueProvider, runMainChunk } from "../hks/env/host_env.ts";
+import type { ActivationRecord, LuaState } from "../hks/vm/interpreter.ts";
+import { LuaClosure, LuaTable, type LuaValue } from "../hks/vm/values.ts";
+import type { EncounterScriptHost } from "../host/activity/encounter_host.ts";
 import { activeLocals } from "./inspect.ts";
 
 const IDENTIFIER = /^[A-Za-z_][A-Za-z0-9_]*$/;
@@ -23,14 +23,14 @@ const EVAL_METHOD = "debugger_eval";
 const CACHE_KEEP = 256;
 
 export interface EvaluationScope {
-  frame?: LuaFrame;
+  frame?: ActivationRecord;
   // the pc the frame stands at, for which locals are live
   pc?: number;
 }
 
 export class BsEvaluationError extends Error {}
 
-const caches = new WeakMap<LuaVm, Map<string, LuaClosure>>();
+const caches = new WeakMap<LuaState, Map<string, LuaClosure>>();
 
 // The frame's locals a BungieScript expression may name: the source's own
 // (the compiler's internal ones, `(for index)` and the like, are not names).
@@ -46,7 +46,7 @@ function frameLocals(
     .map(({ name, register }) => ({ name, value: frame.registers[register] }));
 }
 
-function selfOf(host: LuaEncounterHost, scope: EvaluationScope): LuaValue {
+function selfOf(host: EncounterScriptHost, scope: EvaluationScope): LuaValue {
   const { frame } = scope;
   if (frame) {
     const local = activeLocals(frame, scope.pc ?? frame.currentPc).find(
@@ -60,7 +60,7 @@ function selfOf(host: LuaEncounterHost, scope: EvaluationScope): LuaValue {
 }
 
 function compileExpression(
-  vm: LuaVm,
+  vm: LuaState,
   expression: string,
   params: readonly string[]
 ): LuaClosure {
@@ -80,7 +80,7 @@ function compileExpression(
   if (errors.length > 0) {
     throw new BsEvaluationError(errors.map((d) => d.message).join("; "));
   }
-  const chunk = parseLuaChunk(compiled.chunkFor(EVAL_PATH), "DEBUGGER");
+  const chunk = readBytecode(compiled.chunkFor(EVAL_PATH), "DEBUGGER");
   const module = runMainChunk(vm, chunk);
   applyUpvalueProvider(vm, module);
   const methods =
@@ -100,7 +100,7 @@ function compileExpression(
 // Throws BsEvaluationError for what does not compile, the VM's error for what
 // fails as it runs.
 export function evaluate(
-  host: LuaEncounterHost,
+  host: EncounterScriptHost,
   expression: string,
   scope: EvaluationScope = {}
 ): LuaValue {

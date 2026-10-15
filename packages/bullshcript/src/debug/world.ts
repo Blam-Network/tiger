@@ -7,14 +7,17 @@ import {
   LuaHostFunction,
   type LuaTable,
   type LuaValue,
-} from "../hks/values.ts";
-import type { BoundRow } from "../host/bindings.ts";
-import type { LuaEncounterHost } from "../host/encounter_host.ts";
-import { bound } from "../host/instance_building.ts";
-import { itemKey } from "../host/item_key.ts";
-import { fnv1, parseHashLiteral } from "../host/name_hash.ts";
-import type { KillFilterDetails, LuaBoundObject } from "../host/natives.ts";
-import { registerBoundObject } from "../host/natives.ts";
+} from "../hks/vm/values.ts";
+import type { EncounterScriptHost } from "../host/activity/encounter_host.ts";
+import type { BoundRow } from "../host/bound/bindings.ts";
+import { bound } from "../host/build/instance_building.ts";
+import type {
+  BoundInstance,
+  KillFilterDetails,
+} from "../host/natives/natives.ts";
+import { registerBoundObject } from "../host/natives/natives.ts";
+import { itemKey } from "../host/tags/item_key.ts";
+import { fnv1, parseHashLiteral } from "../host/tags/name_hash.ts";
 
 export interface ActionParam {
   name: string;
@@ -99,7 +102,7 @@ export function hashOf(value: unknown): number {
   return parseHashLiteral(text) ?? fnv1(text);
 }
 
-function typeNames(host: LuaEncounterHost): Map<number, string> {
+function typeNames(host: EncounterScriptHost): Map<number, string> {
   return new Map(
     Object.entries(host.types).map(([name, id]) => [id as number, name])
   );
@@ -132,7 +135,7 @@ export interface BundleView {
 }
 
 export function bundlesView(
-  host: LuaEncounterHost,
+  host: EncounterScriptHost,
   lastSent: (key: string) => unknown
 ): BundleView[] {
   const names = typeNames(host);
@@ -141,7 +144,7 @@ export function bundlesView(
     unknown
   >;
   const fired = new Set((reports.triggersFired as string[] | undefined) ?? []);
-  const byRow = new Map<string, LuaBoundObject[]>();
+  const byRow = new Map<string, BoundInstance[]>();
   for (const object of host.objects) {
     if (!object.row) {
       continue;
@@ -213,7 +216,7 @@ export function bundlesView(
 }
 
 function findRow(
-  host: LuaEncounterHost,
+  host: EncounterScriptHost,
   bundle: number,
   typeId: number,
   typeIndex: number
@@ -231,7 +234,7 @@ function findRow(
 
 // The row's own bound object when a script has one, else one made for the
 // debugger.
-function boundFor(host: LuaEncounterHost, row: BoundRow): LuaBoundObject {
+function boundFor(host: EncounterScriptHost, row: BoundRow): BoundInstance {
   const existing = host.objects.find(
     (object) =>
       object.row?.bundle === row.bundle &&
@@ -247,7 +250,7 @@ function boundFor(host: LuaEncounterHost, row: BoundRow): LuaBoundObject {
 }
 
 export function runRowAction(
-  host: LuaEncounterHost,
+  host: EncounterScriptHost,
   bundle: number,
   typeId: number,
   typeIndex: number,
@@ -312,7 +315,7 @@ export function runRowAction(
 
 // The child instances the host built, with their prefixes (instancePrefix is
 // a WeakMap, so they are found through the threads and bound objects).
-function instancesByPrefix(host: LuaEncounterHost): Map<LuaTable, string> {
+function instancesByPrefix(host: EncounterScriptHost): Map<LuaTable, string> {
   const out = new Map<LuaTable, string>();
   const consider = (table: LuaTable | undefined) => {
     if (!table || out.has(table)) {
@@ -401,7 +404,7 @@ export const INCIDENT_KINDS: readonly IncidentKind[] = [
 ];
 
 export function sendIncident(
-  host: LuaEncounterHost,
+  host: EncounterScriptHost,
   kind: string,
   params: Record<string, unknown>
 ): void {

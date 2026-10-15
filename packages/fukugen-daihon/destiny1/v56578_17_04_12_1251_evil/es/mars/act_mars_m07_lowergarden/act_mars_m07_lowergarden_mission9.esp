@@ -1,0 +1,51 @@
+# es\mars\act_mars_m07_lowergarden\act_mars_m07_lowergarden_mission9.esp
+#
+# Mission 9, the climax: the last Sol Progeny wakes ten seconds after the
+# darkness objective clears, with its minotaurs and goblins behind it. The
+# heart dies with it; the objective clears two seconds later. One run.
+
+generic_objective sp_objective_kill
+c_encounter_handle enc_lowergarden_m07
+c_sequence_host seq_music_lowergarden
+
+thread init: pass
+
+thread complete: pass
+
+thread main:
+    enc = enc_lowergarden_m07
+    heart = enc.sp_specops_heart
+    sleep(10)
+    seq_music_lowergarden.set_switch_mask(8)
+    sp_objective_kill.objective_begin(nil)
+    wake_statue(heart.o_statue_b, heart.sq_bg_mino_b, "0xA003D0D0")
+    enc.sq_minions_c_minotaur_a.set_task("0xA003D0D1")
+    enc.sq_minions_c_goblin_a.set_task("0x4083042B")
+    enc.sq_minions_c_goblin_b.set_task("0x4083042B")
+    enc.sq_cloud_minions.place()
+    for sq in [enc.sq_minions_c_goblin_a, enc.sq_minions_c_goblin_b, enc.sq_minions_c_minotaur_a]:
+        enc.sq_cloud_minions__pilot.drop_squad(sq)
+    sleep_until(not enc.sq_cloud_minions__pilot.is_dropping())
+    enc.sq_cloud_minions.remove()
+    enc.sq_minions_c_minotaur_a.set_task("0xAFCB5051")
+    sleep_until(heart.sq_bg_mino_b.alive_count() == 0)
+    sleep(1)
+    heart.o_heart.set_device_position(1)
+    seq_music_lowergarden.stop()
+    sleep(1)
+    sp_objective_kill.objective_end_silent()
+
+def wake_statue(statue, boss, task):
+    heart = enc_lowergarden_m07.sp_specops_heart
+    statue.set_device_position(0.05)
+    sleep(12)
+    statue.set_device_position(0.1)
+    sleep(10)
+    statue.set_device_position(0.2)
+    boss.set_task(task)
+    boss.place()
+    heart.o_mino_stim.create()
+    sleep(3)
+    statue.set_device_position(0.3)
+    sleep(1)
+    heart.o_mino_stim.delete_object()

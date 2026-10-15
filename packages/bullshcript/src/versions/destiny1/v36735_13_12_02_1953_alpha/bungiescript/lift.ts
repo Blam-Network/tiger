@@ -7,11 +7,11 @@ import {
   BUILTINS,
   NATIVE_DELEGATES,
 } from "../../../../bungiescript/project.ts";
-import { compileLua } from "../../../../hks/compile.ts";
-import { formatScriptTag } from "../../../../hks/script_source.ts";
-import type { LuaChunk, LuaPrototype } from "../../../../hks/types.ts";
-import { parseLuaChunk } from "../../../../hks/undump.ts";
-import { FNV1_EMPTY } from "../../../../host/name_hash.ts";
+import type { HksBytecode, Method } from "../../../../hks/bytecode/proto.ts";
+import { readBytecode } from "../../../../hks/bytecode/reader.ts";
+import { compileLua } from "../../../../hks/compiler/compile.ts";
+import { formatScriptTag } from "../../../../hks/source/script_source.ts";
+import { FNV1_EMPTY } from "../../../../host/tags/name_hash.ts";
 import { decompile } from "../lua/decompile.ts";
 import {
   type LuaCall,
@@ -77,7 +77,7 @@ export interface LiftContext {
 }
 
 export interface LiftScriptInput {
-  readonly chunk: LuaChunk;
+  readonly chunk: HksBytecode;
   // whether the native parent has one derived schema only, so its own
   // members cannot be told from the script's: declare what the code uses
   readonly conservative: boolean;
@@ -339,8 +339,8 @@ interface LineMap {
 
 // Compiles the decompiled text and walks it beside the original to map
 // decompiled lines to source lines.
-function pairLines(original: LuaChunk, lua: string): LineMap {
-  const compiled = parseLuaChunk(
+function pairLines(original: HksBytecode, lua: string): LineMap {
+  const compiled = readBytecode(
     compileLua(Buffer.from(lua, "latin1"), {
       chunkName: original.root.source ?? "",
     }),
@@ -348,7 +348,7 @@ function pairLines(original: LuaChunk, lua: string): LineMap {
   );
   const lines = new Map<number, number[]>();
   const functions = new Map<number, number>();
-  const walk = (a: LuaPrototype, b: LuaPrototype) => {
+  const walk = (a: Method, b: Method) => {
     if (
       a.code.length !== b.code.length ||
       a.protos.length !== b.protos.length

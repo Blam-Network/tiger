@@ -1,5 +1,5 @@
 // The alpha's row type ids (80800533 bundles).
-import type { ActivityBundleItemTypes } from "../../../../host/tag_types.ts";
+import type { ActivityBundleItemTypes } from "../../../../host/tags/tag_types.ts";
 
 export const ActivityBundleItemType = {
   Squad: 1,

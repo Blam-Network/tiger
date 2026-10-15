@@ -49,7 +49,6 @@ c_squad_sensor_host sq_boss
 c_squad_member_sensor_host sq_boss__boss
 
 startup thread sc_checkpoint_main:
-    sp_placement_console._object.create()
     for sq in [sq_road_front_legionary, sq_road_front_phalanx, sq_road_overlook_legionary, sq_road_overlook_phalanx, sq_bunker_legionary_a, sq_bunker_legionary_b, sq_bunker_legionary_c, sq_bunker_legionary_d, sq_bunker_phalanx, sq_boss_phalanx_a, sq_boss_phalanx_b, sq_boss_phalanx_c, sq_boss_psion_a, sq_boss_psion_b, sq_boss_psion_c, sq_boss_legionary_a, sq_boss_legionary_b, sq_boss]:
         sq.set_objective(obj_checkpoint_m01)
     sc_road.wake()

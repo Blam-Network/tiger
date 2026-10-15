@@ -1,0 +1,16 @@
+# es\mars\act_mars_m06_subway\act_mars_m06_subway_mission3.esp
+#
+# Mission 3, "Go to the Lobby". Clears when the player reaches the lobby
+# bubble; the Vex inside belong to enc_lobby_m06.
+
+c_location_sensor_host lobby
+trigger_bubble_objective pf_objective_lobby_goto bind(lobby)
+
+thread init: pass
+
+thread complete: pass
+
+thread main:
+    pf_objective_lobby_goto.objective_begin()
+    sleep_until(pf_objective_lobby_goto.is_complete())
+    pf_objective_lobby_goto.objective_end_silent()
