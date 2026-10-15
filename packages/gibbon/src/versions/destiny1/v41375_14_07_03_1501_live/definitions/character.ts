@@ -33,7 +33,6 @@ export type s_character_constant_flags = c.infer<
 
 // Character constants (globals root +0x34, 80A58038).
 export const k_character_constants_class = 0x80801950;
-export const k_character_constants_tag = 0x80a58038;
 
 export const s_character_constants = c.struct({
   size: c.u32(),
@@ -100,7 +99,6 @@ export type s_new_character_list = c.infer<typeof s_new_character_list>;
 
 // New-character defaults (globals root +0x54, 80A5803C).
 export const k_new_character_defaults_class = 0x8080190d;
-export const k_new_character_defaults_tag = 0x80a5803c;
 
 export const s_new_character_defaults = c.struct({
   size: c.u32(),
@@ -152,7 +150,6 @@ export type s_stat_curve_entry = c.infer<typeof s_stat_curve_entry>;
 
 // Stat curves (globals root +0x194, 80A5805C).
 export const k_stat_curve_table_class = 0x808017ec;
-export const k_stat_curve_table_tag = 0x80a5805c;
 
 export const s_stat_curve_table = c.struct({
   size: c.u32(),
@@ -185,7 +182,6 @@ export function evaluate_stat_curve(
 // Grimoire cards and achievements (globals root +0x0C, 80A58033,
 // sub_82814640): owning the flag awards the record.
 export const k_record_table_class = 0x808016f1;
-export const k_record_table_tag = 0x80a58033;
 
 export const s_record = c.struct({
   name_hash: c.u32(),

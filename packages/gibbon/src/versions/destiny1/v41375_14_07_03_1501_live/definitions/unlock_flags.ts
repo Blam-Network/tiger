@@ -14,7 +14,6 @@ import {
 // Server slot -> flag, per storage type (globals root +0x1FC, 80A58069).
 // The server sends one value per row, in row order.
 export const k_unlock_slot_table_class = 0x8080189f;
-export const k_unlock_slot_table_tag = 0x80a58069;
 export const k_unlock_slot_class = 0x8080183e;
 
 export const s_unlock_slot = c.struct({
@@ -40,7 +39,6 @@ export type s_unlock_slot_table = c.infer<typeof s_unlock_slot_table>;
 // Every named flag, by flag index (globals root +0x1EC, 80A58067). World
 // objects look their flag up by name hash (sub_83254748).
 export const k_unlock_flag_name_table_class = 0x8080179c;
-export const k_unlock_flag_name_table_tag = 0x80a58067;
 export const k_unlock_flag_name_class = 0x808018b8;
 
 export const e_unlock_flag_source = {
@@ -72,7 +70,6 @@ export type s_unlock_flag_name_table = c.infer<typeof s_unlock_flag_name_table>;
 // time order, so a later row for the same flag wins (globals root +0x1F4,
 // 80A58068).
 export const k_unlock_time_table_class = 0x808017de;
-export const k_unlock_time_table_tag = 0x80a58068;
 export const k_unlock_time_class = 0x808018e4;
 
 export const s_unlock_time = c.struct({
@@ -96,7 +93,6 @@ export type s_unlock_time_table = c.infer<typeof s_unlock_time_table>;
 // owning an item whose definition lists the row, and by cooldowns (storage
 // types 7 and 8, sub_831A9CA0). -1 for rows with no flag.
 export const k_unlock_value_table_class = 0x808017fe;
-export const k_unlock_value_table_tag = 0x80a58065;
 export const k_unlock_value_class = 0x8080178d;
 
 export const s_unlock_value = c.struct({
@@ -116,7 +112,6 @@ export type s_unlock_value_table = c.infer<typeof s_unlock_value_table>;
 // Unlock groups and the new-character prologue pick (globals root +0x14,
 // 80A58034).
 export const k_unlock_group_table_class = 0x80801864;
-export const k_unlock_group_table_tag = 0x80a58034;
 export const k_unlock_group_class = 0x80801778;
 export const k_prologue_activity_class = 0x808019a9;
 
@@ -159,7 +154,6 @@ export type s_unlock_group_table = c.infer<typeof s_unlock_group_table>;
 // slots (80804707, 32 x u64) are indexed by the second list's rows; each
 // sets its unlock value flag while it hasn't expired.
 export const k_cooldown_table_class = 0x8080176f;
-export const k_cooldown_table_tag = 0x80a5803f;
 export const k_cooldown_class = 0x808016be;
 
 export const s_cooldown = c.struct({

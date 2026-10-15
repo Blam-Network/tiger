@@ -1,5 +1,10 @@
 import { c } from "@craftycodie/cstruct";
-import { tag_block, tag_struct } from "../tag/tag_block.ts";
+import type { c_package_set } from "../pkg/package_set.ts";
+import { read_definition, tag_block, tag_struct } from "../tag/tag_block.ts";
+import {
+  e_investment_global,
+  investment_global_tag,
+} from "./investment_globals.ts";
 
 // Unlock expressions: every sub-expression must hold. Each is RPN over the
 // character's unlock flags (sub_831A9850): op 1 pushes "flag[operand] is
@@ -58,11 +63,8 @@ export type s_perk_index = c.infer<typeof s_perk_index>;
 // Item definitions, one tag per definition index, in the same order as the
 // item table's rows.
 export const k_item_definition_class = 0x80801806;
-export const k_item_definition_first_tag = 0x80a5d3d8;
-export const k_item_definition_count = 3181;
 
 export const k_item_table_class = 0x80801933;
-export const k_item_table_tag = 0x80a58051;
 
 export const s_item_table_entry = s_tag_table_entry;
 
@@ -74,6 +76,15 @@ export const s_item_table = c.struct({
 });
 
 export type s_item_table = c.infer<typeof s_item_table>;
+
+// Item definition tags by definition index, from the item table's rows.
+export function item_definition_tags(set: c_package_set): number[] {
+  const table = read_definition(
+    set.read_tag(investment_global_tag(set, e_investment_global.items)),
+    s_item_table
+  );
+  return table.items.map((item) => item.tag);
+}
 
 // Laid out like a material requirement but count first. Only on consumable
 // actions (e.g. 2 of the item itself); true names unknown.
@@ -230,7 +241,6 @@ export type s_item_definition = c.infer<typeof s_item_definition>;
 
 // Vendors: a table naming one tag per vendor.
 export const k_vendor_table_class = 0x8080193b;
-export const k_vendor_table_tag = 0x80a5806a;
 export const k_vendor_class = 0x8080171c;
 
 export const s_vendor_table_entry = s_tag_table_entry;
@@ -309,7 +319,6 @@ export type s_vendor = c.infer<typeof s_vendor>;
 
 // Progressions: one table tag holding every definition.
 export const k_progression_table_class = 0x80801779;
-export const k_progression_table_tag = 0x80a58058;
 
 export const s_progression_step = c.struct({
   xp_required: c.i32(),
@@ -359,7 +368,6 @@ export type s_progression_table = c.infer<typeof s_progression_table>;
 // Material requirements: named sets of items an action costs. Talent steps
 // point at a set by index rather than listing their own.
 export const k_material_requirement_table_class = 0x808016c9;
-export const k_material_requirement_table_tag = 0x80a5805d;
 
 export const s_material_requirement_set = c.struct({
   name_hash: c.u32(),
@@ -382,7 +390,6 @@ export type s_material_requirement_table = c.infer<
 // Talent grids: a table naming one tag per grid. Several rows can share a
 // grid.
 export const k_talent_grid_table_class = 0x808018c2;
-export const k_talent_grid_table_tag = 0x80a5805e;
 export const k_talent_grid_class = 0x80801963;
 
 export const s_talent_grid_table_entry = s_tag_table_entry;

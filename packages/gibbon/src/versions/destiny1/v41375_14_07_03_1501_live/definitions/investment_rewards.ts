@@ -6,7 +6,6 @@ import { tag_block } from "../tag/tag_block.ts";
 // Investment globals +0x94: a victim's character definition hash -> enemy
 // index.
 export const k_investment_enemy_table_class = 0x80801842;
-export const k_investment_enemy_table_tag = 0x80a58044;
 
 export const s_investment_enemy = c.struct({
   name_hash: c.u32(),
@@ -26,7 +25,6 @@ export type s_investment_enemy_table = c.infer<typeof s_investment_enemy_table>;
 // Investment globals +0x8C: an activity definition's destination_index
 // selects a row here.
 export const k_investment_destination_table_class = 0x80801851;
-export const k_investment_destination_table_tag = 0x80a58043;
 
 export const s_investment_destination = c.struct({
   name_hash: c.u32(),

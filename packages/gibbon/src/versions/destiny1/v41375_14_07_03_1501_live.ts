@@ -3,6 +3,7 @@ export * from "./v41375_14_07_03_1501_live/definitions/activity_definition.ts";
 export * from "./v41375_14_07_03_1501_live/definitions/activity_lookup.ts";
 export * from "./v41375_14_07_03_1501_live/definitions/character.ts";
 export * from "./v41375_14_07_03_1501_live/definitions/director.ts";
+export * from "./v41375_14_07_03_1501_live/definitions/incident_registry.ts";
 export * from "./v41375_14_07_03_1501_live/definitions/investment.ts";
 export * from "./v41375_14_07_03_1501_live/definitions/investment_globals.ts";
 export * from "./v41375_14_07_03_1501_live/definitions/investment_rewards.ts";

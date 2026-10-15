@@ -19,7 +19,6 @@ import {
 // globals root +0x24): entry i names the definition tag for id i.
 export const k_activity_table_class = 0x80801915;
 export const k_activity_table_entry_class = 0x808018a7;
-export const k_activity_table_tag = 0x80a58036;
 export const k_activity_definition_tag_class = 0x80801872;
 export const k_activity_definition_class = 0x8080181e;
 

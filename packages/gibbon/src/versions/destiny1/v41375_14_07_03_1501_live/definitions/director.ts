@@ -5,7 +5,6 @@ import { s_tag_table_entry, s_unlock_expression } from "./investment.ts";
 // The orbit director's destinations (globals root +0x1C, 80A58035): one tag
 // per destination, each a list of nodes. True Bungie names unknown.
 export const k_destination_table_class = 0x80801868;
-export const k_destination_table_tag = 0x80a58035;
 export const k_destination_table_entry_class = 0x80801841;
 export const k_destination_class = 0x808017ae;
 export const k_destination_node_class = 0x80801918;
