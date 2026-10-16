@@ -16,6 +16,7 @@
 # The dome's own encounter is es\cosmo\dome_c\enc_dome_c_m2.es. The
 # unknown_82945a01 bundle holds the music and the first Ghost lines.
 
+@activity_bundle("act_cosmo_m2_dome_c")
 startup thread ss_cosmo_m2_dome_c:
     print("script startup")
     c_lifetime_script_utilities.get_lifetime_sensor().set_state(e_activity_lifetime_state.pregame)

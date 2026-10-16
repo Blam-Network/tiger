@@ -1,3 +1,4 @@
+@activity_bundle("enc_entrance_ch2m1")
 u_globals utils
 c_location_sensor_host entrance  # true name unknown
 c_player_monitor_sensor_host pm_bubble_entrance bind(entrance)  # true name unknown
@@ -18,7 +19,6 @@ c_squad_group_sensor_host sg_fallen  # true name unknown
 c_squad_group_sensor_host sqg_fallen_sniper  # true name unknown
 bool b_init
 loot_entrance loot_venus_entrance_1
-
 
 
 

@@ -8,6 +8,7 @@
 # one 46 s to 143 s after the first player spawned. None was harvested on the
 # wire; a harvested node is cleaned up as the chests are.
 
+@activity_bundle(0xBDF9E3C6)
 c_object_sensor_host thorium_south_planes
 c_object_sensor_host thorium_north_planes
 c_object_sensor_host thorium_dome

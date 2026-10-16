@@ -17,6 +17,7 @@
 #
 # From one capture run: every timing here is a single-run fact.
 
+@activity_bundle("act_mars_m01_valley")
 startup thread ss_mars_m01_valley:
     print("script startup")
     c_lifetime_script_utilities.get_lifetime_sensor().set_state(e_activity_lifetime_state.pregame)

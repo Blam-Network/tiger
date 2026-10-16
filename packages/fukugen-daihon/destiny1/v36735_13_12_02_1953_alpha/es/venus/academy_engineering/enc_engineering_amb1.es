@@ -1,3 +1,4 @@
+@activity_bundle("enc_engineering_amb1")
 c_objective_sensor_host obj_engineering_amb1  # true name unknown
 c_encounter_manager encounters  # true name unknown
 simple_encounter corner_encounter_1
@@ -6,7 +7,6 @@ simple_encounter main_encounter_3
 simple_encounter top_encounter_4
 simple_encounter small_encounter_5
 loot_engineering loot_venus_engineering_1
-
 
 
 

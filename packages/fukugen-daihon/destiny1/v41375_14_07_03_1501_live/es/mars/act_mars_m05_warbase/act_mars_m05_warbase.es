@@ -19,6 +19,7 @@
 # are scripts of their own. unknown_3d68033c holds the music and Ghost lines
 # the phases play.
 
+@activity_bundle("act_mars_m05_warbase")
 act_mars_m05_warbase_mission1 phase_1_rubicon_goto
 act_mars_m05_warbase_mission2 phase_3_mesa_goto
 act_mars_m05_warbase_mission3 phase_4_mesa

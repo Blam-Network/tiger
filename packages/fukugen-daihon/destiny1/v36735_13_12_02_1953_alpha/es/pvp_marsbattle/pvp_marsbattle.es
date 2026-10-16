@@ -1,3 +1,4 @@
+@activity_bundle("pvp")
 c_pvp_controller pvp_controller
 c_pvp_slayer slayer
 c_pvp_slayer_ffa slayer_ffa
@@ -13,7 +14,6 @@ c_object_sensor_host interceptors
 static_array<c_object_sensor_host, 3> turrets
 static_array<c_object_sensor_host, 2> heavy_ammo
 static_array<c_object_sensor_host, 3> special_ammo
-
 
 
 

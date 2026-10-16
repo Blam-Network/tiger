@@ -7,6 +7,7 @@
 # confirmed. Never on the wire: the tubes, the end ramps and the hecate
 # triggers, so none of those squads is scripted.
 
+@activity_bundle(0x43F9E8C0)
 c_object_sensor_host o_gate_lock01
 c_object_sensor_host o_gate_lock02
 c_object_sensor_host o_gate_lock03

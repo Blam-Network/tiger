@@ -90,6 +90,7 @@ export interface EncounterHostContext {
   activeBundles: ReadonlySet<number> | undefined;
   // instance_building.bound, which scheduling_threads needs but sits above it.
   bound(path: string, row: BoundRow | undefined): BoundInstance;
+  chunksByClassName: Map<string, HksBytecode> | undefined;
   chunksByScriptName: Map<string, HksBytecode> | undefined;
   chunksByTagId: Map<string, HksBytecode> | undefined;
   readonly commandScripts: CommandScriptIndex;

@@ -16,6 +16,7 @@
 # (unknown_529d4bdc) are scripts of their own. Authored from one capture:
 # every timing and wave rule in these files is unconfirmed.
 
+@activity_bundle("act_venus_m01_engineering")
 act_venus_m01_engineering_mission1 phase_shattered_coast_intro
 act_venus_m01_engineering_mission2 phase_shattered_coast_sensors
 act_venus_m01_engineering_mission3 phase_entrance_goto

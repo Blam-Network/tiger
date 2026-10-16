@@ -1,3 +1,4 @@
+@activity_bundle("enc_headlands_amb1")
 u_globals utils
 c_encounter_manager encounters  # true name unknown
 u_event_world_controller event_controller
@@ -15,7 +16,6 @@ c_squad_sensor_host sq_turret01
 c_squad_sensor_host sq_turret02
 c_objective_sensor_host obj_headlands_amb1  # true name unknown
 loot_headlands loot_venus_headlands_1
-
 
 
 

@@ -20,6 +20,7 @@
 # Authored from one capture run: every timing below is a single-run fact,
 # unconfirmed.
 
+@activity_bundle("act_moon_m5_strength")
 startup thread ss_moon_m5_strength:
     print("script startup")
     c_lifetime_script_utilities.get_lifetime_sensor().set_state(e_activity_lifetime_state.pregame)

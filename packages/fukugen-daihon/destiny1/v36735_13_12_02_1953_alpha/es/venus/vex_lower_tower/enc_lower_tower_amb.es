@@ -1,3 +1,4 @@
+@activity_bundle("enc_lower_tower_amb")
 c_objective_sensor_host obj_lower_tower_amb  # true name unknown
 c_squad_sensor_host sq_vex_btm01
 c_squad_sensor_host sq_vex_btm02
@@ -5,7 +6,6 @@ c_squad_sensor_host sq_vex_btm03
 c_squad_sensor_host sq_vex_btm04
 c_squad_group_sensor_host sqg_vex_btm  # true name unknown
 loot_lower_tower loot_venus_lower_tower_1
-
 
 
 

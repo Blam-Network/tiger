@@ -108,7 +108,10 @@ describe("TU0 BungieScript sources", () => {
         path: "bs/weapons/w.bs",
         text: "struct s_w:\n    real rate\n\nclass w : c_weapon:\n    s_w stats\n    def foo(): pass\n",
       },
-      { path: "es/x/x.es", text: "startup thread main:\n    pass\n" },
+      {
+        path: "es/x/x.es",
+        text: '@activity_bundle("x")\nstartup thread main:\n    pass\n',
+      },
     ];
     const result = compileScriptFiles(files);
     expect(result.diagnostics).toEqual([]);

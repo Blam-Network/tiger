@@ -5,6 +5,7 @@
 # Night falls when the garage fight starts.
 # Names that were never cracked are written as "0x" literals.
 
+@activity_bundle("enc_breach_m0")
 c_squad_sensor_host sq_fallen_nest1
 c_squad_member_sensor_host sq_fallen_nest1__dropper1  # true name unknown
 c_performance_host dropper1  # true name unknown

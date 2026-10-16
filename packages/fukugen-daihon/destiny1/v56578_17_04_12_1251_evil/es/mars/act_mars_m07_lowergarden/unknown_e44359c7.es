@@ -8,6 +8,7 @@
 # Sol Progeny wakes and dies. From one retail capture, so the short gaps
 # are that run's.
 
+@activity_bundle(0xE44359C7)
 c_sequence_host seq_music_garden
 c_sequence_host seq_music_catacombs
 c_sequence_host seq_music_lowergarden

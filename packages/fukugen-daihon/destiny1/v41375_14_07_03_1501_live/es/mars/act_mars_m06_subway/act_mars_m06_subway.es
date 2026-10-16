@@ -16,6 +16,7 @@
 # The lobby and subway encounters are scripts of their own (enc_lobby_m06,
 # enc_subway_m06); unknown_04e6ac69 holds the music and Ghost lines.
 
+@activity_bundle("act_mars_m06_subway")
 act_mars_m06_subway_mission1 phase_m06_battleground_goto
 act_mars_m06_subway_mission2 phase_m06_battleground
 act_mars_m06_subway_mission3 phase_m06_lobby_goto

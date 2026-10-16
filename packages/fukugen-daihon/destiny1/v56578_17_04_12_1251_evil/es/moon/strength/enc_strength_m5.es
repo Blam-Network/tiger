@@ -8,6 +8,7 @@
 # One run: the ship's eight seconds before the drop and three before it
 # leaves are this run's.
 
+@activity_bundle("enc_strength_m5")
 c_objective_sensor_host obj_strength_m5
 c_squad_sensor_host sq_cave_floor
 c_squad_sensor_host sq_cave_ledge

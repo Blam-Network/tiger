@@ -1,9 +1,9 @@
+@activity_bundle("enc_dig_site_amb1")
 c_encounter_manager encounters  # true name unknown
 ambush_encounter dig_site_ambush_encounter01
 ambush_encounter dig_site_ambush_encounter02
 simple_encounter dig_site_simple_encounter01
 loot_dig_site loot_venus_dig_site_1
-
 
 
 

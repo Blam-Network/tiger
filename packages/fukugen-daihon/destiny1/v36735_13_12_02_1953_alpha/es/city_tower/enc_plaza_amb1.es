@@ -1,3 +1,4 @@
+@activity_bundle("enc_plaza_amb1")
 bool debug_plaza
 c_squad_sensor_host sq_plaza_vendor_postmaster
 c_squad_sensor_host sq_plaza_vendor_crm
@@ -72,7 +73,6 @@ c_safe_zone_sensor_host om_ball_safe_zone bind(tv_ball_safe_zone)  # true name u
 c_safe_zone_sensor_host om_balloon_safe_zone bind(tv_ball_safe_zone)  # true name unknown
 c_object_filter_sensor_host ball_filter
 c_object_filter_sensor_host balloon_filter
-
 
 
 

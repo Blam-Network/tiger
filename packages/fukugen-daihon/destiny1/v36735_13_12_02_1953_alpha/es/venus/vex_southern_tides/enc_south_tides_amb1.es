@@ -1,3 +1,4 @@
+@activity_bundle("enc_south_tides_amb1")
 c_objective_sensor_host obj_south_tides_amb_fallen  # true name unknown
 c_objective_sensor_host obj_south_tides_amb_south  # true name unknown
 c_objective_sensor_host obj_south_tides_amb_mid  # true name unknown
@@ -31,7 +32,6 @@ vex_warp_gate vex_warp_gate00
 vex_warp_gate vex_warp_gate01
 vex_warp_gate vex_warp_gate02
 vex_warp_gate vex_warp_gate03
-
 
 
 

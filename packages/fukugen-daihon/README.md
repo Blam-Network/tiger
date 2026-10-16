@@ -28,6 +28,19 @@ The BungieScript syntax to my knowledge has never been shared, so this repositor
 On June 21, 2023 Gamecheat13 located a `release_internal` Alpha build of Destiny 1 (ver `36735.13.12.02.1953.alpha`) on Production Xbox LIVE (ProdNet). This is the earliest known build of Destiny and the only `release_internal` build that has leaked. This build of Destiny 1 is unique in that it includes compiled BungieScript files. Source files inside `destiny1\v36735_13_12_02_1953_alpha` have been decompiled from this leaked build with their original file names and folders.
 Other versions of the game have had their scripts written from scratch, using the same folder layout and naming conventions.
 
+A script's file name is its encounter's name, and the root of its rows' names (`enc_x.sq_y`). Name a script after its rows.
+
+Every encounter names the bundle it runs in with an `@activity_bundle` decorator, at the top of a `.es` file or above a shared `.bs` encounter's class. A script without one runs in no bundle. The name is usually the encounter's own, but not always: in the Alpha, `venus_bounty_1.es` runs in the bundle `bounty_1_activity`, and each PvP map's script runs in that map's bundle `pvp`. A name never cracked is written as its hash:
+
+```python
+@activity_bundle("bounty_1_activity")
+@activity_bundle(0x11B7A83E)
+```
+
+This is probably not true to Bungiescript - these names would have come from the host tags, but since we arent building from tags this is a minimal stand-in.
+
+An activity's root declares its missions as members, in the order they run (`venus_strike_1_mission1 engineering_phase`); a `.esp` the root doesn't declare never runs.
+
 ## How are scripts reconstructed?
 
 Destiny 1 conveniently lists everything an encounterscript can interract with for a given section of a given map in a given activity in an activity bundle. For example...

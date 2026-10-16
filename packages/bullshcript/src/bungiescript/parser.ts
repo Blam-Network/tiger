@@ -1,7 +1,9 @@
 // Parser for BungieScript: declarations (members, threads, methods, delegates,
 // command scripts) and Python 2 statements plus `switch`.
 
+import { fnv1, parseHashLiteral } from "../host/tags/name_hash.ts";
 import type {
+  BsActivityBundle,
   BsBinaryOp,
   BsCase,
   BsDecl,
@@ -38,11 +40,33 @@ export function scriptStem(path: string): string {
   return dot < 0 ? name : name.slice(0, dot);
 }
 
+// Every class on the native c_encounter base carries this prefix, and no other
+// class does. Only the class name has it: bundles, hosts and threads all know
+// an encounter by its file stem.
+export const ENCOUNTER_PREFIX = "c_encounter__";
+
+// The class an encounter's file declares: implicit in a `.es` file, written
+// out in a `.bs` file such as story_common.bs.
+export function encounterDeclName(path: string): string {
+  return `${ENCOUNTER_PREFIX}${scriptStem(path)}`;
+}
+
 // The one class an es-family file declares: `.es` files get the compiler's
 // `c_encounter__` prefix, `.esp`/`.esu` are named after the file. The class
 // name only; the script itself is still known by its stem.
 export function implicitDeclName(path: string, kind: BsFileKind): string {
-  return kind === "es" ? `c_encounter__${scriptStem(path)}` : scriptStem(path);
+  return kind === "es" ? encounterDeclName(path) : scriptStem(path);
+}
+
+// A bundle whose name never cracked keeps its script as unknown_<hash> (true
+// name unknown); every other file's name is the one that hashes to its bundle.
+export const UNKNOWN_NAME = /^unknown_([0-9a-f]{8})$/;
+
+// The fnv1 a script is known by: its file stem, or the hash an unknown_<hash>
+// stem stands for.
+export function bundleHashOf(stem: string): number {
+  const unknown = UNKNOWN_NAME.exec(stem);
+  return unknown ? Number.parseInt(unknown[1] ?? "", 16) >>> 0 : fnv1(stem);
 }
 
 export function parseBungieScript(source: string, path: string): BsFile {
@@ -163,6 +187,7 @@ class BsParser {
     const decls: BsDecl[] = [];
     this.skipNewlines();
     while (this.token.kind !== "eof") {
+      const activityBundle = this.decorator();
       const start = this.token;
       const kind = DECL_KINDS.find((k) => this.atWord(k));
       if (kind === undefined) {
@@ -177,8 +202,12 @@ class BsParser {
       if (base !== undefined) {
         this.expectOp(":");
       }
+      if (activityBundle !== undefined && kind !== "class") {
+        this.error("@activity_bundle decorates a class", start);
+      }
       const members = this.declSuite(kind);
       decls.push({
+        activityBundle,
         base,
         end: this.peek(-1).end,
         implicit: false,
@@ -193,6 +222,34 @@ class BsParser {
     return decls;
   }
 
+  // `@activity_bundle("name")` or `@activity_bundle(0x<hash>)` on its own
+  // line, if there is one here
+  private decorator(): BsActivityBundle | undefined {
+    if (!this.acceptOp("@")) {
+      return;
+    }
+    const name = this.expectName();
+    if (name.text !== "activity_bundle") {
+      this.error(`unknown decorator '@${name.text}'`, name);
+    }
+    this.expectOp("(");
+    const arg = this.token;
+    let hash: number | undefined;
+    if (arg.kind === "string") {
+      hash = fnv1(arg.text);
+    } else if (arg.kind === "number") {
+      hash = parseHashLiteral(arg.text);
+    }
+    if (hash === undefined) {
+      this.error("@activity_bundle takes a bundle name or a 0x<hash>", arg);
+    }
+    this.next();
+    this.expectOp(")");
+    this.expectKind("newline");
+    this.skipNewlines();
+    return { hash, line: name.line, text: arg.text };
+  }
+
   // after `class name :`, is this the block's own colon (followed by a
   // newline or a one-line body) rather than a base name?
   private atKindNewline(): boolean {
@@ -202,6 +259,8 @@ class BsParser {
   implicitDecl(name: string): BsDecl {
     const members: BsMember[] = [];
     this.skipNewlines();
+    // an es-family file's decorator heads the file, as its class's would
+    const activityBundle = this.decorator();
     while (this.token.kind !== "eof") {
       const member = this.member();
       if (member !== undefined) {
@@ -210,6 +269,7 @@ class BsParser {
       this.skipNewlines();
     }
     return {
+      activityBundle,
       base: undefined,
       end: this.source.length,
       implicit: true,

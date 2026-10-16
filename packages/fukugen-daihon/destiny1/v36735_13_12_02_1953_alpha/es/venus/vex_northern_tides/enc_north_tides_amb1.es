@@ -1,3 +1,4 @@
+@activity_bundle("enc_north_tides_amb1")
 c_objective_sensor_host obj_north_tides_amb1  # true name unknown
 c_encounter_manager encounters  # true name unknown
 simple_encounter vex_simple_encounter01
@@ -8,7 +9,6 @@ dropship_encounter vex_dropship_encounter01
 loot_north_tides loot_venus_north_tides_1
 c_squad_group_sensor_host sqg_hydra  # true name unknown
 c_squad_group_sensor_host sqg_sniper  # true name unknown
-
 
 
 

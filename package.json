@@ -8,6 +8,7 @@
     "packages/rsat",
     "packages/gibbon",
     "packages/bullshcript",
+    "packages/datamine",
     "packages/tiger-packets"
   ],
   "scripts": {

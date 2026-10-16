@@ -9,6 +9,7 @@
 # (obj_strike_2, the captain and his dropship) never moved in any capture
 # and are left alone.
 
+@activity_bundle("enc_array_amb1")
 c_encounter_manager encounters
 simple_encounter amb_smpl_fallen_domec01
 simple_encounter amb_smpl_fallen_helipad01

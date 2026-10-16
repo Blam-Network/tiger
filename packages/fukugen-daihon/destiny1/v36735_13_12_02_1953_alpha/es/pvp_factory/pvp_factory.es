@@ -1,3 +1,4 @@
+@activity_bundle("pvp")
 c_pvp_controller pvp_controller
 c_pvp_slayer slayer
 c_pvp_dominion dominion
@@ -10,7 +11,6 @@ string_hash slayer_ffa_hash = "slayer_ffa"
 c_object_sensor_host heavy_ammo
 static_array<c_object_sensor_host, 2> special_ammo
 c_object_sensor_host fuel_cell
-
 
 
 startup thread main:

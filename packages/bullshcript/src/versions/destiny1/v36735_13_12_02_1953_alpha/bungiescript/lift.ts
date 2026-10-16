@@ -77,6 +77,9 @@ export interface LiftContext {
 }
 
 export interface LiftScriptInput {
+  // an encounter class's bundle as @activity_bundle takes it: the name
+  // quoted, or 0x<hash>
+  readonly activityBundle?: string;
   readonly chunk: HksBytecode;
   // whether the native parent has one derived schema only, so its own
   // members cannot be told from the script's: declare what the code uses
@@ -97,6 +100,8 @@ export interface LiftOptions {
 // ---- outputs ---------------------------------------------------------------
 
 export interface LiftedDecl {
+  // @activity_bundle's argument, as written
+  readonly activityBundle: string | undefined;
   readonly baseName: string | undefined;
   // `# true name unknown` applies to the base
   readonly baseUnknown: boolean;
@@ -464,6 +469,7 @@ class ScriptLifter {
     const first = Math.min(...functions.map((fn) => this.functionLine(fn)));
     const base = this.baseName();
     return {
+      activityBundle: this.input.activityBundle,
       baseName: base?.text,
       baseUnknown: base?.unknown ?? false,
       bindings: this.bindings,
@@ -1841,6 +1847,10 @@ export function renderLiftedFile(file: LiftedFile): RenderedFile {
   for (const decl of decls) {
     const header: string[] = [];
     const indent = decl.implicit ? "" : INDENT;
+    // the decorator heads the class, or an es-family file
+    if (decl.activityBundle !== undefined) {
+      header.push(`@activity_bundle(${decl.activityBundle})`);
+    }
     if (!decl.implicit) {
       const base = decl.baseName === undefined ? "" : ` : ${decl.baseName}`;
       header.push(

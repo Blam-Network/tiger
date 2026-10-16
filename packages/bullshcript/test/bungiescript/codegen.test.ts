@@ -8,6 +8,7 @@ import { compileLuaChunk } from "../../src/hks/compiler/compile.ts";
 import { LuaHostEnvironment } from "../../src/hks/env/host_env.ts";
 import { LuaState } from "../../src/hks/vm/interpreter.ts";
 import { LuaHostFunction, LuaTable } from "../../src/hks/vm/values.ts";
+import { fnv1 } from "../../src/host/tags/name_hash.ts";
 
 // Small sources through the whole front end; test/fukugen_daihon_alpha.test.ts
 // proves them on real decls.
@@ -355,6 +356,134 @@ describe("the BungieScript code generator", () => {
         path: "es/a.esu",
         severity: "error",
       },
+    ]);
+  });
+});
+
+describe("encounter classes", () => {
+  const warnings = (path: string, source: string) =>
+    compileBungieScript([{ path, source }]).diagnostics.filter(
+      (d) => d.severity === "warning"
+    );
+
+  it("names a .es file's class c_encounter__<stem> on c_encounter", () => {
+    const { decl } = compileOne(
+      "c_squad_sensor_host sq\n",
+      "es/venus/x/enc_x_amb1.es"
+    );
+    expect([decl.name, decl.schema.parent]).toEqual([
+      "c_encounter__enc_x_amb1",
+      "c_encounter",
+    ]);
+  });
+
+  it("writes the definition name hash bsc wrote", () => {
+    const nameHash = (path: string, source = "int i\n") =>
+      compileOne(source, path).decl.schema.nameHash;
+    expect(nameHash("es/x/enc_x_amb1.es")).toBe(fnv1("enc_x_amb1"));
+    expect(nameHash("es/x/unknown_3c2f5ed5.es")).toBe(0x3c_2f_5e_d5);
+    expect(nameHash("es/x/x_mission1.esp")).toBe(fnv1("x_mission1"));
+    expect(nameHash("es/utility_scripts/t.esu")).toBe(fnv1("t"));
+    // a .bs class's name is left for the bundle build, encounters included
+    expect(nameHash("bs/games/x.bs", "class c_x:\n    int i\n")).toBe(fnv1(""));
+    expect(
+      nameHash(
+        "bs/activities/common/story_common.bs",
+        "class c_encounter__story_common : c_encounter:\n    int i\n"
+      )
+    ).toBe(fnv1(""));
+    // no name on these bases, and none on a struct
+    expect(nameHash("bs/w.bs", "class w : c_weapon:\n    int i\n")).toBe(
+      undefined
+    );
+    expect(nameHash("bs/s.bs", "struct s_x:\n    int i\n")).toBe(undefined);
+  });
+
+  it("warns when an encounter class is not named after its file", () => {
+    const bundle = '@activity_bundle("story_common")\n';
+    expect(
+      warnings(
+        "bs/activities/common/story_common.bs",
+        `${bundle}class c_encounter__story_common : c_encounter:\n    int i\n`
+      )
+    ).toEqual([]);
+    expect(
+      warnings(
+        "bs/activities/common/story_common.bs",
+        `${bundle}class c_encounter__other : c_encounter:\n    int i\n`
+      ).map((d) => [d.line, d.message])
+    ).toEqual([
+      [
+        2,
+        "encounter class 'c_encounter__other' should be named 'c_encounter__story_common' after its file",
+      ],
+    ]);
+    expect(
+      warnings(
+        "bs/binder.bs",
+        `${bundle}class binder : c_encounter:\n    int i\n`
+      )
+    ).toHaveLength(1);
+  });
+
+  it("warns when a class carries the encounter prefix off c_encounter", () => {
+    expect(
+      warnings("bs/x.bs", "class c_encounter__x:\n    int i\n").map(
+        (d) => d.message
+      )
+    ).toEqual([
+      "'c_encounter__x' is named as an encounter but is not built on c_encounter",
+    ]);
+  });
+
+  it("binds an encounter to the bundle its @activity_bundle names", () => {
+    const bundleOf = (path: string, source: string) =>
+      compileOne(source, path).decl.schema.activityBundleName;
+    expect(
+      bundleOf(
+        "es/venus/venus_bounty_1.es",
+        '@activity_bundle("bounty_1_activity")\nint i\n'
+      )
+    ).toBe(fnv1("bounty_1_activity"));
+    // a name never cracked, by its hash
+    expect(
+      bundleOf(
+        "es/mars/unknown_3c2f5ed5.es",
+        "@activity_bundle(0x3C2F5ED5)\nint i\n"
+      )
+    ).toBe(0x3c_2f_5e_d5);
+    expect(
+      bundleOf(
+        "bs/activities/common/story_common.bs",
+        '@activity_bundle("story_common")\nclass c_encounter__story_common : c_encounter:\n    int i\n'
+      )
+    ).toBe(fnv1("story_common"));
+  });
+
+  it("warns about an encounter that runs in no bundle", () => {
+    expect(
+      warnings("es/x/enc_x_amb1.es", "int i\n").map((d) => d.message)
+    ).toEqual([
+      `encounter class 'c_encounter__enc_x_amb1' runs in no bundle; give it @activity_bundle("<bundle name>")`,
+    ]);
+    expect(
+      warnings("es/x/enc_x_amb1.es", '@activity_bundle("enc_x_amb1")\nint i\n')
+    ).toEqual([]);
+  });
+
+  it("refuses @activity_bundle off an encounter, and other decorators", () => {
+    const errors = (path: string, source: string) =>
+      compileBungieScript([{ path, source }])
+        .diagnostics.filter((d) => d.severity === "error")
+        .map((d) => d.message);
+    expect(
+      errors("es/utility_scripts/t.esu", '@activity_bundle("x")\nint i\n')
+    ).toEqual(["@activity_bundle on 't', which is not an encounter class"]);
+    expect(errors("es/x/enc_x.es", "@other(1)\nint i\n")).toEqual([
+      expect.stringContaining("unknown decorator '@other'"),
+    ]);
+    expect(errors("es/x/enc_x.es", "@activity_bundle(3)\nint i\n")).toEqual([
+      expect.stringContaining("takes a bundle name or a 0x<hash>"),
     ]);
   });
 });

@@ -8,6 +8,7 @@
 # one between 65s and 139s, two never in the three minutes recorded. None was
 # harvested on the wire; a harvested node is cleaned up as the chests are.
 
+@activity_bundle(0xAFC05F47)
 c_object_sensor_host thorium_low_traffic
 c_object_sensor_host thorium_med_traffic
 c_object_sensor_host thorium_hi_traffic

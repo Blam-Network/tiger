@@ -6,6 +6,7 @@
 #   cine_reveal_mission1.esp  the Traveler
 #   cine_reveal_mission2.esp  the Tower
 
+@activity_bundle("cine_reveal")
 cine_reveal_mission1 cine_106_trv_phase
 cine_reveal_mission2 cine_107_twr_phase
 

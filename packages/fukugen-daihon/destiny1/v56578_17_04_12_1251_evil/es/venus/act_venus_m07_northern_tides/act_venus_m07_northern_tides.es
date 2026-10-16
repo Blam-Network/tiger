@@ -13,6 +13,7 @@
 # unknown_3854b365 holds the music and Ghost lines. From one retail capture:
 # every wait below and in the missions is that run's, unconfirmed.
 
+@activity_bundle("act_venus_m07_northern_tides")
 startup thread ss_venus_m07_northern_tides:
     print("script startup")
     c_lifetime_script_utilities.get_lifetime_sensor().set_state(e_activity_lifetime_state.pregame)

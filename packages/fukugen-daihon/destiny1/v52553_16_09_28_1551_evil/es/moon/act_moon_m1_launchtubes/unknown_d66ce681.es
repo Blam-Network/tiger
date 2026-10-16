@@ -9,6 +9,7 @@
 # Never on the wire: seq_d_o1_s03 to s06, s08, s10, s13, s15 and the o2 lines
 # the tv_seq_* volumes would start.
 
+@activity_bundle(0xD66CE681)
 c_sequence_host seq_music_intro  # true name unknown
 c_sequence_host seq_music_accelerator  # true name unknown
 c_sequence_host seq_music_launchtubes  # true name unknown

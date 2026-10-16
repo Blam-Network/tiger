@@ -1,3 +1,4 @@
+@activity_bundle("enc_thieves_den_amb1")
 c_objective_sensor_host obj_thieves_den_amb1  # true name unknown
 c_squad_sensor_host sq_caldera_ent01
 c_squad_sensor_host sq_den_bottom01
@@ -19,7 +20,6 @@ c_trigger_volume_slot_host tv_top
 c_player_trigger_sensor_host pt_bottom bind(tv_bottom)  # true name unknown
 c_player_trigger_sensor_host pt_top bind(tv_top)  # true name unknown
 loot_fallen_thieves_den loot_venus_fallen_thieves_den
-
 
 
 

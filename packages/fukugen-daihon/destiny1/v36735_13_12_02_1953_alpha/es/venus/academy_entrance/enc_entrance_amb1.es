@@ -1,3 +1,4 @@
+@activity_bundle("enc_entrance_amb1")
 c_location_sensor_host entrance  # true name unknown
 c_player_monitor_sensor_host pm_bubble_entrance bind(entrance)  # true name unknown
 c_objective_sensor_host obj_entrance_amb1  # true name unknown
@@ -15,7 +16,6 @@ loot_entrance loot_venus_entrance_1
 bool b_encounter_1
 bool b_encounter_2
 bool b_encounter_3
-
 
 
 

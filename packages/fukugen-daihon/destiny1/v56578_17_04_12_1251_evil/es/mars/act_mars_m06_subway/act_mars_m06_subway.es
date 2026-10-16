@@ -16,6 +16,7 @@
 # The lobby and subway encounters are scripts of their own (enc_lobby_m06,
 # enc_subway_m06); unknown_04e6ac69 holds the music and Ghost lines.
 
+@activity_bundle("act_mars_m06_subway")
 startup thread ss_mars_m06_subway:
     print("script startup")
     c_lifetime_script_utilities.get_lifetime_sensor().set_state(e_activity_lifetime_state.pregame)

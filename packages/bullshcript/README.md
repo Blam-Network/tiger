@@ -19,7 +19,7 @@ For more information about the language, see [LANGUAGE.md](./LANGUAGE.md).
 | Extension | Name | Description |
 |----|-----|--------|
 |.bs|BungieScript|Libraries and classes: `class`, `struct` and `enum` blocks, several per file (math helpers, weapons, the PvP game types and controllers).|
-|.es|EncounterScript|One encounter per file, bound to the activity bundle its file name hashes to. The whole file is the class (`c_encounter__<stem>`).|
+|.es|EncounterScript|One encounter per file, bound to its activity bundle, usually the one its file name hashes to. The whole file is the class (`c_encounter__<stem>`).|
 |.esp|EncounterScript Phase|One mission phase per file, beside its mission's `.es` (`<mission>_mission1.esp`, `_mission2`, ...), run in order.|
 |.esu|EncounterScript Utilities|Reusable encounter pieces (kill objectives, dropship events, ...) that rows spawn as child scripts.|
 

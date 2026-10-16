@@ -11,6 +11,7 @@
 # miniboss task (2.3.1's eighth) is not in TU0's list, so it takes the task
 # retail fell back to.
 
+@activity_bundle("enc_gatehouse_m05")
 c_objective_sensor_host obj_gatehouse_m05
 static_array<c_object_sensor_host, 20> dynamics
 c_object_sensor_host mc_door_left

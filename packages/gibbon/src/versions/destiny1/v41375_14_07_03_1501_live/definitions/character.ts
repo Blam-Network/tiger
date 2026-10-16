@@ -66,13 +66,14 @@ export const s_new_character_value = c.struct({
 
 export type s_new_character_value = c.infer<typeof s_new_character_value>;
 
-// Per race and class (3 x 3 keys). Every row sets the same flags, applied
+// Per class and race (3 x 3 keys). Every row sets the same flags, applied
 // on create.
 export const s_new_character_default = c.struct({
-  // 0..2 each.
-  race: c.u8(),
-  class: c.u8({ padAfter: 2 }),
-  // One value per race.
+  // 0 titan, 1 hunter, 2 warlock.
+  class: c.u8(),
+  // 0 human, 1 awoken, 2 exo.
+  race: c.u8({ padAfter: 2 }),
+  // One value per class.
   unknown04: c.u16({ padAfter: 2 }),
   unknown08: c.u32(),
   unknown0c: c.u32(),
@@ -115,27 +116,33 @@ export const s_stat_curve_point = c.struct({
 
 export type s_stat_curve_point = c.infer<typeof s_stat_curve_point>;
 
-export const s_stat_curve_unknown08 = c.struct({
-  unknown00: c.i32(),
-  unknown04: c.f32(),
+// The item quality curve, e.g. (-100,-10) (250,25).
+export const s_stat_curve_quality_point = c.struct({
+  x: c.i32(),
+  y: c.f32(),
 });
 
-export type s_stat_curve_unknown08 = c.infer<typeof s_stat_curve_unknown08>;
+export type s_stat_curve_quality_point = c.infer<
+  typeof s_stat_curve_quality_point
+>;
 
-export const s_stat_curve_unknown10 = c.struct({
-  unknown00: c.u16(),
-  unknown02: c.u16(),
+// Per equip slot weights (helmet 1 -> 33, gauntlets 2 -> 27, chest 3 -> 36,
+// legs 4 -> 24 on the defense curve). Bit 0x100 of the key is set on some
+// rows, meaning unknown.
+export const s_stat_curve_slot_weight = c.struct({
+  equip_slot: c.u16(),
+  weight: c.u16(),
 });
 
-export type s_stat_curve_unknown10 = c.infer<typeof s_stat_curve_unknown10>;
+export type s_stat_curve_slot_weight = c.infer<typeof s_stat_curve_slot_weight>;
 
 // Piecewise linear. Curve 0 pairs level with light: (1,0) (20,1) (20,8)
 // (21,20) (30,120) (40,240) (50,400) (sub_831CA8A8); the activity
 // definition's +0x4C is it evaluated at the required level.
 export const s_stat_curve = c.struct({
   points: tag_block(s_stat_curve_point, 0x808046ea),
-  unknown08: tag_block(s_stat_curve_unknown08, 0x80804731),
-  unknown10: tag_block(s_stat_curve_unknown10, 0x80804698),
+  quality_points: tag_block(s_stat_curve_quality_point, 0x80804731),
+  slot_weights: tag_block(s_stat_curve_slot_weight, 0x80804698),
 });
 
 export type s_stat_curve = c.infer<typeof s_stat_curve>;

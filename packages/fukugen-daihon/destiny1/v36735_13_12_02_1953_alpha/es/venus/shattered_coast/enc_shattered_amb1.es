@@ -1,3 +1,4 @@
+@activity_bundle("enc_shattered_amb1")
 u_globals utils
 c_location_sensor_host shattered_coast  # true name unknown
 c_location_sensor_host headlands  # true name unknown
@@ -19,7 +20,6 @@ loot_shattered loot_venus_shattered_1
 interactable_placement pf_sensor01 bind("sensor01")
 interactable_placement pf_sensor02 bind("sensor02")
 interactable_placement pf_sensor03 bind("sensor03")
-
 
 
 

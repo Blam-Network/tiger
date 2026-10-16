@@ -30,6 +30,7 @@ const SOURCES = [
       "enum e_kind:",
       "    one",
       "",
+      '@activity_bundle("story_common")',
       "class c_encounter__story_common : c_encounter:",
       "    def foo():",
       '        print("hi")',
@@ -42,7 +43,7 @@ const SOURCES = [
   },
   {
     path: "es/venus/strike_1_activity/strike_1_activity.es",
-    text: "c_squad_sensor_host sq\n\nthread main:\n    sq.place()\n",
+    text: '@activity_bundle("venus_portal_1")\nvenus_strike_1_mission2 dig_site_phase\nvenus_strike_1_mission10 end_phase\nc_squad_sensor_host sq\n\nthread main:\n    sq.place()\n',
   },
   {
     path: "es/venus/strike_1_activity/venus_strike_1_mission2.esp",
@@ -110,7 +111,7 @@ describe("the compiled_bs tree", () => {
     );
     const common = index.files[0];
     expect(common).toEqual({
-      bundleHash: "4786C0E0",
+      activityBundle: bundleHashOf("story_common"),
       chunkName: "@bs\\activities\\common\\story_common.bs",
       decls: [
         {
@@ -138,11 +139,9 @@ describe("the compiled_bs tree", () => {
         },
       ],
       kind: "bs",
+      memberTypes: [],
       path: "bs/activities/common/story_common.bs",
     });
-    expect(Number.parseInt(common.bundleHash, 16)).toBe(
-      bundleHashOf("story_common")
-    );
     expect(existsSync(`${dir}.tmp-20261013T000000000Z`)).toBe(false);
   });
 
@@ -159,6 +158,10 @@ describe("the compiled_bs tree", () => {
         expect(inMemory.chunkFor(source.path)).toEqual(decl.chunk);
       }
     }
+    expect(
+      fromDisk.schemaFor("es/venus/strike_1_activity/strike_1_activity.es")
+        .nameHash
+    ).toBe(bundleHashOf("strike_1_activity"));
     // a .bs file's own decl is its first; the others by name
     expect(
       fromDisk.schemaFor("@bs\\activities\\common\\story_common.bs")
@@ -200,9 +203,25 @@ describe("the compiled_bs tree", () => {
     );
     expect(set.archetypeScript("nothing")).toBeUndefined();
     expect(
-      set.scriptByBundle(bundleHashOf("strike_1_activity"), "venus")?.path
+      set.files.find((f) => f.path.endsWith("strike_1_activity.es"))
+        ?.memberTypes
+    ).toEqual([
+      "venus_strike_1_mission2",
+      "venus_strike_1_mission10",
+      "c_squad_sensor_host",
+    ]);
+    expect(
+      set.scriptByBundle(bundleHashOf("venus_portal_1"), "venus")?.path
     ).toBe("es/venus/strike_1_activity/strike_1_activity.es");
+    // a shared bs\ encounter runs in any destination's bundle of its name
     expect(set.scriptByBundle(bundleHashOf("story_common"))?.kind).toBe("bs");
+    expect(
+      set.scriptByBundle(bundleHashOf("story_common"), "cosmo")?.kind
+    ).toBe("bs");
+    // a script's own name is no binding
+    expect(
+      set.scriptByBundle(bundleHashOf("strike_1_activity"), "venus")
+    ).toBeUndefined();
   });
 
   it("refuses a build with errors and keeps the published tree", () => {

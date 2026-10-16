@@ -1,3 +1,4 @@
+@activity_bundle("enc_dig_site_strike1")
 u_globals utils
 c_location_sensor_host dig_site  # true name unknown
 c_player_monitor_sensor_host pm_bubble_dig_site bind(dig_site)  # true name unknown
@@ -21,7 +22,6 @@ c_player_trigger_sensor_host pt_dig_site_suicide bind(tv_dig_site_suicide)  # tr
 c_trigger_volume_slot_host tv_dig_site_hydra
 c_player_trigger_sensor_host pt_dig_site_hydra bind(tv_dig_site_hydra)  # true name unknown
 loot_dig_site loot_venus_dig_site_1
-
 
 
 

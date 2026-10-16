@@ -14,6 +14,7 @@
 # The dome's own encounter is es\cosmo\dome_a\enc_dome_a_m1.es. The
 # unknown_8bd80dbe bundle holds the music and Ghost lines.
 
+@activity_bundle("act_cosmo_m1_dome_a")
 act_cosmo_m1_dome_a_mission1 cosmo_m1_phase00_dome_a
 act_cosmo_m1_dome_a_mission2 cosmo_m1_phase01_dome_a
 act_cosmo_m1_dome_a_mission3 cosmo_m1_phase_end

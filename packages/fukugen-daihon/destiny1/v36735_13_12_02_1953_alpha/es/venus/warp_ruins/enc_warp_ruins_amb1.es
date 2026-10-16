@@ -1,3 +1,4 @@
+@activity_bundle("enc_warp_ruins_amb1")
 u_globals utils
 c_encounter_manager encounters  # true name unknown
 ambush_encounter ambush_encounter_1
@@ -37,7 +38,6 @@ venus_raid_pillar_switch right_switch_pillar bind(7)
 venus_raid_pillar_switch center_switch_pillar bind(7)
 string_hash phase00_raid_end = "phase00_raid_end"
 loot_warp_ruins loot_venus_warp_ruins_1
-
 
 
 

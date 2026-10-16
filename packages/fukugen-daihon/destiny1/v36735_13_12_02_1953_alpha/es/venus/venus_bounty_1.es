@@ -1,3 +1,4 @@
+@activity_bundle("bounty_1_activity")
 string_hash sh_first_play = "first_play"
 u_globals u_globals
 string_hash invalid
@@ -36,7 +37,6 @@ c_loot_host loot_quest_item_complex1  # true name unknown
 c_loot_host loot_quest_item_warp_ruins1  # true name unknown
 int g_active_public_bounty_bubbles = 5
 int g_i_bounty_streak_accumulator
-
 
 
 

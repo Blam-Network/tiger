@@ -1,3 +1,4 @@
+@activity_bundle("enc_north_tides_ch2m4")
 c_location_sensor_host northern_tides  # true name unknown
 c_player_monitor_sensor_host pm_bubble_northern_tides bind(northern_tides)  # true name unknown
 c_objective_sensor_host obj_north_tides_ch2m4  # true name unknown
@@ -16,7 +17,6 @@ c_player_trigger_sensor_host pt_end_level_fall bind(tv_end_level_fall)  # true n
 bool mid_obj_enc_c2m4 = true
 bool end_obj_enc_c2m4 = true
 loot_north_tides loot_venus_north_tides_1
-
 
 
 

@@ -17,6 +17,7 @@
 # Ghost lines. The Grave's console is placed here so it is in the world from
 # the start; it only works for players holding the scan objective's flag.
 
+@activity_bundle("act_moon_m3_lowercitadel")
 interactable_placement pf_obj_strength_interact_place  # archetype not authored on TU0
 
 startup thread ss_moon_m3_lowercitadel:

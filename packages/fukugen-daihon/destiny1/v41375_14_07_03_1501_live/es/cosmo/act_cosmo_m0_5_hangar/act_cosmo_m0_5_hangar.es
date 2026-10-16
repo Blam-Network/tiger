@@ -13,6 +13,7 @@
 # The hangar's own encounter is es\cosmo\hangar\enc_hangar_m0_5.es. The
 # unknown_0de80b0d bundle holds the intro music.
 
+@activity_bundle("act_cosmo_m0_5_hangar")
 act_cosmo_m0_5_hangar_mission1 cosmo_m0_5_phase00_delta_s
 act_cosmo_m0_5_hangar_mission2 cosmo_m0_5_phase01_hangar
 act_cosmo_m0_5_hangar_mission3 cosmo_m0_5_phase02_hangar

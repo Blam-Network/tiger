@@ -1,3 +1,4 @@
+@activity_bundle("enc_military_amb1")
 bool debug_military
 c_squad_sensor_host sq_military_droid_flight
 c_squad_sensor_host sq_military_droid_floor1
@@ -58,7 +59,6 @@ string_hash sh_all_players = "all_players"
 c_incident_listener il_player_joined
 c_incident_listener il_player_left
 c_incident_player_iterator player_iterator  # true name unknown
-
 
 
 

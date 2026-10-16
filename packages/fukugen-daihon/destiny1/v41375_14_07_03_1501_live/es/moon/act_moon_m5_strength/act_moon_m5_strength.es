@@ -20,6 +20,7 @@
 # Authored from one capture run: every timing below is a single-run fact,
 # unconfirmed.
 
+@activity_bundle("act_moon_m5_strength")
 act_moon_m5_strength_mission1 phase_2_hellmouth
 act_moon_m5_strength_mission2 phase_goto_launchtubes
 act_moon_m5_strength_mission3 phase_3_launchtubes

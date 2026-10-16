@@ -15,6 +15,7 @@
 # one 2.3.1 run (The Nexus#1): every timing in these files is a single-run
 # fact until more runs land.
 
+@activity_bundle("strike_1_activity")
 startup thread ss_venus_strike1:
     print("script startup")
     c_lifetime_script_utilities.get_lifetime_sensor().set_state(e_activity_lifetime_state.pregame)

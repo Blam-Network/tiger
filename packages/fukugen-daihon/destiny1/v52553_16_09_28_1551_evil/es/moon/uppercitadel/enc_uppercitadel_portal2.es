@@ -11,6 +11,7 @@
 # been wiped regroups on the hall task. One capture run: every wait and beat
 # in here is that run's and unconfirmed.
 
+@activity_bundle("enc_uppercitadel_portal2")
 c_objective_sensor_host obj_uppercitadel_trash
 c_objective_sensor_host obj_uppercitadel_objective
 c_squad_sensor_host sq_overlook_hive01a

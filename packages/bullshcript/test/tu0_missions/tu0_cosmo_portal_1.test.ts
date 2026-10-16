@@ -241,6 +241,15 @@ describe("TU0 cosmo_portal_1 scripts", () => {
       true
     );
 
+    // A handle is the other bundle's encounter itself, filled by its name.
+    const refinery = h.runtime.instances.get("enc_refinery_portal1");
+    expect(refinery).toBeDefined();
+    expect(
+      h.runtime.instances
+        .get("cosmo_portal1_audio")
+        ?.get("enc_refinery_portal1")
+    ).toBe(refinery);
+
     // The refinery: the trash and the playfight on their triggers, the
     // objectives on theirs.
     fire("phase01.pt_wake_trash01");

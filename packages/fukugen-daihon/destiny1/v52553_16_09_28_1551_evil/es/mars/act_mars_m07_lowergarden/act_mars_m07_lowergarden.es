@@ -20,6 +20,7 @@
 # follow the fights; the lines tied to an objective are its mission's.
 # The ending cinematic is its own activity (cine_end), not this script's.
 
+@activity_bundle("act_mars_m07_lowergarden")
 startup thread ss_mars_m07_lowergarden:
     print("script startup")
     c_lifetime_script_utilities.get_lifetime_sensor().set_state(e_activity_lifetime_state.pregame)

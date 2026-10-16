@@ -1,3 +1,4 @@
+@activity_bundle("enc_plaza_amb1")
 c_objective_sensor_host obj_plaza_amb1  # true name unknown
 c_encounter_manager encounters  # true name unknown
 simple_encounter vex_simple_encounter01
@@ -9,7 +10,6 @@ simple_encounter fallen_simple_encounter03
 c_squad_group_sensor_host sqg_fallen  # true name unknown
 c_squad_group_sensor_host sqg_vex  # true name unknown
 loot_plaza loot_venus_plaza_1
-
 
 
 

@@ -9,6 +9,7 @@
 # 48 s to 73 s after the first player spawned. None was opened on the wire
 # and none came back.
 
+@activity_bundle(0x00B02852)
 c_object_sensor_host chest_mc_north
 c_object_sensor_host chest_mc_south
 c_object_sensor_host chest_dome

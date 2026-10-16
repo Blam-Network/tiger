@@ -13,6 +13,7 @@ Bungie's original source code is lost. What survives is the compiled output in a
 
 - **Activity:** a mission, strike, patrol or other playable space.
 - **Bundle:** the data for one part of an activity: its squads, objectives, triggers, loot and so on. Each bundle has a script.
+- **Encounter:** the script that runs a bundle. It is known by its file name: `enc_dig_site_strike1.es` is the encounter `enc_dig_site_strike1`. It names the bundle it runs in with `@activity_bundle`.
 - **Row:** one entry in a bundle, like one squad or one trigger. Scripts refer to rows by name.
 - **Native:** a function provided by the game engine, like "spawn this squad" or "how many of this squad are alive?".
 - **Schema:** a description of a class's members (names, types and starting values) that the compiler writes beside the code.
@@ -60,6 +61,32 @@ enum e_state:
     attacking
 ```
 
+### Which bundle an encounter runs in
+
+An encounter says which bundle it runs in with `@activity_bundle`, at the top of a `.es` file:
+
+```python
+@activity_bundle("bounty_1_activity")
+string_hash sh_first_play = "first_play"
+...
+```
+
+The bundle's name is usually the encounter's own, but not always: `venus_bounty_1.es` runs in `bounty_1_activity`, and each PvP map's script runs in its map's bundle `pvp`. A name that was never cracked is written as its hash, `@activity_bundle(0x3C2F5ED5)`. An encounter without the decorator runs in no bundle, and the compiler warns about it.
+
+An encounter can also live in a `.bs` file, as the bundles every activity shares do. Write its class out as `c_encounter__<file name>`, built on `c_encounter`, with the decorator above it. A shared encounter runs in its bundle in every destination:
+
+```python
+# bs/activities/common/story_common.bs
+@activity_bundle("story_common")
+class c_encounter__story_common : c_encounter:
+    c_lifetime_sensor_host lifetime
+    c_timer_sensor_host lifetime_timer
+```
+
+The game finds an encounter's class by its file name, so the compiler warns about an encounter class with any other name. It also warns about a class that has the `c_encounter__` prefix but is not built on `c_encounter`. `@activity_bundle` on anything but an encounter is an error.
+
+Bungie's own data kept this link on the bundle's side (the bundle's host named its script), and their compiler left the bundle name out. The decorator is our way of writing it down, since we have the scripts but not the bundles' sources.
+
 ## Members
 
 A member is declared on its own line: its type, its name, and optionally a starting value.
@@ -73,7 +100,7 @@ c_squad_sensor_host sq_boss
 
 - **Basic types:** `int`, `short`, `real` (a number with a fraction), `bool`, `string`, `string_hash`, `vector2d`, `vector3d`, `vector4`.
 - **Engine types:** most members are game objects, like `c_squad_sensor_host` (a squad) or `simple_encounter`. Their type decides which natives you can call on them.
-- **Lists:** `static_array<T, N>` and `T[N]` hold a fixed number of items, `dynamic_array<T>` a variable number, and `table<K, V>` maps keys to values.
+- **Lists:** `static_array<T, N>` and `T[N]` hold a fixed number of items, and `table<K, V>` maps keys to values. `dynamic_array<T>` holds a variable number, which the bundle decides for each copy of the class: one `simple_encounter` gets one squad, another gets three.
 - **Starting values:** numbers, `true`/`false`, `"text"`, vectors as `(x, y, z)`, and enum values like `e_state.idle`. Without one, numbers start at `0` and bools at `false`.
 
 Two optional extras:
@@ -82,6 +109,20 @@ Two optional extras:
 - **`bind(...)`** after a member connects it to another one when the script loads: `pt_x bind(tv_x)`. A string binds an identifier by its authored name, which the host hashes with FNV-1: an objective and the placement it unlocks share one (`bind("vex_block")`). A name never cracked is written as its hash, `bind("0x8C8D186C")`.
 
 **Rows are declared by hand.** Every squad, objective or trigger a script uses has its own member line. The bundle's rows were made to match the script, not the other way round, so some declared rows are never used by the code. A squad's individual actors are declared as `<squad>__<actor>`.
+
+Not every row in a bundle belongs to its script, and not every member becomes a row:
+
+- **Rows that belong to the world:** firing areas, spawn points, landing points, kill volumes, factions and spawn influencers. The level's tools make them, and scripts never declare them.
+- **Members that are not rows:** devices, incident listeners, activity flags, capturables, interactables, player iterators and objective timers. These are engine objects the script owns outright.
+
+**Other encounters.** A `c_encounter_handle` member reaches the encounter of another bundle in the activity. Name the member after the encounter, because the game fills it in by that name:
+
+```python
+c_encounter_handle enc_engineering_strike1
+
+thread main:
+    enc_engineering_strike1.sc_engineering_trash.wake()
+```
 
 ## Threads
 
@@ -166,13 +207,15 @@ Scripts do very little themselves. Almost everything is a call to the engine, a 
 - **On members:** `squad.place()`, `squad.alive_count()`, `objective.set_complete()`, `encounters.add_ambient_encounter(...)`. Each engine type has its own set.
 - **Everywhere:** `print`, `assert`, `len`, `event_message` and a few more.
 
+[NATIVES.md](NATIVES.md) lists every native, and [INCIDENTS.md](INCIDENTS.md) lists the incidents: the named events players cause and scripts listen for or submit.
+
 ## How scripts run
 
 ### When an activity starts
 
 1. The server loads the script for every bundle in the activity.
 2. Each class gets a fresh copy, with every member at its starting value.
-3. Members are connected to their bundle rows, then `user_import()` runs if there is one.
+3. Members are connected to their bundle rows, then `user_import()` runs if there is one. Bungie's tools ran this step once, when the bundle was built, and saved the results with the bundle.
 4. Every `startup thread` starts.
 
 ### While it's running
@@ -181,7 +224,9 @@ The server runs on a fixed tick. Each tick, every paused thread that's ready to 
 
 A mission's phases (`.esp` files) all load at the start, but only one runs at a time. The next one starts when the current phase's `main` thread finishes.
 
-The activity's root script names each phase with a member: the mission's class as the type, the bundle's phase row as the name (`venus_strike_1_mission1 engineering_phase`). A mission's members are that phase's rows (`engineering_phase.utils`). A mission the root does not name is `phaseNN` by its number (`mission1` is `phase00`).
+The activity's root script declares each phase as a member, in the order they run: the mission's class as the type, the bundle's phase row as the name (`venus_strike_1_mission1 engineering_phase`). A mission's members are that phase's rows (`engineering_phase.utils`). A mission the root does not declare never runs.
+
+The same goes for every other script a class uses: a member declared with a script class (`u_globals utils`, `c_pvp_controller pvp_controller`) is that class's instance inside this one, whether or not the bundle has a row for it.
 
 ### Things to watch for
 

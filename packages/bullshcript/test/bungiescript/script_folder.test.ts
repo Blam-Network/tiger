@@ -115,17 +115,27 @@ describe("loadScriptFolder", () => {
   };
   write(
     "bs/activities/common/story_common.bs",
-    "class c_encounter__story_common : c_encounter:\n    pass\n\n# See tag 80CC0001\n"
+    '@activity_bundle("story_common")\nclass c_encounter__story_common : c_encounter:\n    pass\n\n# See tag 80CC0001\n'
   );
   write(
     "bs/activities/common/public_common.bs",
     "# See tags 821B8003, 821E2006 (c_encounter__public_common)\n"
   );
-  write("es/city_tower/enc_plaza_amb1.es", "thread main: pass\r\n");
-  write("es/venus/academy_plaza/enc_plaza_amb1.es", "thread main: pass\n");
+  write(
+    "es/city_tower/enc_plaza_amb1.es",
+    '@activity_bundle("enc_plaza_amb1")\r\nthread main: pass\r\n'
+  );
+  write(
+    "es/venus/academy_plaza/enc_plaza_amb1.es",
+    '@activity_bundle("enc_plaza_amb1")\nthread main: pass\n'
+  );
   write(
     "es/venus/strike_1_activity/strike_1_activity.es",
-    "thread main: pass\n"
+    "venus_strike_1_mission10 end_phase\nvenus_strike_1_mission2 dig_site_phase\n\nthread main: pass\n"
+  );
+  write(
+    "es/venus/venus_bounty_1.es",
+    '@activity_bundle("bounty_1_activity")\nthread main: pass\n'
   );
   write(
     "es/venus/strike_1_activity/venus_strike_1_mission10.esp",
@@ -151,10 +161,11 @@ describe("loadScriptFolder", () => {
       "es/venus/strike_1_activity/strike_1_activity.es",
       "es/venus/strike_1_activity/venus_strike_1_mission10.esp",
       "es/venus/strike_1_activity/venus_strike_1_mission2.esp",
+      "es/venus/venus_bounty_1.es",
     ]);
     expect(
       scripts.scriptByPath("@es\\city_tower\\enc_plaza_amb1.es")?.text
-    ).toBe("thread main: pass\n");
+    ).toBe('@activity_bundle("enc_plaza_amb1")\nthread main: pass\n');
     expect(scripts.scriptSources()[0]).toEqual({
       path: "bs/activities/common/public_common.bs",
       source: "# See tags 821B8003, 821E2006 (c_encounter__public_common)\n",
@@ -172,7 +183,7 @@ describe("loadScriptFolder", () => {
     expect(scripts.scriptByTag("80CC0002")).toBeUndefined();
   });
 
-  it("finds a bundle's script by its name hash, the destination picking between twins", () => {
+  it("finds a bundle's script by its encounter's @activity_bundle, the destination picking between twins", () => {
     const plaza = bundleHashOf("enc_plaza_amb1");
     expect(scripts.scriptByBundle(plaza)).toBeUndefined();
     expect(scripts.scriptByBundle(plaza, "city_tower")?.path).toBe(
@@ -181,21 +192,33 @@ describe("loadScriptFolder", () => {
     expect(scripts.scriptByBundle(plaza, "venus")?.path).toBe(
       "es/venus/academy_plaza/enc_plaza_amb1.es"
     );
-    expect(scripts.scriptByBundle(bundleHashOf("story_common"))?.kind).toBe(
-      "bs"
-    );
-    expect(
-      scripts.scriptByBundle(bundleHashOf("story_common"), "cosmo")?.kind
-    ).toBe("bs");
+    // a shared bs\ encounter runs in any destination's bundle of its name
+    const common = bundleHashOf("story_common");
+    expect(scripts.scriptByBundle(common)?.kind).toBe("bs");
+    expect(scripts.scriptByBundle(common, "cosmo")?.kind).toBe("bs");
   });
 
-  it("lists a root's missions in run order and an archetype by name", () => {
+  it("runs the script decorated with the bundle's name, whatever the script's own", () => {
+    const bounty = scripts.scriptByPath("es/venus/venus_bounty_1.es");
+    const bundle = bundleHashOf("bounty_1_activity");
+    expect(bounty?.activityBundle).toBe(bundle);
+    expect(scripts.scriptByBundle(bundle)).toBe(bounty);
+    expect(scripts.scriptByBundle(bundle, "venus")).toBe(bounty);
+    // another destination has no script for it, and the script's own name
+    // is no binding
+    expect(scripts.scriptByBundle(bundle, "city_tower")).toBeUndefined();
+    expect(
+      scripts.scriptByBundle(bundleHashOf("venus_bounty_1"), "venus")
+    ).toBeUndefined();
+  });
+
+  it("lists the missions a root declares, in member order, and an archetype by name", () => {
     const root = scripts.scriptByPath(
       "es/venus/strike_1_activity/strike_1_activity.es"
     );
     expect(root && scripts.missionScripts(root).map((f) => f.path)).toEqual([
-      "es/venus/strike_1_activity/venus_strike_1_mission2.esp",
       "es/venus/strike_1_activity/venus_strike_1_mission10.esp",
+      "es/venus/strike_1_activity/venus_strike_1_mission2.esp",
     ]);
     const plaza = scripts.scriptByPath("es/city_tower/enc_plaza_amb1.es");
     expect(plaza && scripts.missionScripts(plaza)).toEqual([]);

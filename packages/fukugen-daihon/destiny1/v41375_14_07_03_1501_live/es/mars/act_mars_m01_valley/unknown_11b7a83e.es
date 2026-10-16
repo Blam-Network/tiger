@@ -9,6 +9,7 @@
 # One run: the 3 s between the tunnel line and the intro line is as
 # captured.
 
+@activity_bundle(0x11B7A83E)
 c_sequence_host seq_music_intro
 c_sequence_host seq_music_cabal_intro
 c_sequence_host seq_dialog_plains_tunnel

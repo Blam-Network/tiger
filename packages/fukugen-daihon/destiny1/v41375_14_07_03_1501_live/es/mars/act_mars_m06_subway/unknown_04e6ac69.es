@@ -7,6 +7,7 @@
 # capture: every wait is that run's. The trigger volumes and locations are
 # declared for their rows; nothing on the wire moved them.
 
+@activity_bundle(0x04E6AC69)
 c_sequence_host seq_m_intro_s01
 c_sequence_host seq_m_climax_s01
 c_sequence_host seq_m_ascent_s01

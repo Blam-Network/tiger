@@ -8,6 +8,7 @@
 # between 63s and 76s, and the one opened was deleted a second later. No chest
 # came back before the session ended, so there is no respawn here.
 
+@activity_bundle(0xAF642429)
 c_object_sensor_host chest_mc_helipad
 c_object_sensor_host chest_mc_hivedome
 c_object_sensor_host chest_dome_c_high

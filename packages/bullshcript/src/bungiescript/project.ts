@@ -208,6 +208,12 @@ export class Project {
       : undefined;
   }
 
+  // Whether the decl's chain ends on the native c_encounter base: a bundle's
+  // root class. The alpha has no class built on another encounter class.
+  isEncounter(decl: ProjectDecl): boolean {
+    return this.nativeBase(decl)?.name === "c_encounter";
+  }
+
   typeNamed(name: string): BsRegistryEntry | undefined {
     return this.registry.get(name);
   }

@@ -1,3 +1,4 @@
+@activity_bundle("enc_underwatch_amb1")
 bool debug_underwatch
 c_squad_sensor_host sq_underwatch_titans_guards1
 c_squad_sensor_host sq_underwatch_titans_guards2
@@ -40,7 +41,6 @@ c_control_point_set_sensor_host cps_guardian_quartermaster01  # true name unknow
 c_control_point_set_sensor_host cps_guardian_quartermaster02  # true name unknown
 c_control_point_set_sensor_host cps_guardian_quartermaster03  # true name unknown
 c_control_point_set_sensor_host cps_guardian_quartermaster04  # true name unknown
-
 
 
 

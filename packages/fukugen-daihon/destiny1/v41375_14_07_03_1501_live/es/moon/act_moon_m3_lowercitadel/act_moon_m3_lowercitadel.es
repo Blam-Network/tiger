@@ -18,6 +18,7 @@
 # the start; it only works for players holding the scan objective's flag
 # (pf_obj_strength_interact, mission 4, binds the same identifier).
 
+@activity_bundle("act_moon_m3_lowercitadel")
 act_moon_m3_lowercitadel_mission1 phase_wisdom
 act_moon_m3_lowercitadel_mission2 phase_lowercitadel
 act_moon_m3_lowercitadel_mission3 phase_strength

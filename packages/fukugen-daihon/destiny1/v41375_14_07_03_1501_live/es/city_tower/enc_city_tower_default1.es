@@ -2,6 +2,7 @@
 #
 # The Tower's activity root. It only waits for the fireteam to join.
 
+@activity_bundle("enc_city_tower_default1")
 c_fireteam_sensor_host host
 
 startup thread sc_main_thread:

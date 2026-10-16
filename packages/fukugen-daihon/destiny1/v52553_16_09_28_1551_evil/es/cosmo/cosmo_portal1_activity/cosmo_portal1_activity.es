@@ -1,7 +1,7 @@
 # es\cosmo\cosmo_portal1_activity\cosmo_portal1_activity.es
 #
-# The Devils' Lair, the Cosmodrome strike. The root starts nothing; the
-# phases are the missions beside it, run in order. Mission file names are ours.
+# The Devils' Lair, the Cosmodrome strike. The root starts nothing; it
+# declares the phases, run in member order. Mission file names are ours.
 #
 #   cosmo_portal1_activity_mission1.esp  the rocketyard: into the refinery
 #   cosmo_portal1_activity_mission2.esp  the refinery: clear the entrance
@@ -14,6 +14,16 @@
 #
 # The refinery, blast and ship encounters, and cosmo_portal1_audio, are
 # scripts of their own.
+
+@activity_bundle("cosmo_portal1_activity")
+cosmo_portal1_activity_mission1 phase00
+cosmo_portal1_activity_mission2 phase01
+cosmo_portal1_activity_mission3 phase02
+cosmo_portal1_activity_mission4 phase03
+cosmo_portal1_activity_mission5 phase04
+cosmo_portal1_activity_mission6 phase05
+cosmo_portal1_activity_mission7 phase06
+cosmo_portal1_activity_mission8 phase07
 
 startup thread ss_cosmo_portal1:
     print("script startup")

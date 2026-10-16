@@ -8,6 +8,7 @@
 # retail capture: where a step has no trigger on the wire, the wait is
 # that run's. Task names are uncracked and written as hashes, except boss.
 
+@activity_bundle("enc_uppergarden_m07")
 c_object_sensor_host o_door_lowergarden
 c_objective_sensor_host obj_uppergarden_m07
 c_squad_sensor_host sq_overlook_hobgoblin

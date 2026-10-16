@@ -4,6 +4,7 @@
 # shield, then fight the servitor. It teleports around while shanks and
 # reinforcements come in.
 
+@activity_bundle("enc_ship_portal1")
 c_squad_sensor_host sq_bossbattle_boss01
 c_objective_sensor_host obj_bossbattle_fallen  # true name unknown
 c_squad_sensor_host sq_bossbattle_reinf01

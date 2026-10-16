@@ -6,6 +6,7 @@
 # its squad and fades. The task changes mid-fight follow what one run showed
 # (a squad worn down to its last member moves up), so they are unconfirmed.
 
+@activity_bundle("enc_lobby_m06")
 c_objective_sensor_host obj_lobby_m06_s
 c_objective_sensor_host obj_lobby_m06_n
 c_player_trigger_sensor_host pt_s_cloud_spawn

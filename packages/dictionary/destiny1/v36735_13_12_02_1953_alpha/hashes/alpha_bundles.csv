@@ -22,6 +22,7 @@ hash,string,source,confidence
 20C3F9EA,venus_bounty_1,tiger:dict:alpha_script_tag,med
 22859CF8,enc_shattered_amb1,tiger:dict:alpha_script_tag,med
 23DAA9D5,sc_control_room,tiger:dict:alpha_lua_source,med
+27DD7734,bounty_1_activity,tiger:dict:alpha_host_bundle_name,med
 29585157,enc_south_tides_amb1,tiger:dict:alpha_script_tag,med
 29CBD99A,enc_baby_shat_amb,tiger:dict:alpha_script_tag,med
 2DADE715,sc_boulevard_civ_nm,tiger:dict:alpha_lua_source,med

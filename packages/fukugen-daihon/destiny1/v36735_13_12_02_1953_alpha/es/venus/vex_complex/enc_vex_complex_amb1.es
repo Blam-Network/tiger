@@ -1,3 +1,4 @@
+@activity_bundle("enc_vex_complex_amb1")
 u_globals utils
 c_objective_sensor_host obj_complex_amb1  # true name unknown
 u_event_world_controller event_controller
@@ -11,7 +12,6 @@ c_squad_sensor_host sq_bridge_guardian01
 c_squad_sensor_host sq_bridge_guardian02
 c_squad_group_sensor_host sqg_bridge_guardians  # true name unknown
 loot_complex loot_venus_complex_1
-
 
 
 

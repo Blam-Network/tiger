@@ -12,11 +12,9 @@ import { dirname, join } from "node:path";
 import type { BsDeclKind, BsFileKind } from "./ast.ts";
 import type { BsCompiledDecl, BsDiagnostic } from "./compile.ts";
 import { BsCompileError } from "./lexer.ts";
-import { scriptStem } from "./parser.ts";
 import type { BsSchema } from "./schema.ts";
 import type { CompiledScriptFiles } from "./script_files.ts";
 import {
-  bundleHashOf,
   normalizeScriptPath,
   type ScriptLookups,
   scriptLookups,
@@ -24,7 +22,7 @@ import {
 
 export const COMPILED_BS_INDEX = "index.json";
 // index.json's shape; bumped when it changes, so an old tree is rebuilt
-export const COMPILED_BS_FORMAT = 1;
+export const COMPILED_BS_FORMAT = 2;
 
 export interface CompiledBsDecl {
   // the chunk's file, relative to the tree; a struct or enum has none
@@ -36,12 +34,14 @@ export interface CompiledBsDecl {
 }
 
 export interface CompiledBsFile {
-  // fnv1 of the file's stem, uppercase hex: the bundle the script runs for
-  readonly bundleHash: string;
+  // the bundle the file's encounter class runs in (@activity_bundle)
+  readonly activityBundle?: number;
   readonly chunkName: string;
   // in declaration order; the first is the file's own decl
   readonly decls: readonly CompiledBsDecl[];
   readonly kind: BsFileKind;
+  // the type of each member its es-family class declares, in order
+  readonly memberTypes: readonly string[];
   // relative to the build folder, forward slashes, extension kept
   readonly path: string;
 }
@@ -90,14 +90,26 @@ export function formatDiagnostic(diagnostic: BsDiagnostic): string {
   return `${diagnostic.severity}: ${diagnostic.path}:${diagnostic.line}: ${diagnostic.message}`;
 }
 
-const HEX_WIDTH = 8;
 const UNSAFE_STAMP = /[^0-9A-Za-z]/g;
 
-function bundleHashText(path: string): string {
-  return bundleHashOf(scriptStem(path))
-    .toString(16)
-    .toUpperCase()
-    .padStart(HEX_WIDTH, "0");
+// the member kinds that are not fields: what memberTypes leaves out
+const NOT_FIELDS = new Set([
+  "command_script",
+  "delegate",
+  "enum_value",
+  "implements",
+  "method",
+  "thread",
+]);
+
+// the type of each member an es-family class declares, as its schema lists
+// them; a .bs file lists none (ScriptFileSummary)
+function memberTypesOf(decl: BsCompiledDecl): readonly string[] {
+  return decl.fileKind === "bs"
+    ? []
+    : decl.schema.members
+        .filter((member) => !NOT_FIELDS.has(member.kind))
+        .map((member) => member.type);
 }
 
 function moduleDir(decl: BsCompiledDecl): string {
@@ -132,19 +144,19 @@ export function compiledBsIndex(
       name: decl.name,
       schema: schemaPath(decl),
     };
-    const file = files.get(path);
-    files.set(
+    const file = files.get(path) ?? {
+      chunkName: decl.chunkName,
+      decls: [],
+      kind: decl.fileKind,
+      memberTypes: memberTypesOf(decl),
       path,
-      file
-        ? { ...file, decls: [...file.decls, entry] }
-        : {
-            bundleHash: bundleHashText(path),
-            chunkName: decl.chunkName,
-            decls: [entry],
-            kind: decl.fileKind,
-            path,
-          }
-    );
+    };
+    const bundle = decl.schema.activityBundleName;
+    files.set(path, {
+      ...file,
+      ...(bundle === undefined ? {} : { activityBundle: bundle }),
+      decls: [...file.decls, entry],
+    });
   }
   return {
     diagnostics: compiled.diagnostics,

@@ -31,22 +31,31 @@ export function tu0ScriptSource(
 ): ScriptSource {
   const files = new Map<string, { file: ScriptFile; refs: string[] }>();
   const idOf = (file: ScriptFile) => formatScriptTag(fnv1(file.path));
+  // A script and the classes its members embed, as Bungie's references
+  // listed them.
+  const withMembers = (file: ScriptFile): string => {
+    const id = idOf(file);
+    if (!files.has(id)) {
+      files.set(id, { file, refs: [] });
+      const refs = tu0Scripts.memberScripts(file).map(withMembers);
+      files.set(id, { file, refs });
+    }
+    return id;
+  };
   for (const tag of tags) {
     const file = tu0Scripts.scriptByBundle(tag.bundle, destination);
     if (!file) {
       continue;
     }
-    const refs: string[] = [];
+    const refs: string[] = tu0Scripts.memberScripts(file).map(withMembers);
     for (const mission of tu0Scripts.missionScripts(file)) {
-      files.set(idOf(mission), { file: mission, refs: [] });
-      refs.push(idOf(mission));
+      refs.push(withMembers(mission));
     }
     for (const row of tag.rows) {
       const archetype =
         row.childScript && tu0Scripts.archetypeScript(row.childScript);
       if (archetype) {
-        files.set(idOf(archetype), { file: archetype, refs: [] });
-        refs.push(idOf(archetype));
+        refs.push(withMembers(archetype));
       }
     }
     files.set(formatScriptTag(tag.tag), { file, refs: [...new Set(refs)] });

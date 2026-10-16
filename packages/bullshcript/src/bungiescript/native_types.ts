@@ -1,4 +1,4 @@
-// Native base classes and member value types the alpha scripts reach without declaring them. A name is Bungie's where the packages keep it (known: true), else a guessed stem marked "true name unknown"; the ids live in native_ids.ts.
+// Native base classes and member value types the alpha scripts reach without declaring them. A name is Bungie's where the packages keep it, whole or in the names of the classes built on it (known: true), else a guessed stem marked "true name unknown"; the ids live in native_ids.ts.
 
 export type BsNativeKind =
   | "c_array"
@@ -90,9 +90,11 @@ export const NATIVE_BASES: readonly BsNativeBase[] = [
     ],
     name: "c_mission_phase",
   },
+  // every class built on this base, and only those, is named
+  // `c_encounter__<name>` (48 of 48 alpha script tags)
   {
     complete: true,
-    known: false,
+    known: true,
     members: [
       "accessor_handle",
       "activity_bundle_name",

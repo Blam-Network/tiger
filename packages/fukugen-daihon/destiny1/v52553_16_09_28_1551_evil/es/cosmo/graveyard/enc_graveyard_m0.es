@@ -3,6 +3,7 @@
 # The graveyard in A Guardian Rises: the Ketch arrives, the Fallen dropships
 # drop their troops, then the sniper and the exit shanks come in.
 
+@activity_bundle("enc_graveyard_m0")
 c_object_sensor_host o_ketch_gantry
 c_squad_sensor_host sq_fallen_m0_sniper
 c_objective_sensor_host obj_fallen_m0  # true name unknown

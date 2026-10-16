@@ -13,11 +13,13 @@ import {
 } from "@blamnetwork/bullshcript/destiny1/v36735_13_12_02_1953_alpha";
 import {
   c_package_set,
+  k_activity_host_class,
   k_schema_class,
   k_schema_kind,
   k_script_class,
   read_definition,
   read_schema,
+  s_activity_host,
   s_script,
   type schema,
 } from "@blamnetwork/gibbon/destiny1/v36735_13_12_02_1953_alpha";
@@ -30,11 +32,16 @@ import { crackedStrings } from "./dictionary.ts";
 const ALPHA_BUILD = "v36735_13_12_02_1953_alpha";
 
 export interface AlphaScriptTag {
+  // the activity_bundle_name its bundle's host stamped, for an encounter
+  readonly activityBundle: number | undefined;
   readonly conservative: boolean;
   // dotted module path with the decl name last
   readonly declName: string;
   readonly definition: LiftSide;
   readonly instance: LiftSide;
+  // the definition image's name slot as bsc left it; undefined when never
+  // written or when the class is not on a script base
+  readonly nameSlot: number | undefined;
   readonly tag: string;
 }
 
@@ -46,6 +53,15 @@ export interface AlphaSchemas {
 }
 
 const THREAD_DEFINITION = 0x80800472;
+// every script base keeps the class's name hash at definition +0x0C (listed as
+// `name` except on the phase base, which lists another `name` at +0x20)
+const SCRIPT_BASES = new Set([
+  "c_activity_script",
+  "c_encounter",
+  "c_mission_phase",
+]);
+const NAME_SLOT = 0x0c;
+const ACTIVITY_BUNDLE_NAME = 0x20;
 // the global incident name table: {u32 fnv1, i32 rel} x count from +0x20, rel
 // relative to its own word and landing on the NUL-terminated name
 const INCIDENT_NAMES_TAG = 0x808e204d;
@@ -144,9 +160,47 @@ export function readAlphaSchemas(dir: string): AlphaSchemas {
       schema: id,
     };
   };
+  // the native id a schema's parent chain ends on
+  const nativeRoot = (id: number): number => {
+    let at = id;
+    for (let entry = schemas.get(at); entry; entry = schemas.get(at)) {
+      at = entry.schema.header.parent;
+    }
+    return at;
+  };
+  const nameSlot = (id: number): number | undefined => {
+    const entry = schemas.get(id);
+    const base = nativeBaseById(nativeRoot(id))?.name;
+    if (entry === undefined || base === undefined || !SCRIPT_BASES.has(base)) {
+      return;
+    }
+    const word = read_schema_fast_init(
+      entry.buffer,
+      entry.schema.header
+    )?.readUInt32BE(NAME_SLOT);
+    return word === 0 ? undefined : word;
+  };
+  // script tag -> the activity_bundle_name (encounter definition +0x20) its
+  // bundle's host (808004C5) stamped; other class tags name scripts too
+  const bundles = new Map<number, number>();
+  for (const { hash } of set.entries_of_class(k_activity_host_class)) {
+    const host = read_definition(set.read_tag(hash), s_activity_host);
+    const image = set.try_read_tag(host.definition.tag);
+    if (
+      host.script !== 0xffffffff &&
+      image !== undefined &&
+      nativeBaseById(nativeRoot(host.definition_schema))?.name === "c_encounter"
+    ) {
+      bundles.set(
+        host.script,
+        image.readUInt32BE(host.definition.offset + ACTIVITY_BUNDLE_NAME)
+      );
+    }
+  }
   const raw = set.entries_of_class(k_script_class).map(({ hash }) => {
     const s = read_definition(set.read_tag(hash), s_script);
     return {
+      activityBundle: bundles.get(hash),
       declName: s.decl_name ?? "",
       definition: side(
         s.types[0].schema,
@@ -156,6 +210,7 @@ export function readAlphaSchemas(dir: string): AlphaSchemas {
         s.types[1].schema,
         s.types[1].methods.map((m) => m.name ?? "")
       ),
+      nameSlot: nameSlot(s.types[0].schema),
       tag: formatScriptTag(hash),
     };
   });

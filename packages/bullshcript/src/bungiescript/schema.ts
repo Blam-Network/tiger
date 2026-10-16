@@ -4,8 +4,10 @@
 import { fnv1, parseHashLiteral } from "../host/tags/name_hash.ts";
 import type { BsDecl, BsExpr, BsField, BsType } from "./ast.ts";
 import { type BsNativeKind, nativeTypeNamed } from "./native_types.ts";
+import { bundleHashOf, scriptStem } from "./parser.ts";
 import {
   DEFAULT_NATIVE_BASE,
+  isEsFamily,
   type Project,
   type ProjectDecl,
 } from "./project.ts";
@@ -68,10 +70,16 @@ export interface BsSchemaMember {
 }
 
 export interface BsSchema {
+  // an encounter class's bundle (@activity_bundle), the hash Bungie's bundle
+  // build stamped as the host's activity_bundle_name
+  readonly activityBundleName?: number;
   readonly kind: BsDecl["kind"];
   readonly members: readonly BsSchemaMember[];
   readonly modulePath: string;
   readonly name: string;
+  // the definition's name hash as bsc wrote it; absent when the native base
+  // has no name
+  readonly nameHash?: number;
   // the declared base, else the native base the file kind picks
   readonly parent: string;
 }
@@ -211,13 +219,35 @@ export function emitSchema(
       type: "c_command_script",
     });
   }
+  const nameHash = definitionNameHash(decl, project);
+  const bundle = decl.decl.activityBundle;
   return {
+    ...(bundle === undefined ? {} : { activityBundleName: bundle.hash }),
     kind: decl.decl.kind,
     members,
     modulePath: decl.modulePath,
     name: decl.name,
+    ...(nameHash === undefined ? {} : { nameHash }),
     parent: decl.baseName ?? DEFAULT_NATIVE_BASE[decl.file.kind],
   };
+}
+
+// An es-family class is known by its file stem, encounters included, and bsc
+// wrote that into the definition; a .bs class's name is left empty for the
+// bundle build to fill.
+function definitionNameHash(
+  decl: ProjectDecl,
+  project: Project
+): number | undefined {
+  if (
+    decl.decl.kind !== "class" ||
+    !project.nativeBase(decl)?.members.includes("name")
+  ) {
+    return;
+  }
+  return isEsFamily(decl.file.kind)
+    ? bundleHashOf(scriptStem(decl.file.path))
+    : fnv1("");
 }
 
 // the key luaNames is filed under for a def

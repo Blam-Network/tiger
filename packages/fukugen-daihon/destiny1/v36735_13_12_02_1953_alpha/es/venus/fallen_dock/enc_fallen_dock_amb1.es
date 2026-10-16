@@ -1,3 +1,4 @@
+@activity_bundle("enc_fallen_dock_amb1")
 u_globals utils
 c_objective_sensor_host obj_fallen_dock_amb1  # true name unknown
 c_squad_sensor_host sq_den_entrance
@@ -25,7 +26,6 @@ c_trigger_volume_slot_host tv_dock02
 c_player_trigger_sensor_host pt_dock01 bind(tv_dock01)  # true name unknown
 c_player_trigger_sensor_host pt_dock02 bind(tv_dock02)  # true name unknown
 loot_fallen_dock loot_venus_fallen_dock
-
 
 
 

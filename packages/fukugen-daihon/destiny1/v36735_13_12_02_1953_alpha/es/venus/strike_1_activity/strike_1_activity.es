@@ -1,8 +1,8 @@
+@activity_bundle("strike_1_activity")
 venus_strike_1_mission1 engineering_phase
 venus_strike_1_mission2 dig_site_phase
 venus_strike_1_mission3 ruins_phase
 venus_strike_1_mission4_temp end_phase
-
 
 
 

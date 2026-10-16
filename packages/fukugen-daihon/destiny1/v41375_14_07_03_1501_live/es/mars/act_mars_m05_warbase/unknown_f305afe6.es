@@ -15,6 +15,7 @@
 # and dropship tasks are not in TU0's list, so those squads keep the
 # objective's default; the dropships dropped nothing before the boss died.
 
+@activity_bundle(0xF305AFE6)
 c_objective_sensor_host obj_warbase_ch3
 c_squad_sensor_host sq_bridge_a_a
 c_squad_sensor_host sq_bridge_a_b

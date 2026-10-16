@@ -1,3 +1,4 @@
+@activity_bundle("enc_ketch_bay_amb1")
 c_objective_sensor_host obj_ketch_bay_amb1  # true name unknown
 c_squad_sensor_host sq_equipment01
 c_squad_sensor_host sq_equipment02
@@ -34,7 +35,6 @@ bool is_player_in_pm_anchor
 bool is_right_mc_active = true
 bool is_left_mc_active = true
 loot_ketch loot_venus_ketch_1
-
 
 
 

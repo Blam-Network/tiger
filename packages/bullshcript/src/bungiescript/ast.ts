@@ -18,7 +18,17 @@ export interface BsFile {
 
 export type BsDeclKind = "class" | "struct" | "enum";
 
+// `@activity_bundle("name")` on an encounter class: the bundle it runs in,
+// named, or by hash where the name never cracked.
+export interface BsActivityBundle {
+  readonly hash: number;
+  readonly line: number;
+  // as written: the name, or "0x<hash>"
+  readonly text: string;
+}
+
 export interface BsDecl extends BsSpan {
+  readonly activityBundle: BsActivityBundle | undefined;
   readonly base: string | undefined;
   // es-family files declare their one class implicitly
   readonly implicit: boolean;

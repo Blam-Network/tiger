@@ -11,6 +11,7 @@
 # (goblins04, the sniper squads, the harpies) never came. Most task names
 # are uncracked (hashes).
 
+@activity_bundle("enc_north_tides_m07")
 c_objective_sensor_host obj_north_tides_m07
 c_squad_sensor_host sq_boss
 c_squad_member_sensor_host sq_boss__ultra_minotaur

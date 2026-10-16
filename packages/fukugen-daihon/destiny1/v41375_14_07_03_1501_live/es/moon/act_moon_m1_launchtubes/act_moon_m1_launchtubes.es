@@ -17,6 +17,7 @@
 # are scripts of their own; unknown_d66ce681 holds the music and Ghost lines.
 # Written from one capture: every timing below is a single-run fact.
 
+@activity_bundle("act_moon_m1_launchtubes")
 act_moon_m1_launchtubes_mission1 phase_intro_cin
 act_moon_m1_launchtubes_mission2 phase_1_accelerator
 act_moon_m1_launchtubes_mission3 phase_moonbase

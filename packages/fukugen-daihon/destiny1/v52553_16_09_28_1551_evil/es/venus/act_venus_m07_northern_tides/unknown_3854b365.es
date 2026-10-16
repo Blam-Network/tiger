@@ -7,6 +7,7 @@
 # md_vn07_010_20 and md_vn07_020_30/40/60/90/110 and the trigger
 # pt_vn07_020_10 never fired in the one run.
 
+@activity_bundle(0x3854B365)
 c_sequence_host venus_m07_intro_music
 c_sequence_host venus_m07_music_cue2
 c_sequence_host md_vn07_010_10

@@ -1,3 +1,4 @@
+@activity_bundle("action_mock")
 u_globals globals
 static_array<c_object_sensor_host, 3> candy1
 c_object_sensor_host candy
@@ -48,7 +49,6 @@ string_hash incident_hash2
 string_hash type_hash_objective = "action_mock_objective_type"
 string_hash parameter_hash_objective = "action_mock_objective_parameter"
 c_common_reference current_objective
-
 
 
 

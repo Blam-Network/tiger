@@ -8,6 +8,7 @@
 # wizard's death releases the last of the rush. From one retail capture: the
 # gaps without a trigger on the wire are that run's waits.
 
+@activity_bundle("enc_dome_a_m1")
 c_objective_sensor_host obj_hive_dome_a01
 c_object_sensor_host o_door01
 c_player_monitor_sensor_host pm_basement_cleanup

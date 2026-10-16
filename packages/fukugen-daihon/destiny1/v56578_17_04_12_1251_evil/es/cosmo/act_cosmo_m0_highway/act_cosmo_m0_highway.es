@@ -15,6 +15,7 @@
 # The area encounters (highway, breach, graveyard, hangar) are scripts of
 # their own. unknown_3c2f5ed5 holds the music and Ghost lines.
 
+@activity_bundle("act_cosmo_m0_highway")
 startup thread ss_cosmo_m0_highway:
     print("script startup")
     c_lifetime_script_utilities.get_lifetime_sensor().set_state(e_activity_lifetime_state.pregame)

@@ -19,6 +19,7 @@
 # are scripts of their own. unknown_3d68033c holds the music and Ghost lines
 # the phases play.
 
+@activity_bundle("act_mars_m05_warbase")
 startup thread ss_mars_m05_warbase:
     print("script startup")
     c_lifetime_script_utilities.get_lifetime_sensor().set_state(e_activity_lifetime_state.pregame)

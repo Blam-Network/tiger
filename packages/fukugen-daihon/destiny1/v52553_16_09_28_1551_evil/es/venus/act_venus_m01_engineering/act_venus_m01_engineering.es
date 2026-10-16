@@ -16,6 +16,7 @@
 # (unknown_529d4bdc) are scripts of their own. Authored from one capture:
 # every timing and wave rule in these files is unconfirmed.
 
+@activity_bundle("act_venus_m01_engineering")
 c_location_sensor_host baby_shat
 c_player_trigger_sensor_host pt_in_baby_shat bind(baby_shat)
 

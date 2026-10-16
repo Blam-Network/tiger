@@ -13,6 +13,7 @@
 # unknown_3854b365 holds the music and Ghost lines. From one retail capture:
 # every wait below and in the missions is that run's, unconfirmed.
 
+@activity_bundle("act_venus_m07_northern_tides")
 act_venus_m07_northern_tides_mission1 phase_complex_scan_node
 act_venus_m07_northern_tides_mission2 phase_southern_tides_goto
 act_venus_m07_northern_tides_mission3 phase_northern_tides_ascend_steps

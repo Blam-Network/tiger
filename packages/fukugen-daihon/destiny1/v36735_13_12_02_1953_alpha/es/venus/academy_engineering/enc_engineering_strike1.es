@@ -1,3 +1,4 @@
+@activity_bundle("enc_engineering_strike1")
 u_globals utils
 c_location_sensor_host engineering  # true name unknown
 c_player_monitor_sensor_host pm_bubble_engineering bind(engineering)  # true name unknown
@@ -8,7 +9,6 @@ c_squad_sensor_host sq_floor2_fallen04
 c_squad_group_sensor_host gr_top_floor  # true name unknown
 loot_engineering loot_venus_engineering_1
 c_objective_sensor_host obj_engineering_strike  # true name unknown
-
 
 
 

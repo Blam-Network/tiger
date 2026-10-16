@@ -14,6 +14,7 @@
 # with its wait; the skirmish and the two-faction countdown have no archetype
 # yet and stay out of the rotation.
 
+@activity_bundle(0xD2C22DCF)
 static_array<u_event_countdown, 2> pf_event_countdown_dropship
 
 startup thread sc_public_events:

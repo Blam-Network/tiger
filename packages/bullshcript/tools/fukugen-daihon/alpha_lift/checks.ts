@@ -332,6 +332,23 @@ function compareMethods(
   }
 }
 
+function hashText(hash: number | undefined): string {
+  return hash === undefined ? "none" : formatScriptTag(hash);
+}
+
+// the name hash bsc wrote into the definition
+function compareName(
+  decl: BsCompiledDecl,
+  script: AlphaScriptTag,
+  out: string[]
+): void {
+  if (decl.schema.nameHash !== script.nameSlot) {
+    out.push(
+      `name ${hashText(decl.schema.nameHash)}, real ${hashText(script.nameSlot)}`
+    );
+  }
+}
+
 function compareSchema(
   decl: BsCompiledDecl,
   script: AlphaScriptTag,
@@ -339,6 +356,7 @@ function compareSchema(
 ): { mismatches: string[]; undecidable: string[] } {
   const out: string[] = [];
   const undecidable: string[] = [];
+  compareName(decl, script, out);
   compareSide(
     decl,
     script.definition,

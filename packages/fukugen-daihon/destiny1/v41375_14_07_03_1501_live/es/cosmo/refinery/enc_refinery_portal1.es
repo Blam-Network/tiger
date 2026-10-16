@@ -5,6 +5,7 @@
 # as the waves of Fallen are fought off. The console only works for players
 # holding the scan objective's activity flag.
 
+@activity_bundle("enc_refinery_portal1")
 c_object_sensor_host o_laserweb01
 c_object_sensor_host o_laserweb02
 c_object_sensor_host o_laserweb03

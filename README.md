@@ -12,4 +12,5 @@ TypeScript libraries for Destiny's Tiger engine.
 | [`@blamnetwork/dictionary`](packages/dictionary) | Cracked name hashes, activity bundles and network ids per build, as CSV with a typed lookup API |
 | [`@blamnetwork/poodle`](packages/poodle) | Decompresses the blocks packages are stored in |
 | [`@blamnetwork/rsat`](packages/rsat) | Encodes and decodes the RSAT bitstreams Destiny's services speak |
+| [`@blamnetwork/datamine`](packages/datamine) | Writes Bungie-style event logs and datamine files, and uploads them |
 

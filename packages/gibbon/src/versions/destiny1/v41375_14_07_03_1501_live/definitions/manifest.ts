@@ -60,6 +60,22 @@ export function manifest_entries(manifest: s_manifest): number[] {
   return hashes;
 }
 
+// The manifest behind a named root, whose `root` is the root's own data.
+export function named_root_manifest(
+  set: c_package_set,
+  name: string
+): s_manifest {
+  const named = set.find_named_tag(name);
+  if (!named) {
+    throw new Error(`no named root "${name}"`);
+  }
+  const entry = set.entry(named.hash);
+  if (entry === undefined || entry.type !== 0x80) {
+    throw new Error(`named tag "${name}" is not a manifest root`);
+  }
+  return read_definition(set.read_tag(entry.class_hash), s_manifest);
+}
+
 const root_tag_cache = new WeakMap<c_package_set, Map<string, number[]>>();
 
 // The tags a named manifest root loads. Consumers start here rather than
@@ -74,16 +90,7 @@ export function named_root_tags(set: c_package_set, name: string): number[] {
   if (cached) {
     return cached;
   }
-  const named = set.find_named_tag(name);
-  if (!named) {
-    throw new Error(`no named root "${name}"`);
-  }
-  const entry = set.entry(named.hash);
-  if (entry === undefined || entry.type !== 0x80) {
-    throw new Error(`named tag "${name}" is not a manifest root`);
-  }
-  const manifest = read_definition(set.read_tag(entry.class_hash), s_manifest);
-  const tags = manifest_entries(manifest);
+  const tags = manifest_entries(named_root_manifest(set, name));
   by_name.set(name, tags);
   return tags;
 }

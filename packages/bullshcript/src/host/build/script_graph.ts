@@ -2,6 +2,7 @@
 // definitions read. Free of any host instance.
 
 import { scriptStem } from "../../bungiescript/parser.ts";
+import type { BsSchema } from "../../bungiescript/schema.ts";
 import type { HksBytecode } from "../../hks/bytecode/proto.ts";
 import {
   formatScriptTag,
@@ -111,14 +112,16 @@ export function loadScriptGraph(
 }
 
 // From the Encounter row's 8080047B lookup tag (the child's script name),
-// else childScriptSchemaMap.
+// else childScriptSchemaMap, else the script classes a compiled schema
+// declares as members. A phase is the activity's own, never a child.
 export function childScriptsFor(
   types: ActivityBundleItemTypes,
   scripts: ScriptSource,
   chunks: readonly HksBytecode[],
   bundles: readonly ActivityBundleTag[],
   scriptBundles: readonly ActivityBundleTag[],
-  childScriptSchemaMap: EncounterScriptHostOptions["childScriptSchemaMap"] = {}
+  childScriptSchemaMap: EncounterScriptHostOptions["childScriptSchemaMap"] = {},
+  schemas: ReadonlyMap<string, BsSchema> = new Map()
 ): ReadonlyMap<string, HksBytecode> {
   const slots = new Map<string, HksBytecode>();
   const byName = new Map<string, HksBytecode>();
@@ -160,7 +163,29 @@ export function childScriptsFor(
       }
     }
   }
+  const byClass = new Map<string, HksBytecode>();
+  for (const chunk of chunks) {
+    const name = schemas.get(chunk.tagId.toUpperCase())?.name;
+    if (name !== undefined && !isPhaseChunk(chunk) && !byClass.has(name)) {
+      byClass.set(name, chunk);
+    }
+  }
+  for (const chunk of chunks) {
+    for (const member of schemas.get(chunk.tagId.toUpperCase())?.members ??
+      []) {
+      const child =
+        member.kind === "class_instance" ? byClass.get(member.type) : undefined;
+      if (child !== undefined && !slots.has(member.name)) {
+        slots.set(member.name, child);
+      }
+    }
+  }
   return slots;
+}
+
+// A mission phase's script, run by the activity rather than embedded.
+export function isPhaseChunk(chunk: HksBytecode): boolean {
+  return chunk.root.source?.toLowerCase().endsWith(".esp") === true;
 }
 
 // The script a chunk was compiled from, by its source path's stem:

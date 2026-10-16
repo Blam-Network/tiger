@@ -6,7 +6,11 @@ import { compileLua, sourceBytes } from "../hks/compiler/compile.ts";
 import type { BsDeclKind, BsFile, BsFileKind } from "./ast.ts";
 import { type BsDiagnostic, generateLua } from "./codegen.ts";
 import { BsCompileError } from "./lexer.ts";
-import { parseBungieScript } from "./parser.ts";
+import {
+  ENCOUNTER_PREFIX,
+  encounterDeclName,
+  parseBungieScript,
+} from "./parser.ts";
 import { Project, type ProjectDecl } from "./project.ts";
 import { type BsSchema, emitSchema, methodKey } from "./schema.ts";
 import type { BsRegistryEntry } from "./types.ts";
@@ -102,6 +106,7 @@ export function compileBungieScript(
   const sources = new Map(parsed.map((entry) => [entry.file, entry.source]));
   const decls: BsCompiledDecl[] = [];
   for (const decl of project.decls) {
+    diagnostics.push(...encounterDiagnostics(decl, project));
     try {
       decls.push(
         compileDecl(
@@ -117,6 +122,51 @@ export function compileBungieScript(
     }
   }
   return { decls, diagnostics };
+}
+
+// An encounter class is named c_encounter__<file stem>, and only encounter
+// classes carry the prefix (implicit .es classes always are). Its bundle is
+// the one its @activity_bundle names; without one it runs in none.
+function encounterDiagnostics(
+  decl: ProjectDecl,
+  project: Project
+): BsDiagnostic[] {
+  if (decl.decl.kind !== "class") {
+    return [];
+  }
+  const out: BsDiagnostic[] = [];
+  const report = (
+    message: string,
+    severity: BsDiagnostic["severity"],
+    line = decl.decl.line
+  ) => out.push({ line, message, path: decl.file.path, severity });
+  const encounter = project.isEncounter(decl);
+  const expected = encounterDeclName(decl.file.path);
+  if (!decl.decl.implicit && encounter && decl.name !== expected) {
+    report(
+      `encounter class '${decl.name}' should be named '${expected}' after its file`,
+      "warning"
+    );
+  } else if (!encounter && decl.name.startsWith(ENCOUNTER_PREFIX)) {
+    report(
+      `'${decl.name}' is named as an encounter but is not built on c_encounter`,
+      "warning"
+    );
+  }
+  const bundle = decl.decl.activityBundle;
+  if (encounter && bundle === undefined) {
+    report(
+      `encounter class '${decl.name}' runs in no bundle; give it @activity_bundle("<bundle name>")`,
+      "warning"
+    );
+  } else if (!encounter && bundle !== undefined) {
+    report(
+      `@activity_bundle on '${decl.name}', which is not an encounter class`,
+      "error",
+      bundle.line
+    );
+  }
+  return out;
 }
 
 function compileDecl(

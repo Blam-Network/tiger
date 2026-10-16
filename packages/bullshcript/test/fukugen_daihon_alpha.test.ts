@@ -92,6 +92,37 @@ describe("alpha script sources", () => {
     expect(scriptByTag("82100001")?.name).toBe("c_player_status_icon");
   });
 
+  it("decorates each encounter with the bundle its host names", () => {
+    // 36 .es files plus story_common and pvp_common (public_common's tags
+    // hold no class)
+    const decorated = scriptFiles.filter(
+      (file) => file.activityBundle !== undefined
+    );
+    expect(decorated).toHaveLength(38);
+    for (const file of scriptFiles.filter((f) => f.kind === "es")) {
+      expect(file.activityBundle, file.path).toBeDefined();
+    }
+  });
+
+  it("binds the scripts whose bundles have other names, as the hosts do", () => {
+    // host activity_bundle_name: 27DD7734 bounty_1_activity, 39774EE1 pvp
+    expect(alpha.scriptByBundle(0x27_dd_77_34)?.path).toBe(
+      "es/venus/venus_bounty_1.es"
+    );
+    expect(alpha.scriptByBundle(0x39_77_4e_e1, "pvp_greenhouse")?.path).toBe(
+      "es/pvp_greenhouse/pvp_greenhouse.es"
+    );
+    const strike = alpha.scriptByPath(
+      "es/venus/strike_1_activity/strike_1_activity.es"
+    );
+    expect(strike && alpha.missionScripts(strike).map((f) => f.path)).toEqual([
+      "es/venus/strike_1_activity/venus_strike_1_mission1.esp",
+      "es/venus/strike_1_activity/venus_strike_1_mission2.esp",
+      "es/venus/strike_1_activity/venus_strike_1_mission3.esp",
+      "es/venus/strike_1_activity/venus_strike_1_mission4_temp.esp",
+    ]);
+  });
+
   it("compiles as one project with every name resolved", () => {
     expect(result.diagnostics).toEqual([]);
     const byName = new Set(result.decls.map((d) => d.name));
@@ -103,6 +134,27 @@ describe("alpha script sources", () => {
         result.decls.some((d) => d.path === file.path),
         file.path
       ).toBe(false);
+    }
+  });
+
+  it("names every encounter handle after the encounter it reaches", () => {
+    // the lookup's child_bundles fill a handle by fnv1 of the encounter's name
+    const encounters = new Set(
+      scriptFiles
+        .filter((file) => file.kind === "es")
+        .map((file) => file.path.slice(file.path.lastIndexOf("/") + 1, -3))
+    );
+    const handles = result.decls.flatMap((decl) =>
+      decl.schema.members.filter((m) => m.type === "c_encounter_handle")
+    );
+    expect(handles.map((m) => m.name).sort()).toEqual([
+      "enc_dig_site_strike1",
+      "enc_engineering_strike1",
+      "enc_entrance_ch2m1",
+      "enc_south_tides_ch2m3",
+    ]);
+    for (const handle of handles) {
+      expect(encounters.has(handle.name), handle.name).toBe(true);
     }
   });
 });

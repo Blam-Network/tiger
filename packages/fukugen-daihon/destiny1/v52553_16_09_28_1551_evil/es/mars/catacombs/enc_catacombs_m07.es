@@ -8,6 +8,7 @@
 # step has no trigger on the wire, the wait is that run's. Task names are
 # uncracked and written as hashes.
 
+@activity_bundle("enc_catacombs_m07")
 c_objective_sensor_host obj_catacombs_m07
 c_squad_sensor_host sq_hall_goblin_a
 c_squad_sensor_host sq_hall_goblin_b

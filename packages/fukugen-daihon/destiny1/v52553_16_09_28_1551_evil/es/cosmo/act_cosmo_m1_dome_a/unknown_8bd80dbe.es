@@ -5,6 +5,7 @@
 # the dome's point triggers, and the music cue moves through its sections as
 # the fights begin. From one retail capture.
 
+@activity_bundle(0x8BD80DBE)
 c_sequence_host seq_d_o1_s018
 c_sequence_host seq_d_o1_s02
 c_sequence_host seq_d_o2_s015

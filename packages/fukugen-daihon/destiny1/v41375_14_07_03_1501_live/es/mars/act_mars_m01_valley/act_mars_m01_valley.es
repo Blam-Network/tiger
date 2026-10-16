@@ -17,6 +17,7 @@
 #
 # From one capture run: every timing here is a single-run fact.
 
+@activity_bundle("act_mars_m01_valley")
 act_mars_m01_valley_mission1 phase_plains_cinematic
 act_mars_m01_valley_mission2 phase_plains_intro
 act_mars_m01_valley_mission3 phase_plains_base

@@ -6,6 +6,7 @@
 # them (the lines follow the objectives, not the trigger volumes beside
 # them, in the one run captured).
 
+@activity_bundle(0x3D68033C)
 c_sequence_host seq_music_intro
 c_sequence_host seq_d_o1_s01
 c_sequence_host seq_d_o1_s03

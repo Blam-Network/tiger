@@ -7,6 +7,7 @@ import { dirname, join } from "node:path";
 import {
   decompile,
   directoryScriptSource,
+  fnv1,
   type HksBytecode,
   type LiftedDecl,
   type LiftedFile,
@@ -167,8 +168,26 @@ const context = { ...schemas.context, delegateParams };
 
 // ---- lift ----------------------------------------------------------------
 
+// @activity_bundle's argument: the bundle's name where it is known (the
+// encounter's own, or cracked), else its hash
+function activityBundleText(script: DeclChunks["script"]): string | undefined {
+  const hash = script.activityBundle;
+  if (hash === undefined) {
+    return;
+  }
+  const own = script.declName
+    .slice(script.declName.lastIndexOf(".") + 1)
+    .replace("c_encounter__", "");
+  const name =
+    fnv1(own) === hash ? own : (schemas.strings.get(hash) ?? undefined);
+  return name === undefined
+    ? `0x${hash.toString(16).toUpperCase().padStart(8, "0")}`
+    : `"${name}"`;
+}
+
 function inputOf(entry: DeclChunks): LiftScriptInput {
   return {
+    activityBundle: activityBundleText(entry.script),
     chunk: entry.chunk,
     conservative: entry.script.conservative,
     declName: entry.script.declName,

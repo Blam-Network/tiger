@@ -1,3 +1,4 @@
+@activity_bundle("enc_south_tides_ch2m3")
 u_globals utils
 c_location_sensor_host southern_tides  # true name unknown
 c_player_monitor_sensor_host pm_bubble_southern_tides bind(southern_tides)  # true name unknown
@@ -23,7 +24,6 @@ bool bfront = true
 bool text_dialog = true
 interactable_placement ch2m3_interactable bind("ch2m3_interactable")
 loot_south_tides loot_venus_south_tides_1
-
 
 
 

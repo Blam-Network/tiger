@@ -15,6 +15,7 @@
 # guess around it. The patrol and the glimmer drops never ran and have no
 # archetype yet, so they stay out of the rotation.
 
+@activity_bundle(0x358EBAE1)
 static_array<u_event_countdown, 2> pf_event_countdown_dropship_only
 
 startup thread sc_public_events:

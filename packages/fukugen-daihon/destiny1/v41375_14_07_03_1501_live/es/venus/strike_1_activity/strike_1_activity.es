@@ -15,6 +15,7 @@
 # one 2.3.1 run (The Nexus#1): every timing in these files is a single-run
 # fact until more runs land.
 
+@activity_bundle("strike_1_activity")
 venus_strike_1_mission1 engineering_phase
 venus_strike_1_mission2 engineering_trans_phase
 venus_strike_1_mission3 dig_site_phase

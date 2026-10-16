@@ -7,6 +7,7 @@
 # tv_m_cue2) have no sensor on the wire, so those lines wait in their
 # missions on this run's timing.
 
+@activity_bundle(0x82945A01)
 c_sequence_host seq_m_intro
 c_sequence_host seq_d_o1_s017
 

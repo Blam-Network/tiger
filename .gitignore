@@ -8,3 +8,4 @@ dist-cjs
 .local/
 scratch/
 packages/tiger-packets/
+packages/datamine

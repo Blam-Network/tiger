@@ -1,3 +1,4 @@
+@activity_bundle("enc_fallen_caldera_amb1")
 c_objective_sensor_host obj_caldera_amb1  # true name unknown
 u_event_world_controller event_controller
 c_encounter_manager encounters  # true name unknown
@@ -21,7 +22,6 @@ c_squad_group_sensor_host sqg_lower  # true name unknown
 c_control_point_sensor_host dropship_enter  # true name unknown
 c_control_point_sensor_host dropship_exit  # true name unknown
 loot_caldera loot_venus_caldera_1
-
 
 
 

@@ -48,7 +48,7 @@ const BYTE_MAX = 255;
 
 // longest first
 const OPERATORS = ["**", "==", "!=", "<=", ">=", "<>"];
-const SINGLE_OPERATORS = new Set([..."()[]{},:.;=+-*/%<>"]);
+const SINGLE_OPERATORS = new Set([..."()[]{},:.;=+-*/%<>@"]);
 
 const SIMPLE_ESCAPES: Readonly<Record<string, string>> = {
   '"': '"',

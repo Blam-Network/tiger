@@ -8,7 +8,9 @@ import { formatScriptTag } from "../hks/source/script_source.ts";
 import { fnv1 } from "../host/tags/name_hash.ts";
 import type { BsDeclKind, BsFileKind } from "./ast.ts";
 import { BsCompileError } from "./lexer.ts";
-import { bsFileKind, implicitDeclName, scriptStem } from "./parser.ts";
+import { bsFileKind, implicitDeclName, parseBungieScript } from "./parser.ts";
+
+export { bundleHashOf } from "./parser.ts";
 
 export interface ScriptDecl {
   readonly kind: BsDeclKind;
@@ -27,10 +29,14 @@ export interface ScriptStub {
 }
 
 export interface ScriptFile {
+  // the bundle the file's encounter class runs in: its @activity_bundle
+  readonly activityBundle: number | undefined;
   // the chunk name Bungie's compiler was given, "@es\venus\venus_bounty_1.es"
   readonly chunkName: string;
   readonly decls: readonly ScriptDecl[];
   readonly kind: BsFileKind;
+  // the type of each member its es-family class declares, in order
+  readonly memberTypes: readonly string[];
   // relative to the build folder, forward slashes: "es/venus/venus_bounty_1.es"
   readonly path: string;
   readonly stubs: readonly ScriptStub[];
@@ -49,6 +55,8 @@ const DECL_HEADER = /^(class|struct|enum)\s+([A-Za-z_][A-Za-z0-9_]*)/;
 const DECL_TAGS =
   /^#\s*See tags?\s+([0-9A-Fa-f]{8}(?:\s*,\s*[0-9A-Fa-f]{8})*)(?:\s+\(([A-Za-z_][A-Za-z0-9_]*)\))?\s*$/;
 const TAG_SEPARATOR = /\s*,\s*/;
+const ACTIVITY_BUNDLE =
+  /^@activity_bundle\(\s*(?:"([^"]*)"|0x([0-9A-Fa-f]{8}))\s*\)\s*(?:#.*)?$/;
 const LEADING_AT = /^@/;
 const SOURCE_EXTENSION = /\.(bs|es|esp|esu)$/;
 
@@ -114,76 +122,93 @@ export function parseScriptFile(path: string, text: string): ScriptFile {
   const stubs = [...tags]
     .filter(([name]) => name !== "" && !declared.has(name))
     .map(([name, list]) => ({ name, tags: list }));
+  let activityBundle: number | undefined;
+  for (const line of lines) {
+    const match = ACTIVITY_BUNDLE.exec(line.trimEnd());
+    if (match) {
+      activityBundle =
+        match[1] === undefined
+          ? Number.parseInt(match[2] ?? "", 16) >>> 0
+          : fnv1(match[1]);
+    }
+  }
   return {
+    activityBundle,
     chunkName: scriptChunkName(normalized),
     decls,
     kind,
+    memberTypes: declaredMemberTypes(normalized, kind, text),
     path: normalized,
     stubs,
     text,
   };
 }
 
-// A bundle whose name never cracked keeps its script as unknown_<hash> (true
-// name unknown); every other file's name is the one that hashes to its bundle.
-const UNKNOWN_NAME = /^unknown_([0-9a-f]{8})$/;
-
-export function bundleHashOf(stem: string): number {
-  const unknown = UNKNOWN_NAME.exec(stem);
-  return unknown ? Number.parseInt(unknown[1] ?? "", 16) >>> 0 : fnv1(stem);
-}
-
-function folder(path: string): string {
-  return path.slice(0, path.lastIndexOf("/"));
-}
-
-// What a host asks of a build's files, answered from their paths and kinds
-// alone, so the compiled tree (compiled_bs.ts) answers the same way the
+// What a host asks of a build's files, answered from what each file lists
+// about itself, so the compiled tree (compiled_bs.ts) answers the same way the
 // source folder does.
-export interface ScriptLookups<T extends ScriptPathed> {
-  // the archetype an Encounter row runs (its childScript), by declared
-  // name: es/utility_scripts/<name>.esu
+export interface ScriptLookups<T extends ScriptFileSummary> {
+  // the file declaring a class, by its name: the archetype an Encounter row
+  // runs (its childScript)
   archetypeScript(declName: string): T | undefined;
-  // A root is the .es named after its folder; its missions are the .esp files
-  // beside it, by name.
+  // The other script classes a file's own class declares as members, in
+  // member order: the children its instance embeds.
+  memberScripts(file: T): T[];
+  // A root's missions: the phase classes its own class declares as members,
+  // in member order, as Bungie's root held its phases.
   missionScripts(root: T): T[];
-  // A bundle's hash is fnv1 of its script's file name; a destination folder
-  // picks between two files with one name, a bs\ script serves every destination.
+  // the script whose encounter is decorated @activity_bundle(<the bundle>):
+  // the destination's own (es\<destination>\) before a shared bs\ one.
+  // Without a destination there must be one only; with none, no script runs.
   scriptByBundle(bundleHash: number, destination?: string): T | undefined;
   // takes Bungie's form ("@es\venus\venus_bounty_1.es") or the on-disk one
   scriptByPath(path: string): T | undefined;
 }
 
-export interface ScriptPathed {
+// What the lookups read off a file, alike for a source (ScriptFile) and a
+// compiled tree's index entry (CompiledBsFile).
+export interface ScriptFileSummary {
+  // the bundle its encounter class runs in (@activity_bundle)
+  readonly activityBundle?: number | undefined;
+  // the classes, structs and enums it declares
+  readonly decls: readonly { readonly name: string }[];
   readonly kind: BsFileKind;
+  // the type of each member its es-family class declares, in order; none in
+  // a .bs file
+  readonly memberTypes: readonly string[];
   // relative to the build folder, forward slashes
   readonly path: string;
 }
 
-export function scriptLookups<T extends ScriptPathed>(
+export function scriptLookups<T extends ScriptFileSummary>(
   files: readonly T[]
 ): ScriptLookups<T> {
   const byPath = new Map(files.map((file) => [file.path, file]));
   const byBundle = new Map<number, T[]>();
+  const byDecl = new Map<string, T>();
   for (const file of files) {
-    const hash = bundleHashOf(scriptStem(file.path));
-    byBundle.set(hash, [...(byBundle.get(hash) ?? []), file]);
-  }
-  return {
-    archetypeScript: (declName) =>
-      byPath.get(`es/utility_scripts/${declName}.esu`),
-    missionScripts: (root) => {
-      const parent = folder(root.path);
-      if (
-        root.kind !== "es" ||
-        scriptStem(root.path) !== parent.slice(parent.lastIndexOf("/") + 1)
-      ) {
-        return [];
+    if (file.activityBundle !== undefined) {
+      const bundle = file.activityBundle >>> 0;
+      byBundle.set(bundle, [...(byBundle.get(bundle) ?? []), file]);
+    }
+    for (const { name } of file.decls) {
+      if (!byDecl.has(name)) {
+        byDecl.set(name, file);
       }
-      return files
-        .filter((file) => file.kind === "esp" && folder(file.path) === parent)
-        .sort((a, b) => a.path.localeCompare(b.path, "en", { numeric: true }));
-    },
+    }
+  }
+  const declared = (file: T) =>
+    file.memberTypes.flatMap((type) => {
+      const declarer = byDecl.get(type);
+      return declarer === undefined ? [] : [declarer];
+    });
+  return {
+    archetypeScript: (declName) => byDecl.get(declName),
+    memberScripts: (file) => [
+      ...new Set(declared(file).filter((member) => member.kind !== "esp")),
+    ],
+    missionScripts: (root) =>
+      declared(root).filter((file) => file.kind === "esp"),
     scriptByBundle: (bundleHash, destination) => {
       const found = byBundle.get(bundleHash >>> 0) ?? [];
       if (destination === undefined) {
@@ -196,6 +221,27 @@ export function scriptLookups<T extends ScriptPathed>(
     },
     scriptByPath: (path) => byPath.get(normalizeScriptPath(path)),
   };
+}
+
+// The member types an es-family file's class declares; a file that does not
+// parse declares none.
+function declaredMemberTypes(
+  path: string,
+  kind: BsFileKind,
+  text: string
+): readonly string[] {
+  if (kind === "bs") {
+    return [];
+  }
+  try {
+    return (
+      parseBungieScript(text, path).decls[0]?.members.flatMap((member) =>
+        member.kind === "field" ? [member.type.name] : []
+      ) ?? []
+    );
+  } catch {
+    return [];
+  }
 }
 
 export interface ScriptFolder extends ScriptLookups<ScriptFile> {

@@ -13,6 +13,7 @@
 # sq_dummies. The task swaps the squads make on their own (the defensive front
 # refilling, the marchers spreading out) are the AI's, not the script's.
 
+@activity_bundle("enc_entrance_m01")
 c_objective_sensor_host obj_entrance_m01
 c_object_sensor_host o_vex_block_network_a
 interactable_placement pf_vex_block bind("vex_block")

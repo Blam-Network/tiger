@@ -10,6 +10,7 @@
 # later tasks (the road and bunker squads falling back as they lose men)
 # are the task tree's, not this script's.
 
+@activity_bundle("enc_checkpoint_m01")
 c_trigger_volume_slot_host tv_road
 c_player_trigger_sensor_host pt_road bind(tv_road)
 c_trigger_volume_slot_host tv_front

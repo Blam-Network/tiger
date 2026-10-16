@@ -1,3 +1,4 @@
+@activity_bundle("enc_boulevard_amb1")
 bool debug_boulevard
 c_squad_sensor_host sq_boulevard_vendor_warlock_mentor
 c_squad_sensor_host sq_boulevard_vendor_warlock_quartermaster
@@ -41,7 +42,6 @@ c_squad_member_sensor_host sq_boulevard_civ_chess1__player2  # true name unknown
 c_squad_member_sensor_host sq_boulevard_civ_chess1__watcher1  # true name unknown
 c_control_point_set_sensor_host cps_boulevard_droid_patrol1_guard1  # true name unknown
 c_control_point_set_sensor_host cps_boulevard_droid_patrol1_guard2  # true name unknown
-
 
 
 

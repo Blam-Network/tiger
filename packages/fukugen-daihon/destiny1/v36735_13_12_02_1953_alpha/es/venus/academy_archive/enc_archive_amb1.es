@@ -1,3 +1,4 @@
+@activity_bundle("enc_archive_amb1")
 c_squad_sensor_host sq_downstairs_shanks
 c_squad_sensor_host sq_downstairs_melee
 c_squad_sensor_host sq_downstairs01
@@ -19,7 +20,6 @@ c_player_trigger_sensor_host pt_back_mc01 bind(tv_back_mc01)  # true name unknow
 c_player_trigger_sensor_host pt_back_mc02 bind(tv_back_mc02)  # true name unknown
 bool can_advance
 loot_archive loot_venus_archive
-
 
 
 

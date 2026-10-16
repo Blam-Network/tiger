@@ -60,25 +60,13 @@ import {
   unboundLabel,
 } from "../natives/natives.ts";
 import * as schedulingThreads from "../schedule/scheduling_threads.ts";
-import { scriptName } from "./script_graph.ts";
+import { isPhaseChunk, scriptName } from "./script_graph.ts";
 import * as squadNatives from "../natives/squad_natives.ts";
 import type {
   ActivityBundleItemTypes,
   ActivityBundleTag,
   ObjectiveTask,
 } from "../tags/tag_types.ts";
-
-// Sibling scripts reached by a field name that is not their script name
-// (`self.utils` is u_globals); without the alias their methods no-op.
-const SIBLING_ALIASES: Readonly<Record<string, string>> = {
-  event_controller: "u_event_world_controller",
-  utils: "u_globals",
-  pvp_controller: "c_pvp_controller",
-  dominion: "c_pvp_dominion",
-  salvage: "c_pvp_salvage",
-  slayer: "c_pvp_slayer",
-  slayer_ffa: "c_pvp_slayer_ffa",
-};
 
 // How far reserveChildSquads probes a `<name>[i]` family.
 const CHILD_SQUAD_FAMILY_PROBE = 8;
@@ -107,21 +95,15 @@ function hasPlacementVerb(methods: ReadonlySet<string>): boolean {
   return false;
 }
 
-// A mission phase script, run when its mission starts rather than when the
-// activity's script graph loads.
-function isPhaseScript(chunk: HksBytecode): boolean {
-  return chunk.root.source?.toLowerCase().endsWith(".esp") === true;
-}
-
 // The members the activity's other scripts declare of a mission's class: a
 // root naming its phases.
 function phaseMembers(self: EncounterHostContext): readonly BsSchemaMember[] {
   if (!self.phaseMembers) {
     const missions = new Set(
-      self.options.chunks.filter(isPhaseScript).map(scriptName)
+      self.options.chunks.filter(isPhaseChunk).map(scriptName)
     );
     self.phaseMembers = self.options.chunks
-      .filter((chunk) => !isPhaseScript(chunk))
+      .filter((chunk) => !isPhaseChunk(chunk))
       .flatMap((chunk) => schemaOf(self, chunk)?.members ?? [])
       .filter((member) => missions.has(member.type));
   }
@@ -266,7 +248,7 @@ export function isDormantPhase(
   if (roots === undefined || roots.has(chunk.tagId.toUpperCase())) {
     return false;
   }
-  return isPhaseScript(chunk);
+  return isPhaseChunk(chunk);
 }
 
 // A chunk that is not a Link-A root is built at prefix "" for sibling and
@@ -717,6 +699,75 @@ function chunkByScriptName(
   return self.chunksByScriptName.get(name);
 }
 
+// A script class by its decl name: a schema's name, else the script's stem.
+function chunkByClassName(
+  self: EncounterHostContext,
+  name: string
+): HksBytecode | undefined {
+  if (!self.chunksByClassName) {
+    self.chunksByClassName = new Map();
+    for (const chunk of [
+      ...self.options.chunks,
+      ...(self.options.childScripts?.values() ?? []),
+    ]) {
+      const key = schemaOf(self, chunk)?.name ?? scriptName(chunk);
+      if (!self.chunksByClassName.has(key)) {
+        self.chunksByClassName.set(key, chunk);
+      }
+    }
+  }
+  return self.chunksByClassName.get(name);
+}
+
+// The script class a member is declared with, as Bungie's instance tree
+// embedded it: from the declaring script's schema, else the per-parent
+// member-type map the package data gives (childScriptSchemaMap).
+function declaredChildChunk(
+  self: EncounterHostContext,
+  parent: HksBytecode | undefined,
+  field: string
+): HksBytecode | undefined {
+  if (parent === undefined) {
+    return;
+  }
+  const schema = schemaOf(self, parent);
+  if (schema !== undefined) {
+    const member = schema.members.find((m) => m.name === field);
+    return member?.kind === "class_instance"
+      ? chunkByClassName(self, member.type)
+      : undefined;
+  }
+  const tag =
+    self.options.childScriptSchemaMap?.[parent.tagId.toUpperCase()]?.[field];
+  return tag === undefined ? undefined : chunkByTagId(self, tag);
+}
+
+// A handle reaches another bundle's encounter, which the activity lookup
+// fills by the encounter's name (child_bundles, fnv1 of its file stem). A
+// declared member that is not a handle never is one.
+function encounterHandle(
+  self: EncounterHostContext,
+  parent: HksBytecode | undefined,
+  field: string
+): LuaTable | undefined {
+  const member =
+    parent === undefined
+      ? undefined
+      : schemaOf(self, parent)?.members.find((m) => m.name === field);
+  if (member !== undefined && member.kind !== "handle") {
+    return;
+  }
+  const encounter = chunkByScriptName(self, field);
+  return encounter && isEncounterScript(encounter)
+    ? self.instances.get(field)
+    : undefined;
+}
+
+// An encounter's script: a .es file, one bundle's root.
+function isEncounterScript(chunk: HksBytecode): boolean {
+  return chunk.root.source?.toLowerCase().endsWith(".es") === true;
+}
+
 // Class-chain ancestors are named by tag id, not script name.
 function chunkByTagId(
   self: EncounterHostContext,
@@ -1050,25 +1101,37 @@ function resolveField(
       (line) => self.writer.note(line)
     ).object;
   }
-  if (!prefix) {
-    const native = instanceNative(self, field);
-    if (native !== undefined) {
-      return native;
-    }
+  // The native base's methods, on every instance: an embedded class (a pvp
+  // game type in its controller's root) reaches get_outer() too.
+  const native = instanceNative(self, field);
+  if (native !== undefined) {
+    return native;
   }
-  // A sibling script first: `self.enc_entrance_ch2m1` is the encounter chunk's
-  // own instance, whose threads mission 1 wakes.
-  const sibling = prefix
-    ? undefined
-    : self.instances.get(SIBLING_ALIASES[field] ?? field);
-  if (sibling) {
-    return sibling;
+  // A handle: `self.enc_entrance_ch2m1` is that encounter's own instance,
+  // whose threads mission 1 wakes.
+  const handle = prefix ? undefined : encounterHandle(self, parent, field);
+  if (handle) {
+    return handle;
+  }
+  // A phase the root declares is the activity's instance of that mission.
+  const declared = declaredChildChunk(self, parent, field);
+  if (declared && isPhaseChunk(declared)) {
+    const phase = self.instances.get(scriptName(declared));
+    if (phase) {
+      return phase;
+    }
   }
   const path = prefix ? `${prefix}.${field}` : field;
   const row = resolveInstanceField(bundles, prefix, field, namespaces);
   // A bare field naming an Encounter row with a known child runs that child, as
   // importSlot does: directors rarely import_only_bind the encounters they run.
-  const childChunk = childChunkFor(self, row, field, childScripts);
+  // A member declared with a script class embeds that class, row or not; an
+  // Encounter row's own record class says which first.
+  const embedded = declared && !isPhaseChunk(declared) ? declared : undefined;
+  const childChunk =
+    row === undefined
+      ? (embedded ?? childChunkFor(self, row, field, childScripts))
+      : (childChunkFor(self, row, field, childScripts) ?? embedded);
   if (childChunk) {
     return childInstance(
       self,
@@ -1453,7 +1516,10 @@ export function parentStarts(
   }
   const family = field.replace(ROW_FAMILY_INDEX, "");
   for (const receiver of shape.handoffs.get(family) ?? []) {
-    if (chunkByScriptName(self, SIBLING_ALIASES[receiver] ?? receiver)) {
+    if (
+      declaredChildChunk(self, parent, receiver) ??
+      chunkByScriptName(self, receiver)
+    ) {
       return true;
     }
   }

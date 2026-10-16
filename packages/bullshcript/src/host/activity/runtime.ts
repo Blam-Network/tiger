@@ -34,13 +34,21 @@ export class ScriptRuntime extends EncounterScriptHost {
       options.scriptFor,
       scriptBundles
     );
+    // the schemas the source compiled beside the graph's chunks
+    const graphSchemas =
+      options.schemas ??
+      loadScriptSchemas(
+        options.scripts,
+        graph.chunks.map((c) => c.tagId)
+      );
     const childScripts = childScriptsFor(
       options.types,
       options.scripts,
       graph.chunks,
       options.bundles,
       scriptBundles,
-      options.childScriptSchemaMap
+      options.childScriptSchemaMap,
+      graphSchemas
     );
     super({
       ...options,
@@ -49,7 +57,6 @@ export class ScriptRuntime extends EncounterScriptHost {
       chunks: graph.chunks,
       rootTags: graph.rootTags,
       rowOwners: graph.rowOwners,
-      // the schemas the source compiled beside the graph's chunks
       schemas:
         options.schemas ??
         loadScriptSchemas(

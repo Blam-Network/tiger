@@ -3,6 +3,7 @@
 # The highway in A Guardian Rises. Waits for the player to come in after the
 # intro, then lets them spawn and releases the pigeons.
 
+@activity_bundle("enc_highway_m0")
 c_location_sensor_host highway  # true name unknown
 c_player_trigger_sensor_host pt_bubble bind(highway)  # true name unknown
 c_object_sensor_host pigeon_1

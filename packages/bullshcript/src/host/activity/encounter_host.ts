@@ -170,6 +170,7 @@ export class EncounterScriptHost implements EncounterHostContext {
     Map<number, LuaValue>
   >();
   identSquadsCache: Map<number, Set<string>> | undefined;
+  chunksByClassName: Map<string, HksBytecode> | undefined;
   chunksByScriptName: Map<string, HksBytecode> | undefined;
   chunksByTagId: Map<string, HksBytecode> | undefined;
   phaseMembers: readonly BsSchemaMember[] | undefined;

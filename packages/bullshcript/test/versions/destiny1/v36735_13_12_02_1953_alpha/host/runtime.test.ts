@@ -570,6 +570,17 @@ describe("host natives with no item", () => {
 
 describe.skipIf(chunkDir === undefined)("the alpha's scripts", () => {
   const scripts = () => directoryScriptSource(chunkDir as string);
+  // pvp_factory's (8220C001) script-class members, as its schema declares
+  // them: the controller and the four game types it embeds.
+  const pvpFactoryMembers = {
+    "8220C001": {
+      dominion: "8220C004",
+      pvp_controller: "8220C003",
+      salvage: "8220C005",
+      slayer: "8220C006",
+      slayer_ffa: "8220C007",
+    },
+  };
 
   it("finds venus_chapter_2's missions through the root's references", () => {
     expect(scriptReferences(scripts(), "821B8000")).toEqual([
@@ -689,6 +700,7 @@ describe.skipIf(chunkDir === undefined)("the alpha's scripts", () => {
     };
     const { instance } = runtime({
       bundles: [{ bundle: 0x3977_4ee1, rows: [], tag: 0x80a0_c008 }],
+      childScriptSchemaMap: pvpFactoryMembers,
       classChainMap,
       scriptFor: () => 0x8220_c001,
       scripts: scripts(),
@@ -744,6 +756,7 @@ describe.skipIf(chunkDir === undefined)("the alpha's scripts", () => {
           tag: 0x80a0_c008,
         },
       ],
+      childScriptSchemaMap: pvpFactoryMembers,
       classChainMap,
       scriptFor: () => 0x8220_c001,
       scripts: scripts(),
@@ -801,6 +814,7 @@ describe.skipIf(chunkDir === undefined)("the alpha's scripts", () => {
         integerArrays: {},
       },
       bundles: [{ bundle: 0x3977_4ee1, rows: [], tag: 0x80a0_c008 }],
+      childScriptSchemaMap: pvpFactoryMembers,
       classChainMap,
       // Schema fast-init scalars: the option's name hash and each mode's name must be
       // real numbers for the mode match to succeed.
@@ -829,6 +843,11 @@ describe.skipIf(chunkDir === undefined)("the alpha's scripts", () => {
         line.includes("in c_pvp_dominion.d_slayer_init")
       )
     ).toBe(true);
+    // The controller and game types are pvp_factory's declared members,
+    // embedded in its instance rather than run beside it.
+    expect(instance.trace).toContain(
+      "pvp_controller runs child script c_pvp_controller (8220C003)"
+    );
     const threadErrors = instance
       .debugSnapshot()
       .threads.filter((thread) => thread.error !== undefined);
@@ -890,6 +909,7 @@ describe.skipIf(chunkDir === undefined)("the alpha's scripts", () => {
           tag: 0x80a0_c008,
         },
       ],
+      childScriptSchemaMap: pvpFactoryMembers,
       classChainMap,
       players: () => [{ characterKey: "k", powerLevel: 1, ready: true }],
       scalarDefaults: {
