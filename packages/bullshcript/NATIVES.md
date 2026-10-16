@@ -6,7 +6,6 @@ How to read the tables:
 
 - **Called as** shows what a call looks like, with parameter names guessed from the scripts. A name on the left of the dot (`sq`, `po`) stands for any member of that type.
 - **`import_only_bind`** and the other `import_only_` calls wire a member to its bundle row while the script loads. They are not for use during play.
-- **Only seen in later builds** marks natives that none of the alpha's scripts call. They are used by scripts from the 2014 and later builds of the game.
 - Time is in seconds. Hashes (`string_hash`) name incidents, audiences and activity options.
 
 ## Contents
@@ -102,29 +101,29 @@ Inside a `command_script` each line is an order for an AI to carry out in turn. 
 | Native | Called as | What it does |
 |---|---|---|
 | `ability` | `ability(name, argument)` | Has the AI use a named ability, such as a dropship's entry or exit move. |
-| `face` | `face(path, index)` | Turns the AI to face a point on a path. Only seen in later builds. |
+| `face` | `face(path, index)` | Turns the AI to face a point on a path. |
 | `follow_path` | `follow_path(path)` | Walks the AI along every point of a path. |
-| `move_to` | `move_to(path, index, stop)` | Moves the AI to a point on a path; `stop` says whether it comes to a halt there. Only seen in later builds. |
+| `move_to` | `move_to(path, index, stop)` | Moves the AI to a point on a path; `stop` says whether it comes to a halt there. |
 | `point_targeted_ability` | `point_targeted_ability(name, argument, path, index)` | Uses a named ability aimed at a point on a path, such as a teleport. |
 | `set_channel_scalar` | `set_channel_scalar(channel, value)` | Sets a named channel, such as a dropship's doors, to a value. |
-| `set_flag` | `set_flag(which, value)` | Sets one of the order flags; retail dropships set flag 3 to 3 around their moves, and what the flags do is not known. Only seen in later builds. |
+| `set_flag` | `set_flag(which, value)` | Sets one of the order flags; dropship scripts set flag 3 to 3 around their moves, and what the flags do is not known. |
 | `sleep` | `sleep(seconds)` | Makes the AI wait. |
 | `snap_to` | `snap_to(path, index)` | Puts the AI straight onto a point of a path, with no movement. |
 | `terminate_delay` | `terminate_delay(seconds)` | Ends the previous order after that long. |
-| `terminate_immediate` | `terminate_immediate()` | Ends the previous order straight away. Only seen in later builds. |
+| `terminate_immediate` | `terminate_immediate()` | Ends the previous order straight away. |
 
 ### Building orders in code (`c_command_script`)
 
-Later builds can also build a list of orders from ordinary code. Each call adds one order to the end of the list, and the finished builder is given to `execute` like a command script.
+A list of orders can also be built in ordinary code. Each call adds one order to the end of the list, and the finished builder is given to `execute` like a command script.
 
 | Native | Called as | What it does |
 |---|---|---|
-| `ability` | `cs.ability(name, argument)` | Adds an order to use a named ability. Only seen in later builds. |
-| `clear` | `cs.clear()` | Throws away every order added so far. Only seen in later builds. |
-| `move_to` | `cs.move_to(path, index, stop)` | Adds a move to a point on a path. Only seen in later builds. |
-| `scripted_sequence` | `cs.scripted_sequence(sequence)` | Adds an order to play a scripted sequence. Only seen in later builds. |
-| `set_channel_scalar` | `cs.set_channel_scalar(channel, value)` | Adds an order to set a named channel to a value. Only seen in later builds. |
-| `snap_to` | `cs.snap_to(path, index)` | Adds an order to jump straight onto a point of a path. Only seen in later builds. |
+| `ability` | `cs.ability(name, argument)` | Adds an order to use a named ability. |
+| `clear` | `cs.clear()` | Throws away every order added so far. |
+| `move_to` | `cs.move_to(path, index, stop)` | Adds a move to a point on a path. |
+| `scripted_sequence` | `cs.scripted_sequence(sequence)` | Adds an order to play a scripted sequence. |
+| `set_channel_scalar` | `cs.set_channel_scalar(channel, value)` | Adds an order to set a named channel to a value. |
+| `snap_to` | `cs.snap_to(path, index)` | Adds an order to jump straight onto a point of a path. |
 
 ## Every script class
 
@@ -185,8 +184,8 @@ An encounter also has everything in "Every script class".
 | `count_at_firing_area` | `sq.count_at_firing_area()` | Likely returns how many members have reached their firing area, the spot they fight from. |
 | `activate_temperament` | `sq.activate_temperament(name)` | Turns on a named temperament, a behavior mode for the AI such as `"temper_freeze"`. |
 | `deactivate_temperament` | `sq.deactivate_temperament(name)` | Turns a named temperament off again. |
-| `set_objective` | `sq.set_objective(objective)` | Gives the squad an AI objective to work towards. Only seen in later builds. |
-| `set_task` | `sq.set_task(task)` | Puts the squad under a named task of its objective, such as `"tank"`. Only seen in later builds. |
+| `set_objective` | `sq.set_objective(objective)` | Gives the squad an AI objective to work towards. |
+| `set_task` | `sq.set_task(task)` | Puts the squad under a named task of its objective, such as `"tank"`. |
 
 ## Squad groups
 
@@ -212,9 +211,9 @@ An encounter also has everything in "Every script class".
 | Native | Called as | What it does |
 |---|---|---|
 | `place` | `member.place()` | Spawns this member. |
-| `remove` | `member.remove()` | Takes this member out of the game. Only seen in later builds. |
+| `remove` | `member.remove()` | Takes this member out of the game. |
 | `is_alive` | `member.is_alive()` | True while the member is alive. |
-| `is_bound` | `member.is_bound()` | Likely true once the member has an AI to control. Only seen in later builds. |
+| `is_bound` | `member.is_bound()` | Likely true once the member has an AI to control. |
 | `execute` | `member.execute(command_script)` | Gives the member a command script to carry out. |
 | `abort_command_script` | `member.abort_command_script()` | Stops the member's command script. |
 | `get_command_script_state` | `member.get_command_script_state()` | Returns whether the command script is still executing; compare it with `e_command_script_state.executing`. |
@@ -232,12 +231,12 @@ An encounter also has everything in "Every script class".
 | `create` | `obj.create()` | Brings the object into the world. |
 | `create_anew` | `obj.create_anew()` | Likely makes a fresh copy of the object even if one already exists. |
 | `delete_object` | `obj.delete_object()` | Removes the object from the world. |
-| `is_alive` | `obj.is_alive()` | True while the object exists and has not been destroyed. Only seen in later builds. |
-| `get_device_position` | `obj.get_device_position()` | Returns how far a moving object, such as a door, has opened. Only seen in later builds. |
-| `set_device_position` | `obj.set_device_position(position)` | Moves a moving object to a position from 0 to 1. Only seen in later builds. |
-| `import_identifier` | `obj.import_identifier()` | Returns the name the object's row was authored with. Only seen in later builds. |
+| `is_alive` | `obj.is_alive()` | True while the object exists and has not been destroyed. |
+| `get_device_position` | `obj.get_device_position()` | Returns how far a moving object, such as a door, has opened. |
+| `set_device_position` | `obj.set_device_position(position)` | Moves a moving object to a position from 0 to 1. |
+| `import_identifier` | `obj.import_identifier()` | Returns the name the object's row was authored with. |
 | `import_only_bind` | `obj.import_only_bind(identifier)` | Connects the member to the row with that identifier. This is load-time wiring and not something to call during play. |
-| `set_enabled_player_filter` | `obj.set_enabled_player_filter(filter)` | Lets only the players who pass the filter use the object. Only seen in later builds. |
+| `set_enabled_player_filter` | `obj.set_enabled_player_filter(filter)` | Lets only the players who pass the filter use the object. |
 
 ## Object filters
 
@@ -298,8 +297,8 @@ An encounter also has everything in "Every script class".
 
 | Native | Called as | What it does |
 |---|---|---|
-| `activate` | `group.activate()` | Turns the group's triggers on. Only seen in later builds. |
-| `deactivate` | `group.deactivate()` | Turns the group's triggers off. Only seen in later builds. |
+| `activate` | `group.activate()` | Turns the group's triggers on. |
+| `deactivate` | `group.deactivate()` | Turns the group's triggers off. |
 
 ## Player triggers
 
@@ -309,7 +308,7 @@ An encounter also has everything in "Every script class".
 |---|---|---|
 | `is_triggered` | `trigger.is_triggered()` | True if a player has entered since the trigger was last armed. |
 | `reset` | `trigger.reset()` | Arms the trigger again so it can fire. |
-| `enable` | `trigger.enable()` | Arms the trigger. Only seen in later builds. |
+| `enable` | `trigger.enable()` | Arms the trigger. |
 | `disable` | `trigger.disable()` | Disarms the trigger so it cannot fire. |
 | `set_handler` | `trigger.set_handler(handler)` | Runs the given method each time the trigger fires. |
 | `import_only_bind` | `trigger.import_only_bind(volume)` | Connects the trigger to its volume. This is load-time wiring. |
@@ -320,9 +319,9 @@ An encounter also has everything in "Every script class".
 
 | Native | Called as | What it does |
 |---|---|---|
-| `get_count` | `monitor.get_count()` | Returns how many players are inside. Only seen in later builds. |
+| `get_count` | `monitor.get_count()` | Returns how many players are inside. |
 | `test_any_inside` | `monitor.test_any_inside()` | True if at least one player is inside. |
-| `set_filter` | `monitor.set_filter(filter)` | Only players who pass the filter are counted. Only seen in later builds. |
+| `set_filter` | `monitor.set_filter(filter)` | Only players who pass the filter are counted. |
 
 ## Safe zones
 
@@ -339,7 +338,7 @@ An encounter also has everything in "Every script class".
 
 | Native | Called as | What it does |
 |---|---|---|
-| `is_triggered` | `location.is_triggered()` | True while a player is inside the area. Only seen in later builds. |
+| `is_triggered` | `location.is_triggered()` | True while a player is inside the area. |
 
 ## Trigger volumes
 
@@ -431,7 +430,7 @@ Likely an effect attached to an object. The scripts use them for an overshield a
 | `stop` | `sequence.stop()` | Stops it. |
 | `is_done` | `sequence.is_done()` | True once it has finished playing. |
 | `set_state` | `sequence.set_state(switch, value)` | Sets a named state of the sequence's audio, such as a music switch. |
-| `set_switch_mask` | `sequence.set_switch_mask(mask)` | Sets which of the sequence's audio options are switched on. Only seen in later builds. |
+| `set_switch_mask` | `sequence.set_switch_mask(mask)` | Sets which of the sequence's audio options are switched on. |
 | `import_only_bind` | `sequence.import_only_bind(player_objective, suppression_behavior)` | Connects a dialogue sequence to the objective it belongs to. This is load-time wiring. |
 
 ## Timers
@@ -470,7 +469,7 @@ Likely an effect attached to an object. The scripts use them for an overshield a
 | `set_state` | `lifetime.set_state(state)` | Moves the activity to a lifetime state from `e_activity_lifetime_state`, such as `countdown`. |
 | `allow_join_in_progress` | `lifetime.allow_join_in_progress(allowed)` | Says whether players may join while the activity is already running. |
 | `end_game` | `lifetime.end_game(delay)` | Ends the game: shows the results, then sends everyone back after a short wait. The delay is optional. |
-| `set_time_of_day` | `lifetime.set_time_of_day(fraction)` | Locks the time of day for everyone, from 0 to 1 through the day. Only seen in later builds. |
+| `set_time_of_day` | `lifetime.set_time_of_day(fraction)` | Locks the time of day for everyone, from 0 to 1 through the day. |
 | `import_only_bind` | `lifetime.import_only_bind(timer)` | Connects the lifetime to its timer. This is load-time wiring. |
 
 ## Cinematics
@@ -529,8 +528,8 @@ Likely an effect attached to an object. The scripts use them for an overshield a
 
 | Native | Called as | What it does |
 |---|---|---|
-| `get_active` | `binding.get_active()` | Likely true while the bound row is active. Only seen in later builds. |
-| `import_identifier` | `binding.import_identifier()` | Returns the name the bound row was authored with. Only seen in later builds. |
+| `get_active` | `binding.get_active()` | Likely true while the bound row is active. |
+| `import_identifier` | `binding.import_identifier()` | Returns the name the bound row was authored with. |
 | `import_only_bind_object` | `binding.import_only_bind_object(identifier)` | Connects the member to the object row with that identifier. This is load-time wiring. |
 
 ## Health sensors
@@ -555,8 +554,8 @@ Likely an effect attached to an object. The scripts use them for an overshield a
 
 | Native | Called as | What it does |
 |---|---|---|
-| `start_performance` | `actor.start_performance(name)` | Has the actor start a named performance. Only seen in later builds. |
-| `cue_performance` | `actor.cue_performance(name)` | Sends a named cue to the performance that is running. Only seen in later builds. |
+| `start_performance` | `actor.start_performance(name)` | Has the actor start a named performance. |
+| `cue_performance` | `actor.cue_performance(name)` | Sends a named cue to the performance that is running. |
 
 ## Incident listeners
 
@@ -568,7 +567,7 @@ An incident is a named event, such as a kill or a capture. A listener counts mat
 | Native | Called as | What it does |
 |---|---|---|
 | `bind_hash` | `listener.bind_hash(incident, audience)` | Listens for the named incident, for the players in the named audience. |
-| `bind_incident_name_hash` | `listener.bind_incident_name_hash(incident)` | Listens for the named incident. Only seen in later builds. |
+| `bind_incident_name_hash` | `listener.bind_incident_name_hash(incident)` | Listens for the named incident. |
 | `get_count` | `listener.get_count()` | Returns how many matching incidents have happened. |
 | `reset` | `listener.reset()` | Sets the count back to zero. |
 | `set_handler` | `listener.set_handler(handler)` | Runs the given method each time a matching incident happens. |
@@ -1028,7 +1027,7 @@ Both translators build their tables with these. A table has one row for each lev
 | `set_translation_floor` | `set_translation_floor(group, to_stat, from_stat)` | Sets a stat to another value rounded down. |
 | `set_translation_round` | `set_translation_round(group, to_stat, from_stat)` | Sets a stat to another value rounded to the nearest whole number. |
 | `set_translation_pin` | `set_translation_pin(...)` | Likely sets a stat to another value held between a minimum and a maximum. |
-| `set_translation_math` | `set_translation_math(...)` | Likely a general maths step; the alpha's scripts do not use it. |
+| `set_translation_math` | `set_translation_math(...)` | Likely a general maths step; no script uses it. |
 
 ### Damage components (`c_damage_component_base`)
 
