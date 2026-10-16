@@ -14,23 +14,9 @@ const COMMAND_TYPED = /^\/(\S*)(\s?)/;
 
 export function BottomPanel() {
   const [tab, setTab] = useState<Tab>("Console");
-  const [sentAlways, setSentAlways] = useState(false);
-  useEffect(() => {
-    session.setSentWanted(tab === "Sent" || sentAlways);
-  }, [tab, sentAlways]);
   return (
     <div className="panel bottom">
-      <TabBar
-        active={tab}
-        extra={
-          <label className="check" title="Keep receiving sent rows when the Sent tab is hidden">
-            <input checked={sentAlways} onChange={(e) => setSentAlways(e.target.checked)} type="checkbox" />
-            record sent
-          </label>
-        }
-        onSelect={setTab}
-        tabs={TABS}
-      />
+      <TabBar active={tab} onSelect={setTab} tabs={TABS} />
       <div className="panel-body flex-col">
         {tab === "Console" && <ConsoleTab />}
         {tab === "Sent" && <SentTab />}

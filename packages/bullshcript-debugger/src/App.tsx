@@ -4,8 +4,11 @@ import { InspectPanel } from "./components/Inspect";
 import { Sidebar } from "./components/Sidebar";
 import { StatusBar, Toolbar } from "./components/Toolbar";
 import { Overlays, Sized } from "./components/ui";
+import { useSession } from "./session";
 
 export function App() {
+  // The source pane is only there while a source is open.
+  const hasSource = useSession((s) => s.openTabs.length > 0);
   return (
     <div className="app">
       <Toolbar />
@@ -14,10 +17,12 @@ export function App() {
           <Sidebar />
         </Sized>
         <div className="center-col">
-          <div className="center-top">
-            <EditorPane />
-          </div>
-          <Sized axis="y" initial={240} side="start" storageKey="bsdbg.bottom">
+          {hasSource && (
+            <div className="center-top">
+              <EditorPane />
+            </div>
+          )}
+          <Sized axis="y" fill={!hasSource} initial={240} side="start" storageKey="bsdbg.bottom">
             <BottomPanel />
           </Sized>
         </div>

@@ -5,6 +5,7 @@ import { invoke } from "@tauri-apps/api/core";
 import { useSyncExternalStore } from "react";
 import { type ConnectionState, DapClient } from "./dap";
 import type {
+  Bundle,
   DapBreakpoint,
   DapSource,
   DapStackFrame,
@@ -60,6 +61,8 @@ export interface State {
   activeTab: string | undefined;
   address: string;
   breakpoints: Record<string, BreakpointView[]>;
+  // The selected target's bundles, shared by the Bundles tab and Squads.
+  bundles: Bundle[];
   commands: ConsoleCommand[];
   connection: ConnectionState;
   console: ConsoleLine[];
@@ -78,7 +81,6 @@ export interface State {
   selectedFrameId: number | undefined;
   selectedThreadId: number | undefined;
   sent: TigerSentEntry[];
-  sentWanted: boolean;
   server: TigerServer | undefined;
   sources: DapSource[];
   targetId: string | undefined;
@@ -134,6 +136,7 @@ class Session {
       new URLSearchParams(location.search).get("address") ??
       load(STORE.address, "127.0.0.1:8099"),
     breakpoints: load(STORE.breakpoints, {}),
+    bundles: [],
     commands: [],
     connection: "disconnected",
     console: [],
@@ -149,7 +152,6 @@ class Session {
     selectedFrameId: undefined,
     selectedThreadId: undefined,
     sent: [],
-    sentWanted: false,
     server: undefined,
     sources: [],
     targetId: undefined,
@@ -266,20 +268,7 @@ class Session {
   }
 
   private subscribeStreams(): Promise<unknown> {
-    return this.request("tiger/subscribe", {
-      sent: this.state.sentWanted,
-      trace: true,
-    });
-  }
-
-  setSentWanted(sentWanted: boolean): void {
-    if (sentWanted === this.state.sentWanted) {
-      return;
-    }
-    this.set({ sentWanted });
-    if (this.client.connected) {
-      void this.subscribeStreams();
-    }
+    return this.request("tiger/subscribe", { sent: true, trace: true });
   }
 
   private event(event: string, body: unknown): void {
@@ -520,6 +509,7 @@ class Session {
   async selectTarget(targetId: string | undefined): Promise<void> {
     this.set({
       activity: undefined,
+      bundles: [],
       frames: [],
       selectedFrameId: undefined,
       selectedThreadId: undefined,
@@ -943,7 +933,23 @@ class Session {
     }
   }
 
-  // For panels that fetch their own data (bundles, world, variables).
+  async refreshBundles(): Promise<void> {
+    const targetId = this.state.targetId;
+    if (!targetId) {
+      this.set({ bundles: [] });
+      return;
+    }
+    try {
+      const body = await this.request<{ bundles: Bundle[] }>("tiger/bundles", { targetId });
+      if (targetId === this.state.targetId) {
+        this.set({ bundles: body.bundles });
+      }
+    } catch (error) {
+      this.toast(`bundles: ${errorText(error)}`, true);
+    }
+  }
+
+  // For panels that fetch their own data (world, variables).
   call<T = Record<string, unknown>>(
     command: string,
     args: Record<string, unknown> = {}

@@ -163,6 +163,10 @@ input.bad {
   overflow: hidden;
 }
 
+.sized.fill {
+  flex: 1;
+}
+
 .divider {
   flex: none;
   background: var(--border);

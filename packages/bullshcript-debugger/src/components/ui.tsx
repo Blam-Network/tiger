@@ -251,16 +251,19 @@ function stored(key: string, fallback: number): number {
 }
 
 // A pane whose size (px, along `axis`) the divider beside it drags. `side`
-// says which edge of the pane the divider is on.
+// says which edge of the pane the divider is on. `fill` takes the whole
+// space instead (no divider), for when the pane it shared with is gone.
 export function Sized({
   axis,
   children,
+  fill,
   initial,
   side,
   storageKey,
 }: {
   axis: "x" | "y";
   children: ReactNode;
+  fill?: boolean;
   initial: number;
   side: "end" | "start";
   storageKey: string;
@@ -298,14 +301,14 @@ export function Sized({
   const divider = <div className={`divider divider-${axis}`} onMouseDown={onDown} />;
   return (
     <>
-      {side === "start" && divider}
+      {side === "start" && !fill && divider}
       <div
-        className="sized"
-        style={axis === "x" ? { width: size } : { height: size }}
+        className={fill ? "sized fill" : "sized"}
+        style={fill ? undefined : axis === "x" ? { width: size } : { height: size }}
       >
         {children}
       </div>
-      {side === "end" && divider}
+      {side === "end" && !fill && divider}
     </>
   );
 }

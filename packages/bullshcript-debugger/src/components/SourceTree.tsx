@@ -15,7 +15,6 @@ interface Folder {
 }
 
 const OPEN_KEY = "bsdbg.sourceFolders";
-const LOADED_ONLY_KEY = "bsdbg.sourcesLoadedOnly";
 
 // File kinds by extension: libraries, encounter scripts, mission phases,
 // archetypes.
@@ -204,9 +203,8 @@ export function SourceTree() {
   const sources = useSession((s) => s.sources);
   const selected = useSession((s) => s.activeTab);
   const [query, setQuery] = useState("");
-  const [loadedOnly, setLoadedOnly] = useState(
-    () => readSet(LOADED_ONLY_KEY).has("on")
-  );
+  // Off at every start: a remembered filter hid every script while nothing ran.
+  const [loadedOnly, setLoadedOnly] = useState(false);
   const [open, setOpen] = useState<Set<string>>(() => readSet(OPEN_KEY));
   const search = useRef<HTMLInputElement>(null);
 
@@ -248,10 +246,6 @@ export function SourceTree() {
       return next;
     });
   };
-  const setLoaded = (on: boolean) => {
-    setLoadedOnly(on);
-    writeSet(LOADED_ONLY_KEY, new Set(on ? ["on"] : []));
-  };
 
   return (
     <div className="src-pane">
@@ -281,7 +275,7 @@ export function SourceTree() {
         <div className="src-tool-row">
           <button
             className={`src-chip${loadedOnly ? " on" : ""}`}
-            onClick={() => setLoaded(!loadedOnly)}
+            onClick={() => setLoadedOnly(!loadedOnly)}
             title="Only scripts a running activity has loaded"
             type="button"
           >

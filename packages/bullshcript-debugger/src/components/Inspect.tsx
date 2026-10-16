@@ -1,8 +1,9 @@
 // Right sidebar: the selected thread's call stack, its frame's variables and
 // the watch list. Also the lazy variable tree the console reuses.
-import { useEffect, useState } from "react";
-import type { DapScope, DapVariable } from "../protocol";
+import { useEffect, useRef, useState } from "react";
+import type { Bundle, BundleRow, DapScope, DapVariable } from "../protocol";
 import { session, useSession } from "../session";
+import { rowMenu } from "./Sidebar";
 
 // Children are fetched on expand; references die with the epoch, so a tree
 // from an older epoch can't expand any more.
@@ -250,7 +251,88 @@ function Watch() {
   );
 }
 
+const asNumber = (value: unknown) => (typeof value === "number" ? value : undefined);
+const field = (value: unknown, key: string) =>
+  value && typeof value === "object" ? (value as Record<string, unknown>)[key] : undefined;
+
+const BUNDLES_POLL_MS = 2000;
+
+// The one fetch loop for session.bundles (the Bundles tab and Squads read it):
+// on target and stop/continue changes, and while the scripts run.
+function useBundlePolling(): void {
+  const targetId = useSession((s) => s.targetId);
+  const epoch = useSession((s) => s.epoch);
+  useEffect(() => {
+    void session.refreshBundles();
+  }, [targetId, epoch]);
+  useEffect(() => {
+    const timer = setInterval(() => {
+      if (!session.target?.paused) {
+        void session.refreshBundles();
+      }
+    }, BUNDLES_POLL_MS);
+    return () => clearInterval(timer);
+  }, []);
+}
+
+// The squads of the active (current slice) bundles, with the client's report
+// of how many are alive. Right-click is the Bundles tab's row menu.
+function Squads() {
+  const targetId = useSession((s) => s.targetId);
+  const bundles = useSession((s) => s.bundles);
+  // Squads that were seen alive, so a later zero reads as cleared.
+  const seenAlive = useRef(new Set<string>());
+  if (!targetId) {
+    return <div className="empty">No target</div>;
+  }
+  const squads: { bundle: Bundle; key: string; row: BundleRow }[] = [];
+  for (const bundle of bundles) {
+    if (!bundle.active) {
+      continue;
+    }
+    for (const row of bundle.rows) {
+      const key = `${targetId}:${bundle.bundle}:t${row.typeId}#${row.typeIndex}`;
+      if (row.type === "Squad" && !squads.some((s) => s.key === key)) {
+        squads.push({ bundle, key, row });
+      }
+    }
+  }
+  return (
+    <>
+      {squads.length === 0 && <div className="empty">No squads</div>}
+      {squads.map(({ bundle, key, row }) => {
+        const alive = asNumber(row.sense?.squadsAlive);
+        const bodies = asNumber(field(row.state, "bodies"));
+        if (alive !== undefined && alive > 0) {
+          seenAlive.current.add(key);
+        }
+        const cleared =
+          (alive === 0 && seenAlive.current.has(key)) || Boolean(field(row.state, "killed"));
+        const [status, badge] =
+          alive !== undefined && alive > 0
+            ? [`alive ${alive}`, "state-active"]
+            : cleared
+              ? ["cleared", "state-dead"]
+              : ["not spawned", "state-inactive"];
+        return (
+          <div
+            className="list-row"
+            key={key}
+            onContextMenu={(e) => rowMenu(e, bundle, row)}
+            title={`${bundle.bundle} · Squad t${row.typeId}#${row.typeIndex}`}
+          >
+            <span className="grow">{row.name ?? `${bundle.bundle}:${row.typeIndex}`}</span>
+            {bodies !== undefined && <span className="dim">bodies {bodies}</span>}
+            <span className={`badge ${badge}`}>{status}</span>
+          </div>
+        );
+      })}
+    </>
+  );
+}
+
 export function InspectPanel() {
+  useBundlePolling();
   return (
     <div className="panel inspect">
       <Section title="Call Stack">
@@ -273,6 +355,9 @@ export function InspectPanel() {
         title="Watch"
       >
         <Watch />
+      </Section>
+      <Section title="Squads">
+        <Squads />
       </Section>
     </div>
   );

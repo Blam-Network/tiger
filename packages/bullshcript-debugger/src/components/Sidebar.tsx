@@ -1,6 +1,6 @@
 // Left sidebar: the activity (phases, encounters, threads), loaded sources and
 // the bundle rows.
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import type { Bundle, BundleRow, RowAction, TigerPlayer, TigerSlice, TigerThread } from "../protocol";
 import { currentSlice, loadsInSlice } from "../current-slice";
 import { session, useSession } from "../session";
@@ -349,11 +349,11 @@ function SourcesTab() {
   return <SourceTree />;
 }
 
-function runAction(bundle: Bundle, row: BundleRow, action: RowAction, refresh: () => void): void {
+function runAction(bundle: Bundle, row: BundleRow, action: RowAction): void {
   const send = (args: unknown[]) =>
     void session
       .rowAction(bundle.bundle, row.typeId, row.typeIndex, action.name, args)
-      .then(refresh);
+      .then(() => session.refreshBundles());
   if (!action.params?.length) {
     send([]);
     return;
@@ -363,6 +363,20 @@ function runAction(bundle: Bundle, row: BundleRow, action: RowAction, refresh: (
     `${action.label} on ${row.name ?? row.nameHash}`,
     params.map((p) => ({ hint: p.hint ?? p.type, label: p.name, name: p.name })),
     (values) => send(params.map((p) => values[p.name]))
+  );
+}
+
+// The row context menu: its actions, shared by the Bundles tab and Squads.
+export function rowMenu(event: React.MouseEvent, bundle: Bundle, row: BundleRow): void {
+  event.preventDefault();
+  openMenu(
+    event,
+    row.actions.length
+      ? row.actions.map((action) => ({
+          label: action.params?.length ? `${action.label}…` : action.label,
+          run: () => runAction(bundle, row, action),
+        }))
+      : [{ disabled: true, label: "no actions", run: () => undefined }]
   );
 }
 
@@ -414,36 +428,11 @@ function SliceFilter({ on, slice, toggle }: { on: boolean; slice: string | undef
 
 function BundlesTab() {
   const targetId = useSession((s) => s.targetId);
-  const epoch = useSession((s) => s.epoch);
-  const [bundles, setBundles] = useState<Bundle[]>([]);
+  const bundles = useSession((s) => s.bundles);
   const [filter, setFilter] = useState("");
   const [selected, setSelected] = useState<string>();
   const worlds = useWorldFilter();
   const slices = useSliceFilter(targetId);
-  const refresh = useCallback(async () => {
-    if (!targetId) {
-      setBundles([]);
-      return;
-    }
-    try {
-      const body = await session.call<{ bundles: Bundle[] }>("tiger/bundles", { targetId });
-      setBundles(body.bundles);
-    } catch (error) {
-      session.toast(`bundles: ${String(error)}`, true);
-    }
-  }, [targetId]);
-  useEffect(() => {
-    void refresh();
-  }, [refresh, epoch]);
-  // Row state moves while the scripts run; only while this tab is shown.
-  useEffect(() => {
-    const timer = setInterval(() => {
-      if (!session.target?.paused) {
-        void refresh();
-      }
-    }, 2000);
-    return () => clearInterval(timer);
-  }, [refresh]);
   const needle = filter.trim().toLowerCase();
   const matches = (row: BundleRow) =>
     !needle ||
@@ -484,7 +473,7 @@ function BundlesTab() {
           placeholder="Filter by name or type"
           value={filter}
         />
-        <button onClick={() => void refresh()} type="button">
+        <button onClick={() => void session.refreshBundles()} type="button">
           Refresh
         </button>
       </div>
@@ -502,17 +491,8 @@ function BundlesTab() {
             key={`${bundle.bundle}:${bundle.tag}`}
             matches={needle && bundle.bundle.includes(needle) ? () => true : matches}
             onMenu={(e, row) => {
-              e.preventDefault();
               setSelected(keyOf(bundle, row));
-              openMenu(
-                e,
-                row.actions.length
-                  ? row.actions.map((action) => ({
-                      label: action.params?.length ? `${action.label}…` : action.label,
-                      run: () => runAction(bundle, row, action, () => void refresh()),
-                    }))
-                  : [{ disabled: true, label: "no actions", run: () => undefined }]
-              );
+              rowMenu(e, bundle, row);
             }}
             onSelect={(row) => setSelected(keyOf(bundle, row))}
             selected={selected}
