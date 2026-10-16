@@ -3,7 +3,8 @@ name: release
 # scripts/release.mjs pushes a `<package dir>-v<version>` tag.
 on:
   push:
-    tags: ["*-v*"]
+    # datamine has its own workflow (datamine-publish.yml) for npm trusted publishing.
+    tags: ["*-v*", "!datamine-v*"]
 
 permissions:
   contents: read

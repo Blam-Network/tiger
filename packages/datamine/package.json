@@ -1,0 +1,60 @@
+{
+  "name": "@blamnetwork/datamine",
+  "version": "0.1.0",
+  "description": "Bungie-style event logs and datamine files for TypeScript, ported from cseries",
+  "type": "module",
+  "files": [
+    "dist",
+    "dist-cjs"
+  ],
+  "scripts": {
+    "build": "node ../../scripts/clean-dist.mjs && tsc -p tsconfig.build.json && tsc -p tsconfig.build.cjs.json && node ../../scripts/write-cjs-package-json.mjs",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "prepack": "npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Blam-Network/tiger.git",
+    "directory": "packages/datamine"
+  },
+  "keywords": [
+    "destiny",
+    "halo",
+    "blam",
+    "datamine",
+    "events"
+  ],
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
+  "main": "./dist-cjs/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist-cjs/index.js",
+      "default": "./dist/index.js"
+    },
+    "./reading": {
+      "types": "./dist/reading/index.d.ts",
+      "import": "./dist/reading/index.js",
+      "require": "./dist-cjs/reading/index.js",
+      "default": "./dist/reading/index.js"
+    }
+  },
+  "typesVersions": {
+    "*": {
+      "reading": [
+        "./dist/reading/index.d.ts"
+      ]
+    }
+  },
+  "devDependencies": {
+    "@blamnetwork/blf": "^1.1.0-beta.17"
+  },
+  "dependencies": {
+    "fflate": "^0.8.3"
+  }
+}
