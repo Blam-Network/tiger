@@ -77,10 +77,17 @@ export interface s_data_mine_config_options {
   upload?: s_data_mine_upload_settings;
 }
 
+// How the text logs and the console write a line, see format_event_for_log.
+export type t_event_line_style = "destiny" | "halo";
+
 // What the layout decides, so none of it is an option of its own. Destiny behaviour goes with
 // 3.1 and Halo behaviour with every other layout:
 //
 //                               3.1                    other layouts
+//   log line style              Destiny: date, game     Halo: date, index, game
+//                               time, thread, level     time and frame, netbuf,
+//                               padded to 8, text       severity, text, context
+//   console level text          lower case              upper case severities
 //   first event index           0                      1
 //   event signature             keeps the trailing     drops the trailing ", "
 //                               ", "
@@ -97,6 +104,7 @@ export interface s_data_mine_layout_behaviour {
   bridge_session_parameters: boolean;
   event_index_start: number;
   first_definition_id: number;
+  line_style: t_event_line_style;
   maximum_registered_events: number;
   session_id_sequence: boolean;
   signature_strip_trailing_separator: boolean;
@@ -117,6 +125,7 @@ export function data_mine_layout_behaviour(
 ): s_data_mine_layout_behaviour {
   const destiny = layout === "3.1";
   return {
+    line_style: destiny ? "destiny" : "halo",
     event_index_start: destiny ? 0 : 1,
     signature_strip_trailing_separator: !destiny,
     // One counter shared by every event site in the game, starting at 1.

@@ -13,21 +13,26 @@ function sendIncidentMenu(event: React.MouseEvent): void {
           label: kind.params.length ? `${kind.label}…` : kind.label,
           run: () => {
             if (kind.params.length === 0) {
-              void session.incident(kind.name, {});
+              session.run(session.incident(kind.name, {}));
               return;
             }
             openDialog(
               `Incident: ${kind.label}`,
-              kind.params.map((p) => ({ hint: p.hint ?? p.type, label: p.name, name: p.name })),
+              kind.params.map((p) => ({
+                hint: p.hint ?? p.type,
+                label: p.name,
+                name: p.name,
+              })),
               (values) => {
                 const params: Record<string, unknown> = {};
                 for (const p of kind.params) {
                   const value = values[p.name]?.trim() ?? "";
                   if (value !== "") {
-                    params[p.name] = p.type === "number" ? Number(value) : value;
+                    params[p.name] =
+                      p.type === "number" ? Number(value) : value;
                   }
                 }
-                void session.incident(kind.name, params);
+                session.run(session.incident(kind.name, params));
               }
             );
           },
@@ -55,7 +60,12 @@ function ServerInfo() {
   }, [open]);
   return (
     <div className="server-info" ref={ref}>
-      <button disabled={!server} onClick={() => setOpen(!open)} title={server?.buildLabel} type="button">
+      <button
+        disabled={!server}
+        onClick={() => setOpen(!open)}
+        title={server?.buildLabel}
+        type="button"
+      >
         Server
       </button>
       {open && server && (
@@ -82,7 +92,9 @@ export function Toolbar() {
   const targets = useSession((s) => s.targets);
   const targetId = useSession((s) => s.targetId);
   const following = useSession((s) => s.following);
-  const followed = useSession((s) => s.players.find((p) => p.id === s.following));
+  const followed = useSession((s) =>
+    s.players.find((p) => p.id === s.following)
+  );
   const target = targets.find((t) => t.id === targetId);
   const live = connection === "connected" && target !== undefined;
   const paused = target?.paused ?? false;
@@ -122,7 +134,11 @@ export function Toolbar() {
         value={address}
       />
       {connection === "disconnected" ? (
-        <button className="primary" onClick={() => session.connect()} type="button">
+        <button
+          className="primary"
+          onClick={() => session.connect()}
+          type="button"
+        >
           Connect
         </button>
       ) : (
@@ -133,7 +149,7 @@ export function Toolbar() {
       <select
         className="target"
         disabled={targets.length === 0}
-        onChange={(e) => void session.selectTarget(e.target.value)}
+        onChange={(e) => session.run(session.selectTarget(e.target.value))}
         value={targetId ?? ""}
       >
         {targets.length === 0 && <option value="">no activity</option>}
@@ -145,27 +161,62 @@ export function Toolbar() {
         ))}
       </select>
       {following && (
-        <button className="badge-button" onClick={() => session.follow(undefined)} title="Click to stop following" type="button">
+        <button
+          className="badge-button"
+          onClick={() => session.follow(undefined)}
+          title="Click to stop following"
+          type="button"
+        >
           following {followed ? playerName(followed) : following}
         </button>
       )}
       <div className="run-buttons">
-        <button disabled={!(live && paused)} onClick={() => session.continue()} title="Continue (F5)" type="button">
+        <button
+          disabled={!(live && paused)}
+          onClick={() => session.continue()}
+          title="Continue (F5)"
+          type="button"
+        >
           ▶ Continue
         </button>
-        <button disabled={!live || paused} onClick={() => session.pause()} title="Pause (F6)" type="button">
+        <button
+          disabled={!live || paused}
+          onClick={() => session.pause()}
+          title="Pause (F6)"
+          type="button"
+        >
           ⏸ Pause
         </button>
-        <button disabled={!live} onClick={() => session.step("next")} title="Step Over (F10)" type="button">
+        <button
+          disabled={!live}
+          onClick={() => session.step("next")}
+          title="Step Over (F10)"
+          type="button"
+        >
           ↷ Over
         </button>
-        <button disabled={!live} onClick={() => session.step("stepIn")} title="Step Into (F11)" type="button">
+        <button
+          disabled={!live}
+          onClick={() => session.step("stepIn")}
+          title="Step Into (F11)"
+          type="button"
+        >
           ↓ Into
         </button>
-        <button disabled={!live} onClick={() => session.step("stepOut")} title="Step Out (Shift+F11)" type="button">
+        <button
+          disabled={!live}
+          onClick={() => session.step("stepOut")}
+          title="Step Out (Shift+F11)"
+          type="button"
+        >
           ↑ Out
         </button>
-        <button disabled={!live} onClick={() => session.stepTick()} title="Run one tick, then hold (F8)" type="button">
+        <button
+          disabled={!live}
+          onClick={() => session.stepTick()}
+          title="Run one tick, then hold (F8)"
+          type="button"
+        >
           ⏭ Tick
         </button>
       </div>
@@ -174,7 +225,7 @@ export function Toolbar() {
       </button>
       <button
         disabled={!live}
-        onClick={() => void session.kick(session.state.targetId)}
+        onClick={() => session.run(session.kick(session.state.targetId))}
         title="Drop the activity's host connections: its players go back to orbit"
         type="button"
       >
@@ -196,15 +247,23 @@ export function StatusBar() {
   return (
     <div className={`statusbar ${target?.paused ? "paused" : ""}`}>
       <span>{connection}</span>
-      {server && <span title={server.build}>{server.buildLabel ?? server.build}</span>}
+      {server && (
+        <span title={server.build}>{server.buildLabel ?? server.build}</span>
+      )}
       {target ? (
         <>
           <span>{target.label}</span>
           <span>tick {target.ticks}</span>
           <span>time {target.time.toFixed(1)} s</span>
           <span>{target.phase ?? "no phase"}</span>
-          <span>{target.paused ? `paused (${target.stopReason ?? lastStop?.reason ?? "?"})` : "running"}</span>
-          {lastStop?.description && target.paused && <span>{lastStop.description}</span>}
+          <span>
+            {target.paused
+              ? `paused (${target.stopReason ?? lastStop?.reason ?? "?"})`
+              : "running"}
+          </span>
+          {lastStop?.description && target.paused && (
+            <span>{lastStop.description}</span>
+          )}
         </>
       ) : (
         <span>no target</span>

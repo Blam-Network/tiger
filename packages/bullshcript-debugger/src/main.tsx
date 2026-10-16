@@ -7,7 +7,9 @@ import { session } from "./session";
 
 // No webview menu (Back/Refresh/Inspect) anywhere: the app's own menus are
 // opened by their elements' handlers, which still see the event.
-window.addEventListener("contextmenu", (e) => e.preventDefault(), { capture: true });
+window.addEventListener("contextmenu", (e) => e.preventDefault(), {
+  capture: true,
+});
 // Nor dragging UI elements about (text in inputs still drags).
 window.addEventListener(
   "dragstart",

@@ -22,7 +22,13 @@ export function App() {
               <EditorPane />
             </div>
           )}
-          <Sized axis="y" fill={!hasSource} initial={240} side="start" storageKey="bsdbg.bottom">
+          <Sized
+            axis="y"
+            fill={!hasSource}
+            initial={240}
+            side="start"
+            storageKey="bsdbg.bottom"
+          >
             <BottomPanel />
           </Sized>
         </div>

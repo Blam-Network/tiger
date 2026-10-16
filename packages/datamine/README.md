@@ -111,42 +111,35 @@ More about the files:
 
 #### Line format
 
-Each line is a set of columns, in this order, separated by single spaces:
-
-```
-10/16/2026 00:53:27.067 0000061 g00025637 f0092363 0000ABCD message  networking: request started [(job)A]
-date                    index   game time          thread   level    text                             context
-```
-
-The `line` option switches the columns on and off:
+The line style comes from the datamine header layout, like the other layout-derived behaviour (see `data_mine_layout_behaviour`). `events_initialize` takes `layout`, default `"3.1"`:
 
 ```ts
-events_initialize({
-  root: "./logs",
-  line: {
-    date: "long",         // "short": MM.DD.YY HH:MM:SS.mmm, "long": MM/DD/YYYY HH:MM:SS.mmm
-    event_index: true,    // %07d
-    game_time: false,     // g%08d, then f%07d when a frame_index provider is set
-    thread_id: true,      // %08X
-    level: "lower",       // "lower": the level name padded to 8, "upper": verbose, status, message, WARNING, -ERROR-, -FATAL-
-    context: true,        // the trailing [(type)description:...], when the event has one
-  },
-});
+events_initialize({ root: "./logs", layout: "1.1" });
 ```
 
-- A category with `log_format: "netbuf"` puts three `hh:mm:ss.mmm` session clocks (or twelve spaces each) before the level in its own file.
-- Without a `game_time` provider the game time column reads zero.
-- The console line is the level as the log line writes it, the text, and ` (<context>)` when there is one. Forced display shows as critical.
-- The banner is an 80 column rule, the `version_string`, the column list and a rule again:
+Layout `"3.1"` writes Destiny's lines, every other layout (`"1.0"`, `"1.1"`, `"2.0"`, `"2.1"`) Halo's:
+
+```
+10/16/2026 00:53:27.067 g00025637 0000ABCD message  networking: request started
+date                    game time thread   level    text
+
+10.16.26 00:53:27.067 0000061 g025637 f0092363 <38 netbuf characters> message networking: request started [(job)A]
+date                  index   game time and frame                     severity text                            context
+```
+
+- Destiny: `MM/DD/YYYY HH:MM:SS.mmm g%08d %08X <level name padded to 8> <text>`. There is no index, frame, netbuf or context column, so those are dropped. Without a `game_time` provider the game time reads zero.
+- Halo: `MM.DD.YY HH:MM:SS.mmm %07d <g%06d f%07d | 8 spaces f%07d> <netbuf> <severity> <text> <context>`. The severity is `verbose`, `status `, `message`, `WARNING`, `-ERROR-` or `-FATAL-`. The game time column is eight spaces plus the frame when no `game_time` provider is set, and the frame is zero when no `frame_index` provider is set. Like the game, an empty netbuf leaves a double space and an empty context a trailing space.
+- A category with `log_format: "netbuf"` puts three `hh:mm:ss.mmm` session clocks (or twelve spaces each) before the severity in its own file, in Halo lines only.
+- The console line is the level, the text, and ` (<context>)` when there is one. Halo layouts show the upper case severity, Destiny's the lower case name. Forced display shows as critical.
+- `date_utc: true` writes UTC instead of local time.
+- Events and the datamine each take the layout as their own option and are not tied together, so pass the same layout to both.
+- The banner is an 80 column rule, the `version_string`, a rule again and a blank line. It carries no column list; the reader works out the style from the lines:
 
 ```
 ================================================================================
 web-tiger 1.0
-columns: date=long,event_index,thread_id,level=lower,context
 ================================================================================
 ```
-
-The `columns:` line names every column that is on (`date=` and `level=` always appear), so the reader and Datamine Explorer know how to take the lines apart. `date_utc: true` writes UTC instead of local time.
 
 ### Uploading datamine
 
@@ -259,16 +252,15 @@ Formats:
 
 | Id | Name | What it is |
 | --- | --- | --- |
-| `event_log` | Event log | what this package writes, with any column set its `columns:` banner line names |
-| `halo_style_log` | Halo style event log | the report files of Halo's tools, which have no `columns:` line |
-| `destiny_style_log` | Destiny style event log | the report files of Destiny, which have no `columns:` line |
+| `halo_style_log` | Halo style event log | the report files of Halo's tools, and what this package writes for every layout but `"3.1"` |
+| `destiny_style_log` | Destiny style event log | the report files of Destiny, and what this package writes for layout `"3.1"` |
 | `datamine_text` | Datamine text export | text exports of datamine files |
 | `datamine_binary` | Datamine file | binary `.datamine` files in every layout |
 | `datamine_upload` | Datamine upload (zip) | an upload's zip |
 
-- Each banner in a text report becomes a session row, so a report appended to by several runs shows each run. An `event_log` file follows the columns of each banner, so runs with different `line` options read side by side.
+- Each banner in a text report becomes a session row, so a report appended to by several runs shows each run. The banner is everything between its two rules, so an older `columns:` banner line is just part of it.
 - `encode_datamine_file` writes a datamine file back byte for byte.
-- The browser entry also exports the line and banner writers (`format_event_for_log`, `build_banner`, `event_line_columns_format`, `event_line_columns_parse`), so a tool can write files the reader takes.
+- The browser entry also exports the line and banner writers (`format_event_for_log`, `format_console_line`, `build_banner`), so a tool can write files the reader takes. They take the datamine layout, `"3.1"` by default.
 
 ## HaloScript commands
 
@@ -321,7 +313,7 @@ Categories:
 | `spam_mode` | `"console_only"` | `"console_only"`, `"faithful"` or `"disabled"` |
 | `text_encoding` | `"utf8"` | `"utf8"` or `"latin1"` |
 | `write_mode` | `"immediate"` | `"immediate"` or `"cached"` |
-| `line` | `{ date: "long", event_index: true, game_time: false, thread_id: true, level: "lower", context: true }` | see [Line format](#line-format) |
+| `layout` | `"3.1"` | Destiny's lines for `"3.1"`, Halo's for the others, see [Line format](#line-format) |
 | `date_utc` | `false` | local time |
 | `write_files` | `true` | |
 | `separate_session_reports` | `false` | everything in `<root>/reports/` |
@@ -373,6 +365,8 @@ Every header starts with the 16 bit marker `0xFFFE`. The first two bytes give th
 | `2.0` | 369 B | Halo: Reach | adds a `source_flag` byte, no minor version word |
 | `2.1` | 371 B | Halo: Reach | `2.0` with a minor version word |
 | `3.1` | 472 B | Destiny | definition and occurrence records |
+
+The layout also decides how the text logs write a line, see [Line format](#line-format).
 
 Records in `1.0` to `2.1`:
 - Every record stands alone: a fixed header, the category names, then the parameters.

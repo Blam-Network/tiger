@@ -222,10 +222,25 @@ describe("TU0 venus_portal_1 scripts", () => {
       )
     );
     ticks(10);
-    expect(said("place guards")).toBe(true);
+    // The guards and the boss are placed as the phase starts; the boss's
+    // encounter waits for the guards to fall.
+    const placed = (item: { bundle: number; typeIndex: number }) =>
+      changes.some(
+        (change) =>
+          change.kind === "squad" &&
+          change.item.bundle === item.bundle &&
+          change.item.typeIndex === item.typeIndex
+      );
     const guards = [1, 2, 3, 4, 5, 6].map((n) =>
       rowOf("STRIKE_1_ACTIVITY", `ruins_phase.sq_boss_guard0${n}`)
     );
+    for (const guard of guards) {
+      expect(placed(guard)).toBe(true);
+    }
+    expect(placed(rowOf("STRIKE_1_ACTIVITY", "ruins_phase.sq_boss"))).toBe(
+      true
+    );
+    expect(said("start encounter")).toBe(false);
     for (const guard of guards) {
       runtime.reportSquadAlive(guard, 1);
     }
@@ -233,17 +248,9 @@ describe("TU0 venus_portal_1 scripts", () => {
     for (const guard of guards) {
       runtime.reportSquadAlive(guard, 0);
     }
-    ticks(5);
+    // the boss comes out a dozen seconds after the last guard
+    ticks(20);
     expect(said("start encounter")).toBe(true);
-    const boss = rowOf("STRIKE_1_ACTIVITY", "ruins_phase.sq_boss");
-    expect(
-      changes.some(
-        (change) =>
-          change.kind === "squad" &&
-          change.item.bundle === boss.bundle &&
-          change.item.typeIndex === boss.typeIndex
-      )
-    ).toBe(true);
     ticks(50);
     expect(said("boss wave 1")).toBe(true);
     kill(fnv1("strike_kill_boss"));

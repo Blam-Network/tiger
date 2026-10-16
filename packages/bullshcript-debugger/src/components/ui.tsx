@@ -1,6 +1,7 @@
 // Shared bits: the context menu, the form dialog, toasts, a JSON tree and
 // draggable splitters.
 import {
+  type KeyboardEvent,
   type ReactNode,
   useEffect,
   useRef,
@@ -54,8 +55,34 @@ const subscribeOverlay = (listener: () => void) => {
   return () => overlayListeners.delete(listener);
 };
 
-export function openMenu(event: { clientX: number; clientY: number }, items: MenuItem[]): void {
+// A class list from the names that are set. (Template literals with a
+// conditional class inside lose their space to the class sorter.)
+export const cx = (...names: (string | false | undefined)[]) =>
+  names.filter(Boolean).join(" ");
+
+// For a row with role, tabIndex and onClick: Enter or Space on the focused
+// row does what a click does. (Not a key meant for a button or input in it.)
+export function activateOnKey(activate: () => void) {
+  return (e: KeyboardEvent) => {
+    if (e.target === e.currentTarget && (e.key === "Enter" || e.key === " ")) {
+      e.preventDefault();
+      activate();
+    }
+  };
+}
+
+export function openMenu(
+  event: { clientX: number; clientY: number },
+  items: MenuItem[]
+): void {
   setOverlay({ menu: { items, x: event.clientX, y: event.clientY } });
+}
+
+// The menu at the element's bottom left, for opening it from a click or key
+// on the element instead of a right-click.
+export function openMenuBelow(element: HTMLElement, items: MenuItem[]): void {
+  const box = element.getBoundingClientRect();
+  openMenu({ clientX: box.left, clientY: box.bottom }, items);
 }
 
 export function openDialog(
@@ -67,7 +94,10 @@ export function openDialog(
 }
 
 export function Overlays() {
-  const { dialog, menu } = useSyncExternalStore(subscribeOverlay, () => overlay);
+  const { dialog, menu } = useSyncExternalStore(
+    subscribeOverlay,
+    () => overlay
+  );
   useEffect(() => {
     if (!menu) {
       return;
@@ -87,7 +117,10 @@ export function Overlays() {
           items={menu.items}
           style={{
             left: Math.min(menu.x, window.innerWidth - 220),
-            top: Math.max(0, Math.min(menu.y, window.innerHeight - menu.items.length * 24 - 8)),
+            top: Math.max(
+              0,
+              Math.min(menu.y, window.innerHeight - menu.items.length * 24 - 8)
+            ),
           }}
         />
       )}
@@ -97,40 +130,71 @@ export function Overlays() {
   );
 }
 
+// Keys for a level's entries from their labels, the nth repeat of a label
+// getting its own.
+function itemKeys(items: MenuItem[]): (readonly [MenuItem, string])[] {
+  const seen = new Map<string, number>();
+  return items.map((item) => {
+    const label = item.separator ? "-" : item.label;
+    const n = seen.get(label) ?? 0;
+    seen.set(label, n + 1);
+    return [item, `${label}#${n}`] as const;
+  });
+}
+
 // One level of a menu; a hovered item with items opens the next to its right.
 // A level with no submenus scrolls when it's taller than the window.
-function MenuList({ items, style }: { items: MenuItem[]; style: React.CSSProperties }) {
+function MenuList({
+  items,
+  style,
+}: {
+  items: MenuItem[];
+  style: React.CSSProperties;
+}) {
   const [open, setOpen] = useState<number>();
   const leaf = items.every((item) => !item.items);
   return (
-    <div className={leaf ? "menu scroll" : "menu"} onMouseDown={(e) => e.stopPropagation()} style={style}>
-      {items.map((item, i) =>
+    <div
+      className={leaf ? "menu scroll" : "menu"}
+      onMouseDown={(e) => e.stopPropagation()}
+      role="menu"
+      style={style}
+    >
+      {itemKeys(items).map(([item, key], i) =>
         item.separator ? (
-          <div className="menu-separator" key={`${i}-separator`} />
+          <div className="menu-separator" key={key} />
         ) : (
-        <div className="menu-entry" key={`${i}-${item.label}`} onMouseEnter={() => setOpen(i)}>
-          <button
-            className={item.items ? "menu-item parent" : "menu-item"}
-            disabled={item.disabled}
-            onClick={() => {
-              if (item.items && !item.run) {
-                setOpen(i);
-                return;
-              }
-              setOverlay({ menu: undefined });
-              item.run?.();
-            }}
-            type="button"
-          >
-            <span className="menu-check">{item.checked ? "●" : ""}</span>
-            <span className="menu-label">{item.label}</span>
-            {item.badge && <span className="badge world-public">{item.badge}</span>}
-            {item.items && <span className="menu-arrow">▸</span>}
-          </button>
-          {item.items && open === i && !item.disabled && (
-            <MenuList items={item.items} style={{ left: "100%", position: "absolute", top: -4 }} />
-          )}
-        </div>
+          <div className="menu-entry" key={key}>
+            <button
+              className={item.items ? "menu-item parent" : "menu-item"}
+              disabled={item.disabled}
+              onClick={() => {
+                if (item.items && !item.run) {
+                  setOpen(i);
+                  return;
+                }
+                setOverlay({ menu: undefined });
+                item.run?.();
+              }}
+              onFocus={() => setOpen(i)}
+              onMouseEnter={() => setOpen(i)}
+              role="menuitem"
+              type="button"
+            >
+              <span className="menu-check">{item.checked ? "●" : ""}</span>
+              <span className="menu-label">{item.label}</span>
+              {item.badge && (
+                <span className="badge world-public">{item.badge}</span>
+              )}
+              {item.items && <span className="menu-arrow">▸</span>}
+            </button>
+            {item.items && open === i && !item.disabled && (
+              <MenuList
+                items={item.items}
+                style={{ left: "100%", position: "absolute", top: -4 }}
+              />
+            )}
+          </div>
         )
       )}
     </div>
@@ -143,15 +207,21 @@ function FormDialog(props: NonNullable<Overlay["dialog"]>) {
   );
   const close = () => setOverlay({ dialog: undefined });
   return (
-    <div className="backdrop" onMouseDown={close}>
+    <div
+      className="backdrop"
+      onMouseDown={(e) => e.target === e.currentTarget && close()}
+      role="none"
+    >
       <form
+        aria-label={props.title}
+        aria-modal="true"
         className="dialog"
-        onMouseDown={(e) => e.stopPropagation()}
         onSubmit={(e) => {
           e.preventDefault();
           close();
           props.submit(values);
         }}
+        role="dialog"
       >
         <div className="dialog-title">{props.title}</div>
         {props.fields.map((field, i) => (
@@ -207,7 +277,9 @@ export function JsonTree({
   value: unknown;
 }) {
   const [expanded, setExpanded] = useState(depth < open);
-  const label = name !== undefined && <span className="var-name">{name}: </span>;
+  const label = name !== undefined && (
+    <span className="var-name">{name}: </span>
+  );
   if (value === null || typeof value !== "object") {
     return (
       <div className="tree-row" style={{ paddingLeft: depth * 12 + 14 }}>
@@ -221,13 +293,19 @@ export function JsonTree({
   const entries = Array.isArray(value)
     ? value.map((v, i) => [String(i), v] as const)
     : Object.entries(value);
-  const summary = Array.isArray(value) ? `[${value.length}]` : `{${entries.length}}`;
+  const summary = Array.isArray(value)
+    ? `[${value.length}]`
+    : `{${entries.length}}`;
   return (
     <>
       <div
+        aria-expanded={expanded}
         className="tree-row clickable"
         onClick={() => setExpanded(!expanded)}
+        onKeyDown={activateOnKey(() => setExpanded(!expanded))}
+        role="treeitem"
         style={{ paddingLeft: depth * 12 }}
+        tabIndex={0}
       >
         <span className="twisty">{expanded ? "▾" : "▸"}</span>
         {label}
@@ -235,7 +313,13 @@ export function JsonTree({
       </div>
       {expanded &&
         entries.map(([key, child]) => (
-          <JsonTree depth={depth + 1} key={key} name={key} open={open} value={child} />
+          <JsonTree
+            depth={depth + 1}
+            key={key}
+            name={key}
+            open={open}
+            value={child}
+          />
         ))}
     </>
   );
@@ -249,6 +333,12 @@ function stored(key: string, fallback: number): number {
     return fallback;
   }
 }
+
+const DIVIDER_STEP = 16;
+const DIVIDER_KEYS: Record<"x" | "y", Record<string, number>> = {
+  x: { ArrowLeft: -DIVIDER_STEP, ArrowRight: DIVIDER_STEP },
+  y: { ArrowDown: DIVIDER_STEP, ArrowUp: -DIVIDER_STEP },
+};
 
 // A pane whose size (px, along `axis`) the divider beside it drags. `side`
 // says which edge of the pane the divider is on. `fill` takes the whole
@@ -270,6 +360,12 @@ export function Sized({
 }) {
   const [size, setSize] = useState(() => stored(storageKey, initial));
   const drag = useRef<{ from: number; size: number } | undefined>(undefined);
+  const max = () =>
+    (axis === "x" ? window.innerWidth : window.innerHeight) - 120;
+  const resize = (from: number, delta: number) =>
+    setSize(
+      Math.max(80, Math.min(from + (side === "end" ? delta : -delta), max()))
+    );
   const onDown = (e: React.MouseEvent) => {
     e.preventDefault();
     drag.current = { from: axis === "x" ? e.clientX : e.clientY, size };
@@ -278,8 +374,7 @@ export function Sized({
         return;
       }
       const delta = (axis === "x" ? m.clientX : m.clientY) - drag.current.from;
-      const next = drag.current.size + (side === "end" ? delta : -delta);
-      setSize(Math.max(80, Math.min(next, (axis === "x" ? window.innerWidth : window.innerHeight) - 120)));
+      resize(drag.current.size, delta);
     };
     const up = () => {
       drag.current = undefined;
@@ -298,13 +393,34 @@ export function Sized({
       // not kept
     }
   }, [size, storageKey]);
-  const divider = <div className={`divider divider-${axis}`} onMouseDown={onDown} />;
+  // Arrow keys move the divider like a drag would.
+  const onKey = (e: React.KeyboardEvent) => {
+    const delta = DIVIDER_KEYS[axis][e.key];
+    if (delta !== undefined) {
+      e.preventDefault();
+      resize(size, delta);
+    }
+  };
+  const divider = (
+    <div
+      aria-orientation={axis === "x" ? "vertical" : "horizontal"}
+      aria-valuemax={max()}
+      aria-valuemin={80}
+      aria-valuenow={size}
+      className={`divider divider-${axis}`}
+      onKeyDown={onKey}
+      onMouseDown={onDown}
+      role="slider"
+      tabIndex={0}
+    />
+  );
+  const sized = axis === "x" ? { width: size } : { height: size };
   return (
     <>
       {side === "start" && !fill && divider}
       <div
         className={fill ? "sized fill" : "sized"}
-        style={fill ? undefined : axis === "x" ? { width: size } : { height: size }}
+        style={fill ? undefined : sized}
       >
         {children}
       </div>

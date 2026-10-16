@@ -96,9 +96,15 @@ export const tokens: Monaco.languages.IMonarchLanguage = {
         ["", "keyword.type", "", "type.identifier"],
       ],
       [/^(\s*)(static)(\s+)(?=def\b)/, ["", "keyword.modifier", ""]],
-      [/^(\s*)(def)(\s+)([A-Za-z_][\w.]*)/, ["", "keyword.type", "", "function"]],
+      [
+        /^(\s*)(def)(\s+)([A-Za-z_][\w.]*)/,
+        ["", "keyword.type", "", "function"],
+      ],
       [/^(\s*)(startup)(\s+)(?=thread\b)/, ["", "keyword.modifier", ""]],
-      [/^(\s*)(thread)(\s+)([A-Za-z_]\w*)/, ["", "keyword.type", "", "function"]],
+      [
+        /^(\s*)(thread)(\s+)([A-Za-z_]\w*)/,
+        ["", "keyword.type", "", "function"],
+      ],
       [
         /^(\s*)(delegate|command_script|implements)(\s+)([A-Za-z_][\w.]*)/,
         ["", "keyword.type", "", "function"],
@@ -116,7 +122,13 @@ export const tokens: Monaco.languages.IMonarchLanguage = {
       [/\b[cesi]_[A-Za-z0-9_]+\b/, "type.identifier"],
       [
         /[A-Za-z_]\w*(?=\s*\()/,
-        { cases: { "@builtins": "predefined", "@keywords": "keyword", "@default": "function.call" } },
+        {
+          cases: {
+            "@builtins": "predefined",
+            "@keywords": "keyword",
+            "@default": "function.call",
+          },
+        },
       ],
       [
         /[A-Za-z_]\w*/,

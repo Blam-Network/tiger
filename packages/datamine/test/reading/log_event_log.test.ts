@@ -3,17 +3,18 @@ import { e_event_level } from "../../src/blam/cseries/event_levels.ts";
 import {
   build_banner,
   build_networking_buffer_for_log,
-  event_line_options_resolve,
   format_event_for_log,
-  k_event_line_options_default,
-  type s_event_line_options,
   type s_event_log_line,
 } from "../../src/blam/cseries/event_log_format.ts";
+import type { t_data_mine_header_layout } from "../../src/blam/data_mining/data_mine_formats.ts";
 import {
-  c_log_text_parser,
   log_detect_format,
   log_detect_text_format,
 } from "../../src/reading/log_text_parser.ts";
+import {
+  destiny_style_line,
+  halo_style_line,
+} from "../fixtures/game_report_lines.ts";
 import {
   k_line_date as k_date,
   make_log_line,
@@ -39,106 +40,76 @@ const k_levels = [
   e_event_level.critical,
 ] as const;
 
-// Every combination of the toggles, so each column order and absence is read back.
-function every_column_set(): s_event_line_options[] {
-  const flags = [false, true];
-  const sets: s_event_line_options[] = [];
-  for (const date of ["short", "long"] as const) {
-    for (const level of ["upper", "lower"] as const) {
-      for (const event_index of flags) {
-        for (const game_time of flags) {
-          for (const thread_id of flags) {
-            for (const context of flags) {
-              sets.push({
-                date,
-                level,
-                event_index,
-                game_time,
-                thread_id,
-                context,
-              });
-            }
-          }
-        }
-      }
-    }
-  }
-  return sets;
+const k_halo_layouts = ["1.0", "1.1", "2.0", "2.1"] as const;
+
+// One line per level, with the optional columns on and off in turn.
+function make_lines(): s_event_log_line[] {
+  return k_levels.map((level, index) =>
+    make_line({
+      level,
+      event_index: 100 + index,
+      game_time: index % 3 === 0 ? undefined : 25 + index,
+      frame_index: 1000 + index,
+      thread_id: 0xab_cd + index,
+      text: `design:hs: line ${index}`,
+      context: index % 2 === 0 ? "[(job)A:(job)B]" : "",
+    })
+  );
 }
 
-describe("event logs", () => {
-  it("reads every column combination the banner announces", () => {
-    for (const columns of every_column_set()) {
-      const lines = k_levels.map((level, index) =>
-        make_line({
-          level,
-          event_index: 100 + index,
-          game_time: 25 + index,
-          frame_index: index % 2 === 0 ? 1000 + index : undefined,
-          thread_id: 0xab_cd + index,
-          text: `design:hs: line ${index}`,
-          context: index % 2 === 0 ? "[(job)A:(job)B]" : "",
-        })
-      );
+describe("halo style event logs", () => {
+  it("reads back every column of every line the writer makes", () => {
+    for (const layout of k_halo_layouts) {
+      const lines = make_lines();
       const text =
-        build_banner("test 1.0", columns) +
-        lines.map((line) => format_event_for_log(line, columns)).join("");
+        build_banner("test 1.0") +
+        lines.map((line) => format_event_for_log(line, layout)).join("");
       const { entries, parser, sessions } = parse_all(text);
-      const label = JSON.stringify(columns);
-      expect(parser.format, label).toBe("event_log");
-      expect(sessions, label).toHaveLength(1);
-      expect(sessions[0].session, label).toEqual({
+      expect(parser.format, layout).toBe("halo_style_log");
+      expect(sessions, layout).toHaveLength(1);
+      expect(sessions[0].session, layout).toEqual({
         number: 1,
         version: "test 1.0",
-        columns,
       });
-      expect(entries, label).toHaveLength(lines.length);
+      expect(entries, layout).toHaveLength(lines.length);
       for (const [index, entry] of entries.entries()) {
         const line = lines[index];
-        expect(entry.date, label).toEqual(k_date);
-        expect(entry.date_text, label).toBe(
-          columns.date === "short"
-            ? "10.16.26 00:53:27.067"
-            : "10/16/2026 00:53:27.067"
-        );
-        expect(entry.level, label).toBe(line.level);
-        expect(entry.text, label).toBe(`design:hs: line ${index}`);
-        expect(entry.category_path, label).toBe("design:hs");
-        expect(entry.event_index, label).toBe(
-          columns.event_index ? line.event_index : undefined
-        );
-        expect(entry.game_time, label).toBe(
-          columns.game_time ? line.game_time : undefined
-        );
-        expect(entry.frame_index, label).toBe(
-          columns.game_time ? line.frame_index : undefined
-        );
-        expect(entry.thread_id, label).toBe(
-          columns.thread_id ? line.thread_id : undefined
-        );
-        expect(entry.context, label).toBe(
-          columns.context && line.context ? line.context : undefined
-        );
+        expect(entry.date, layout).toEqual(k_date);
+        expect(entry.date_text, layout).toBe("10.16.26 00:53:27.067");
+        expect(entry.level, layout).toBe(line.level);
+        expect(entry.text, layout).toBe(`design:hs: line ${index}`);
+        expect(entry.category_path, layout).toBe("design:hs");
+        expect(entry.event_index, layout).toBe(line.event_index);
+        expect(entry.game_time, layout).toBe(line.game_time);
+        expect(entry.frame_index, layout).toBe(line.frame_index);
+        expect(entry.thread_id, layout).toBeUndefined();
+        expect(entry.custom_prefix, layout).toBeUndefined();
+        expect(entry.context, layout).toBe(line.context || undefined);
       }
     }
+  });
+
+  it("reads a frame that was not known as zero", () => {
+    const text = format_event_for_log(
+      make_line({ frame_index: undefined }),
+      "1.1"
+    );
+    expect(parse_all(text).entries[0].frame_index).toBe(0);
   });
 
   it("reads the netbuf columns and a context on the same line", () => {
     const custom_prefix = build_networking_buffer_for_log([1500, undefined, 2]);
     const text =
-      build_banner("v", event_line_options_resolve({ date: "short" })) +
+      build_banner("v") +
       format_event_for_log(
         make_line({
           custom_prefix,
           level: e_event_level.error,
           context: "[(game)match:(ui)lobby]",
         }),
-        event_line_options_resolve({ date: "short" })
+        "1.1"
       ) +
-      format_event_for_log(
-        make_line({ event_index: 62 }),
-        event_line_options_resolve({ date: "short" })
-      );
+      format_event_for_log(make_line({ event_index: 62 }), "1.1");
     const { entries } = parse_all(text);
     expect(entries).toHaveLength(2);
     expect(entries[0].custom_prefix).toBe(custom_prefix);
@@ -151,9 +122,10 @@ describe("event logs", () => {
   it("keeps text that begins with spaces, and continuation lines", () => {
     const text =
       build_banner("v") +
-      format_event_for_log(make_line({ text: "  indented" })) +
+      format_event_for_log(make_line({ text: "  indented" }), "1.1") +
       format_event_for_log(
-        make_line({ text: "a: first\nsecond", context: "[(x)y]" })
+        make_line({ text: "a: first\nsecond", context: "[(x)y]" }),
+        "1.1"
       );
     const { entries } = parse_all(text);
     expect(entries[0].text).toBe("  indented");
@@ -161,72 +133,139 @@ describe("event logs", () => {
     expect(entries[1].context).toBe("[(x)y]");
   });
 
-  it("gives the same entries whatever the chunk size", () => {
+  it("reads the same lines as the game's report fixtures write", () => {
+    const line = make_line({
+      context: "[(x)y]",
+      custom_prefix: " ".repeat(38),
+    });
+    expect(format_event_for_log(line, "1.1")).toBe(halo_style_line(line));
+    const bare = make_line({ game_time: undefined });
+    expect(format_event_for_log(bare, "1.1")).toBe(halo_style_line(bare));
+  });
+});
+
+describe("destiny style event logs", () => {
+  it("reads back every column of every line the writer makes", () => {
+    const lines = make_lines();
     const text =
-      build_banner("v") +
-      format_event_for_log(make_line()) +
-      format_event_for_log(make_line({ text: "a: b\nc", context: "[(x)y]" }));
-    const whole = parse_all(text).all;
-    for (const size of [1, 2, 7, 50]) {
-      expect(parse_all(text, size).all).toEqual(whole);
+      build_banner("test 1.0") +
+      lines.map((line) => format_event_for_log(line, "3.1")).join("");
+    const { entries, parser, sessions } = parse_all(text);
+    expect(parser.format).toBe("destiny_style_log");
+    expect(sessions).toHaveLength(1);
+    expect(sessions[0].session).toEqual({ number: 1, version: "test 1.0" });
+    expect(entries).toHaveLength(lines.length);
+    for (const [index, entry] of entries.entries()) {
+      const line = lines[index];
+      expect(entry.date).toEqual(k_date);
+      expect(entry.date_text).toBe("10/16/2026 00:53:27.067");
+      expect(entry.level).toBe(line.level);
+      expect(entry.text).toBe(`design:hs: line ${index}`);
+      expect(entry.category_path).toBe("design:hs");
+      expect(entry.game_time).toBe(line.game_time ?? 0);
+      expect(entry.thread_id).toBe(line.thread_id);
+      expect(entry.event_index).toBeUndefined();
+      expect(entry.frame_index).toBeUndefined();
+      expect(entry.context).toBeUndefined();
     }
   });
 
-  it("follows the columns of each banner in an appended file", () => {
-    const first = event_line_options_resolve({ date: "short", level: "upper" });
-    const second = k_event_line_options_default;
-    const text =
-      build_banner("run one", first) +
-      format_event_for_log(make_line({ text: "a: one" }), first) +
-      build_banner("run two", second) +
-      format_event_for_log(make_line({ text: "b: two" }), second);
-    const { all, entries, sessions } = parse_all(text);
-    expect(sessions.map((entry) => entry.session?.version)).toEqual([
-      "run one",
-      "run two",
-    ]);
-    expect(entries.map((entry) => entry.text)).toEqual(["a: one", "b: two"]);
-    expect(entries[0].date_text).toBe("10.16.26 00:53:27.067");
-    expect(entries[1].date_text).toBe("10/16/2026 00:53:27.067");
-    expect(all.map((entry) => entry.ordinal)).toEqual([0, 1, 2, 3]);
+  it("reads the same lines as the game's report fixtures write", () => {
+    const line = make_line({ thread_id: 0xab_cd });
+    expect(format_event_for_log(line, "3.1")).toBe(destiny_style_line(line));
   });
 
-  it("skips the cut-off start of a trimmed file", () => {
-    const text = `ng started\r\n${build_banner("v")}${format_event_for_log(make_line())}`;
-    const { entries } = parse_all(text);
-    expect(entries).toHaveLength(1);
-  });
-
-  it("puts the banner's columns on its session row", () => {
-    const columns = event_line_options_resolve({
-      date: "short",
-      level: "upper",
-    });
-    const { sessions } = parse_all(build_banner("v", columns));
-    expect(sessions[0].session?.columns).toEqual(columns);
-  });
-
-  it("reads a lone line with the columns it is given", () => {
-    const columns = event_line_options_resolve({
-      date: "short",
-      level: "upper",
-    });
-    const text = format_event_for_log(make_line({ text: "a: b" }), columns);
-    const parser = new c_log_text_parser("event_log", { columns });
-    const entries = [...parser.push(text), ...parser.finish()];
-    expect(parser.columns).toEqual(columns);
-    expect(entries).toHaveLength(1);
-    expect(entries[0].text).toBe("a: b");
-    // without them the line is not understood
-    const bare = new c_log_text_parser("event_log");
-    expect([...bare.push(text), ...bare.finish()]).toEqual([]);
-  });
-
-  it("is detected from the columns line", () => {
-    const text = build_banner("v") + format_event_for_log(make_line());
-    expect(log_detect_text_format(text)).toBe("event_log");
-    expect(log_detect_format("debug.txt", new TextEncoder().encode(text))).toBe(
-      "event_log"
+  it("keeps a bracketed ending as part of the text", () => {
+    const text = format_event_for_log(
+      make_line({ text: "a: b [(x)y]" }),
+      "3.1"
     );
+    const entry = parse_all(text).entries[0];
+    expect(entry.text).toBe("a: b [(x)y]");
+    expect(entry.context).toBeUndefined();
+  });
+
+  it("keeps text that begins with spaces, and continuation lines", () => {
+    const text =
+      format_event_for_log(make_line({ text: "  indented" }), "3.1") +
+      format_event_for_log(make_line({ text: "a: first\nsecond" }), "3.1");
+    const { entries } = parse_all(text);
+    expect(entries[0].text).toBe("  indented");
+    expect(entries[1].text).toBe("a: first\nsecond");
+  });
+});
+
+describe("event log files", () => {
+  it("give the same entries whatever the chunk size", () => {
+    for (const layout of ["1.1", "3.1"] as const) {
+      const text =
+        build_banner("v") +
+        format_event_for_log(make_line(), layout) +
+        format_event_for_log(
+          make_line({ text: "a: b\nc", context: "[(x)y]" }),
+          layout
+        );
+      const whole = parse_all(text).all;
+      for (const size of [1, 2, 7, 50]) {
+        expect(parse_all(text, size).all).toEqual(whole);
+      }
+    }
+  });
+
+  it("have a session row per banner in an appended file", () => {
+    for (const layout of ["1.1", "3.1"] as const) {
+      const text =
+        build_banner("run one") +
+        format_event_for_log(make_line({ text: "a: one" }), layout) +
+        build_banner("run two") +
+        format_event_for_log(make_line({ text: "b: two" }), layout);
+      const { all, entries, sessions } = parse_all(text);
+      expect(sessions.map((entry) => entry.session?.version)).toEqual([
+        "run one",
+        "run two",
+      ]);
+      expect(entries.map((entry) => entry.text)).toEqual(["a: one", "b: two"]);
+      expect(all.map((entry) => entry.ordinal)).toEqual([0, 1, 2, 3]);
+    }
+  });
+
+  it("skip the cut-off start of a trimmed file", () => {
+    for (const layout of ["1.1", "3.1"] as const) {
+      const text = `ng started\r\n${build_banner("v")}${format_event_for_log(make_line(), layout)}`;
+      expect(parse_all(text).entries).toHaveLength(1);
+    }
+  });
+
+  it("are detected from the first line", () => {
+    const formats: [t_data_mine_header_layout, string][] = [
+      ["1.1", "halo_style_log"],
+      ["2.1", "halo_style_log"],
+      ["3.1", "destiny_style_log"],
+    ];
+    for (const [layout, format] of formats) {
+      const text =
+        build_banner("v") + format_event_for_log(make_line(), layout);
+      expect(log_detect_text_format(text)).toBe(format);
+      expect(
+        log_detect_format("debug.txt", new TextEncoder().encode(text))
+      ).toBe(format);
+    }
+  });
+
+  it("have no columns line in the banner", () => {
+    expect(build_banner("v")).not.toContain("columns:");
+  });
+
+  it("take an old columns banner line as banner text", () => {
+    const rule = "=".repeat(80);
+    const banner = `${rule}\r\nweb-tiger 1.0\r\ncolumns: date=long,event_index,game_time,thread_id,level=lower,context\r\n${rule}\r\n\r\n`;
+    const text = banner + format_event_for_log(make_line(), "3.1");
+    const { all, entries, sessions } = parse_all(text);
+    expect(all).toHaveLength(2);
+    expect(sessions).toHaveLength(1);
+    expect(sessions[0].session?.version).toBe("web-tiger 1.0");
+    expect(sessions[0].raw).toContain("columns: date=long");
+    expect(entries).toHaveLength(1);
+    expect(entries[0].text).toBe("networking: request started");
   });
 });

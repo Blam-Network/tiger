@@ -7,53 +7,94 @@ import {
 import {
   build_banner,
   build_networking_buffer_for_log,
-  event_line_columns_format,
-  event_line_columns_parse,
-  event_line_options_resolve,
   format_category_dump,
   format_console_line,
   format_event_for_log,
-  k_event_line_options_default,
-  type s_event_line_options,
+  type s_event_log_line,
 } from "../../../src/blam/cseries/event_log_format.ts";
-import { make_log_line as make_line } from "../../support/event_lines.ts";
+import { make_log_line } from "../../support/event_lines.ts";
 
-const k_all_columns: s_event_line_options = {
-  date: "short",
-  event_index: true,
-  game_time: true,
-  thread_id: true,
-  level: "upper",
-  context: true,
-};
+function make_line(
+  overrides: Partial<s_event_log_line> = {}
+): s_event_log_line {
+  return make_log_line({ game_time: 25, ...overrides });
+}
 
-describe("format_event_for_log", () => {
-  it("writes the default columns", () => {
-    expect(format_event_for_log(make_line())).toBe(
-      "10/16/2026 00:53:27.067 0000061 00000007 message  networking: request started\r\n"
+describe("format_event_for_log, Destiny style", () => {
+  it("is the default, with no index, frame or context", () => {
+    const line = make_line({
+      context: "[(job)A]",
+      game_time: 25_637,
+      thread_id: 0xab_cd,
+    });
+    expect(format_event_for_log(line)).toBe(
+      "10/16/2026 00:53:27.067 g00025637 0000ABCD message  networking: request started\r\n"
     );
+    expect(format_event_for_log(line, "3.1")).toBe(format_event_for_log(line));
   });
 
   it("pads the lower case level to eight columns", () => {
-    const options = event_line_options_resolve({
-      event_index: false,
-      thread_id: false,
+    const text = (level: e_event_level) =>
+      format_event_for_log(make_line({ level, text: "x" }), "3.1");
+    expect(text(e_event_level.error)).toBe(
+      "10/16/2026 00:53:27.067 g00000025 00000007 error    x\r\n"
+    );
+    expect(text(e_event_level.critical)).toBe(
+      "10/16/2026 00:53:27.067 g00000025 00000007 critical x\r\n"
+    );
+    expect(text(e_event_level.verbose)).toBe(
+      "10/16/2026 00:53:27.067 g00000025 00000007 verbose  x\r\n"
+    );
+  });
+
+  it("prints zero game time while no game is in progress", () => {
+    expect(
+      format_event_for_log(make_line({ game_time: undefined }), "3.1")
+    ).toContain(" g00000000 00000007 ");
+  });
+
+  it("leaves the netbuf columns out", () => {
+    const custom_prefix = build_networking_buffer_for_log([1, 2, 3]);
+    expect(format_event_for_log(make_line({ custom_prefix }), "3.1")).toBe(
+      format_event_for_log(make_line(), "3.1")
+    );
+  });
+
+  it("writes UTC when asked", () => {
+    const line = make_line({
+      date: new Date(Date.UTC(2026, 9, 16, 1, 2, 3, 4)),
     });
-    expect(
-      format_event_for_log(make_line({ level: e_event_level.error }), options)
-    ).toBe("10/16/2026 00:53:27.067 error    networking: request started\r\n");
+    expect(format_event_for_log(line, "3.1", true)).toContain(
+      "10/16/2026 01:02:03.004"
+    );
+  });
+});
+
+describe("format_event_for_log, Halo style", () => {
+  it("writes every column in order", () => {
     expect(
       format_event_for_log(
-        make_line({ level: e_event_level.critical }),
-        options
+        make_line({
+          game_time: 25_637,
+          frame_index: 92_363,
+          event_index: 8550,
+          level: e_event_level.warning,
+          context: "[(job)A:(job)B]",
+        }),
+        "1.1"
       )
-    ).toBe("10/16/2026 00:53:27.067 critical networking: request started\r\n");
-    expect(
-      format_event_for_log(
-        make_line({ level: e_event_level.verbose, text: "x" }),
-        options
-      )
-    ).toBe("10/16/2026 00:53:27.067 verbose  x\r\n");
+    ).toBe(
+      "10.16.26 00:53:27.067 0008550 g025637 f0092363  WARNING networking: request started [(job)A:(job)B]\r\n"
+    );
+  });
+
+  it("is the same for every layout but 3.1", () => {
+    const line = make_line({ text: "a: b" });
+    for (const layout of ["1.0", "1.1", "2.0", "2.1"] as const) {
+      expect(format_event_for_log(line, layout)).toBe(
+        format_event_for_log(line, "1.1")
+      );
+    }
   });
 
   it("uses every upper case severity string", () => {
@@ -66,58 +107,28 @@ describe("format_event_for_log", () => {
       "-FATAL-",
     ];
     for (const level of [0, 1, 2, 3, 4, 5] as const) {
-      expect(
-        format_event_for_log(make_line({ level }), k_all_columns)
-      ).toContain(` ${expected[level]} networking`);
+      expect(format_event_for_log(make_line({ level }), "1.1")).toContain(
+        `  ${expected[level]} networking`
+      );
     }
   });
 
-  it("writes every column in order", () => {
+  it("replaces the game time with eight spaces while no game is in progress", () => {
     expect(
-      format_event_for_log(
-        make_line({
-          game_time: 25_637,
-          frame_index: 92_363,
-          event_index: 8550,
-          level: e_event_level.warning,
-          thread_id: 0xab_cd,
-          context: "[(job)A:(job)B]",
-        }),
-        k_all_columns
-      )
-    ).toBe(
-      "10.16.26 00:53:27.067 0008550 g00025637 f0092363 0000ABCD WARNING networking: request started [(job)A:(job)B]\r\n"
-    );
+      format_event_for_log(make_line({ game_time: undefined }), "1.1")
+    ).toContain(` 0000061 ${" ".repeat(8)}f0000001 `);
   });
 
-  it("leaves the frame out of the game time when it is not known", () => {
-    const line = format_event_for_log(
-      make_line({ frame_index: undefined, game_time: 5 }),
-      k_all_columns
-    );
-    expect(line).toContain(" g00000005 0000");
-    expect(line).not.toContain(" f0");
+  it("writes frame zero when the frame is not known", () => {
+    expect(
+      format_event_for_log(make_line({ frame_index: undefined }), "1.1")
+    ).toContain(" g000025 f0000000 ");
   });
 
-  it("prints zero game time while no game is in progress", () => {
-    expect(format_event_for_log(make_line(), k_all_columns)).toContain(
-      " g00000000 f0000001 "
+  it("leaves a double space for an empty netbuf and a trailing space for an empty context", () => {
+    expect(format_event_for_log(make_line({ text: "a: b" }), "1.1")).toBe(
+      "10.16.26 00:53:27.067 0000061 g000025 f0000001  message a: b \r\n"
     );
-  });
-
-  it("leaves out the columns that are off, and an empty context", () => {
-    const options = event_line_options_resolve({
-      date: "short",
-      event_index: false,
-      thread_id: false,
-      context: false,
-    });
-    expect(
-      format_event_for_log(make_line({ context: "[(job)A]" }), options)
-    ).toBe("10.16.26 00:53:27.067 message  networking: request started\r\n");
-    expect(
-      format_event_for_log(make_line(), k_all_columns).endsWith("started\r\n")
-    ).toBe(true);
   });
 
   it("puts the netbuf columns before the level", () => {
@@ -128,34 +139,26 @@ describe("format_event_for_log", () => {
     ]);
     const line = format_event_for_log(
       make_line({ custom_prefix, level: e_event_level.warning }),
-      k_all_columns
+      "1.1"
     );
     expect(line).toBe(
-      `10.16.26 00:53:27.067 0000061 g00000000 f0000001 00000007 01:02:03.456 ${" ".repeat(12)} 00:00:59.999 WARNING networking: request started\r\n`
+      `10.16.26 00:53:27.067 0000061 g000025 f0000001 01:02:03.456 ${" ".repeat(12)} 00:00:59.999 WARNING networking: request started \r\n`
     );
   });
+});
 
-  it("writes UTC when asked", () => {
-    const options = event_line_options_resolve({ date: "short" });
-    const line = make_line({
-      date: new Date(Date.UTC(2026, 9, 16, 1, 2, 3, 4)),
-    });
-    expect(format_event_for_log(line, options, true)).toContain(
-      "10.16.26 01:02:03.004"
-    );
-  });
-
+describe("format_event_for_log, length", () => {
   it("cuts at the length it is given", () => {
     const long = format_event_for_log(
       make_line({ text: "x".repeat(5000) }),
-      k_event_line_options_default,
+      "3.1",
       false,
       10_000
     );
     expect(long.length).toBe(5000 + long.indexOf("xxx") + 2);
     const short = format_event_for_log(
       make_line({ text: "x".repeat(50) }),
-      k_event_line_options_default,
+      "1.1",
       false,
       40
     );
@@ -163,46 +166,15 @@ describe("format_event_for_log", () => {
   });
 
   it("keeps the CRLF on a line cut at 2048 characters", () => {
-    const line = format_event_for_log(make_line({ text: "x".repeat(3000) }));
-    expect(line.endsWith("\r\n")).toBe(true);
-    expect(line.length).toBe(2047 + 2);
-    expect(line.slice(0, -2)).toMatch(/x$/);
-  });
-});
-
-describe("event line options", () => {
-  it("changes only what is given", () => {
-    expect(event_line_options_resolve()).toEqual(k_event_line_options_default);
-    expect(
-      event_line_options_resolve({ game_time: true, level: undefined })
-    ).toEqual({ ...k_event_line_options_default, game_time: true });
-  });
-
-  it("writes and reads the banner column list", () => {
-    expect(event_line_columns_format(k_event_line_options_default)).toBe(
-      "date=long,event_index,thread_id,level=lower,context"
-    );
-    expect(event_line_columns_format(k_all_columns)).toBe(
-      "date=short,event_index,game_time,thread_id,level=upper,context"
-    );
-    for (const options of [k_event_line_options_default, k_all_columns]) {
-      expect(
-        event_line_columns_parse(event_line_columns_format(options))
-      ).toEqual(options);
+    for (const layout of ["1.1", "3.1"] as const) {
+      const line = format_event_for_log(
+        make_line({ text: "x".repeat(3000) }),
+        layout
+      );
+      expect(line.endsWith("\r\n")).toBe(true);
+      expect(line.length).toBe(2047 + 2);
+      expect(line.slice(0, -2)).toMatch(/x$/);
     }
-    expect(event_line_columns_parse("date=short,level=upper")).toEqual({
-      date: "short",
-      event_index: false,
-      game_time: false,
-      thread_id: false,
-      level: "upper",
-      context: false,
-    });
-  });
-
-  it("rejects a date or level it does not know", () => {
-    expect(event_line_columns_parse("date=iso,level=lower")).toBeUndefined();
-    expect(event_line_columns_parse("date=long,level=title")).toBeUndefined();
   });
 });
 
@@ -219,7 +191,7 @@ describe("build_networking_buffer_for_log", () => {
 });
 
 describe("format_console_line", () => {
-  it("prints the level and text", () => {
+  it("prints the lower case level and text for Destiny's layout", () => {
     expect(
       format_console_line({
         level: e_event_level.warning,
@@ -230,7 +202,7 @@ describe("format_console_line", () => {
     ).toBe("warning  low on cheese");
   });
 
-  it("puts the context in parentheses after the text", () => {
+  it("prints upper case severities for Halo's layouts", () => {
     expect(
       format_console_line(
         {
@@ -239,34 +211,28 @@ describe("format_console_line", () => {
           context: "map:bsp",
           forced: false,
         },
-        k_all_columns
+        "2.1"
       )
     ).toBe("status  loaded (map:bsp)");
   });
 
   it("prints forced display as critical", () => {
-    expect(
-      format_console_line(
-        {
-          level: e_event_level.verbose,
-          text: "forced",
-          context: "",
-          forced: true,
-        },
-        k_all_columns
-      )
-    ).toBe("-FATAL- forced");
+    const line = {
+      level: e_event_level.verbose,
+      text: "forced",
+      context: "",
+      forced: true,
+    };
+    expect(format_console_line(line, "1.1")).toBe("-FATAL- forced");
+    expect(format_console_line(line, "3.1")).toBe("critical forced");
   });
 });
 
 describe("build_banner", () => {
-  it("is an 80 column rule around the version and the column list", () => {
+  it("is an 80 column rule around the version, then a blank line", () => {
     const rule = "=".repeat(80);
     expect(build_banner("web-tiger 1.0")).toBe(
-      `${rule}\r\nweb-tiger 1.0\r\ncolumns: date=long,event_index,thread_id,level=lower,context\r\n${rule}\r\n\r\n`
-    );
-    expect(build_banner("v", k_all_columns)).toBe(
-      `${rule}\r\nv\r\ncolumns: date=short,event_index,game_time,thread_id,level=upper,context\r\n${rule}\r\n\r\n`
+      `${rule}\r\nweb-tiger 1.0\r\n${rule}\r\n\r\n`
     );
   });
 });

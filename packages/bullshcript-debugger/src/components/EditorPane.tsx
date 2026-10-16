@@ -2,18 +2,27 @@
 // the selected thread's line.
 import Editor from "@monaco-editor/react";
 import type * as Monaco from "monaco-editor";
+import * as monaco from "monaco-editor/esm/vs/editor/edcore.main";
 import { useEffect, useRef, useState } from "react";
 import { LANGUAGE_ID } from "../bungiescript";
-import { monaco, THEME } from "../monaco-setup";
-import { type BreakpointView, session, shownLine, useSession } from "../session";
-import { openDialog, openMenu } from "./ui";
+import { THEME } from "../monaco-setup";
+import {
+  type BreakpointView,
+  session,
+  shownLine,
+  useSession,
+} from "../session";
+import { activateOnKey, type DialogField, openDialog, openMenu } from "./ui";
+
+function breakpointKind(bp: BreakpointView): string {
+  if (bp.logMessage) {
+    return "bp-log";
+  }
+  return bp.condition || bp.hitCondition ? "bp-cond" : "bp";
+}
 
 function breakpointClass(bp: BreakpointView): string {
-  const kind = bp.logMessage
-    ? "bp-log"
-    : bp.condition || bp.hitCondition
-      ? "bp-cond"
-      : "bp";
+  const kind = breakpointKind(bp);
   return bp.verified === false ? `${kind} bp-unverified` : kind;
 }
 
@@ -28,20 +37,62 @@ function breakpointHover(bp: BreakpointView): string {
   return parts.join("\n\n") || "breakpoint";
 }
 
-function editBreakpoint(path: string, line: number, kind: "condition" | "edit" | "log"): void {
+type BreakpointEdit = "condition" | "edit" | "log";
+
+const EDIT_TITLES: Record<BreakpointEdit, string> = {
+  condition: "Conditional breakpoint",
+  edit: "Edit breakpoint",
+  log: "Logpoint",
+};
+
+function breakpointFields(
+  kind: BreakpointEdit,
+  bp: BreakpointView | undefined
+): DialogField[] {
+  const condition = {
+    hint: "BungieScript, e.g. counter > 3",
+    initial: bp?.condition,
+    label: "Condition",
+    name: "condition",
+  };
+  if (kind === "condition") {
+    return [condition];
+  }
+  if (kind === "log") {
+    return [
+      {
+        hint: "text with {expression} parts",
+        initial: bp?.logMessage,
+        label: "Log message",
+        name: "logMessage",
+      },
+    ];
+  }
+  return [
+    condition,
+    {
+      hint: "n, >n, ==n or %n",
+      initial: bp?.hitCondition,
+      label: "Hit count",
+      name: "hitCondition",
+    },
+    {
+      hint: "text with {expression} parts; blank = stop",
+      initial: bp?.logMessage,
+      label: "Log message",
+      name: "logMessage",
+    },
+  ];
+}
+
+function editBreakpoint(
+  path: string,
+  line: number,
+  kind: BreakpointEdit
+): void {
   const bp = session.breakpointAt(path, line);
-  const fields =
-    kind === "condition"
-      ? [{ hint: "BungieScript, e.g. counter > 3", initial: bp?.condition, label: "Condition", name: "condition" }]
-      : kind === "log"
-        ? [{ hint: "text with {expression} parts", initial: bp?.logMessage, label: "Log message", name: "logMessage" }]
-        : [
-            { hint: "BungieScript, e.g. counter > 3", initial: bp?.condition, label: "Condition", name: "condition" },
-            { hint: "n, >n, ==n or %n", initial: bp?.hitCondition, label: "Hit count", name: "hitCondition" },
-            { hint: "text with {expression} parts; blank = stop", initial: bp?.logMessage, label: "Log message", name: "logMessage" },
-          ];
-  const title =
-    kind === "condition" ? "Conditional breakpoint" : kind === "log" ? "Logpoint" : "Edit breakpoint";
+  const fields = breakpointFields(kind, bp);
+  const title = EDIT_TITLES[kind];
   openDialog(`${title} · line ${line}`, fields, (values) => {
     const merged = {
       condition: bp?.condition,
@@ -61,22 +112,27 @@ function editBreakpoint(path: string, line: number, kind: "condition" | "edit" |
 export function EditorPane() {
   const tabs = useSession((s) => s.openTabs);
   const active = useSession((s) => s.activeTab);
-  const content = useSession((s) => (s.activeTab ? s.contents[s.activeTab] : undefined));
-  const breakpoints = useSession((s) => (s.activeTab ? s.breakpoints[s.activeTab] : undefined));
+  const content = useSession((s) =>
+    s.activeTab ? s.contents[s.activeTab] : undefined
+  );
+  const breakpoints = useSession((s) =>
+    s.activeTab ? s.breakpoints[s.activeTab] : undefined
+  );
   const reveal = useSession((s) => s.reveal);
   const frames = useSession((s) => s.frames);
   const frameId = useSession((s) => s.selectedFrameId);
-  const thread = useSession((s) => s.activity?.threads.find((t) => t.id === s.selectedThreadId));
-  const editorRef = useRef<Monaco.editor.IStandaloneCodeEditor>(undefined);
-  const decorations = useRef<Monaco.editor.IEditorDecorationsCollection>(undefined);
+  const thread = useSession((s) =>
+    s.activity?.threads.find((t) => t.id === s.selectedThreadId)
+  );
+  // Set once the editor mounts, so the effects below run against it.
+  const [editor, setEditor] = useState<Monaco.editor.IStandaloneCodeEditor>();
+  const decorations =
+    useRef<Monaco.editor.IEditorDecorationsCollection>(undefined);
   const activeRef = useRef(active);
   activeRef.current = active;
-  // Bumped once the editor exists so the effects below run against it.
-  const [mounted, setMounted] = useState(0);
 
   // Gutter, current line and frame line.
   useEffect(() => {
-    const editor = editorRef.current;
     if (!(editor && active && content !== undefined)) {
       return;
     }
@@ -86,7 +142,8 @@ export function EditorPane() {
         options: {
           glyphMarginClassName: breakpointClass(bp),
           glyphMarginHoverMessage: { value: breakpointHover(bp) },
-          stickiness: monaco.editor.TrackedRangeStickiness.NeverGrowsWhenTypingAtEdges,
+          stickiness:
+            monaco.editor.TrackedRangeStickiness.NeverGrowsWhenTypingAtEdges,
         },
         range: new monaco.Range(shownLine(bp), 1, shownLine(bp), 1),
       });
@@ -98,7 +155,9 @@ export function EditorPane() {
       list.push({
         options: {
           className: thread.stoppedHere ? "line-stopped" : "line-waiting",
-          glyphMarginClassName: thread.stoppedHere ? "arrow-stopped" : "arrow-waiting",
+          glyphMarginClassName: thread.stoppedHere
+            ? "arrow-stopped"
+            : "arrow-waiting",
           isWholeLine: true,
         },
         range: new monaco.Range(topLine, 1, topLine, 1),
@@ -116,29 +175,29 @@ export function EditorPane() {
     } else {
       decorations.current = editor.createDecorationsCollection(list);
     }
-  }, [active, content, breakpoints, frames, frameId, thread, mounted]);
+  }, [active, content, breakpoints, frames, frameId, thread, editor]);
 
   useEffect(() => {
-    const editor = editorRef.current;
-    if (!(editor && reveal && reveal.path === active && content !== undefined)) {
+    if (
+      !(editor && reveal && reveal.path === active && content !== undefined)
+    ) {
       return;
     }
     editor.revealLineInCenterIfOutsideViewport(reveal.line);
     editor.setPosition({ column: 1, lineNumber: reveal.line });
-  }, [reveal, active, content, mounted]);
+  }, [reveal, active, content, editor]);
 
-  const onMount = (editor: Monaco.editor.IStandaloneCodeEditor) => {
-    editorRef.current = editor;
+  const onMount = (mountedEditor: Monaco.editor.IStandaloneCodeEditor) => {
     decorations.current = undefined;
     const GLYPH = monaco.editor.MouseTargetType.GUTTER_GLYPH_MARGIN;
-    editor.onMouseDown((e) => {
+    mountedEditor.onMouseDown((e) => {
       const path = activeRef.current;
       const line = e.target.position?.lineNumber;
       if (e.target.type === GLYPH && e.event.leftButton && path && line) {
         session.toggleBreakpoint(path, line);
       }
     });
-    editor.onContextMenu((e) => {
+    mountedEditor.onContextMenu((e) => {
       const path = activeRef.current;
       const line = e.target.position?.lineNumber;
       if (e.target.type !== GLYPH || !path || !line) {
@@ -151,32 +210,48 @@ export function EditorPane() {
         existing
           ? [
               { label: "Edit…", run: () => editBreakpoint(path, line, "edit") },
-              { label: "Remove", run: () => session.removeBreakpoint(path, line) },
+              {
+                label: "Remove",
+                run: () => session.removeBreakpoint(path, line),
+              },
             ]
           : [
-              { label: "Add breakpoint", run: () => session.setBreakpoint(path, { line }) },
-              { label: "Add conditional breakpoint…", run: () => editBreakpoint(path, line, "condition") },
-              { label: "Add logpoint…", run: () => editBreakpoint(path, line, "log") },
+              {
+                label: "Add breakpoint",
+                run: () => session.setBreakpoint(path, { line }),
+              },
+              {
+                label: "Add conditional breakpoint…",
+                run: () => editBreakpoint(path, line, "condition"),
+              },
+              {
+                label: "Add logpoint…",
+                run: () => editBreakpoint(path, line, "log"),
+              },
             ]
       );
     });
-    setMounted((n) => n + 1);
+    setEditor(mountedEditor);
   };
 
   return (
     <div className="panel editor-pane">
-      <div className="tabbar editor-tabs">
+      <div className="tabbar editor-tabs" role="tablist">
         {tabs.map((path) => (
           <div
+            aria-selected={path === active}
             className={path === active ? "tab active" : "tab"}
             key={path}
             onClick={() => session.setActiveTab(path)}
+            onKeyDown={activateOnKey(() => session.setActiveTab(path))}
             onMouseDown={(e) => {
               if (e.button === 1) {
                 e.preventDefault();
                 session.closeTab(path);
               }
             }}
+            role="tab"
+            tabIndex={0}
             title={path}
           >
             {path.split("/").at(-1)}

@@ -89,7 +89,10 @@ function worlds(g, set) {
 // and how many share the name. `default` first, then by name.
 const spawnPointsCache = new Map();
 function spawnPoints({ g, key, names, read, set }, world, bubbleIndex) {
-  const root = world === undefined ? undefined : read(world, g.s_world).bubbles[bubbleIndex];
+  const root =
+    world === undefined
+      ? undefined
+      : read(world, g.s_world).bubbles[bubbleIndex];
   if (!root) {
     return [];
   }
@@ -107,7 +110,12 @@ function spawnPoints({ g, key, names, read, set }, world, bubbleIndex) {
         continue;
       }
       const [x, y, z] = point.position.map((n) => Math.round(n * 100) / 100);
-      byHash.set(hash, { count: 1, hash: hex(hash), name: names.get(hash) ?? hex(hash), position: [x, y, z] });
+      byHash.set(hash, {
+        count: 1,
+        hash: hex(hash),
+        name: names.get(hash) ?? hex(hash),
+        position: [x, y, z],
+      });
     }
   }
   const rank = (p) => {
@@ -116,7 +124,9 @@ function spawnPoints({ g, key, names, read, set }, world, bubbleIndex) {
     }
     return p.name.startsWith("0x") ? 2 : 1;
   };
-  const points = [...byHash.values()].sort((a, b) => rank(a) - rank(b) || a.name.localeCompare(b.name));
+  const points = [...byHash.values()].sort(
+    (a, b) => rank(a) - rank(b) || a.name.localeCompare(b.name)
+  );
   spawnPointsCache.set(`${key}|${root.tag}`, points);
   return points;
 }
@@ -126,7 +136,12 @@ const slicesCache = new Map();
 // Every bubble state of the scenario: state 0 is the bubble's own, a later
 // one a phase's (its unknown04 is fnv1 of the phase's name). A state's spawn
 // points are its bubble's, from the world the descriptor names.
-export function readSlices({ build, dictionary: dictionaryDir, packages, scenario }) {
+export function readSlices({
+  build,
+  dictionary: dictionaryDir,
+  packages,
+  scenario,
+}) {
   if (!(packages && build && scenario && HEX.test(scenario))) {
     throw new Error("slices needs packages, build and scenario (hex)");
   }
@@ -138,7 +153,8 @@ export function readSlices({ build, dictionary: dictionaryDir, packages, scenari
   }
   const g = gibbon(build);
   const set = packageSet(g, packages);
-  const read = (tag, definition) => g.read_definition(set.read_tag(tag), definition);
+  const read = (tag, definition) =>
+    g.read_definition(set.read_tag(tag), definition);
   const names = dictionary(dictionaryDir);
   const client = read(scenarioTag, g.s_scenario_client);
   const worldRoots = worlds(g, set);
@@ -146,7 +162,10 @@ export function readSlices({ build, dictionary: dictionaryDir, packages, scenari
   client.bubbles.forEach((bubble, index) => {
     bubble.states.forEach((state, stateIndex) => {
       const descriptor = read(state.descriptor, g.s_slice_descriptor);
-      const blueprints = read(descriptor.blueprint_set, g.s_client_blueprint_set);
+      const blueprints = read(
+        descriptor.blueprint_set,
+        g.s_client_blueprint_set
+      );
       const bundles = (list) => list.map(({ tag }) => hex(tag));
       const regionName = names.get(state.region_name_hash >>> 0);
       const slice = {
@@ -161,7 +180,13 @@ export function readSlices({ build, dictionary: dictionaryDir, packages, scenari
         region: regionName ?? hex(state.region_name_hash),
         regionHash: hex(state.region_name_hash),
         spawnPoints: spawnPoints(
-          { g, key: `${packages}|${build}|${dictionaryDir ?? ""}`, names, read, set },
+          {
+            g,
+            key: `${packages}|${build}|${dictionaryDir ?? ""}`,
+            names,
+            read,
+            set,
+          },
           worldRoots.get((descriptor.world_hash ?? descriptor.unknown08) >>> 0),
           descriptor.bubble_index
         ),
@@ -212,11 +237,16 @@ export function handleData(req, res) {
         send(404, { error: `no ${url.pathname}` });
     }
   } catch (error) {
-    send(500, { error: error instanceof Error ? error.message : String(error) });
+    send(500, {
+      error: error instanceof Error ? error.message : String(error),
+    });
   }
 }
 
-if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+if (
+  process.argv[1] &&
+  path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)
+) {
   const at = process.argv.indexOf("--port");
   const port = at >= 0 ? Number(process.argv[at + 1]) : 0;
   const server = createServer(handleData);

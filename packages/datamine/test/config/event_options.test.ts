@@ -4,7 +4,6 @@ import {
   e_event_level,
   k_event_level_none,
 } from "../../src/blam/cseries/event_levels.ts";
-import { k_event_line_options_default } from "../../src/blam/cseries/event_log_format.ts";
 import { e_event_response } from "../../src/blam/cseries/event_response.ts";
 import {
   event_log_definitions,
@@ -33,7 +32,7 @@ describe("events_config_resolve", () => {
       },
       spam_mode: "console_only",
       text_encoding: "utf8",
-      line: k_event_line_options_default,
+      layout: "3.1",
       date_utc: false,
       write_files: true,
       separate_session_reports: false,
@@ -54,7 +53,7 @@ describe("events_config_resolve", () => {
       name: "mine",
       version_string: "v 1",
       initial_levels: { log: k_event_level_none },
-      line: { level: "upper" },
+      layout: "1.1",
       full_log: false,
       trim_bytes: 5,
     });
@@ -65,10 +64,7 @@ describe("events_config_resolve", () => {
       log: k_event_level_none,
       remote_log: e_event_level.error,
     });
-    expect(config.line).toEqual({
-      ...k_event_line_options_default,
-      level: "upper",
-    });
+    expect(config.layout).toBe("1.1");
     expect(config.full_log).toBe(false);
     expect(config.trim_bytes).toBe(5);
     expect(config.append).toBe(true);

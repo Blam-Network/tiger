@@ -1,12 +1,7 @@
-// Reads the text logs: the ones this package writes, whose banner names their columns, the
-// game's own report files and the datamine text exports. The parser is incremental, so a viewer
+// Reads the text logs: the Halo style and Destiny style report files, which are the ones this
+// package writes too, and the datamine text exports. The parser is incremental, so a viewer
 // can feed it chunks as they arrive.
 
-import {
-  event_line_columns_parse,
-  k_event_banner_columns_prefix,
-  type s_event_line_options,
-} from "../blam/cseries/event_log_format.ts";
 import { data_mine_byte_order_from_marker } from "../blam/data_mining/data_mine_formats.ts";
 import { DatamineError } from "../datamine_error.ts";
 import {
@@ -39,10 +34,6 @@ const k_datamine_text_start_regex = k_halo_style_start_regex;
 // "[(type)description:(type)description]" at the end of a line.
 const k_context_regex = /^(?<text>.*?) (?<context>\[\(.*\])$/s;
 const k_banner_rule_regex = /^={20,}\s*$/;
-// "columns: date=long,event_index,thread_id,level=lower,context"
-const k_columns_line_regex = new RegExp(
-  `^${k_event_banner_columns_prefix}\\s*(?<columns>.*?)\\s*$`
-);
 const k_datamine_banner_regex = /^blamnet datamine (?<version>.*)$/;
 const k_line_break_regex = /\r?\n/;
 const k_byte_order_mark = "﻿";
@@ -77,62 +68,10 @@ function date_from_groups(
   );
 }
 
-// What the lines of a banner-announced log look like for one set of columns. The level is
-// the last column, so the rest of the line is the text and, when the column is on, the context.
-interface s_event_log_grammar {
-  columns: s_event_line_options;
-  line: RegExp;
-  start: RegExp;
-}
-
-const k_date_short_source = String.raw`(?<date>(?<month>\d{2})\.(?<day>\d{2})\.(?<year>\d{2}) (?<hour>\d{2}):(?<minute>\d{2}):(?<second>\d{2})\.(?<milli>\d{3}))`;
-const k_date_long_source = String.raw`(?<date>(?<month>\d{2})/(?<day>\d{2})/(?<year>\d{4}) (?<hour>\d{2}):(?<minute>\d{2}):(?<second>\d{2})\.(?<milli>\d{3}))`;
-// One of the three session clocks of a netbuf column, or twelve spaces.
-const k_netbuf_clock_source = String.raw`(?:\d{2}:\d{2}:\d{2}\.\d{3}| {12})`;
-const k_netbuf_source = `(?: (?<prefix>${k_netbuf_clock_source} ${k_netbuf_clock_source} ${k_netbuf_clock_source}))?`;
-const k_level_upper_source =
-  " (?<level>verbose|status |message|WARNING|-ERROR-|-FATAL-) (?<rest>.*)";
-const k_level_lower_source =
-  " (?<level>verbose|status|message|warning|error|critical) (?<rest>.*)";
-
-const g_event_log_grammars = new Map<string, s_event_log_grammar>();
-
-function event_log_grammar(columns: s_event_line_options): s_event_log_grammar {
-  const key = JSON.stringify(columns);
-  let grammar = g_event_log_grammars.get(key);
-  if (!grammar) {
-    const fixed = [
-      columns.date === "short" ? k_date_short_source : k_date_long_source,
-    ];
-    if (columns.event_index) {
-      fixed.push(String.raw` (?<index>\d{7,})`);
-    }
-    if (columns.game_time) {
-      fixed.push(String.raw` g(?<game>\d{8,})(?: f(?<frame>\d{7,}))?`);
-    }
-    if (columns.thread_id) {
-      fixed.push(" (?<thread>[0-9A-Fa-f]{8})");
-    }
-    const level =
-      columns.level === "upper" ? k_level_upper_source : k_level_lower_source;
-    grammar = {
-      columns,
-      start: new RegExp(`^${fixed.join("")}(?: |$)`),
-      line: new RegExp(`^${fixed.join("")}${k_netbuf_source}${level}$`, "s"),
-    };
-    g_event_log_grammars.set(key, grammar);
-  }
-  return grammar;
-}
-
-// A halo style line also fits the datamine text pattern, so the tighter formats go first. A
-// "columns:" line gives away a log this package wrote, whose lines have no fixed shape.
+// A halo style line also fits the datamine text pattern, so the tighter formats go first.
 function log_detect_line(line: string): t_log_text_format | undefined {
   if (k_datamine_banner_regex.test(line)) {
     return "datamine_text";
-  }
-  if (k_columns_line_regex.test(line)) {
-    return "event_log";
   }
   if (k_destiny_style_line_regex.test(line)) {
     return "destiny_style_log";
@@ -328,48 +267,6 @@ function line_start_datamine_text(line: string): s_line_start | undefined {
   };
 }
 
-function line_start_event_log(
-  line: string,
-  grammar: s_event_log_grammar
-): s_line_start | undefined {
-  const groups = grammar.line.exec(line)?.groups;
-  if (!groups) {
-    return;
-  }
-  const fields: Partial<s_log_entry> = {};
-  if (groups.index !== undefined) {
-    fields.event_index = Number.parseInt(groups.index, 10);
-  }
-  if (groups.game !== undefined) {
-    fields.game_time = Number.parseInt(groups.game, 10);
-  }
-  if (groups.frame !== undefined) {
-    fields.frame_index = Number.parseInt(groups.frame, 10);
-  }
-  if (groups.thread !== undefined) {
-    fields.thread_id = Number.parseInt(groups.thread, 16);
-  }
-  if (groups.prefix !== undefined) {
-    fields.custom_prefix = groups.prefix;
-  }
-  // The level is padded to a column before the one separating space.
-  let rest = groups.rest;
-  if (grammar.columns.level === "lower") {
-    let padding = k_destiny_style_level_column_width - groups.level.length;
-    while (padding > 0 && rest.startsWith(" ")) {
-      rest = rest.slice(1);
-      padding--;
-    }
-  }
-  return {
-    date: date_from_groups(groups, grammar.columns.date === "long"),
-    date_text: groups.date,
-    level_text: groups.level.trim(),
-    rest,
-    fields,
-  };
-}
-
 // An entry waits here until the next one starts, because its text can go on for more lines.
 interface s_pending_entry {
   continuation: string[];
@@ -384,8 +281,6 @@ interface s_pending_entry {
 
 export class c_log_text_parser {
   private m_format: t_log_text_format | undefined;
-  // The columns the latest banner named, for event_log.
-  private m_grammar: s_event_log_grammar | undefined;
   private m_banner_version: string | undefined;
   private m_partial = "";
   private m_line_number = 0;
@@ -401,15 +296,9 @@ export class c_log_text_parser {
   private m_finished = false;
   private m_detect_held: { line: string; number: number }[] = [];
 
-  // columns: for event_log, the columns of lines that come with no banner of their own before
-  // them, such as a single entry read out of the middle of a file.
-  constructor(
-    format?: t_log_source_format,
-    options: { columns?: s_event_line_options } = {}
-  ) {
+  constructor(format?: t_log_source_format) {
     if (
       format !== undefined &&
-      format !== "event_log" &&
       format !== "halo_style_log" &&
       format !== "destiny_style_log" &&
       format !== "datamine_text"
@@ -417,14 +306,6 @@ export class c_log_text_parser {
       throw new DatamineError(`${format} is not a text log format`);
     }
     this.m_format = format;
-    if (options.columns) {
-      this.m_grammar = event_log_grammar(options.columns);
-    }
-  }
-
-  // The columns lines are read with right now, for event_log.
-  get columns(): s_event_line_options | undefined {
-    return this.m_grammar?.columns;
   }
 
   // Undefined until a banner or a log line gives it away, when none was passed in.
@@ -516,8 +397,6 @@ export class c_log_text_parser {
 
   private line_is_start(line: string): boolean {
     switch (this.m_format) {
-      case "event_log":
-        return this.m_grammar?.start.test(line) ?? false;
       case "halo_style_log":
         return k_halo_style_start_regex.test(line);
       case "destiny_style_log":
@@ -594,9 +473,6 @@ export class c_log_text_parser {
     const version =
       k_datamine_banner_regex.exec(version_line)?.groups?.version.trim() ??
       version_line;
-    if (this.m_format === "event_log") {
-      this.columns_accept(lines);
-    }
     if (this.m_banner_version === undefined && version.length > 0) {
       this.m_banner_version = version;
     }
@@ -605,9 +481,6 @@ export class c_log_text_parser {
       number: this.m_session_count,
       version,
     };
-    if (this.m_format === "event_log" && this.m_grammar) {
-      session.columns = this.m_grammar.columns;
-    }
     entries.push({
       kind: "session",
       session,
@@ -623,27 +496,9 @@ export class c_log_text_parser {
     });
   }
 
-  // The banner's "columns:" line sets the line grammar until the next banner says otherwise.
-  private columns_accept(banner_lines: readonly string[]): void {
-    for (const line of banner_lines) {
-      const text = k_columns_line_regex.exec(line.trim())?.groups?.columns;
-      const columns =
-        text === undefined ? undefined : event_line_columns_parse(text);
-      if (columns) {
-        this.m_grammar = event_log_grammar(columns);
-        return;
-      }
-    }
-  }
-
   private entry_start(line: string, number: number): void {
     let start: s_line_start | undefined;
     switch (this.m_format) {
-      case "event_log":
-        start = this.m_grammar
-          ? line_start_event_log(line, this.m_grammar)
-          : undefined;
-        break;
       case "halo_style_log":
         start = line_start_halo_style(line);
         break;
@@ -689,10 +544,9 @@ export class c_log_text_parser {
     }
     let text = [pending.first_text, ...pending.continuation].join("\n");
     let context: string | undefined;
-    const halo_style = this.m_format === "halo_style_log";
-    if (halo_style || this.m_grammar?.columns.context) {
-      // A halo style line is "text context" and keeps the space when there is no context.
-      if (halo_style && text.endsWith(" ")) {
+    // A halo style line is "text context" and keeps the space when there is no context.
+    if (this.m_format === "halo_style_log") {
+      if (text.endsWith(" ")) {
         text = text.slice(0, -1);
       }
       const match = k_context_regex.exec(text)?.groups;

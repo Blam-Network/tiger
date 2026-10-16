@@ -14,15 +14,13 @@ import {
   e_event_level,
   type t_event_level_threshold,
 } from "../blam/cseries/event_levels.ts";
-import {
-  event_line_options_resolve,
-  type s_event_line_options,
-} from "../blam/cseries/event_log_format.ts";
+import { k_event_layout_default } from "../blam/cseries/event_log_format.ts";
 import {
   e_event_response,
   type t_event_response_flags,
 } from "../blam/cseries/event_response.ts";
 import type { t_event_spam_mode } from "../blam/cseries/event_spam.ts";
+import type { t_data_mine_header_layout } from "../blam/data_mining/data_mine_formats.ts";
 
 export const k_event_reports_directory = "reports";
 export const k_event_error_snapshot_directory = "error_snapshot";
@@ -52,8 +50,10 @@ export interface s_events_initialize_options {
   initial_levels?: Partial<s_event_initial_levels>;
   // Flush the logs synchronously when the process exits. Default true.
   install_exit_flush?: boolean;
-  // The columns of a log line, see s_event_line_options.
-  line?: Partial<s_event_line_options>;
+  // The datamine header layout the log lines are written for: "3.1" gives Destiny's lines, every
+  // other layout Halo's, see data_mine_layout_behaviour. Pass the same layout to the datamine; the
+  // two are not tied together. Default "3.1".
+  layout?: t_data_mine_header_layout;
   // Shown in the live server's hello. Default none.
   name?: string;
   providers?: s_events_providers;
@@ -95,7 +95,7 @@ export interface s_events_config {
   debug_log_includes_unfiled: boolean;
   full_log: boolean;
   initial_levels: s_event_initial_levels;
-  line: s_event_line_options;
+  layout: t_data_mine_header_layout;
   name: string | undefined;
   root: string;
   root_debug_log: boolean;
@@ -126,7 +126,7 @@ export function events_config_resolve(
     },
     spam_mode: options.spam_mode ?? "console_only",
     text_encoding: options.text_encoding ?? "utf8",
-    line: event_line_options_resolve(options.line),
+    layout: options.layout ?? k_event_layout_default,
     date_utc: options.date_utc ?? false,
     write_files: options.write_files ?? true,
     separate_session_reports: options.separate_session_reports ?? false,

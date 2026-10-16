@@ -6,7 +6,9 @@ import WebSocket from "ws";
 import { currentSlice, loadsInSlice } from "../src/current-slice.ts";
 
 const address = process.argv[2] ?? "127.0.0.1:8199";
-const DATA_SERVICE = fileURLToPath(new URL("./data-service.mjs", import.meta.url));
+const DATA_SERVICE = fileURLToPath(
+  new URL("./data-service.mjs", import.meta.url)
+);
 const LISTENING = /listening on (\d+)/;
 const socket = new WebSocket(`ws://${address}/debug/dap`);
 const pending = new Map();
@@ -34,9 +36,14 @@ socket.on("message", (data) => {
 function request(command, args = {}) {
   seq += 1;
   const id = seq;
-  socket.send(JSON.stringify({ seq: id, type: "request", command, arguments: args }));
+  socket.send(
+    JSON.stringify({ seq: id, type: "request", command, arguments: args })
+  );
   return new Promise((resolve, reject) => {
-    const timer = setTimeout(() => reject(new Error(`${command}: timeout`)), 5000);
+    const timer = setTimeout(
+      () => reject(new Error(`${command}: timeout`)),
+      5000
+    );
     pending.set(id, (response) => {
       clearTimeout(timer);
       if (response.success) {
@@ -124,8 +131,14 @@ await step("tiger/activity", async () => {
     }
     await new Promise((r) => setTimeout(r, 200));
   }
-  check(threads.some((t) => t.name.endsWith("sc_main")), "no sc_main");
-  check(threads.every((t) => typeof t.world === "string"), "a thread has no world");
+  check(
+    threads.some((t) => t.name.endsWith("sc_main")),
+    "no sc_main"
+  );
+  check(
+    threads.every((t) => typeof t.world === "string"),
+    "a thread has no world"
+  );
   return threads.map((t) => `${t.name}:${t.state}:${t.world}`).join(", ");
 });
 await step("threads", async () => {
@@ -163,14 +176,18 @@ await step("stopped event", async () => {
     // Say what the target was doing instead.
     const { targets } = await request("tiger/targets");
     const activity = await request("tiger/activity", { targetId });
-    const states = activity.threads.map((t) => `${t.name}:${t.state}:${t.line}`);
+    const states = activity.threads.map(
+      (t) => `${t.name}:${t.state}:${t.line}`
+    );
     throw new Error(
       `${error.message}; target ${JSON.stringify(targets[0])}; threads ${states.join(" ")}`
     );
   });
   stoppedThread = stopped.body.threadId;
   check(stopped.body.reason === "breakpoint", `reason ${stopped.body.reason}`);
-  const { stackFrames } = await request("stackTrace", { threadId: stoppedThread });
+  const { stackFrames } = await request("stackTrace", {
+    threadId: stoppedThread,
+  });
   check(stackFrames[0].line === breakLine, `top line ${stackFrames[0].line}`);
   frameId = stackFrames[0].id;
   return `thread ${stoppedThread} at line ${stackFrames[0].line}`;
@@ -189,7 +206,10 @@ await step("scopes + variables", async () => {
   return `${names.join("/")}; counter = ${counter.value}`;
 });
 await step("evaluate (BungieScript)", async () => {
-  const body = await request("evaluate", { expression: "counter * 2 + 1", frameId });
+  const body = await request("evaluate", {
+    expression: "counter * 2 + 1",
+    frameId,
+  });
   check(body.result !== undefined, "no result");
   return `counter * 2 + 1 = ${body.result}`;
 });
@@ -197,7 +217,10 @@ await step("tiger/bundles", async () => {
   const { bundles } = await request("tiger/bundles", { targetId });
   const row = bundles[0]?.rows.find((r) => r.name === "sq_guards");
   check(row, "no sq_guards row");
-  check(row.actions.some((a) => a.name === "place"), "no place action");
+  check(
+    row.actions.some((a) => a.name === "place"),
+    "no place action"
+  );
   check(bundles[0].world === "private", `bundle world ${bundles[0].world}`);
   return `${bundles.length} bundle(s), ${row.type} ${row.name}, world ${bundles[0].world}, bubbles ${bundles[0].bubbles?.join(",")}`;
 });
@@ -220,9 +243,12 @@ await step("tiger/incidentKinds", async () => {
   return kinds.map((k) => k.name).join(", ");
 });
 await step('evaluate "/threads"', async () => {
-  const { result } = await request("evaluate", { expression: "/threads", targetId });
+  const { result } = await request("evaluate", {
+    expression: "/threads",
+    targetId,
+  });
   check(String(result).includes("sc_main"), "no sc_main in /threads");
-  return String(result).split("\n").length + " line(s)";
+  return `${String(result).split("\n").length} line(s)`;
 });
 await step("tiger/players", async () => {
   const { players } = await request("tiger/players");
@@ -236,11 +262,26 @@ await step("current slice filter", async () => {
   const { bundles } = await request("tiger/bundles", { targetId });
   const slice = currentSlice(players, undefined, targetId);
   check(slice === "0.0", `slice ${slice}`);
-  check(currentSlice(players, undefined, "elsewhere") === undefined, "slice outside the target");
-  check(bundles.every((b) => loadsInSlice(b, slice)), "a 0.0 bundle filtered out");
-  check(loadsInSlice({ bubbles: ["0.0"] }, "0.2"), "base state not kept in a phase");
-  check(!loadsInSlice({ bubbles: ["0.0"] }, "3.0"), "another bubble's bundle kept");
-  check(!loadsInSlice({}, "3.0") && !loadsInSlice({ bubbles: [] }, "3.0"), "global bundle kept");
+  check(
+    currentSlice(players, undefined, "elsewhere") === undefined,
+    "slice outside the target"
+  );
+  check(
+    bundles.every((b) => loadsInSlice(b, slice)),
+    "a 0.0 bundle filtered out"
+  );
+  check(
+    loadsInSlice({ bubbles: ["0.0"] }, "0.2"),
+    "base state not kept in a phase"
+  );
+  check(
+    !loadsInSlice({ bubbles: ["0.0"] }, "3.0"),
+    "another bubble's bundle kept"
+  );
+  check(
+    !(loadsInSlice({}, "3.0") || loadsInSlice({ bubbles: [] }, "3.0")),
+    "global bundle kept"
+  );
   return `slice ${slice}, ${bundles.length} bundle(s) shown`;
 });
 let server;
@@ -264,7 +305,9 @@ await step("data service /slices", async () => {
           resolve(Number(match[1]));
         }
       });
-      service.once("exit", (code) => reject(new Error(`data service exited ${code}`)));
+      service.once("exit", (code) =>
+        reject(new Error(`data service exited ${code}`))
+      );
     });
     const query = new URLSearchParams({
       build: server.build,
@@ -272,13 +315,27 @@ await step("data service /slices", async () => {
       packages: server.packagesDir,
       scenario,
     });
-    const body = await (await fetch(`http://127.0.0.1:${port}/slices?${query}`)).json();
+    const body = await (
+      await fetch(`http://127.0.0.1:${port}/slices?${query}`)
+    ).json();
     check(!body.error, body.error);
-    check(body.slices.some((s) => s.region === "array"), "no array region");
+    check(
+      body.slices.some((s) => s.region === "array"),
+      "no array region"
+    );
     const array = body.slices.find((s) => s.region === "array");
-    check(body.slices.some((s) => s.spawnPoints?.length), "no slice has spawnPoints");
-    const names = array?.spawnPoints?.map((p) => (p.count > 1 ? `${p.name}×${p.count}` : p.name)) ?? [];
-    check(names.includes("default") && names.includes("array_to_dome_c×3"), `array spawn points ${names}`);
+    check(
+      body.slices.some((s) => s.spawnPoints?.length),
+      "no slice has spawnPoints"
+    );
+    const names =
+      array?.spawnPoints?.map((p) =>
+        p.count > 1 ? `${p.name}×${p.count}` : p.name
+      ) ?? [];
+    check(
+      names.includes("default") && names.includes("array_to_dome_c×3"),
+      `array spawn points ${names}`
+    );
     return `${scenario}: ${body.slices.length} slices, ${body.slices
       .slice(0, 4)
       .map((s) => `${s.handle} ${s.region}${s.public ? " (public)" : ""}`)

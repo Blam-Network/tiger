@@ -123,7 +123,9 @@ dbg.registerCommand("teleport", {
   usage: "<bubble.state> [spawn point] | clear",
   run: (args) => {
     host.writer.note(`mock teleport ${args.join(" ")}`);
-    return args[0] === "clear" ? "teleport cleared" : `teleport to ${args.join(" ")}`;
+    return args[0] === "clear"
+      ? "teleport cleared"
+      : `teleport to ${args.join(" ")}`;
   },
 });
 

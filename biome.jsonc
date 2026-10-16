@@ -71,6 +71,17 @@
       }
     },
     {
+      // The data service reads u32 hashes as unsigned with `>>> 0`.
+      "includes": ["packages/bullshcript-debugger/scripts/data-service.mjs"],
+      "linter": {
+        "rules": {
+          "suspicious": {
+            "noBitwiseOperators": "off"
+          }
+        }
+      }
+    },
+    {
       // Name hash cracking: FNV run forwards and backwards.
       "includes": ["scripts/names/**"],
       "linter": {

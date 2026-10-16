@@ -1,9 +1,16 @@
 // Bottom panel: the console (trace stream and REPL), sent rows and the world.
-import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import type { TigerHit } from "../protocol";
 import { type ConsoleLine, session, useSession } from "../session";
 import { VarNode } from "./Inspect";
-import { JsonTree, TabBar } from "./ui";
+import { activateOnKey, JsonTree, TabBar } from "./ui";
 
 const TABS = ["Console", "Sent", "World"] as const;
 type Tab = (typeof TABS)[number];
@@ -26,8 +33,10 @@ export function BottomPanel() {
   );
 }
 
-// Keeps a scroller pinned to the bottom unless the user scrolled up.
-function useStickToBottom(dep: unknown) {
+// Keeps a scroller pinned to the bottom unless the user scrolled up. Runs on
+// every render of the component with the scroller, which renders when its
+// lines change.
+function useStickToBottom() {
   const ref = useRef<HTMLDivElement>(null);
   const pinned = useRef(true);
   useLayoutEffect(() => {
@@ -35,7 +44,7 @@ function useStickToBottom(dep: unknown) {
     if (el && pinned.current) {
       el.scrollTop = el.scrollHeight;
     }
-  }, [dep]);
+  });
   const onScroll = () => {
     const el = ref.current;
     if (el) {
@@ -84,12 +93,16 @@ function ConsoleTab() {
       }
     }
     const needle = filter.toLowerCase();
-    return { bad: false, matcher: (text: string) => text.toLowerCase().includes(needle) };
+    return {
+      bad: false,
+      matcher: (text: string) => text.toLowerCase().includes(needle),
+    };
   }, [filter, regex]);
   const shown = useMemo(() => {
     const out = lines.filter((line) => {
       if (line.kind === "trace" || line.kind === "hit") {
-        const target = line.kind === "trace" ? line.entry.targetId : line.hit.targetId;
+        const target =
+          line.kind === "trace" ? line.entry.targetId : line.hit.targetId;
         if (target !== targetId) {
           return false;
         }
@@ -101,7 +114,7 @@ function ConsoleTab() {
     });
     return out.slice(-SHOWN);
   }, [lines, targetId, thread, matcher]);
-  const scroller = useStickToBottom(shown);
+  const scroller = useStickToBottom();
   return (
     <>
       <div className="panel-tools">
@@ -112,7 +125,11 @@ function ConsoleTab() {
           value={filter}
         />
         <label className="check">
-          <input checked={regex} onChange={(e) => setRegex(e.target.checked)} type="checkbox" />
+          <input
+            checked={regex}
+            onChange={(e) => setRegex(e.target.checked)}
+            type="checkbox"
+          />
           regex
         </label>
         <select onChange={(e) => setThread(e.target.value)} value={thread}>
@@ -127,7 +144,11 @@ function ConsoleTab() {
           Clear
         </button>
       </div>
-      <div className="console-lines" onScroll={scroller.onScroll} ref={scroller.ref}>
+      <div
+        className="console-lines"
+        onScroll={scroller.onScroll}
+        ref={scroller.ref}
+      >
         {shown.map((line) => (
           <ConsoleRow key={line.id} line={line} />
         ))}
@@ -141,17 +162,36 @@ function ConsoleRow({ line }: { line: ConsoleLine }) {
   switch (line.kind) {
     case "trace": {
       const { entry } = line;
-      const where = entry.path && entry.line ? { line: entry.line, path: entry.path } : undefined;
+      const where =
+        entry.path && entry.line
+          ? { line: entry.line, path: entry.path }
+          : undefined;
       const logpoint = entry.text.startsWith("logpoint ");
-      return (
-        <div
-          className={`console-row ${logpoint ? "logpoint" : ""} ${where ? "clickable" : ""}`}
-          onClick={() => where && void session.openSource(where.path, where.line)}
-          title={where ? `${where.path}:${where.line}` : undefined}
-        >
+      const cells = (
+        <>
           <span className="tick">{entry.tick}</span>
           <span className="thread">{entry.thread ?? ""}</span>
           <span className="text">{entry.text}</span>
+        </>
+      );
+      // a row with a source location jumps there
+      if (where) {
+        return (
+          <button
+            className={`bare console-row clickable ${logpoint ? "logpoint" : ""}`}
+            onClick={() =>
+              session.run(session.openSource(where.path, where.line))
+            }
+            title={`${where.path}:${where.line}`}
+            type="button"
+          >
+            {cells}
+          </button>
+        );
+      }
+      return (
+        <div className={`console-row ${logpoint ? "logpoint" : ""}`}>
+          {cells}
         </div>
       );
     }
@@ -171,7 +211,11 @@ function ConsoleRow({ line }: { line: ConsoleLine }) {
             <VarNode
               depth={0}
               epoch={line.epoch}
-              variable={{ name: "", value: line.text, variablesReference: line.variablesReference }}
+              variable={{
+                name: "",
+                value: line.text,
+                variablesReference: line.variablesReference,
+              }}
             />
           ) : (
             <pre className="text">{line.text}</pre>
@@ -193,22 +237,30 @@ function HitRow({ hit }: { hit: TigerHit }) {
   const [open, setOpen] = useState(false);
   return (
     <div className="console-row hit">
-      <div className="clickable" onClick={() => setOpen(!open)}>
+      <div
+        aria-expanded={open}
+        className="clickable"
+        onClick={() => setOpen(!open)}
+        onKeyDown={activateOnKey(() => setOpen(!open))}
+        role="treeitem"
+        tabIndex={0}
+      >
         <span className="tick">{hit.tick}</span>
         <span className="twisty">{open ? "▾" : "▸"}</span>
         <span className="text">
           breakpoint met in a host call at{" "}
-          <a
-            draggable={false}
+          <button
+            className="bare link"
             onClick={(e) => {
               e.stopPropagation();
               if (hit.path && hit.line) {
-                void session.openSource(hit.path, hit.line);
+                session.run(session.openSource(hit.path, hit.line));
               }
             }}
+            type="button"
           >
             {hit.path?.split("/").at(-1)}:{hit.line}
-          </a>{" "}
+          </button>{" "}
           (not pausable)
         </span>
       </div>
@@ -216,11 +268,15 @@ function HitRow({ hit }: { hit: TigerHit }) {
         <div className="hit-detail">
           {Object.entries(hit.locals).map(([name, value]) => (
             <div key={name}>
-              <span className="var-name">{name}</span> = <span className="var-value">{value}</span>
+              <span className="var-name">{name}</span> ={" "}
+              <span className="var-value">{value}</span>
             </div>
           ))}
-          {hit.frames.map((frame, i) => (
-            <div className="dim" key={`${i}-${frame.name}`}>
+          {hit.frames.map((frame) => (
+            <div
+              className="dim"
+              key={`${frame.name}:${frame.path}:${frame.line}`}
+            >
               at {frame.name} {frame.path?.split("/").at(-1)}:{frame.line}
             </div>
           ))}
@@ -243,7 +299,9 @@ function Repl() {
       return [];
     }
     const [, verb = "", space] = match;
-    return commands.filter((c) => (space ? c.verb === verb : c.verb.startsWith(verb)));
+    return commands.filter((c) =>
+      space ? c.verb === verb : c.verb.startsWith(verb)
+    );
   }, [text, commands]);
   const complete = (verb: string) => setText(`/${verb} `);
   const onKey = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -254,9 +312,12 @@ function Repl() {
         complete(first.verb);
       }
     } else if (e.key === "Enter" && text.trim()) {
-      history.current = [...history.current.filter((h) => h !== text), text].slice(-200);
+      history.current = [
+        ...history.current.filter((h) => h !== text),
+        text,
+      ].slice(-200);
       at.current = history.current.length;
-      void session.repl(text);
+      session.run(session.repl(text));
       setText("");
     } else if (e.key === "ArrowUp" && at.current > 0) {
       e.preventDefault();
@@ -273,12 +334,18 @@ function Repl() {
       {hints.length > 0 && (
         <div className="repl-hints">
           {hints.slice(0, 12).map((c) => (
-            <div className="repl-hint" key={c.verb} onMouseDown={(e) => {
-              e.preventDefault();
-              complete(c.verb);
-            }}>
-              <span className="verb">/{c.verb}</span> <span className="dim">{c.usage}</span>
-            </div>
+            <button
+              className="bare repl-hint"
+              key={c.verb}
+              onMouseDown={(e) => {
+                e.preventDefault();
+                complete(c.verb);
+              }}
+              type="button"
+            >
+              <span className="verb">/{c.verb}</span>{" "}
+              <span className="dim">{c.usage}</span>
+            </button>
           ))}
         </div>
       )}
@@ -310,16 +377,24 @@ function SentTab() {
         .slice(-SHOWN),
     [sent, targetId, filter]
   );
-  const scroller = useStickToBottom(shown);
+  const scroller = useStickToBottom();
   return (
     <>
       <div className="panel-tools">
-        <input onChange={(e) => setFilter(e.target.value)} placeholder="Filter by key or thread" value={filter} />
+        <input
+          onChange={(e) => setFilter(e.target.value)}
+          placeholder="Filter by key or thread"
+          value={filter}
+        />
         <button onClick={() => session.clearSent()} type="button">
           Clear
         </button>
       </div>
-      <div className="console-lines" onScroll={scroller.onScroll} ref={scroller.ref}>
+      <div
+        className="console-lines"
+        onScroll={scroller.onScroll}
+        ref={scroller.ref}
+      >
         {shown.length === 0 && <div className="empty">Nothing sent yet</div>}
         {shown.map((entry) => (
           <SentRow entry={entry} key={entry.seq} />
@@ -337,22 +412,39 @@ function changeKind(change: unknown): string {
         return record[key] as string;
       }
     }
-    return Object.keys(record).filter((k) => k !== "item").join(",");
+    return Object.keys(record)
+      .filter((k) => k !== "item")
+      .join(",");
   }
   return String(change);
 }
 
-function SentRow({ entry }: { entry: { change: unknown; key: string; seq: number; thread: string | undefined; tick: number } }) {
+function SentRow({
+  entry,
+}: {
+  entry: {
+    change: unknown;
+    key: string;
+    seq: number;
+    thread: string | undefined;
+    tick: number;
+  };
+}) {
   const [open, setOpen] = useState(false);
   return (
     <div className="console-row">
-      <div className="clickable" onClick={() => setOpen(!open)}>
+      <button
+        aria-expanded={open}
+        className="bare clickable"
+        onClick={() => setOpen(!open)}
+        type="button"
+      >
         <span className="tick">{entry.tick}</span>
         <span className="twisty">{open ? "▾" : "▸"}</span>
         <span className="mono key">{entry.key}</span>
         <span className="thread">{entry.thread ?? ""}</span>
         <span className="text dim">{changeKind(entry.change)}</span>
-      </div>
+      </button>
       {open && (
         <div className="hit-detail">
           <JsonTree open={4} value={entry.change} />
@@ -366,7 +458,8 @@ function WorldTab() {
   const targetId = useSession((s) => s.targetId);
   const [world, setWorld] = useState<Record<string, unknown>>();
   const [auto, setAuto] = useState(true);
-  const refresh = async () => {
+  // Changes only with the target, so the effect below restarts only then.
+  const refresh = useCallback(async () => {
     if (!targetId) {
       setWorld(undefined);
       return;
@@ -376,25 +469,27 @@ function WorldTab() {
     } catch (error) {
       setWorld({ error: String(error) });
     }
-  };
-  const refreshRef = useRef(refresh);
-  refreshRef.current = refresh;
+  }, [targetId]);
   useEffect(() => {
-    void refreshRef.current();
+    session.run(refresh());
     if (!auto) {
       return;
     }
-    const timer = setInterval(() => void refreshRef.current(), 1000);
+    const timer = setInterval(() => session.run(refresh()), 1000);
     return () => clearInterval(timer);
-  }, [auto, targetId]);
+  }, [auto, refresh]);
   return (
     <>
       <div className="panel-tools">
-        <button onClick={() => void refresh()} type="button">
+        <button onClick={() => session.run(refresh())} type="button">
           Refresh
         </button>
         <label className="check">
-          <input checked={auto} onChange={(e) => setAuto(e.target.checked)} type="checkbox" />
+          <input
+            checked={auto}
+            onChange={(e) => setAuto(e.target.checked)}
+            type="checkbox"
+          />
           auto (1 s)
         </label>
       </div>
@@ -406,7 +501,9 @@ function WorldTab() {
             <JsonTree name="itemState" open={1} value={world.itemState} />
             <JsonTree name="objects" open={0} value={world.objects} />
             <JsonTree name="sentByRow" open={0} value={world.sentByRow} />
-            {"error" in world && <div className="error">{String(world.error)}</div>}
+            {"error" in world && (
+              <div className="error">{String(world.error)}</div>
+            )}
           </>
         )}
       </div>

@@ -6,19 +6,19 @@ import { useSyncExternalStore } from "react";
 import { type ConnectionState, DapClient } from "./dap";
 import type {
   Bundle,
+  ConsoleCommand,
   DapBreakpoint,
   DapSource,
   DapStackFrame,
   EvaluateResult,
-  ConsoleCommand,
   IncidentKind,
   StoppedBody,
   TigerActivity,
   TigerHit,
   TigerPlayer,
+  TigerSentEntry,
   TigerServer,
   TigerSlice,
-  TigerSentEntry,
   TigerTarget,
   TigerTraceEntry,
 } from "./protocol";
@@ -57,8 +57,8 @@ export interface Toast {
 export type WatchResult = EvaluateResult | { error: string };
 
 export interface State {
-  activity: TigerActivity | undefined;
   activeTab: string | undefined;
+  activity: TigerActivity | undefined;
   address: string;
   breakpoints: Record<string, BreakpointView[]>;
   // The selected target's bundles, shared by the Bundles tab and Squads.
@@ -70,9 +70,9 @@ export interface State {
   // Bumped on every stopped/continued: frame ids and variable references
   // from before are gone.
   epoch: number;
-  frames: DapStackFrame[];
   // The player whose activity the target selector follows.
   following: string | undefined;
+  frames: DapStackFrame[];
   incidentKinds: IncidentKind[];
   lastStop: StoppedBody | undefined;
   openTabs: string[];
@@ -123,11 +123,11 @@ const errorText = (error: unknown) =>
 
 class Session {
   readonly client = new DapClient();
-  private listeners = new Set<() => void>();
+  private readonly listeners = new Set<() => void>();
   private nextId = 1;
   private polling = false;
   // Slices per target, from the data service; they do not change while it lives.
-  private slicesByTarget = new Map<string, Promise<TigerSlice[]>>();
+  private readonly slicesByTarget = new Map<string, Promise<TigerSlice[]>>();
   state: State = {
     activity: undefined,
     activeTab: undefined,
@@ -163,10 +163,10 @@ class Session {
 
   constructor() {
     this.client.onState = (connection) => this.set({ connection });
-    this.client.onOpen = () => void this.opened();
+    this.client.onOpen = () => this.run(this.opened());
     this.client.onEvent = (event, body) => this.event(event, body);
-    setInterval(() => void this.poll(), POLL_MS);
-    setInterval(() => void this.refreshPlayers(), PLAYERS_POLL_MS);
+    setInterval(() => this.run(this.poll()), POLL_MS);
+    setInterval(() => this.run(this.refreshPlayers()), PLAYERS_POLL_MS);
   }
 
   subscribe = (listener: () => void) => {
@@ -201,7 +201,7 @@ class Session {
       return await this.request(command, args);
     } catch (error) {
       this.toast(`${command}: ${errorText(error)}`, true);
-      return undefined;
+      return;
     }
   }
 
@@ -247,7 +247,7 @@ class Session {
       } catch {
         this.set({ commands: [] });
       }
-      void this.refreshPlayers();
+      this.run(this.refreshPlayers());
       this.slicesByTarget.clear();
       try {
         this.set({ server: await this.request<TigerServer>("tiger/server") });
@@ -260,7 +260,7 @@ class Session {
       // Open tabs may be stale after a server restart.
       this.set({ contents: {} });
       for (const path of this.state.openTabs) {
-        void this.loadContent(path);
+        this.run(this.loadContent(path));
       }
     } catch (error) {
       this.toast(`connect: ${errorText(error)}`, true);
@@ -283,12 +283,13 @@ class Session {
         });
         // A breakpoint or step: show that thread. A pause keeps the selection.
         if (stop.reason !== "pause" && stop.threadId !== undefined) {
-          void this.selectThread(stop.threadId, true);
+          this.run(this.selectThread(stop.threadId, true));
         } else {
-          void this.fetchStack();
+          this.run(this.fetchStack());
         }
-        void this.refreshTargets();
-        void this.refreshActivity();
+        this.run(this.refreshTargets());
+        this.run(this.refreshActivity());
+        this.run(this.refreshBundles());
         return;
       }
       case "continued":
@@ -298,18 +299,19 @@ class Session {
           lastStop: undefined,
           selectedFrameId: undefined,
         });
-        void this.refreshTargets();
-        void this.refreshActivity().then(() => this.fetchStack());
+        this.run(this.refreshTargets());
+        this.run(this.refreshActivity().then(() => this.fetchStack()));
+        this.run(this.refreshBundles());
         return;
       case "thread":
-        void this.refreshActivity();
+        this.run(this.refreshActivity());
         return;
       case "tiger/targets":
         this.slicesByTarget.clear();
         this.applyTargets((body as { targets: TigerTarget[] }).targets);
         // New scripts may verify breakpoints that had nowhere to land.
-        void this.resendBreakpoints();
-        void this.refreshSources();
+        this.run(this.resendBreakpoints());
+        this.run(this.refreshSources());
         return;
       case "tiger/trace":
         this.appendConsole([
@@ -351,7 +353,7 @@ class Session {
       return;
     }
     if (!keep) {
-      void this.selectTarget(targets[0]?.id);
+      this.run(this.selectTarget(targets[0]?.id));
     }
   }
 
@@ -374,13 +376,15 @@ class Session {
   // Moves the target selector to the followed player's activity. True when
   // it is (now) there.
   private followTarget(): boolean {
-    const player = this.state.players.find((p) => p.id === this.state.following);
+    const player = this.state.players.find(
+      (p) => p.id === this.state.following
+    );
     const targetId = player?.targetId;
     if (!(targetId && this.state.targets.some((t) => t.id === targetId))) {
       return false;
     }
     if (targetId !== this.state.targetId) {
-      void this.selectTarget(targetId);
+      this.run(this.selectTarget(targetId));
     }
     return true;
   }
@@ -393,7 +397,11 @@ class Session {
 
   // /teleport is the server's console command, run in the player's activity.
   async teleport(player: TigerPlayer, args: string): Promise<void> {
-    await this.serverCommand(`/teleport ${args}`.trim(), player.targetId, "teleport sent");
+    await this.serverCommand(
+      `/teleport ${args}`.trim(),
+      player.targetId,
+      "teleport sent"
+    );
   }
 
   // Drops the activity host connections of a target, so its players go back
@@ -419,11 +427,19 @@ class Session {
         targetId,
       });
       this.appendConsole([
-        { epoch: this.state.epoch, id: this.nextId++, kind: "result", text: result, variablesReference: 0 },
+        {
+          epoch: this.state.epoch,
+          id: this.nextId++,
+          kind: "result",
+          text: result,
+          variablesReference: 0,
+        },
       ]);
       this.toast(result || fallback);
     } catch (error) {
-      this.appendConsole([{ id: this.nextId++, kind: "error", text: errorText(error) }]);
+      this.appendConsole([
+        { id: this.nextId++, kind: "error", text: errorText(error) },
+      ]);
       this.toast(`${line}: ${errorText(error)}`, true);
     }
   }
@@ -462,7 +478,8 @@ class Session {
   }
 
   private async readSlices(targetId: string): Promise<TigerSlice[]> {
-    const scenario = this.state.targets.find((t) => t.id === targetId)?.meta?.scenario;
+    const scenario = this.state.targets.find((t) => t.id === targetId)?.meta
+      ?.scenario;
     const server = this.state.server;
     if (!scenario) {
       throw new Error("the target has no scenario");
@@ -477,7 +494,10 @@ class Session {
       scenario,
     });
     const response = await fetch(`${await this.dataService()}/slices?${query}`);
-    const body = (await response.json()) as { error?: string; slices?: TigerSlice[] };
+    const body = (await response.json()) as {
+      error?: string;
+      slices?: TigerSlice[];
+    };
     if (!response.ok || body.error) {
       throw new Error(body.error ?? `data service: ${response.status}`);
     }
@@ -569,7 +589,11 @@ class Session {
     }
     const now = activity.threads.find((t) => t.id === selected);
     if (!now) {
-      this.set({ frames: [], selectedFrameId: undefined, selectedThreadId: undefined });
+      this.set({
+        frames: [],
+        selectedFrameId: undefined,
+        selectedThreadId: undefined,
+      });
       return;
     }
     // The selected thread moved on: its old frames say where it was.
@@ -614,7 +638,7 @@ class Session {
     await this.fetchStack();
     const top = this.state.frames[0];
     if (reveal && top?.source) {
-      void this.openSource(top.source.path, top.line);
+      this.run(this.openSource(top.source.path, top.line));
     }
   }
 
@@ -635,24 +659,24 @@ class Session {
     } catch {
       this.set({ frames: [], selectedFrameId: undefined });
     }
-    void this.evaluateWatches();
+    this.run(this.evaluateWatches());
   }
 
   selectFrame(frameId: number): void {
     this.set({ selectedFrameId: frameId });
     const frame = this.state.frames.find((f) => f.id === frameId);
     if (frame?.source) {
-      void this.openSource(frame.source.path, frame.line);
+      this.run(this.openSource(frame.source.path, frame.line));
     }
-    void this.evaluateWatches();
+    this.run(this.evaluateWatches());
   }
 
   continue(): void {
-    void this.act("continue", { targetId: this.state.targetId });
+    this.run(this.act("continue", { targetId: this.state.targetId }));
   }
 
   pause(): void {
-    void this.act("pause", { targetId: this.state.targetId });
+    this.run(this.act("pause", { targetId: this.state.targetId }));
   }
 
   step(kind: "next" | "stepIn" | "stepOut", threadId?: number): void {
@@ -662,12 +686,14 @@ class Session {
       this.toast("select a thread to step", true);
       return;
     }
-    void this.act(kind, { threadId: id });
+    this.run(this.act(kind, { threadId: id }));
   }
 
   stepTick(): void {
-    void this.act("tiger/stepTick", { targetId: this.state.targetId }).then(
-      () => this.refreshActivity()
+    this.run(
+      this.act("tiger/stepTick", { targetId: this.state.targetId }).then(() =>
+        this.refreshActivity()
+      )
     );
   }
 
@@ -763,18 +789,20 @@ class Session {
     }
     this.set({ breakpoints });
     this.persistBreakpoints();
-    void this.sendBreakpoints(path);
+    this.run(this.sendBreakpoints(path));
   }
 
   private persistBreakpoints(): void {
     const plain: Record<string, SourceBreakpoint[]> = {};
     for (const [path, list] of Object.entries(this.state.breakpoints)) {
-      plain[path] = list.map(({ condition, hitCondition, line, logMessage }) => ({
-        condition,
-        hitCondition,
-        line,
-        logMessage,
-      }));
+      plain[path] = list.map(
+        ({ condition, hitCondition, line, logMessage }) => ({
+          condition,
+          hitCondition,
+          line,
+          logMessage,
+        })
+      );
     }
     save(STORE.breakpoints, plain);
   }
@@ -788,12 +816,14 @@ class Session {
       const { breakpoints } = await this.request<{
         breakpoints: DapBreakpoint[];
       }>("setBreakpoints", {
-        breakpoints: list.map(({ condition, hitCondition, line, logMessage }) => ({
-          condition,
-          hitCondition,
-          line,
-          logMessage,
-        })),
+        breakpoints: list.map(
+          ({ condition, hitCondition, line, logMessage }) => ({
+            condition,
+            hitCondition,
+            line,
+            logMessage,
+          })
+        ),
         source: { name: path.split("/").at(-1), path },
       });
       // The list may have changed while the request was out.
@@ -806,7 +836,9 @@ class Session {
         resolvedLine: breakpoints[i]?.line,
         verified: breakpoints[i]?.verified ?? false,
       }));
-      this.set({ breakpoints: { ...this.state.breakpoints, [path]: verified } });
+      this.set({
+        breakpoints: { ...this.state.breakpoints, [path]: verified },
+      });
     } catch (error) {
       this.toast(`breakpoints: ${errorText(error)}`, true);
     }
@@ -822,7 +854,9 @@ class Session {
 
   async repl(expression: string): Promise<void> {
     const epoch = this.state.epoch;
-    this.appendConsole([{ id: this.nextId++, kind: "input", text: expression }]);
+    this.appendConsole([
+      { id: this.nextId++, kind: "input", text: expression },
+    ]);
     try {
       const body = await this.request<EvaluateResult>("evaluate", {
         context: "repl",
@@ -845,14 +879,14 @@ class Session {
       ]);
     }
     if (expression.trim().startsWith("/")) {
-      void this.refreshActivity();
+      this.run(this.refreshActivity());
     }
   }
 
   // A hover's evaluation: undefined when there's nothing to evaluate in.
   async hover(expression: string): Promise<EvaluateResult | undefined> {
     if (this.state.selectedFrameId === undefined) {
-      return undefined;
+      return;
     }
     try {
       return await this.request<EvaluateResult>("evaluate", {
@@ -861,7 +895,7 @@ class Session {
         frameId: this.state.selectedFrameId,
       });
     } catch {
-      return undefined;
+      return;
     }
   }
 
@@ -873,7 +907,7 @@ class Session {
     const watches = [...this.state.watches, text];
     save(STORE.watches, watches);
     this.set({ watches });
-    void this.evaluateWatches();
+    this.run(this.evaluateWatches());
   }
 
   removeWatch(expression: string): void {
@@ -914,7 +948,14 @@ class Session {
     try {
       const { result } = await this.request<{ result: string }>(
         "tiger/rowAction",
-        { action, args, bundle, targetId: this.state.targetId, typeId, typeIndex }
+        {
+          action,
+          args,
+          bundle,
+          targetId: this.state.targetId,
+          typeId,
+          typeIndex,
+        }
       );
       this.toast(`${action}: ${result || "done"}`);
     } catch (error) {
@@ -933,14 +974,15 @@ class Session {
     }
   }
 
-  async refreshBundles(): Promise<void> {
-    const targetId = this.state.targetId;
+  async refreshBundles(targetId = this.state.targetId): Promise<void> {
     if (!targetId) {
       this.set({ bundles: [] });
       return;
     }
     try {
-      const body = await this.request<{ bundles: Bundle[] }>("tiger/bundles", { targetId });
+      const body = await this.request<{ bundles: Bundle[] }>("tiger/bundles", {
+        targetId,
+      });
       if (targetId === this.state.targetId) {
         this.set({ bundles: body.bundles });
       }
@@ -955,6 +997,11 @@ class Session {
     args: Record<string, unknown> = {}
   ): Promise<T> {
     return this.request<T>(command, args);
+  }
+
+  // Fire and forget: a rejection becomes a toast instead of an unhandled promise.
+  run(work: Promise<unknown>): void {
+    work.catch((error) => this.toast(errorText(error), true));
   }
 
   toast(text: string, error = false): void {

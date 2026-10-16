@@ -302,7 +302,7 @@ function timer_create(callback: () => void, interval: number): NodeJS.Timeout {
   return timer;
 }
 
-function error_report(state: s_data_mine_globals, error: unknown): void {
+function error_report(error: unknown): void {
   data_mine_event(
     e_event_level.error,
     `datamine: ${error instanceof Error ? error.message : String(error)}`
@@ -388,7 +388,7 @@ export function data_mine_initialize(
     state.config.build_number !== k_untracked_build_number
   ) {
     state.upload_timer = timer_create(() => {
-      data_mine_upload().catch((error: unknown) => error_report(state, error));
+      data_mine_upload().catch((error: unknown) => error_report(error));
     }, options.upload_interval_ms);
   }
   if (options.install_exit_flush ?? true) {
@@ -528,7 +528,7 @@ function uploadable_files(state: s_data_mine_globals): string[] {
   }
 }
 
-function file_delete(state: s_data_mine_globals, path: string): boolean {
+function file_delete(path: string): boolean {
   try {
     unlinkSync(path);
     return true;
@@ -576,7 +576,7 @@ async function upload_files(
       continue;
     }
     if (size === 0) {
-      if (file_delete(state, path)) {
+      if (file_delete(path)) {
         result.deleted_empty++;
       }
       continue;
@@ -602,7 +602,7 @@ async function upload_files(
       e_event_level.message,
       `datamine: file '${path}' uploaded successfully`
     );
-    file_delete(state, path);
+    file_delete(path);
     result.uploaded++;
   }
   return result;

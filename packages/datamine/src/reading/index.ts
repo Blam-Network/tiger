@@ -22,19 +22,14 @@ export {
 } from "../blam/cseries/event_levels.ts";
 export type {
   s_event_console_line,
-  s_event_line_options,
   s_event_log_line,
 } from "../blam/cseries/event_log_format.ts";
 export {
   build_banner,
-  event_line_columns_format,
-  event_line_columns_parse,
-  event_line_options_resolve,
   format_console_line,
   format_event_for_log,
-  k_event_banner_columns_prefix,
   k_event_banner_rule_length,
-  k_event_line_options_default,
+  k_event_layout_default,
 } from "../blam/cseries/event_log_format.ts";
 export type {
   s_data_mine_header,

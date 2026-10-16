@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { DapSource } from "../protocol";
 import { session, useSession } from "../session";
+import { activateOnKey, cx } from "./ui";
 
 // The Sources pane: every script the server can run, as a folder tree.
 // Loaded ones (a running activity has them) carry a green dot; a search
@@ -15,6 +16,7 @@ interface Folder {
 }
 
 const OPEN_KEY = "bsdbg.sourceFolders";
+const EXTENSION = /\.[^.]+$/;
 
 // File kinds by extension: libraries, encounter scripts, mission phases,
 // archetypes.
@@ -111,17 +113,33 @@ function FileRow({
 }) {
   const ext = source.name.split(".").at(-1) ?? "";
   const kind = KINDS[ext];
+  const openFile = () => session.run(session.openSource(source.path));
   return (
     <div
-      className={`src-row src-file${selected ? " selected" : ""}${source.active ? " loaded" : ""}`}
-      onClick={() => void session.openSource(source.path)}
+      aria-selected={selected}
+      className={cx(
+        "src-row",
+        "src-file",
+        selected && "selected",
+        source.active && "loaded"
+      )}
+      onClick={openFile}
+      onKeyDown={activateOnKey(openFile)}
+      role="treeitem"
       style={{ "--depth": depth } as React.CSSProperties}
-      title={source.active ? `${source.path}\nloaded by a running activity` : source.path}
+      tabIndex={0}
+      title={
+        source.active
+          ? `${source.path}\nloaded by a running activity`
+          : source.path
+      }
     >
       <span className="src-guides" />
-      <span className={`src-kind ${kind?.tone ?? ""}`}>{kind?.label ?? ext}</span>
+      <span className={`src-kind ${kind?.tone ?? ""}`}>
+        {kind?.label ?? ext}
+      </span>
       <span className="src-name">
-        <Highlight query={query} text={source.name.replace(/\.[^.]+$/, "")} />
+        <Highlight query={query} text={source.name.replace(EXTENSION, "")} />
       </span>
       {source.active && <span className="src-loaded" title="loaded" />}
     </div>
@@ -157,18 +175,24 @@ function FolderRows({
         return (
           <div key={full}>
             <div
+              aria-expanded={isOpen}
               className="src-row src-folder"
               onClick={() => toggle(full)}
+              onKeyDown={activateOnKey(() => toggle(full))}
+              role="treeitem"
               style={{ "--depth": depth } as React.CSSProperties}
+              tabIndex={0}
               title={full}
             >
               <span className="src-guides" />
-              <span className={`src-chevron${isOpen ? " open" : ""}`}>›</span>
+              <span className={cx("src-chevron", isOpen && "open")}>›</span>
               <span className="src-name">
                 <Highlight query={query} text={label} />
               </span>
               <span className="src-count">
-                {shown.loaded > 0 && <span className="src-count-loaded">{shown.loaded}</span>}
+                {shown.loaded > 0 && (
+                  <span className="src-count-loaded">{shown.loaded}</span>
+                )}
                 {shown.total}
               </span>
             </div>
@@ -225,7 +249,8 @@ export function SourceTree() {
     const q = query.trim().toLowerCase();
     return sources.filter(
       (s) =>
-        (!loadedOnly || s.active) && (q === "" || s.path.toLowerCase().includes(q))
+        (!loadedOnly || s.active) &&
+        (q === "" || s.path.toLowerCase().includes(q))
     );
   }, [sources, query, loadedOnly]);
   const tree = useMemo(() => buildTree(shown), [shown]);
@@ -258,7 +283,7 @@ export function SourceTree() {
               if (e.key === "Escape") {
                 setQuery("");
               } else if (e.key === "Enter" && shown.length > 0) {
-                void session.openSource(shown[0].path);
+                session.run(session.openSource(shown[0].path));
               }
             }}
             placeholder="Search scripts  (Ctrl+P)"
@@ -267,14 +292,19 @@ export function SourceTree() {
             value={query}
           />
           {query && (
-            <button className="src-clear" onClick={() => setQuery("")} title="Clear" type="button">
+            <button
+              className="src-clear"
+              onClick={() => setQuery("")}
+              title="Clear"
+              type="button"
+            >
               ×
             </button>
           )}
         </div>
         <div className="src-tool-row">
           <button
-            className={`src-chip${loadedOnly ? " on" : ""}`}
+            className={cx("src-chip", loadedOnly && "on")}
             onClick={() => setLoadedOnly(!loadedOnly)}
             title="Only scripts a running activity has loaded"
             type="button"
@@ -282,7 +312,9 @@ export function SourceTree() {
             <span className="src-loaded" /> Loaded {loadedCount}
           </button>
           <span className="src-total">
-            {query ? `${shown.length} of ${sources.length}` : `${sources.length} scripts`}
+            {query
+              ? `${shown.length} of ${sources.length}`
+              : `${sources.length} scripts`}
           </span>
           <button
             className="src-icon-button"
@@ -297,7 +329,7 @@ export function SourceTree() {
           </button>
           <button
             className="src-icon-button"
-            onClick={() => void session.refreshSources()}
+            onClick={() => session.run(session.refreshSources())}
             title="Refresh"
             type="button"
           >
@@ -305,8 +337,10 @@ export function SourceTree() {
           </button>
         </div>
       </div>
-      <div className="src-tree">
-        {sources.length === 0 && <div className="empty">No sources (not connected?)</div>}
+      <div className="src-tree" role="tree">
+        {sources.length === 0 && (
+          <div className="empty">No sources (not connected?)</div>
+        )}
         {sources.length > 0 && shown.length === 0 && (
           <div className="empty">Nothing matches "{query}"</div>
         )}

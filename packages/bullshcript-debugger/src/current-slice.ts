@@ -19,7 +19,10 @@ export function currentSlice(
 // A bundle belongs to the slice when its bubbles name it, or the bubble's
 // base state (a phase keeps its bubble's bundles). Global bundles (no
 // bubbles: built once per activity) are not the slice's own and stay out.
-export function loadsInSlice(bundle: Pick<Bundle, "bubbles">, slice: string): boolean {
+export function loadsInSlice(
+  bundle: Pick<Bundle, "bubbles">,
+  slice: string
+): boolean {
   if (!bundle.bubbles?.length) {
     return false;
   }

@@ -46,11 +46,7 @@ import {
   e_event_level,
   k_event_level_none,
 } from "../../../src/blam/cseries/event_levels.ts";
-import {
-  build_banner,
-  event_line_options_resolve,
-  type s_event_line_options,
-} from "../../../src/blam/cseries/event_log_format.ts";
+import { build_banner } from "../../../src/blam/cseries/event_log_format.ts";
 import { k_console_spam_notice } from "../../../src/blam/cseries/event_spam.ts";
 import type { s_events_initialize_options } from "../../../src/config/event_options.ts";
 import { DatamineError } from "../../../src/datamine_error.ts";
@@ -60,19 +56,9 @@ import { temp_dirs } from "../../support/temp_dirs.ts";
 
 const k_start = new Date(2026, 9, 16, 12, 0, 0, 0);
 const k_version = "test build";
-// Short date, index, game time and frame, upper case level: the shape of a Halo report.
-const k_upper_line: Partial<s_event_line_options> = {
-  date: "short",
-  event_index: true,
-  game_time: true,
-  thread_id: false,
-  level: "upper",
-  context: true,
-};
-const k_banner = build_banner(
-  k_version,
-  event_line_options_resolve(k_upper_line)
-);
+const k_banner = build_banner(k_version);
+// Halo's layout, which most of these tests read; the default layout is Destiny's.
+const k_halo_layout = "1.1";
 
 const temp = temp_dirs("datamine-events-");
 const make_root = temp.make;
@@ -86,7 +72,7 @@ function init(
     root,
     install_exit_flush: false,
     categories: k_test_category_defaults,
-    line: k_upper_line,
+    layout: k_halo_layout,
     root_debug_log: true,
     version_string: k_version,
     ...options,
@@ -186,13 +172,13 @@ describe("report files", () => {
     const body = read(join(root, "debug.txt")).slice(k_banner.length);
     expect(body).toBe(
       [
-        "10.16.26 12:00:00.000 0000000 g00000000 f0000001 -ERROR- hs: first\r\n",
-        "10.16.26 12:00:00.000 0000001 g00000000 f0000001 -ERROR- hs: second 2\r\n",
+        "10.16.26 12:00:00.000 0000000         f0000001  -ERROR- hs: first \r\n",
+        "10.16.26 12:00:00.000 0000001         f0000001  -ERROR- hs: second 2 \r\n",
       ].join("")
     );
   });
 
-  it("writes the long date, index, thread and lower case level by default", () => {
+  it("writes Destiny's lines by default", () => {
     const root = make_root();
     events_initialize({
       root,
@@ -205,7 +191,7 @@ describe("report files", () => {
     events_dispose();
     const full = read(join(root, "reports", "debug_full.txt"));
     expect(full).toBe(
-      `${build_banner(k_version)}10/16/2026 12:00:00.000 0000000 0000001F error    hs: plain\r\n`
+      `${build_banner(k_version)}10/16/2026 12:00:00.000 g00000000 0000001F error    hs: plain\r\n`
     );
   });
 
@@ -224,27 +210,27 @@ describe("report files", () => {
       join(root, "reports", "networking_debug.txt")
     ).at(-1);
     expect(category_line).toBe(
-      `10.16.26 12:00:00.000 0000000 g00025637 f0092363 01:02:03.456 ${" ".repeat(12)} ${" ".repeat(12)} message networking: ping`
+      `10.16.26 12:00:00.000 0000000 g025637 f0092363 01:02:03.456 ${" ".repeat(12)} ${" ".repeat(12)} message networking: ping `
     );
     // The full log gets the same event without the netbuf columns.
     expect(lines_of(join(root, "reports", "debug_full.txt")).at(-1)).toBe(
-      "10.16.26 12:00:00.000 0000000 g00025637 f0092363 message networking: ping"
+      "10.16.26 12:00:00.000 0000000 g025637 f0092363  message networking: ping "
     );
   });
 
-  it("leaves the frame out when no provider knows it", () => {
+  it("writes frame zero when no provider knows the frame", () => {
     const root = make_root();
     events_initialize({
       root,
       install_exit_flush: false,
       categories: k_test_category_defaults,
-      line: k_upper_line,
+      layout: k_halo_layout,
       providers: { clock: k_clock, game_time: () => 7 },
     });
     event_error("hs: no frame");
     events_dispose();
     expect(lines_of(join(root, "reports", "debug_full.txt")).at(-1)).toBe(
-      "10.16.26 12:00:00.000 0000000 g00000007 -ERROR- hs: no frame"
+      "10.16.26 12:00:00.000 0000000 g000007 f0000000  -ERROR- hs: no frame "
     );
   });
 
@@ -260,14 +246,12 @@ describe("report files", () => {
     expect(count_of(debug, k_version)).toBe(1);
   });
 
-  it("names the columns in the banner", () => {
+  it("writes no columns line in the banner", () => {
     const root = make_root();
     init(root);
     event_error("hs: x");
     events_dispose();
-    expect(read(join(root, "debug.txt"))).toContain(
-      "columns: date=short,event_index,game_time,level=upper,context\r\n"
-    );
+    expect(read(join(root, "debug.txt"))).not.toContain("columns:");
   });
 
   it("recreates the root log and trims the append logs on first open", () => {
@@ -290,7 +274,7 @@ describe("report files", () => {
     const kept = old.subarray(old.length - 262_144);
     expect(reports_debug.subarray(0, kept.length).equals(kept)).toBe(true);
     expect(reports_debug.subarray(kept.length).toString("latin1")).toBe(
-      `${k_banner}10.16.26 12:00:00.000 0000000 g00000000 f0000001 -ERROR- networking: fresh\r\n`
+      `${k_banner}10.16.26 12:00:00.000 0000000         f0000001  -ERROR- networking: fresh \r\n`
     );
     // The category file is appended to like the others.
     const category = read(join(root, "reports", "networking_debug.txt"));
@@ -727,7 +711,7 @@ describe("recursion", () => {
 
     const thrown = read(join(root, "thrown_away_events.txt"));
     expect(thrown).toMatch(
-      /-ERROR- inner: re-entered\(!datamined\)\(!logged\)\r\n/
+      /-ERROR- inner: re-entered\(!datamined\)\(!logged\) \r\n/
     );
     expect(read(join(root, "reports", "debug_full.txt"))).not.toContain(
       "inner: re-entered"

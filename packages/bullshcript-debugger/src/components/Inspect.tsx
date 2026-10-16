@@ -3,7 +3,8 @@
 import { useEffect, useRef, useState } from "react";
 import type { Bundle, BundleRow, DapScope, DapVariable } from "../protocol";
 import { session, useSession } from "../session";
-import { rowMenu } from "./Sidebar";
+import { rowMenu, rowMenuItems } from "./Sidebar";
+import { activateOnKey, openMenuBelow } from "./ui";
 
 // Children are fetched on expand; references die with the epoch, so a tree
 // from an older epoch can't expand any more.
@@ -20,6 +21,7 @@ export function VarNode({
   const [open, setOpen] = useState(false);
   const [children, setChildren] = useState<DapVariable[] | string>();
   const live = current === epoch && variable.variablesReference > 0;
+  const twisty = open ? "▾" : "▸";
   const toggle = async () => {
     if (!live) {
       return;
@@ -40,25 +42,37 @@ export function VarNode({
   return (
     <>
       <div
+        aria-expanded={live ? open : undefined}
         className={live ? "tree-row clickable" : "tree-row"}
-        onClick={toggle}
+        onClick={() => session.run(toggle())}
+        onKeyDown={activateOnKey(() => session.run(toggle()))}
+        role="treeitem"
         style={{ paddingLeft: depth * 12 }}
+        tabIndex={live ? 0 : -1}
         title={variable.type}
       >
-        <span className="twisty">{live ? (open ? "▾" : "▸") : ""}</span>
+        <span className="twisty">{live ? twisty : ""}</span>
         <span className="var-name">{variable.name}</span>
         <span className="dim"> = </span>
         <span className="var-value">{variable.value}</span>
       </div>
       {open && typeof children === "string" && (
-        <div className="tree-row error" style={{ paddingLeft: depth * 12 + 26 }}>
+        <div
+          className="tree-row error"
+          style={{ paddingLeft: depth * 12 + 26 }}
+        >
           {children}
         </div>
       )}
       {open &&
         Array.isArray(children) &&
         children.map((child) => (
-          <VarNode depth={depth + 1} epoch={epoch} key={child.name} variable={child} />
+          <VarNode
+            depth={depth + 1}
+            epoch={epoch}
+            key={child.name}
+            variable={child}
+          />
         ))}
     </>
   );
@@ -76,12 +90,17 @@ function Section({
   const [open, setOpen] = useState(true);
   return (
     <div className={open ? "section open" : "section"}>
-      <div className="section-head" onClick={() => setOpen(!open)}>
-        <span className="twisty">{open ? "▾" : "▸"}</span>
-        {title}
-        <span className="section-extra" onClick={(e) => e.stopPropagation()}>
-          {extra}
-        </span>
+      <div className="section-head">
+        <button
+          aria-expanded={open}
+          className="bare section-toggle"
+          onClick={() => setOpen(!open)}
+          type="button"
+        >
+          <span className="twisty">{open ? "▾" : "▸"}</span>
+          {title}
+        </button>
+        <span className="section-extra">{extra}</span>
       </div>
       {open && <div className="section-body">{children}</div>}
     </div>
@@ -109,9 +128,13 @@ function CallStack() {
       {frames.length === 0 && <div className="empty">No frames</div>}
       {frames.map((frame) => (
         <div
-          className={frame.id === selected ? "list-row selected" : "list-row"}
+          aria-selected={frame.id === selected}
+          className={frame.id === selected ? "selected list-row" : "list-row"}
           key={frame.id}
           onClick={() => session.selectFrame(frame.id)}
+          onKeyDown={activateOnKey(() => session.selectFrame(frame.id))}
+          role="option"
+          tabIndex={0}
         >
           <span className="frame-name">{frame.name}</span>
           <span className="dim right">
@@ -126,7 +149,9 @@ function CallStack() {
 function Variables() {
   const frameId = useSession((s) => s.selectedFrameId);
   const epoch = useSession((s) => s.epoch);
-  const [scopes, setScopes] = useState<{ scope: DapScope; vars: DapVariable[] }[]>([]);
+  const [scopes, setScopes] = useState<
+    { scope: DapScope; vars: DapVariable[] }[]
+  >([]);
   useEffect(() => {
     setScopes([]);
     if (frameId === undefined) {
@@ -166,7 +191,12 @@ function Variables() {
   return (
     <>
       {scopes.map(({ scope, vars }) => (
-        <ScopeTree epoch={epoch} key={scope.name} name={scope.name} vars={vars} />
+        <ScopeTree
+          epoch={epoch}
+          key={scope.name}
+          name={scope.name}
+          vars={vars}
+        />
       ))}
     </>
   );
@@ -184,13 +214,22 @@ function ScopeTree({
   const [open, setOpen] = useState(true);
   return (
     <>
-      <div className="tree-row clickable scope" onClick={() => setOpen(!open)}>
+      <div
+        aria-expanded={open}
+        className="tree-row clickable scope"
+        onClick={() => setOpen(!open)}
+        onKeyDown={activateOnKey(() => setOpen(!open))}
+        role="treeitem"
+        tabIndex={0}
+      >
         <span className="twisty">{open ? "▾" : "▸"}</span>
         {name}
         <span className="dim"> ({vars.length})</span>
       </div>
       {open &&
-        vars.map((v) => <VarNode depth={1} epoch={epoch} key={v.name} variable={v} />)}
+        vars.map((v) => (
+          <VarNode depth={1} epoch={epoch} key={v.name} variable={v} />
+        ))}
     </>
   );
 }
@@ -251,29 +290,41 @@ function Watch() {
   );
 }
 
-const asNumber = (value: unknown) => (typeof value === "number" ? value : undefined);
+const asNumber = (value: unknown) =>
+  typeof value === "number" ? value : undefined;
 const field = (value: unknown, key: string) =>
-  value && typeof value === "object" ? (value as Record<string, unknown>)[key] : undefined;
+  value && typeof value === "object"
+    ? (value as Record<string, unknown>)[key]
+    : undefined;
 
 const BUNDLES_POLL_MS = 2000;
 
 // The one fetch loop for session.bundles (the Bundles tab and Squads read it):
-// on target and stop/continue changes, and while the scripts run.
+// on target changes (the session refetches on stop and continue), and while
+// the scripts run.
 function useBundlePolling(): void {
   const targetId = useSession((s) => s.targetId);
-  const epoch = useSession((s) => s.epoch);
   useEffect(() => {
-    void session.refreshBundles();
-  }, [targetId, epoch]);
+    session.run(session.refreshBundles(targetId));
+  }, [targetId]);
   useEffect(() => {
     const timer = setInterval(() => {
       if (!session.target?.paused) {
-        void session.refreshBundles();
+        session.run(session.refreshBundles());
       }
     }, BUNDLES_POLL_MS);
     return () => clearInterval(timer);
   }, []);
 }
+
+const squadStatus = (alive: number | undefined, cleared: boolean) => {
+  if (alive !== undefined && alive > 0) {
+    return [`alive ${alive}`, "state-active"] as const;
+  }
+  return cleared
+    ? (["cleared", "state-dead"] as const)
+    : (["not spawned", "state-inactive"] as const);
+};
 
 // The squads of the active (current slice) bundles, with the client's report
 // of how many are alive. Right-click is the Bundles tab's row menu.
@@ -307,22 +358,37 @@ function Squads() {
           seenAlive.current.add(key);
         }
         const cleared =
-          (alive === 0 && seenAlive.current.has(key)) || Boolean(field(row.state, "killed"));
-        const [status, badge] =
-          alive !== undefined && alive > 0
-            ? [`alive ${alive}`, "state-active"]
-            : cleared
-              ? ["cleared", "state-dead"]
-              : ["not spawned", "state-inactive"];
+          (alive === 0 && seenAlive.current.has(key)) ||
+          Boolean(field(row.state, "killed"));
+        const [status, badge] = squadStatus(alive, cleared);
+        // a click (or Enter) opens the same menu as a right-click
+        const items = rowMenuItems(bundle, row);
         return (
           <div
+            aria-selected={false}
             className="list-row"
             key={key}
+            onClick={(e) => openMenuBelow(e.currentTarget, items)}
             onContextMenu={(e) => rowMenu(e, bundle, row)}
+            onKeyDown={(e) => {
+              if (
+                e.target === e.currentTarget &&
+                (e.key === "Enter" || e.key === " ")
+              ) {
+                e.preventDefault();
+                openMenuBelow(e.currentTarget, items);
+              }
+            }}
+            role="option"
+            tabIndex={0}
             title={`${bundle.bundle} · Squad t${row.typeId}#${row.typeIndex}`}
           >
-            <span className="grow">{row.name ?? `${bundle.bundle}:${row.typeIndex}`}</span>
-            {bodies !== undefined && <span className="dim">bodies {bodies}</span>}
+            <span className="grow">
+              {row.name ?? `${bundle.bundle}:${row.typeIndex}`}
+            </span>
+            {bodies !== undefined && (
+              <span className="dim">bodies {bodies}</span>
+            )}
             <span className={`badge ${badge}`}>{status}</span>
           </div>
         );
@@ -345,7 +411,7 @@ export function InspectPanel() {
         extra={
           <button
             className="icon-button"
-            onClick={() => void session.evaluateWatches()}
+            onClick={() => session.run(session.evaluateWatches())}
             title="Re-evaluate"
             type="button"
           >

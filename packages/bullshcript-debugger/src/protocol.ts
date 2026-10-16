@@ -119,7 +119,11 @@ export interface TigerSentEntry {
 }
 
 export interface TigerHit {
-  frames: { line: number | undefined; name: string; path: string | undefined }[];
+  frames: {
+    line: number | undefined;
+    name: string;
+    path: string | undefined;
+  }[];
   line: number | undefined;
   locals: Record<string, string>;
   path: string | undefined;

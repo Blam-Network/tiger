@@ -916,7 +916,7 @@ function event_generated_handle_console(
       forced,
       context: event_context_get("console"),
     },
-    state.config.line
+    state.config.layout
   );
   write_to_console(state, shown_level, category_index, line);
 }
@@ -1010,7 +1010,7 @@ function log_line_format(
   state: s_events_state,
   line: s_event_log_line
 ): string {
-  return format_event_for_log(line, state.config.line, state.config.date_utc);
+  return format_event_for_log(line, state.config.layout, state.config.date_utc);
 }
 
 function event_generated_handle_log(

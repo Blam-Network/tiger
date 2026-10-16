@@ -1,11 +1,26 @@
 // Left sidebar: the activity (phases, encounters, threads), loaded sources and
 // the bundle rows.
 import { useMemo, useState } from "react";
-import type { Bundle, BundleRow, RowAction, TigerPlayer, TigerSlice, TigerThread } from "../protocol";
 import { currentSlice, loadsInSlice } from "../current-slice";
+import type {
+  Bundle,
+  BundleRow,
+  RowAction,
+  TigerPlayer,
+  TigerSlice,
+  TigerThread,
+} from "../protocol";
 import { session, useSession } from "../session";
 import { SourceTree } from "./SourceTree";
-import { JsonTree, type MenuItem, openDialog, openMenu, TabBar } from "./ui";
+import {
+  activateOnKey,
+  JsonTree,
+  type MenuItem,
+  openDialog,
+  openMenu,
+  openMenuBelow,
+  TabBar,
+} from "./ui";
 
 const TABS = ["Activity", "Players", "Sources", "Bundles"] as const;
 type Tab = (typeof TABS)[number];
@@ -37,11 +52,22 @@ function useWorldFilter() {
   return { select, shows, world };
 }
 
-function WorldFilter({ select, world }: { select: (w: World) => void; world: World }) {
+function WorldFilter({
+  select,
+  world,
+}: {
+  select: (w: World) => void;
+  world: World;
+}) {
   return (
     <div className="segmented">
       {WORLDS.map((w) => (
-        <button className={w === world ? "on" : ""} key={w} onClick={() => select(w)} type="button">
+        <button
+          className={w === world ? "on" : ""}
+          key={w}
+          onClick={() => select(w)}
+          type="button"
+        >
           {w[0]?.toUpperCase()}
           {w.slice(1)}
         </button>
@@ -81,14 +107,30 @@ function threadMenu(event: React.MouseEvent, thread: TigerThread): void {
   event.preventDefault();
   const id = thread.id;
   openMenu(event, [
-    { label: "Wake", run: () => void session.threadCommand("tiger/wake", id) },
-    { label: "Kill", run: () => void session.threadCommand("tiger/kill", id) },
-    { label: "Restart", run: () => void session.threadCommand("tiger/restart", id) },
+    {
+      label: "Wake",
+      run: () => session.run(session.threadCommand("tiger/wake", id)),
+    },
+    {
+      label: "Kill",
+      run: () => session.run(session.threadCommand("tiger/kill", id)),
+    },
+    {
+      label: "Restart",
+      run: () => session.run(session.threadCommand("tiger/restart", id)),
+    },
     { label: "Step Over", run: () => session.step("next", id) },
     { label: "Step Into", run: () => session.step("stepIn", id) },
     { label: "Step Out", run: () => session.step("stepOut", id) },
   ]);
 }
+
+const phaseMenu = (index: number): MenuItem[] => [
+  {
+    label: "Activate phase",
+    run: () => session.run(session.activatePhase(index)),
+  },
+];
 
 function ActivityTab() {
   const activity = useSession((s) => s.activity);
@@ -119,21 +161,34 @@ function ActivityTab() {
       {snapshot.phases.length === 0 && <div className="empty">none</div>}
       {snapshot.phases.map((phase, index) => (
         <div
-          className={phase === snapshot.phase ? "list-row current" : "list-row"}
+          aria-selected={phase === snapshot.phase}
+          className={phase === snapshot.phase ? "current list-row" : "list-row"}
           key={phase}
+          onClick={(e) => openMenuBelow(e.currentTarget, phaseMenu(index))}
           onContextMenu={(e) => {
             e.preventDefault();
-            openMenu(e, [
-              { label: "Activate phase", run: () => void session.activatePhase(index) },
-            ]);
+            openMenu(e, phaseMenu(index));
           }}
-          title="Right-click to activate"
+          onKeyDown={(e) => {
+            if (
+              e.target === e.currentTarget &&
+              (e.key === "Enter" || e.key === " ")
+            ) {
+              e.preventDefault();
+              openMenuBelow(e.currentTarget, phaseMenu(index));
+            }
+          }}
+          role="option"
+          tabIndex={0}
+          title="Click or right-click to activate"
         >
           <span className="grow">
             {phase === snapshot.phase ? "▶ " : ""}
             {phase}
           </span>
-          {phase === snapshot.phase && <span className="badge state-active">current</span>}
+          {phase === snapshot.phase && (
+            <span className="badge state-active">current</span>
+          )}
         </div>
       ))}
       <div className="group-head">Encounters</div>
@@ -157,14 +212,24 @@ function ActivityTab() {
           <div className="owner-head">{owner}</div>
           {threads.map((thread) => (
             <div
-              className={thread.id === selected ? "thread-row selected" : "thread-row"}
+              aria-selected={thread.id === selected}
+              className={
+                thread.id === selected ? "thread-row selected" : "thread-row"
+              }
               key={thread.id}
-              onClick={() => void session.selectThread(thread.id)}
+              onClick={() => session.run(session.selectThread(thread.id))}
               onContextMenu={(e) => threadMenu(e, thread)}
+              onKeyDown={activateOnKey(() =>
+                session.run(session.selectThread(thread.id))
+              )}
+              role="option"
+              tabIndex={0}
               title={thread.path}
             >
               <div className="thread-line">
-                <span className={`badge state-${thread.state}`}>{thread.state}</span>
+                <span className={`badge state-${thread.state}`}>
+                  {thread.state}
+                </span>
                 <span className="grow">{thread.name}</span>
                 <WorldBadge world={thread.world} />
                 <span className="dim">
@@ -172,7 +237,9 @@ function ActivityTab() {
                   {thread.line ? `:${thread.line}` : ""}
                 </span>
               </div>
-              {thread.waitingOn && <div className="thread-wait dim">{thread.waitingOn}</div>}
+              {thread.waitingOn && (
+                <div className="thread-wait dim">{thread.waitingOn}</div>
+              )}
             </div>
           ))}
         </div>
@@ -182,19 +249,31 @@ function ActivityTab() {
 }
 
 // What a player is called in the list, the badge and the menus.
-export const playerName = (player: TigerPlayer) => player.name || player.character || player.id;
+export const playerName = (player: TigerPlayer) =>
+  player.name || player.character || player.id;
 
 function spawnPointDialog(player: TigerPlayer): void {
   openDialog(
     `Teleport ${playerName(player)}`,
     [
-      { hint: "bubble.state, e.g. 14.2", initial: player.bubble, label: "Bubble", name: "bubble" },
-      { hint: "optional spawn point name", label: "Spawn point", name: "spawn" },
+      {
+        hint: "bubble.state, e.g. 14.2",
+        initial: player.bubble,
+        label: "Bubble",
+        name: "bubble",
+      },
+      {
+        hint: "optional spawn point name",
+        label: "Spawn point",
+        name: "spawn",
+      },
     ],
     (values) => {
       const bubble = values.bubble?.trim();
       if (bubble) {
-        void session.teleport(player, `${bubble} ${values.spawn?.trim() ?? ""}`);
+        session.run(
+          session.teleport(player, `${bubble} ${values.spawn?.trim() ?? ""}`)
+        );
       }
     }
   );
@@ -212,8 +291,14 @@ function teleportItems(player: TigerPlayer, slices: TigerSlice[]): MenuItem[] {
     const key = String(slice.bubble);
     byBubble.set(key, [...(byBubble.get(key) ?? []), slice]);
   }
-  const go = (args: string) => () => void session.teleport(player, args);
-  const sliceItem = (slice: TigerSlice, label: string, badge: string | undefined, checked: boolean): MenuItem => {
+  const go = (args: string) => () =>
+    session.run(session.teleport(player, args));
+  const sliceItem = (
+    slice: TigerSlice,
+    label: string,
+    badge: string | undefined,
+    checked: boolean
+  ): MenuItem => {
     const points = slice.spawnPoints ?? [];
     if (points.length === 0) {
       return { badge, checked, label, run: go(slice.handle) };
@@ -249,7 +334,9 @@ function teleportItems(player: TigerPlayer, slices: TigerSlice[]): MenuItem[] {
       items: states.map((s) =>
         sliceItem(
           s,
-          s.phase || s.phaseHash ? `${s.handle} ${s.phase ?? s.phaseHash}` : s.handle,
+          s.phase || s.phaseHash
+            ? `${s.handle} ${s.phase ?? s.phaseHash}`
+            : s.handle,
           s.public ? "public" : undefined,
           s.handle === player.bubble
         )
@@ -267,17 +354,30 @@ function teleportItems(player: TigerPlayer, slices: TigerSlice[]): MenuItem[] {
   return items;
 }
 
-async function playerMenu(event: React.MouseEvent, player: TigerPlayer, followed: boolean): Promise<void> {
+async function playerMenu(
+  event: React.MouseEvent,
+  player: TigerPlayer,
+  followed: boolean
+): Promise<void> {
   event.preventDefault();
   const at = { clientX: event.clientX, clientY: event.clientY };
-  let teleport: MenuItem = { disabled: true, label: "Teleport (not in an activity)" };
+  let teleport: MenuItem = {
+    disabled: true,
+    label: "Teleport (not in an activity)",
+  };
   if (player.targetId !== undefined) {
     try {
-      teleport = { items: teleportItems(player, await session.slices(player.targetId)), label: "Teleport" };
+      teleport = {
+        items: teleportItems(player, await session.slices(player.targetId)),
+        label: "Teleport",
+      };
     } catch (error) {
       // no slices (no scenario, no data service): still the custom dialog and clear
       teleport = { items: teleportItems(player, []), label: "Teleport" };
-      session.toast(`slices: ${error instanceof Error ? error.message : String(error)}`, true);
+      session.toast(
+        `slices: ${error instanceof Error ? error.message : String(error)}`,
+        true
+      );
     }
   }
   openMenu(at, [
@@ -288,9 +388,15 @@ async function playerMenu(event: React.MouseEvent, player: TigerPlayer, followed
     {
       disabled: player.targetId === undefined,
       label: "Kick to orbit",
-      run: () => void session.kick(player.targetId),
+      run: () => session.run(session.kick(player.targetId)),
     },
   ]);
+}
+
+function selectPlayer(player: TigerPlayer): void {
+  if (player.targetId) {
+    session.run(session.selectTarget(player.targetId));
+  }
 }
 
 function PlayersTab() {
@@ -307,17 +413,25 @@ function PlayersTab() {
         const target = targets.find((t) => t.id === player.targetId);
         return (
           <div
+            aria-selected={followed}
             className={followed ? "thread-row selected" : "thread-row"}
             key={player.id}
-            onContextMenu={(e) => void playerMenu(e, player, followed)}
-            onClick={() => player.targetId && void session.selectTarget(player.targetId)}
+            onClick={() => selectPlayer(player)}
+            onContextMenu={(e) => session.run(playerMenu(e, player, followed))}
+            onKeyDown={activateOnKey(() => selectPlayer(player))}
+            role="option"
+            tabIndex={0}
             title={`${player.account} · ${player.platform}`}
           >
             <div className="thread-line">
-              <span className="grow player-name">
+              <span className="player-name grow">
                 {playerName(player)}
-                {player.level !== undefined && <span className="dim"> · level {player.level}</span>}
-                {player.powerLevel !== undefined && <span className="dim"> · power {player.powerLevel}</span>}
+                {player.level !== undefined && (
+                  <span className="dim"> · level {player.level}</span>
+                )}
+                {player.powerLevel !== undefined && (
+                  <span className="dim"> · power {player.powerLevel}</span>
+                )}
               </span>
               <button
                 className={followed ? "follow on" : "follow"}
@@ -331,7 +445,8 @@ function PlayersTab() {
               </button>
             </div>
             <div className="thread-wait dim small">
-              {player.id} · {player.character} · {player.account} · {player.platform}
+              {player.id} · {player.character} · {player.account} ·{" "}
+              {player.platform}
             </div>
             <div className="thread-wait dim">
               {player.activity ?? "no activity"}
@@ -351,9 +466,11 @@ function SourcesTab() {
 
 function runAction(bundle: Bundle, row: BundleRow, action: RowAction): void {
   const send = (args: unknown[]) =>
-    void session
-      .rowAction(bundle.bundle, row.typeId, row.typeIndex, action.name, args)
-      .then(() => session.refreshBundles());
+    session.run(
+      session
+        .rowAction(bundle.bundle, row.typeId, row.typeIndex, action.name, args)
+        .then(() => session.refreshBundles())
+    );
   if (!action.params?.length) {
     send([]);
     return;
@@ -361,23 +478,32 @@ function runAction(bundle: Bundle, row: BundleRow, action: RowAction): void {
   const params = action.params;
   openDialog(
     `${action.label} on ${row.name ?? row.nameHash}`,
-    params.map((p) => ({ hint: p.hint ?? p.type, label: p.name, name: p.name })),
+    params.map((p) => ({
+      hint: p.hint ?? p.type,
+      label: p.name,
+      name: p.name,
+    })),
     (values) => send(params.map((p) => values[p.name]))
   );
 }
 
 // The row context menu: its actions, shared by the Bundles tab and Squads.
-export function rowMenu(event: React.MouseEvent, bundle: Bundle, row: BundleRow): void {
+export function rowMenu(
+  event: React.MouseEvent,
+  bundle: Bundle,
+  row: BundleRow
+): void {
   event.preventDefault();
-  openMenu(
-    event,
-    row.actions.length
-      ? row.actions.map((action) => ({
-          label: action.params?.length ? `${action.label}…` : action.label,
-          run: () => runAction(bundle, row, action),
-        }))
-      : [{ disabled: true, label: "no actions", run: () => undefined }]
-  );
+  openMenu(event, rowMenuItems(bundle, row));
+}
+
+export function rowMenuItems(bundle: Bundle, row: BundleRow): MenuItem[] {
+  return row.actions.length
+    ? row.actions.map((action) => ({
+        label: action.params?.length ? `${action.label}…` : action.label,
+        run: () => runAction(bundle, row, action),
+      }))
+    : [{ disabled: true, label: "no actions", run: () => undefined }];
 }
 
 function loadSliceOnly(): boolean {
@@ -402,11 +528,20 @@ function useSliceFilter(targetId: string | undefined) {
       // not kept
     }
   };
-  const shows = (bundle: Bundle) => !(on && slice) || loadsInSlice(bundle, slice);
+  const shows = (bundle: Bundle) =>
+    !(on && slice) || loadsInSlice(bundle, slice);
   return { on, shows, slice, toggle };
 }
 
-function SliceFilter({ on, slice, toggle }: { on: boolean; slice: string | undefined; toggle: () => void }) {
+function SliceFilter({
+  on,
+  slice,
+  toggle,
+}: {
+  on: boolean;
+  slice: string | undefined;
+  toggle: () => void;
+}) {
   return (
     <div className="segmented">
       <button
@@ -473,23 +608,36 @@ function BundlesTab() {
           placeholder="Filter by name or type"
           value={filter}
         />
-        <button onClick={() => void session.refreshBundles()} type="button">
+        <button
+          onClick={() => session.run(session.refreshBundles())}
+          type="button"
+        >
           Refresh
         </button>
       </div>
       <div className="panel-tools">
         <WorldFilter select={worlds.select} world={worlds.world} />
-        <SliceFilter on={slices.on} slice={slices.slice} toggle={slices.toggle} />
+        <SliceFilter
+          on={slices.on}
+          slice={slices.slice}
+          toggle={slices.toggle}
+        />
       </div>
       <div className="bundle-list">
         {shown.length === 0 && (
-          <div className="empty">{bundles.length === 0 ? "No bundles" : "No bundle matches the filters"}</div>
+          <div className="empty">
+            {bundles.length === 0
+              ? "No bundles"
+              : "No bundle matches the filters"}
+          </div>
         )}
         {shown.map((bundle) => (
           <BundleNode
             bundle={bundle}
             key={`${bundle.bundle}:${bundle.tag}`}
-            matches={needle && bundle.bundle.includes(needle) ? () => true : matches}
+            matches={
+              needle && bundle.bundle.includes(needle) ? () => true : matches
+            }
             onMenu={(e, row) => {
               setSelected(keyOf(bundle, row));
               rowMenu(e, bundle, row);
@@ -502,10 +650,15 @@ function BundlesTab() {
       {detail && (
         <div className="bundle-detail">
           <div className="group-head">
-            {detail.name ?? detail.nameHash} · {detail.type} t{detail.typeId}#{detail.typeIndex}
+            {detail.name ?? detail.nameHash} · {detail.type} t{detail.typeId}#
+            {detail.typeIndex}
           </div>
-          {detail.childScript && <div className="dim">child script {detail.childScript}</div>}
-          {detail.importIdent && <div className="dim">import {detail.importIdent}</div>}
+          {detail.childScript && (
+            <div className="dim">child script {detail.childScript}</div>
+          )}
+          {detail.importIdent && (
+            <div className="dim">import {detail.importIdent}</div>
+          )}
           <div className="dim">state</div>
           <JsonTree open={3} value={detail.state ?? null} />
           <div className="dim">sense</div>
@@ -533,11 +686,23 @@ function BundleNode({
   const rows = bundle.rows.filter(matches);
   return (
     <>
-      <div className="tree-row clickable" onClick={() => setOpen(!open)} title={`tag ${bundle.tag}`}>
+      <div
+        aria-expanded={open}
+        className="tree-row clickable"
+        onClick={() => setOpen(!open)}
+        onKeyDown={activateOnKey(() => setOpen(!open))}
+        role="treeitem"
+        tabIndex={0}
+        title={`tag ${bundle.tag}`}
+      >
         <span className="twisty">{open ? "▾" : "▸"}</span>
         <span className="mono">{bundle.bundle}</span>
         {bundle.active !== undefined && (
-          <span className={bundle.active ? "badge state-active" : "badge state-inactive"}>
+          <span
+            className={
+              bundle.active ? "badge state-active" : "badge state-inactive"
+            }
+          >
             {bundle.active ? "active" : "inactive"}
           </span>
         )}
@@ -545,17 +710,23 @@ function BundleNode({
         <span className="dim right">{rows.length} rows</span>
       </div>
       {open && bundle.bubbles && bundle.bubbles.length > 0 && (
-        <div className="dim small bubbles">bubbles {bundle.bubbles.join(", ")}</div>
+        <div className="dim small bubbles">
+          bubbles {bundle.bubbles.join(", ")}
+        </div>
       )}
       {open &&
         rows.map((row) => {
           const key = `${bundle.bundle}:t${row.typeId}#${row.typeIndex}`;
           return (
             <div
-              className={key === selected ? "row-node selected" : "row-node"}
+              aria-selected={key === selected}
+              className={key === selected ? "selected row-node" : "row-node"}
               key={key}
               onClick={() => onSelect(row)}
               onContextMenu={(e) => onMenu(e, row)}
+              onKeyDown={activateOnKey(() => onSelect(row))}
+              role="option"
+              tabIndex={0}
             >
               <div className="thread-line">
                 <span className="grow">{row.name ?? row.nameHash}</span>
@@ -563,7 +734,9 @@ function BundleNode({
                   {row.type} #{row.typeIndex}
                 </span>
               </div>
-              {row.bound.length > 0 && <div className="dim small">{row.bound.join(", ")}</div>}
+              {row.bound.length > 0 && (
+                <div className="dim small">{row.bound.join(", ")}</div>
+              )}
             </div>
           );
         })}

@@ -16,6 +16,7 @@ describe("data_mine_layout_behaviour", () => {
 
   it("gives 3.1 the Destiny behaviour", () => {
     const behaviour = data_mine_layout_behaviour("3.1");
+    expect(behaviour.line_style).toBe("destiny");
     expect(behaviour.event_index_start).toBe(0);
     expect(behaviour.signature_strip_trailing_separator).toBe(false);
     expect(behaviour.first_definition_id).toBe(1);
@@ -35,6 +36,7 @@ describe("data_mine_layout_behaviour", () => {
     "2.1",
   ] as const)("gives %s the Halo behaviour", (layout) => {
     const behaviour = data_mine_layout_behaviour(layout);
+    expect(behaviour.line_style).toBe("halo");
     expect(behaviour.event_index_start).toBe(1);
     expect(behaviour.signature_strip_trailing_separator).toBe(true);
     expect(behaviour.bridge_root_category).toBe("root");

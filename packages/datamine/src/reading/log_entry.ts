@@ -5,15 +5,13 @@ import {
   e_event_level,
   k_event_level_names,
 } from "../blam/cseries/event_levels.ts";
-import type { s_event_line_options } from "../blam/cseries/event_log_format.ts";
 import type { t_data_mine_header_layout } from "../blam/data_mining/data_mine_formats.ts";
 import type { e_datamine_parameter_type } from "../blam/data_mining/data_mining.ts";
 import type { t_byte_order } from "../byte_writer.ts";
 
-// event_log is what this package writes, with the columns its banner announces. halo_style_log
-// and destiny_style_log are the game's own report files, which have no such line.
+// halo_style_log and destiny_style_log are the two line styles of the report files, the ones
+// this package writes and the games' own.
 export type t_log_source_format =
-  | "event_log"
   | "halo_style_log"
   | "destiny_style_log"
   | "datamine_text"
@@ -22,7 +20,6 @@ export type t_log_source_format =
 
 // Display names, by format.
 export const k_log_source_format_names: Record<t_log_source_format, string> = {
-  event_log: "Event log",
   halo_style_log: "Halo style event log",
   destiny_style_log: "Destiny style event log",
   datamine_text: "Datamine text export",
@@ -35,9 +32,6 @@ export const k_log_source_format_names: Record<t_log_source_format, string> = {
 export type t_log_entry_kind = "event" | "session";
 
 export interface s_log_entry_session {
-  // The columns the banner announced, for event_log. A line is read with the columns of the
-  // banner before it.
-  columns?: s_event_line_options;
   // 1-based, in file order.
   number: number;
   // Datamine files only.
@@ -49,7 +43,7 @@ export interface s_log_entry_session {
 // The formats that are lines of text, which c_log_text_parser can read.
 export type t_log_text_format = Extract<
   t_log_source_format,
-  "event_log" | "halo_style_log" | "destiny_style_log" | "datamine_text"
+  "halo_style_log" | "destiny_style_log" | "datamine_text"
 >;
 
 export interface s_log_entry_parameter {

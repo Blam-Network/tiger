@@ -16,7 +16,8 @@ describe("TU0 BungieScript sources", () => {
   const compiled = tu0Compiled();
 
   it("keeps the layout the alpha's chunks record", () => {
-    expect(scriptFiles).toHaveLength(77);
+    // the corpus grows with the missions: what holds is one decl per file
+    expect(scriptFiles.length).toBeGreaterThan(0);
     for (const file of scriptFiles) {
       expect(file.path).toMatch(BUNGIE_PATH);
       expect(file.path.startsWith("bs/")).toBe(file.kind === "bs");
@@ -27,7 +28,7 @@ describe("TU0 BungieScript sources", () => {
 
   it("compiles as one project, every member declared", () => {
     expect(compiled.diagnostics).toEqual([]);
-    expect(compiled.decls).toHaveLength(77);
+    expect(compiled.decls).toHaveLength(scriptFiles.length);
     for (const file of scriptFiles) {
       expect(compiled.compiledDecl(file.path).chunk, file.path).toBeDefined();
     }
@@ -38,8 +39,13 @@ describe("TU0 BungieScript sources", () => {
     // tests' tables
     const noRowTable =
       /act_cosmo_m4_dome_c|enc_dome_[ac]_m4|enc_array_amb1|unknown_(f9e600a7|00b02852|358ebae1|a2f66e1a|af642429|afc05f47|bdf9e3c6|d2c22dcf)|^(simple|ambush|wave|dropship)_encounter$|^u_event_/;
-    for (const decl of compiled.decls) {
-      if (noRowTable.test(decl.name)) {
+    // the missions built from captures, and the utility scripts only their
+    // bundles use: their bundles' rows are not among the tests' tables
+    const noRowTablePath =
+      /^es\/(mars|moon)\/|^es\/cosmo\/(act_cosmo_m(0_5_hangar|1_dome_a|2_dome_c)|dome_[ac])\/|^es\/cosmo\/hangar\/enc_hangar_m0_5\.es$|^es\/venus\/(academy_entrance|act_venus_m01_engineering|act_venus_m07_northern_tides|north_tides|south_tides)\/|^es\/utility_scripts\/(venus_raid_pillar_switch|vex_warp_gate)\.esu$/;
+    for (const file of scriptFiles) {
+      const decl = compiled.compiledDecl(file.path);
+      if (noRowTable.test(decl.name) || noRowTablePath.test(file.path)) {
         continue;
       }
       for (const member of decl.schema.members) {
@@ -62,15 +68,25 @@ describe("TU0 BungieScript sources", () => {
       "collect_loot_objective._activity_flag",
       "collect_loot_objective._loot",
       "countdown_objective._activity_flag",
+      "countdown_placement._activity_flag",
+      "countdown_placement._capturable",
+      "destructible_objective._activity_flag",
+      "destructible_objective._incident_listener",
+      "destructible_placement._activity_flag",
+      "destructible_placement._object_faction",
       "interactable_objective._activity_flag",
       "interactable_objective._incident_listener",
+      "interactable_placement._activity_flag",
+      "interactable_placement._device",
+      "interactable_placement._interactable",
       "kill_squad_objective._incident_listener",
     ]);
   });
 
   it("starts the threads the TU0 host started", () => {
     // every bundle script's main thread and every audio cue thread start up;
-    // threads the scripts wake, restart or drive as a phase's lifecycle do not
+    // threads the scripts wake, restart or drive as a phase's lifecycle do
+    // not (the phase host starts a phase's startup threads with the phase)
     const startup = new Map<string, string[]>();
     for (const decl of compiled.decls) {
       startup.set(
@@ -91,15 +107,27 @@ describe("TU0 BungieScript sources", () => {
       "sc_breach_main",
     ]);
     expect(startup.get("c_encounter__unknown_3c2f5ed5")).toHaveLength(20);
-    // the alpha's simple_encounter starts its own placement window
-    expect(startup.get("simple_encounter")).toEqual(["ss_initial_placement"]);
-    for (const file of scriptFiles.filter(
-      (f) =>
-        (f.kind === "esp" || f.kind === "esu") &&
-        f.decls[0].name !== "simple_encounter"
-    )) {
-      expect(startup.get(file.decls[0].name), file.path).toEqual([]);
-    }
+    // Phases and utility scripts start nothing but these: the alpha's
+    // placements and warp gate (utility scripts it compiled with a startup
+    // thread), a phase's own music cues, and the Northern Tides altar that
+    // stands from the phase's start.
+    const startedByParts = Object.fromEntries(
+      scriptFiles
+        .filter((f) => f.kind === "esp" || f.kind === "esu")
+        .map((f) => [f.path, startup.get(f.decls[0].name) ?? []] as const)
+        .filter(([, threads]) => threads.length > 0)
+    );
+    expect(startedByParts).toEqual({
+      "es/moon/act_moon_m3_lowercitadel/act_moon_m3_lowercitadel_mission3.esp":
+        ["sc_strength_music", "sc_strength_music_alt"],
+      "es/utility_scripts/countdown_placement.esu": ["main"],
+      "es/utility_scripts/destructible_placement.esu": ["main"],
+      "es/utility_scripts/interactable_placement.esu": ["main"],
+      "es/utility_scripts/simple_encounter.esu": ["ss_initial_placement"],
+      "es/utility_scripts/vex_warp_gate.esu": ["start_up_warpgate"],
+      "es/venus/act_venus_m07_northern_tides/act_venus_m07_northern_tides_mission4.esp":
+        ["ss_boss_pillar"],
+    });
   });
 
   it("reaches a file's decls by path and name, and refuses what did not compile", () => {

@@ -80,10 +80,7 @@ export class c_event_log_set {
   constructor(options: s_event_log_set_options) {
     this.m_options = options;
     this.m_session_started = options.clock.now();
-    this.m_banner = build_banner(
-      options.config.version_string,
-      options.config.line
-    );
+    this.m_banner = build_banner(options.config.version_string);
     // Register the primary logs in order, so the first one to reach a file decides how it is
     // opened.
     for (const definition of event_log_definitions(options.config)) {
