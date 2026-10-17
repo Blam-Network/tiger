@@ -227,7 +227,12 @@ function assignObjectiveInfluencers(
 ): void {
   const used = new Map<number, number>();
   for (const squad of squads) {
-    const bodies = squadRosterSize(self.types, self.options.bundles, squad);
+    const bodies = squadRosterSize(
+      self.types,
+      self.options.bundles,
+      squad,
+      self.memberCounts.get(itemKey(squad.bundle, squad.typeIndex))
+    );
     const path = walkObjectiveTask(
       self,
       tasks,

@@ -16,6 +16,11 @@
 # fact until more runs land.
 
 @activity_bundle("strike_1_activity")
+venus_strike_1_mission1 engineering_phase
+venus_strike_1_mission2 engineering_trans_phase
+venus_strike_1_mission3 dig_site_phase
+venus_strike_1_mission4 ruins_phase
+venus_strike_1_mission5 end_phase
 startup thread ss_venus_strike1:
     print("script startup")
     c_lifetime_script_utilities.get_lifetime_sensor().set_state(e_activity_lifetime_state.pregame)

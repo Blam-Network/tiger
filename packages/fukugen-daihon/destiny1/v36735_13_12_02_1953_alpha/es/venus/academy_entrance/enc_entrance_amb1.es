@@ -2,13 +2,13 @@
 c_location_sensor_host entrance  # true name unknown
 c_player_monitor_sensor_host pm_bubble_entrance bind(entrance)  # true name unknown
 c_objective_sensor_host obj_entrance_amb1  # true name unknown
-dropship_encounter vex_dropship_encounter01
-simple_encounter fallen_simple_encounter01a
-simple_encounter fallen_simple_encounter01b
-simple_encounter fallen_simple_encounter02
-simple_encounter fallen_simple_encounter03
-simple_encounter vex_simple_encounter02
-simple_encounter vex_simple_encounter03
+@member_counts({_squad: [{goblin: 3, harpy: 1, hybrid: 2}, {harpy: 1, hybrid: 3}], _dropship_squad: {pilot: 0}}) dropship_encounter vex_dropship_encounter01
+@member_counts({_squad: [{leader: 1, fallen: 3, vandal: 2}]}) simple_encounter fallen_simple_encounter01a
+@member_counts({_squad: [{leader: 1, fallen: 3, vandal: 2}]}) simple_encounter fallen_simple_encounter01b
+@member_counts({_squad: [{fallen: 2, vandal: 4}, {fallen: 4}]}) simple_encounter fallen_simple_encounter02
+@member_counts({_squad: [{leader: 4}, {fallen: 6}]}) simple_encounter fallen_simple_encounter03
+@member_counts({_squad: [{goblin: 3}, {hybrid: 2, goblin: 2}, {minotaur: 1}]}) simple_encounter vex_simple_encounter02
+@member_counts({_squad: [{goblin: 6}, {hybrid: 2, goblin: 2}, {minotaur: 1}]}) simple_encounter vex_simple_encounter03
 wave_encounter entrance_amb_wave_encounter
 c_squad_group_sensor_host sqg_fallen  # true name unknown
 c_squad_group_sensor_host sqg_vex  # true name unknown

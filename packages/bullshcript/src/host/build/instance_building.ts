@@ -406,6 +406,9 @@ export function buildInstance(
   // Scalar fields as the schema's fast-init data authored them, overridable by
   // options.scalarDefaults; an unset scalar read via arithmetic throws on nil.
   const schema = schemaOf(self, chunk);
+  if (schema !== undefined) {
+    noteMemberCounts(self, schema, prefix, namespaces, bundles);
+  }
   for (const [key, value] of Object.entries({
     ...(schema === undefined ? {} : schemaDefaults(schema)),
     ...scalarDefaultsFor(self, chunk),
@@ -468,6 +471,78 @@ export function buildInstance(
     self.instances.set(declName, table);
   }
   return { declName, implNames, table };
+}
+
+// A script's @member_counts against the rows it binds: the host-only squad
+// host's cells. Each names a Squad row and keys its definition's members by
+// name: a key gives each member of that name a count, in member order; a
+// member it leaves out keeps the package's bodies. A named actor's cell
+// counts the anonymous bodies beside its actor (nearly always 0). Anything
+// else stops the script loading.
+function noteMemberCounts(
+  self: EncounterHostContext,
+  schema: BsSchema,
+  prefix: string,
+  namespaces: readonly string[],
+  bundles: readonly ActivityBundleTag[]
+): void {
+  for (const member of schema.members) {
+    for (const { members, path } of member.memberCounts ?? []) {
+      const field =
+        path === undefined
+          ? member.name
+          : `${member.name}${path.startsWith("[") ? "" : "."}${path}`;
+      const fail = (why: string): never => {
+        throw new Error(
+          `${schema.name}:${member.line}: @member_counts on ${field}: ${why}`
+        );
+      };
+      const row = resolveInstanceField(bundles, prefix, field, namespaces);
+      if (row?.typeId !== self.types.Squad) {
+        return fail("no Squad row has that name");
+      }
+      const entry = bundles
+        .find((tag) => tag.bundle === row.bundle)
+        ?.rows.find(
+          (r) => r.typeId === self.types.Squad && r.typeIndex === row.typeIndex
+        );
+      const { cells, memberNames } = entry ?? {};
+      if (
+        cells === undefined ||
+        memberNames === undefined ||
+        memberNames.length !== cells.length
+      ) {
+        return fail("the packages give its squad definition no member names");
+      }
+      const named = cells.map((count) => count === 0);
+      const counts = [...cells];
+      for (const { counts: given, hash, key } of members) {
+        const at = memberNames.flatMap((name, cell) =>
+          name >>> 0 === hash >>> 0 ? [cell] : []
+        );
+        if (at.length === 0) {
+          const listed = memberNames
+            .map((name) => `0x${(name >>> 0).toString(16).toUpperCase()}`)
+            .join(", ");
+          return fail(`its squad has no member '${key}' (members: ${listed})`);
+        }
+        if (at.length !== given.length) {
+          return fail(
+            `${at.length} of its members are named '${key}', so '${key}' takes ${at.length === 1 ? "a count" : `a list of ${at.length} counts`}`
+          );
+        }
+        at.forEach((cell, i) => {
+          counts[cell] = given[i];
+        });
+      }
+      const key = itemKey(row.bundle, row.typeIndex);
+      const known = self.memberCounts.get(key);
+      if (known !== undefined && known.counts.join() !== counts.join()) {
+        return fail(`another declaration gives it (${known.counts.join(", ")})`);
+      }
+      self.memberCounts.set(key, { counts, named });
+    }
+  }
 }
 
 // The rows a top-level chunk resolves against: bundlesFirst on its own
@@ -1567,7 +1642,12 @@ export function bound(
       owningSquad: (row) =>
         owningSquadRow(self.types, self.options.bundles, row),
       roster: (squad) =>
-        squadRosterSize(self.types, self.options.bundles, squad),
+        squadRosterSize(
+          self.types,
+          self.options.bundles,
+          squad,
+          self.memberCounts.get(itemKey(squad.bundle, squad.typeIndex))
+        ),
       resolveByIdentifier: (identifier) =>
         resolveInstanceField(self.options.bundles, "", identifier) ??
         objectForIdentifier(self, identifier),

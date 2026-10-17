@@ -3,12 +3,12 @@ u_globals utils
 c_location_sensor_host southern_tides  # true name unknown
 c_player_monitor_sensor_host pm_bubble_southern_tides bind(southern_tides)  # true name unknown
 c_objective_sensor_host obj_south_tides_ch2m3  # true name unknown
-c_squad_sensor_host sq_fallen01
-c_squad_sensor_host sq_fallen02
-c_squad_sensor_host sq_fallen03
-c_squad_sensor_host sq_fallen04
-c_squad_sensor_host sq_fallen05
-c_squad_sensor_host sq_fallen_dropship
+@member_counts({raider: 1}) c_squad_sensor_host sq_fallen01
+@member_counts({dreg_4: 4}) c_squad_sensor_host sq_fallen02
+@member_counts({cell_1: 2}) c_squad_sensor_host sq_fallen03
+@member_counts({raider: 1, shank: 1}) c_squad_sensor_host sq_fallen04
+@member_counts({cell_1: 2}) c_squad_sensor_host sq_fallen05
+@member_counts({pilot: 0}) c_squad_sensor_host sq_fallen_dropship
 c_squad_member_sensor_host sq_fallen_dropship__pilot  # true name unknown
 c_squad_group_sensor_host sqg_fallen  # true name unknown
 c_trigger_volume_slot_host tv_fallen_fallback01

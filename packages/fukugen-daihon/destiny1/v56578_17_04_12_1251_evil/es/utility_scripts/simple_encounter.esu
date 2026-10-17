@@ -2,7 +2,10 @@
 #
 # An ambient encounter. Its squads go in under its objective while no player
 # is watching, and come back once they have been out of combat for
-# respawn_time. Ported from the alpha's.
+# respawn_time. A wiped encounter comes back too, once no player is inside
+# its volume: retail's Last Array re-served its wiped ambient squads (and
+# bumped their objective) only while the player was out of range. Ported
+# from the alpha's.
 
 c_trigger_volume_slot_host _trigger_volume
 dynamic_array<c_squad_sensor_host> _squad
@@ -54,7 +57,9 @@ thread main:
 
     while true:
         if _squad_group.alive_count() == 0:
-            break
+            sleep_until(not _player_monitor.test_any_inside())
+            _squad_group.respawn()
+            _objective.reset()
         if _squad_group.current_in_combat_count() > 0:
             _respawn_timer.reset(respawn_time)
             _respawn_timer.stop()

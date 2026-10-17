@@ -21,8 +21,9 @@ import {
 } from "./script_folder.ts";
 
 export const COMPILED_BS_INDEX = "index.json";
-// index.json's shape; bumped when it changes, so an old tree is rebuilt
-export const COMPILED_BS_FORMAT = 2;
+// the shape of index.json and the schemas (3: @member_counts); bumped when
+// it changes, so an old tree is rebuilt
+export const COMPILED_BS_FORMAT = 3;
 
 export interface CompiledBsDecl {
   // the chunk's file, relative to the tree; a struct or enum has none

@@ -77,6 +77,8 @@ export interface State {
   lastStop: StoppedBody | undefined;
   openTabs: string[];
   players: TigerPlayer[];
+  // addresses connected to, most recent first (the Server menu's Recent)
+  recentAddresses: string[];
   reveal: { line: number; nonce: number; path: string } | undefined;
   selectedFrameId: number | undefined;
   selectedThreadId: number | undefined;
@@ -94,10 +96,12 @@ const CONSOLE_KEEP = 5000;
 const SENT_KEEP = 2000;
 const POLL_MS = 1000;
 const PLAYERS_POLL_MS = 2000;
+const RECENT_ADDRESSES_MAX = 8;
 const STORE = {
   address: "bsdbg.address",
   breakpoints: "bsdbg.breakpoints",
   following: "bsdbg.following",
+  recentAddresses: "bsdbg.recentAddresses",
   watches: "bsdbg.watches",
 };
 
@@ -148,6 +152,7 @@ class Session {
     lastStop: undefined,
     openTabs: [],
     players: [],
+    recentAddresses: load(STORE.recentAddresses, []),
     reveal: undefined,
     selectedFrameId: undefined,
     selectedThreadId: undefined,
@@ -163,7 +168,10 @@ class Session {
 
   constructor() {
     this.client.onState = (connection) => this.set({ connection });
-    this.client.onOpen = () => this.run(this.opened());
+    this.client.onOpen = () => {
+      this.addressRemember(this.state.address.trim());
+      this.run(this.opened());
+    };
     this.client.onEvent = (event, body) => this.event(event, body);
     setInterval(() => this.run(this.poll()), POLL_MS);
     setInterval(() => this.run(this.refreshPlayers()), PLAYERS_POLL_MS);
@@ -212,6 +220,33 @@ class Session {
 
   connect(): void {
     this.client.connect(this.state.address.trim());
+  }
+
+  // Connects to `address`, dropping the current connection first.
+  connectTo(address: string): void {
+    const trimmed = address.trim();
+    if (!trimmed) {
+      return;
+    }
+    if (this.state.connection !== "disconnected") {
+      this.disconnect();
+    }
+    this.setAddress(trimmed);
+    this.connect();
+  }
+
+  clearRecentAddresses(): void {
+    save(STORE.recentAddresses, []);
+    this.set({ recentAddresses: [] });
+  }
+
+  private addressRemember(address: string): void {
+    const recentAddresses = [
+      address,
+      ...this.state.recentAddresses.filter((a) => a !== address),
+    ].slice(0, RECENT_ADDRESSES_MAX);
+    save(STORE.recentAddresses, recentAddresses);
+    this.set({ recentAddresses });
   }
 
   disconnect(): void {

@@ -276,28 +276,114 @@ input.bad {
   height: auto;
 }
 
+/* Three parts, after Datamine Explorer's title bar: the outer two share what
+   the title leaves equally, so the title is centred in the window; when one
+   side is wider than its half it keeps its width and the title gives way. */
 .toolbar {
-  display: flex;
+  display: grid;
   flex: none;
-  gap: 6px;
-  align-items: center;
-  padding: 4px 8px;
+  grid-template-columns:
+    minmax(max-content, 1fr) minmax(0, max-content)
+    minmax(max-content, 1fr);
+  gap: 8px;
+  align-items: stretch;
+  height: 33px;
+  padding: 0;
   background: var(--panel-2);
   border-bottom: 1px solid var(--border);
 }
 
-.address {
-  width: 150px;
+.toolbar.desktop {
+  user-select: none;
 }
 
-.target {
-  min-width: 220px;
-  max-width: 420px;
+.toolbar-group {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  min-width: 0;
+}
+
+.toolbar-right {
+  justify-content: flex-end;
+}
+
+/* in a browser there are no window controls to sit flush with the edge */
+.toolbar:not(.desktop) .toolbar-right {
+  padding-right: 8px;
+}
+
+/* the app icon, the full height of the bar; it opens About */
+button.toolbar-brand {
+  display: flex;
+  flex: none;
+  align-items: center;
+  align-self: stretch;
+  height: auto;
+  padding: 0 4px 0 6px;
+  margin-right: -2px;
+  color: var(--text);
+  background: transparent;
+  border: 0;
+  border-radius: 6px;
+}
+
+button.toolbar-brand:hover:not(:disabled) {
+  background: var(--hover);
+}
+
+button.toolbar-brand:focus-visible {
+  outline: 2px solid var(--accent-hi);
+  outline-offset: -2px;
+}
+
+.app-icon {
+  display: block;
+  flex: none;
+  width: 22px;
+  height: 22px;
+}
+
+/* the program's name, centred in the window */
+.toolbar-title {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  font-weight: 500;
+  color: var(--text);
+}
+
+.toolbar-title > span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .run-buttons {
   display: flex;
   gap: 2px;
+}
+
+.run-buttons button {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  padding: 0;
+  color: #75beff;
+  background: transparent;
+  border-color: transparent;
+}
+
+.run-buttons button:has(.continue) {
+  color: #89d185;
+}
+
+/* The fills carry no stroke of their own. */
+.run-icon rect,
+.run-icon path[fill] {
+  stroke: none;
 }
 
 .status-dot {
@@ -782,29 +868,90 @@ input.bad {
   outline: none;
 }
 
+/* Context menus, in Datamine Explorer's look. Every level is fixed and
+   placed by MenuList (ui.tsx), so a submenu is never clipped by its parent's
+   scrolling. */
 .menu {
   position: fixed;
   z-index: 100;
-  min-width: 200px;
+  display: flex;
+  flex-direction: column;
+  min-width: 190px;
+  max-width: 420px;
+  max-height: calc(100vh - 8px);
   padding: 4px 0;
-  background: #252526;
-  border: 1px solid #454545;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5);
+  overflow-y: auto;
+  outline: none;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
 }
 
 .menu-item {
-  display: block;
+  display: flex;
+  flex: none;
+  gap: 8px;
+  align-items: center;
   width: 100%;
-  height: 24px;
-  padding: 3px 18px;
-  text-align: left;
-  background: transparent;
-  border: none;
-  border-radius: 0;
+  padding: 3px 12px 3px 8px;
+  white-space: nowrap;
+  cursor: pointer;
 }
 
-.menu-item:hover:not(:disabled) {
+.menu-item.disabled {
+  cursor: default;
+  opacity: 0.45;
+}
+
+.menu-item.active {
   background: var(--select);
+}
+
+.menu-icon-slot {
+  display: inline-flex;
+  flex: none;
+  width: 14px;
+  color: var(--dim);
+}
+
+.menu-label {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.menu-arrow {
+  padding-left: 18px;
+  color: var(--dim);
+}
+
+/* a menu-bar button (Server), as Datamine Explorer's File and View */
+.menu-button {
+  flex: none;
+  padding: 2px 12px;
+  font-weight: 600;
+}
+
+.menu-button.open {
+  background: var(--hover);
+}
+
+.menu-heading {
+  flex: none;
+  padding: 2px 12px;
+  font-size: 11px;
+  color: var(--dim);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.menu-sep {
+  flex: none;
+  width: 100%;
+  height: 1px;
+  margin: 4px 0;
+  background: var(--border);
+  border: 0;
 }
 
 .backdrop {
@@ -976,62 +1123,27 @@ input.bad {
   margin-left: 6px;
 }
 
-.menu-entry {
-  position: relative;
-}
-
-.menu.scroll {
-  max-height: 70vh;
-  overflow-y: auto;
-}
-
-.menu-separator {
-  height: 1px;
-  margin: 4px 0;
-  background: #454545;
-}
-
-.menu-item {
-  display: flex;
-  gap: 6px;
-  align-items: center;
-  padding: 3px 12px 3px 6px;
-  white-space: nowrap;
-}
-
-.menu-check {
-  width: 10px;
-  font-size: 8px;
-  color: var(--ok);
-}
-
-.menu-label {
-  flex: 1;
-}
-
-.menu-arrow {
-  margin-left: 12px;
-  color: var(--dim);
-}
-
-.menu-entry:hover > .menu-item:not(:disabled) {
-  background: var(--select);
-}
-
 .server-info {
   position: relative;
 }
 
-.popover {
-  position: absolute;
-  top: 26px;
-  right: 0;
+/* Fixed, so the status bar's overflow does not clip it; it opens upward
+   from the bar's left end. */
+.server-info .popover {
+  position: fixed;
+  bottom: 22px;
+  left: 0;
   z-index: 50;
+  display: none;
   min-width: 360px;
   padding: 8px 10px;
   background: var(--panel);
   border: 1px solid #454545;
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5);
+}
+
+.server-info:hover .popover {
+  display: block;
 }
 
 .popover table {
@@ -1048,8 +1160,39 @@ input.bad {
   word-break: break-all;
 }
 
-.toolbar-spacer {
-  flex: 1;
+/* Flush with the toolbar's top and right edges, as a title bar's are. */
+.window-controls {
+  display: flex;
+  align-self: stretch;
+  margin-left: 6px;
+}
+
+.window-controls .caption {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 46px;
+  height: 100%;
+  padding: 0;
+  color: var(--text);
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+}
+
+.window-controls .caption:hover {
+  background: rgba(127, 127, 127, 0.2);
+}
+
+.window-controls .caption.close:hover {
+  color: #fff;
+  background: #c42b1c;
+}
+
+/* a window that has lost focus dims its title and controls */
+.toolbar.inactive .toolbar-title,
+.toolbar.inactive .window-controls {
+  opacity: 0.6;
 }
 
 .player-name {
@@ -1260,4 +1403,186 @@ input.bad {
 }
 .src-file .src-loaded {
   margin-left: auto;
+}
+
+/* the build, muted at the right end of the status bar; it opens About */
+button.statusbar-build {
+  flex: none;
+  height: auto;
+  padding: 0;
+  font-size: inherit;
+  line-height: inherit;
+  color: rgba(255, 255, 255, 0.7);
+  cursor: pointer;
+  outline: none;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+}
+
+button.statusbar-build:hover:not(:disabled),
+button.statusbar-build:active,
+button.statusbar-build:focus {
+  color: #fff;
+  background: transparent;
+}
+
+button.statusbar-build:focus-visible {
+  text-decoration: underline;
+}
+
+/* over everything, in the bottom right corner above the status bar; the page
+   under it keeps its clicks */
+.pre-release-watermark {
+  position: fixed;
+  right: 24px;
+  bottom: 38px;
+  z-index: 10000;
+  max-width: min(420px, calc(100% - 24px));
+  font-family:
+    ui-monospace, "Cascadia Mono", "Segoe UI Mono", Consolas, monospace;
+  line-height: 1.35;
+  color: var(--text);
+  text-align: right;
+  text-shadow:
+    0 0 3px var(--bg),
+    0 0 6px var(--bg);
+  pointer-events: none;
+  user-select: none;
+  opacity: 0.6;
+}
+
+.pre-release-watermark-title {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.pre-release-watermark-meta {
+  margin-top: 2px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 10px;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+/* the About dialog */
+.dialog.about {
+  gap: 14px;
+  width: 380px;
+}
+
+.about-head {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+}
+
+.about-icon {
+  display: block;
+  flex: none;
+}
+
+.about-name {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+button.about-build {
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+  height: auto;
+  padding: 1px 6px;
+  margin: 4px 0 0 -7px;
+  font-family: Consolas, "Cascadia Mono", monospace;
+  font-size: 12px;
+  color: var(--dim);
+  cursor: copy;
+  background: transparent;
+  border-color: transparent;
+}
+
+button.about-build:hover:not(:disabled) {
+  color: var(--text);
+  background: var(--hover);
+  border-color: var(--border);
+}
+
+.about-copied {
+  font-family: "Segoe UI", system-ui, sans-serif;
+  font-size: 11px;
+  color: var(--ok);
+}
+
+.about-fields {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 4px 14px;
+  margin: 0;
+}
+
+.about-fields dt {
+  color: var(--dim);
+}
+
+.about-fields dd {
+  margin: 0;
+  font-family: Consolas, "Cascadia Mono", monospace;
+  user-select: text;
+}
+
+.about-links {
+  display: flex;
+  gap: 14px;
+}
+
+button.link {
+  height: auto;
+  padding: 0;
+  color: var(--accent-hi);
+  text-decoration: underline;
+  cursor: pointer;
+  background: transparent;
+  border: 0;
+}
+
+button.link:hover:not(:disabled) {
+  background: transparent;
+}
+
+.about-update {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.about-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* the update prompt */
+.dialog.update {
+  width: 520px;
+}
+
+.update-release {
+  font-weight: 600;
+}
+
+.update-notes {
+  max-height: 260px;
+  padding: 8px;
+  margin: 0;
+  overflow: auto;
+  font-family: Consolas, "Cascadia Mono", monospace;
+  font-size: 12px;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+  user-select: text;
+  background: var(--bg);
+  border: 1px solid var(--border);
 }

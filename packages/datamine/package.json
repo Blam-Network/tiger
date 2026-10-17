@@ -1,6 +1,6 @@
 {
   "name": "@blamnetwork/datamine",
-  "version": "0.1.0",
+  "version": "1.0.0-alpha.1",
   "description": "Bungie-style event logs and datamine files for TypeScript, ported from cseries",
   "type": "module",
   "files": [
@@ -32,15 +32,25 @@
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.js",
-      "require": "./dist-cjs/index.js",
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist-cjs/index.d.ts",
+        "default": "./dist-cjs/index.js"
+      },
       "default": "./dist/index.js"
     },
     "./reading": {
-      "types": "./dist/reading/index.d.ts",
-      "import": "./dist/reading/index.js",
-      "require": "./dist-cjs/reading/index.js",
+      "import": {
+        "types": "./dist/reading/index.d.ts",
+        "default": "./dist/reading/index.js"
+      },
+      "require": {
+        "types": "./dist-cjs/reading/index.d.ts",
+        "default": "./dist-cjs/reading/index.js"
+      },
       "default": "./dist/reading/index.js"
     }
   },

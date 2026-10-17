@@ -8,6 +8,8 @@ trigger_bubble_objective obj_m4_o1a bind(array)
 collect_loot_objective obj_m4_o1b bind("0xDA728072", 5)
 c_sequence_host seq_d_o1_s03
 c_sequence_host seq_d_o1_s04
+c_sequence_host seq_d_o1_s045
+c_sequence_host seq_d_o1_s047
 c_sequence_host seq_d_o1_s05
 
 thread init: pass
@@ -21,6 +23,11 @@ thread main:
     sleep_until(obj_m4_o1a.is_complete())
     obj_m4_o1a.objective_end_silent()
     obj_m4_o1b.objective_begin()
+    # the Ghost has a line for each of the first two codes picked up
+    sleep_until(obj_m4_o1b.get_count() >= 1)
+    seq_d_o1_s045.start()
+    sleep_until(obj_m4_o1b.get_count() >= 2)
+    seq_d_o1_s047.start()
     sleep_until(obj_m4_o1b.is_complete())
     seq_d_o1_s03.stop()
     seq_d_o1_s04.stop()

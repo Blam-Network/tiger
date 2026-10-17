@@ -10,12 +10,19 @@
 c_objective_sensor_host obj_dome_a_hive_m4
 c_objective_sensor_host obj_dome_a_fallen_m4
 c_player_monitor_sensor_host pm_players_domea_upper02
+@member_counts({trooper: 3})
 c_squad_sensor_host sq_hive_upper01
+@member_counts({trooper: 2})
 c_squad_sensor_host sq_hive_upper02
+@member_counts({trooper: 2})
 c_squad_sensor_host sq_hive_upper03
+@member_counts({dreg: 4})
 c_squad_sensor_host sq_fallen_upper_front01
+@member_counts({dreg: 2})
 c_squad_sensor_host sq_fallen_upper_back01
+@member_counts({vandal: 1})
 c_squad_sensor_host sq_fallen_upper_sniper01
+@member_counts({captain: 1, vandal: 2})
 c_squad_sensor_host sq_fallen_upper_anchors01
 c_object_sensor_host o_door01
 

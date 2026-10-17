@@ -36,6 +36,7 @@ c_squad_member_sensor_host sq_fallen_nest2__shank1  # true name unknown
 c_performance_host shank1  # true name unknown
 c_squad_member_sensor_host sq_fallen_nest2__shank2  # true name unknown
 c_performance_host shank2  # true name unknown
+@member_counts({vandal: 1})
 c_squad_sensor_host sq_fallen_first_vandal
 c_objective_sensor_host obj_breach_fallen01  # true name unknown
 c_squad_sensor_host sq_fallen_bouncedown_a
@@ -54,6 +55,7 @@ c_squad_sensor_host sq_fallen_floor_f
 c_squad_sensor_host sq_fallen_wall_r_f
 c_squad_sensor_host sq_fallen_dropdown_g
 c_squad_sensor_host sq_fallen_wall_l_g
+@member_counts({dreg: 1, dreg_1: 1})
 c_squad_sensor_host sq_fallen_h
 c_squad_sensor_host sq_fallen_1c
 c_squad_sensor_host sq_fallen_2
@@ -63,6 +65,7 @@ c_squad_sensor_host sq_fallen_garage_obj
 c_squad_sensor_host sq_fallen_garage_melee
 c_squad_sensor_host sq_fallen_garage_vandals_2
 c_squad_sensor_host sq_fallen_garage_vandals_3
+@member_counts({dregs: 1, dregs_1: 1, vandal: 1})
 c_squad_sensor_host sq_fallen_garage_exit
 c_location_sensor_host breach  # true name unknown
 c_player_trigger_sensor_host pt_bubble bind(breach)  # true name unknown

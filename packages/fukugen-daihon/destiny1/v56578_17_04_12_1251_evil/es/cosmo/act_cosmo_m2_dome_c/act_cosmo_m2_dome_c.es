@@ -17,6 +17,11 @@
 # unknown_82945a01 bundle holds the music and the first Ghost lines.
 
 @activity_bundle("act_cosmo_m2_dome_c")
+act_cosmo_m2_dome_c_mission1 cosmo_m2_phase00_delta_n
+act_cosmo_m2_dome_c_mission2 cosmo_m2_phase01_dry_sea
+act_cosmo_m2_dome_c_mission3 cosmo_m2_phase02_dome_c
+act_cosmo_m2_dome_c_mission4 cosmo_m2_phase03_dome_c
+act_cosmo_m2_dome_c_mission5 cosmo_m2_phase04_dome_c
 startup thread ss_cosmo_m2_dome_c:
     print("script startup")
     c_lifetime_script_utilities.get_lifetime_sensor().set_state(e_activity_lifetime_state.pregame)

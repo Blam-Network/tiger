@@ -245,6 +245,10 @@ export interface SquadState {
   // with every placement (the Last Array's dome A Fallen, 7681 ticks between
   // the first and the respawn).
   placedAt?: number;
+  // SquadAuth [3], the bodies per cell, for a squad whose script authored
+  // its counts (@member_counts): a named cell is 0, its actor the body.
+  // Unset, the sink splits `bodies` over the cells.
+  roster?: readonly number[];
   task?: number;
   // The task's +0xC, sent as [9] as retail does; the TU0 client never reads it.
   taskInfluencer?: number;

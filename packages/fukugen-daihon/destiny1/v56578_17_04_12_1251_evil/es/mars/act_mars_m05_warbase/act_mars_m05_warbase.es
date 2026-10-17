@@ -20,6 +20,15 @@
 # the phases play.
 
 @activity_bundle("act_mars_m05_warbase")
+act_mars_m05_warbase_mission1 phase_1_rubicon_goto
+act_mars_m05_warbase_mission2 phase_3_mesa_goto
+act_mars_m05_warbase_mission3 phase_4_mesa
+act_mars_m05_warbase_mission4 phase_5_gatehouse_goto
+act_mars_m05_warbase_mission5 phase_6_gatehouse
+act_mars_m05_warbase_mission6 phase_7_warbase_goto
+act_mars_m05_warbase_mission7 phase_7_5_warbase
+act_mars_m05_warbase_mission8 phase_8_warbase
+act_mars_m05_warbase_mission9 phase_warbase_complete
 startup thread ss_mars_m05_warbase:
     print("script startup")
     c_lifetime_script_utilities.get_lifetime_sensor().set_state(e_activity_lifetime_state.pregame)

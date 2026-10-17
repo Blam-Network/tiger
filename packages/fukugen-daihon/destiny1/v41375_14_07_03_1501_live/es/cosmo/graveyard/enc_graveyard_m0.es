@@ -5,12 +5,18 @@
 
 @activity_bundle("enc_graveyard_m0")
 c_object_sensor_host o_ketch_gantry
+@member_counts({vandal: 1})
 c_squad_sensor_host sq_fallen_m0_sniper
 c_objective_sensor_host obj_fallen_m0  # true name unknown
+@member_counts({dregs: 3, vandal: 1})
 c_squad_sensor_host sq_fallen_m0_drop_1
+@member_counts({dregs: 2})
 c_squad_sensor_host sq_fallen_m0_drop_2
+@member_counts({dregs: 3})
 c_squad_sensor_host sq_fallen_m0_drop_2_b
+@member_counts({dreg1: 3})
 c_squad_sensor_host sq_fallen_m0_upgrade
+@member_counts({shank1: 1, shank2: 1, shank3: 1})
 c_squad_sensor_host sq_fallen_m0_exit_shanks
 c_player_trigger_sensor_host pt_ketch  # true name unknown
 c_cinematic_sensor_host ci_ketch_arrival_cinematic

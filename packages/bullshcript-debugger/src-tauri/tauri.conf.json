@@ -13,10 +13,12 @@
     "windows": [
       {
         "title": "bullshcript debugger",
+        "decorations": false,
         "width": 1500,
         "height": 920,
         "minWidth": 900,
-        "minHeight": 560
+        "minHeight": 560,
+        "shadow": true
       }
     ],
     "security": {

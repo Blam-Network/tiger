@@ -7,20 +7,30 @@
 @activity_bundle("enc_ship_portal1")
 c_squad_sensor_host sq_bossbattle_boss01
 c_objective_sensor_host obj_bossbattle_fallen  # true name unknown
+@member_counts({dregs: 2, vandal: 1})
 c_squad_sensor_host sq_bossbattle_reinf01
+@member_counts({dregs: 2, vandal: 1})
 c_squad_sensor_host sq_bossbattle_reinf02
 c_squad_sensor_host sq_bossbattle_dropsquad01
 c_squad_sensor_host sq_bossbattle_dropsquad02
 c_squad_sensor_host sq_bossbattle_sweeper01
+@member_counts({shanks_a: 2})
 c_squad_sensor_host sq_bossbattle_shanks01
+@member_counts({shanks_a: 2})
 c_squad_sensor_host sq_bossbattle_shanks02
+@member_counts({shanks_a: 2})
 c_squad_sensor_host sq_bossbattle_shanks03
+@member_counts({shanks_a: 2})
 c_squad_sensor_host sq_bossbattle_shanks04
 c_squad_sensor_host sq_bossbattle_anticheese01
 c_squad_sensor_host sq_bossbattle_anticheese02
+@member_counts({dreg01: 1, dreg02: 1, vandal01: 1})
 c_squad_sensor_host sq_bossbattle_fallen01
+@member_counts({dreg01: 1, dreg02: 1, vandal01: 1})
 c_squad_sensor_host sq_bossbattle_fallen02
+@member_counts({dreg01: 1, dreg02: 1})
 c_squad_sensor_host sq_bossbattle_fallen03
+@member_counts({dreg01: 1, dreg02: 1})
 c_squad_sensor_host sq_bossbattle_fallen04
 c_player_trigger_sensor_host pt_play_s01_x120  # true name unknown
 c_sequence_host seq_soulfx_a  # true name unknown

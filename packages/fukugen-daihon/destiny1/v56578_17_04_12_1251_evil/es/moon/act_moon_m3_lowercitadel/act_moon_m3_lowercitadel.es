@@ -18,6 +18,11 @@
 # the start; it only works for players holding the scan objective's flag.
 
 @activity_bundle("act_moon_m3_lowercitadel")
+act_moon_m3_lowercitadel_mission1 phase_wisdom
+act_moon_m3_lowercitadel_mission2 phase_lowercitadel
+act_moon_m3_lowercitadel_mission3 phase_strength
+act_moon_m3_lowercitadel_mission4 phase_strength_b
+act_moon_m3_lowercitadel_mission5 phase_strength_complete
 interactable_placement pf_obj_strength_interact_place  # archetype not authored on TU0
 
 startup thread ss_moon_m3_lowercitadel:

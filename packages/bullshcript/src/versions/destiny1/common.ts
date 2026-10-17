@@ -10,6 +10,7 @@ export type {
   BsFile,
   BsFileKind,
   BsMember,
+  BsMemberCounts,
   BsStmt,
   BsType,
 } from "../../bungiescript/ast.ts";
@@ -77,6 +78,7 @@ export {
   type BsSchema,
   type BsSchemaDefault,
   type BsSchemaMember,
+  type BsSchemaMemberCounts,
   type BsSchemaMemberKind,
   type BsSchemaSide,
   emitSchema,

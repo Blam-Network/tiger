@@ -87,6 +87,24 @@ The game finds an encounter's class by its file name, so the compiler warns abou
 
 Bungie's own data kept this link on the bundle's side (the bundle's host named its script), and their compiler left the bundle name out. The decorator is our way of writing it down, since we have the scripts but not the bundles' sources.
 
+### How many bodies a squad spawns
+
+A squad's definition lists its members (one per roster cell), each with a name such as `dreg`, `vandal` or `thrall_1`. How many bodies each member spawns was Bungie's host-only data (the squad host's cells), so a script writes those cells with `@member_counts` on the squad's declaration, keyed by member name:
+
+```python
+@member_counts({dreg: 3, vandal: 1})
+c_squad_sensor_host sq_fallen_landing01
+```
+
+- A member left out keeps the default: one body, or none for a member a named actor fills (`sq_x__captain`). A squad with no decorator is all defaults.
+- Two members with the same name take a list, in member order: `{dreg: [2, 1]}`. A name that never cracked is written as its hash: `{0xD1F11E74: 1}`.
+- Named actors' members are written too, as the host had them. A named member's count is the anonymous bodies beside its actor, and it goes out as is: nearly always 0 (192 of the pre-alpha's 206 named cells, and every one retail served), 1 for the pre-alpha Tower talkers.
+- An array of squads takes a list by index, `{}` for one left at its defaults: `@member_counts([{thrall: 2, thrall_1: 2}, {}])`.
+- An archetype instance takes a map of its own members: `@member_counts({_squad: [{dreg: 2}, {vandal: 2}]})` on `simple_encounter amb_x`.
+- The decorator can share its member's line (`@member_counts({dreg: 2}) c_squad_sensor_host sq_x`), which the pre-alpha's scripts use so their lines stay where Bungie's chunks have them.
+
+The compiler checks the shape against the member's type. The host checks the names against the squad's definition when the script loads: an unknown name or the wrong number of counts for a name stops the script loading, with a note saying why. On `place()` the squad gets the authored bodies, and its roster goes out per cell.
+
 ## Members
 
 A member is declared on its own line: its type, its name, and optionally a starting value.

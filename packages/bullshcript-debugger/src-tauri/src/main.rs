@@ -1,4 +1,5 @@
 // Opens the UI and runs scripts/data-service.mjs beside it for package reads.
+// The opener plugin takes About's and the update prompt's links to the browser.
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 use std::net::TcpListener;
@@ -56,6 +57,7 @@ fn data_service_url(service: tauri::State<DataService>) -> Option<String> {
 
 fn main() {
     let app = tauri::Builder::default()
+        .plugin(tauri_plugin_opener::init())
         .manage(start_data_service())
         .invoke_handler(tauri::generate_handler![data_service_url])
         .build(tauri::generate_context!())

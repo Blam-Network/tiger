@@ -1,74 +1,21 @@
-// Top toolbar (connection, target, run control, incidents) and the status bar.
-import { useEffect, useRef, useState } from "react";
+import { useEffect } from "react";
+import appIcon from "../../src-tauri/app-icon.svg";
+import { BUILD_INFO } from "../build-info";
+import { IN_TAURI } from "../desktop";
 import { session, useSession } from "../session";
 import { playerName } from "./Sidebar";
-import { openDialog, openMenu } from "./ui";
+import { cx, MenuButton, type MenuItem, openDialog } from "./ui";
+import { useWindowState, WindowControls } from "./WindowControls";
 
-function sendIncidentMenu(event: React.MouseEvent): void {
-  const kinds = session.state.incidentKinds;
-  openMenu(
-    event,
-    kinds.length
-      ? kinds.map((kind) => ({
-          label: kind.params.length ? `${kind.label}…` : kind.label,
-          run: () => {
-            if (kind.params.length === 0) {
-              session.run(session.incident(kind.name, {}));
-              return;
-            }
-            openDialog(
-              `Incident: ${kind.label}`,
-              kind.params.map((p) => ({
-                hint: p.hint ?? p.type,
-                label: p.name,
-                name: p.name,
-              })),
-              (values) => {
-                const params: Record<string, unknown> = {};
-                for (const p of kind.params) {
-                  const value = values[p.name]?.trim() ?? "";
-                  if (value !== "") {
-                    params[p.name] =
-                      p.type === "number" ? Number(value) : value;
-                  }
-                }
-                session.run(session.incident(kind.name, params));
-              }
-            );
-          },
-        }))
-      : [{ disabled: true, label: "not connected", run: () => undefined }]
-  );
-}
-
-// The server's build and data paths (tiger/server), on a click.
-function ServerInfo() {
+// The connection state in the status bar; hovering it shows the server's
+// build and data paths (tiger/server).
+function ConnectionInfo() {
+  const connection = useSession((s) => s.connection);
   const server = useSession((s) => s.server);
-  const [open, setOpen] = useState(false);
-  const ref = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    if (!open) {
-      return;
-    }
-    const close = (e: MouseEvent) => {
-      if (!ref.current?.contains(e.target as Node)) {
-        setOpen(false);
-      }
-    };
-    window.addEventListener("mousedown", close);
-    return () => window.removeEventListener("mousedown", close);
-  }, [open]);
   return (
-    <div className="server-info" ref={ref}>
-      <button
-        disabled={!server}
-        onClick={() => setOpen(!open)}
-        title={server?.buildLabel}
-        type="button"
-      >
-        Server
-      </button>
-      {open && server && (
+    <div className="server-info">
+      <span>{connection}</span>
+      {server && (
         <div className="popover">
           <table>
             <tbody>
@@ -86,7 +33,116 @@ function ServerInfo() {
   );
 }
 
-export function Toolbar() {
+// The run controls' icons, VS Code's debug toolbar shapes on a 16 px grid:
+// a step's dot is the current statement, its arrow where the step goes.
+const ICONS = {
+  continue: (
+    <>
+      <rect fill="currentColor" height="10" rx="0.5" width="2" x="2.5" y="3" />
+      <path d="M7 3v10l6.5-5z" fill="currentColor" />
+    </>
+  ),
+  pause: (
+    <>
+      <rect fill="currentColor" height="10" rx="0.5" width="3" x="3.5" y="3" />
+      <rect fill="currentColor" height="10" rx="0.5" width="3" x="9.5" y="3" />
+    </>
+  ),
+  stepOver: (
+    <>
+      <path d="M2.5 9.5a5 5 0 0 1 10 0" />
+      <path d="M10 7.25l2.5 2.5 2.5-2.5" />
+      <circle cx="7.5" cy="13" fill="currentColor" r="1.75" stroke="none" />
+    </>
+  ),
+  stepInto: (
+    <>
+      <path d="M8 1.5v7.5M4.75 6 8 9.25 11.25 6" />
+      <circle cx="8" cy="13" fill="currentColor" r="1.75" stroke="none" />
+    </>
+  ),
+  stepOut: (
+    <>
+      <path d="M8 9.5V2M4.75 5.25 8 2l3.25 3.25" />
+      <circle cx="8" cy="13" fill="currentColor" r="1.75" stroke="none" />
+    </>
+  ),
+  tick: (
+    <>
+      <path d="M2.5 3v10L9 8z" fill="currentColor" />
+      <rect fill="currentColor" height="10" rx="0.5" width="2" x="11" y="3" />
+    </>
+  ),
+};
+
+function Icon({ name }: { name: keyof typeof ICONS }) {
+  return (
+    <svg
+      aria-hidden="true"
+      className={`run-icon ${name}`}
+      fill="none"
+      height="16"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="1.6"
+      viewBox="0 0 16 16"
+      width="16"
+    >
+      {ICONS[name]}
+    </svg>
+  );
+}
+
+// The Server menu: connect by address or to a recent server, disconnect.
+function serverMenu(): MenuItem[] {
+  const { address, connection, recentAddresses } = session.state;
+  const recent: MenuItem[] = recentAddresses.length
+    ? recentAddresses.map((a) => ({
+        checked: a === address && connection !== "disconnected",
+        label: a,
+        run: () => session.connectTo(a),
+      }))
+    : [{ disabled: true, label: "none" }];
+  return [
+    {
+      label: "Connect…",
+      run: () =>
+        openDialog(
+          "Connect to server",
+          [{ initial: address, label: "Address", name: "address" }],
+          (values) => session.connectTo(values.address ?? "")
+        ),
+    },
+    {
+      disabled: connection === "disconnected",
+      label: "Disconnect",
+      run: () => session.disconnect(),
+    },
+    { label: "", separator: true },
+    { heading: true, label: "Recent" },
+    ...recent,
+    { label: "", separator: true },
+    {
+      disabled: recentAddresses.length === 0,
+      label: "Clear recent",
+      run: () => session.clearRecentAddresses(),
+    },
+  ];
+}
+
+// In the desktop app the window has no frame of its own: this bar is its
+// title bar. Where the attribute is clicked itself it drags the window, and a
+// double click maximizes it; "deep" also takes the clicks on what is inside,
+// which the title needs.
+const drag = IN_TAURI ? { "data-tauri-drag-region": "" } : {};
+const dragDeep = IN_TAURI ? { "data-tauri-drag-region": "deep" } : {};
+
+// The bar, after Datamine Explorer's: the app icon (opens About), the Server
+// menu and the connection's dot on the left, the program's name centred, the run controls and
+// the window's caption buttons on the right.
+export function Toolbar({ onAbout }: { onAbout: () => void }) {
+  const { focused, maximized } = useWindowState();
   const address = useSession((s) => s.address);
   const connection = useSession((s) => s.connection);
   const targets = useSession((s) => s.targets);
@@ -123,122 +179,108 @@ export function Toolbar() {
   }, []);
 
   return (
-    <div className="toolbar">
-      <span className={`status-dot ${connection}`} title={connection} />
-      <input
-        className="address"
-        disabled={connection !== "disconnected"}
-        onChange={(e) => session.setAddress(e.target.value)}
-        onKeyDown={(e) => e.key === "Enter" && session.connect()}
-        spellCheck={false}
-        value={address}
-      />
-      {connection === "disconnected" ? (
-        <button
-          className="primary"
-          onClick={() => session.connect()}
-          type="button"
-        >
-          Connect
-        </button>
-      ) : (
-        <button onClick={() => session.disconnect()} type="button">
-          {connection === "connecting" ? "Cancel" : "Disconnect"}
-        </button>
+    <div
+      className={cx(
+        "toolbar",
+        IN_TAURI && "desktop",
+        IN_TAURI && !focused && "inactive"
       )}
-      <select
-        className="target"
-        disabled={targets.length === 0}
-        onChange={(e) => session.run(session.selectTarget(e.target.value))}
-        value={targetId ?? ""}
-      >
-        {targets.length === 0 && <option value="">no activity</option>}
-        {targets.map((t) => (
-          <option key={t.id} title={t.meta?.activity} value={t.id}>
-            {t.paused ? "⏸ " : "▶ "}
-            {t.label} · {t.phase ?? "no phase"} · tick {t.ticks}
-          </option>
-        ))}
-      </select>
-      {following && (
+      {...drag}
+    >
+      <div className="toolbar-group toolbar-left" {...drag}>
         <button
-          className="badge-button"
-          onClick={() => session.follow(undefined)}
-          title="Click to stop following"
+          aria-label="About bullshcript debugger"
+          className="toolbar-brand"
+          onClick={onAbout}
+          title="About bullshcript debugger"
           type="button"
         >
-          following {followed ? playerName(followed) : following}
+          <img
+            alt=""
+            className="app-icon"
+            draggable={false}
+            height="22"
+            src={appIcon}
+            width="22"
+          />
         </button>
-      )}
-      <div className="run-buttons">
-        <button
-          disabled={!(live && paused)}
-          onClick={() => session.continue()}
-          title="Continue (F5)"
-          type="button"
-        >
-          ▶ Continue
-        </button>
-        <button
-          disabled={!live || paused}
-          onClick={() => session.pause()}
-          title="Pause (F6)"
-          type="button"
-        >
-          ⏸ Pause
-        </button>
-        <button
-          disabled={!live}
-          onClick={() => session.step("next")}
-          title="Step Over (F10)"
-          type="button"
-        >
-          ↷ Over
-        </button>
-        <button
-          disabled={!live}
-          onClick={() => session.step("stepIn")}
-          title="Step Into (F11)"
-          type="button"
-        >
-          ↓ Into
-        </button>
-        <button
-          disabled={!live}
-          onClick={() => session.step("stepOut")}
-          title="Step Out (Shift+F11)"
-          type="button"
-        >
-          ↑ Out
-        </button>
-        <button
-          disabled={!live}
-          onClick={() => session.stepTick()}
-          title="Run one tick, then hold (F8)"
-          type="button"
-        >
-          ⏭ Tick
-        </button>
+        <MenuButton items={serverMenu} label="Server" />
+        <span
+          className={`status-dot ${connection}`}
+          title={`${connection} · ${address}`}
+        />
+        {following && (
+          <button
+            className="badge-button"
+            onClick={() => session.follow(undefined)}
+            title="Click to stop following"
+            type="button"
+          >
+            following {followed ? playerName(followed) : following}
+          </button>
+        )}
       </div>
-      <button disabled={!live} onClick={sendIncidentMenu} type="button">
-        Send incident ▾
-      </button>
-      <button
-        disabled={!live}
-        onClick={() => session.run(session.kick(session.state.targetId))}
-        title="Drop the activity's host connections: its players go back to orbit"
-        type="button"
-      >
-        Kick to orbit
-      </button>
-      <div className="toolbar-spacer" />
-      <ServerInfo />
+      <div className="toolbar-title" {...dragDeep}>
+        <span>bullshcript debugger</span>
+      </div>
+      <div className="toolbar-group toolbar-right" {...drag}>
+        <div className="run-buttons">
+          <button
+            disabled={!(live && paused)}
+            onClick={() => session.continue()}
+            title="Continue (F5)"
+            type="button"
+          >
+            <Icon name="continue" />
+          </button>
+          <button
+            disabled={!live || paused}
+            onClick={() => session.pause()}
+            title="Pause (F6)"
+            type="button"
+          >
+            <Icon name="pause" />
+          </button>
+          <button
+            disabled={!live}
+            onClick={() => session.step("next")}
+            title="Step Over (F10)"
+            type="button"
+          >
+            <Icon name="stepOver" />
+          </button>
+          <button
+            disabled={!live}
+            onClick={() => session.step("stepIn")}
+            title="Step Into (F11)"
+            type="button"
+          >
+            <Icon name="stepInto" />
+          </button>
+          <button
+            disabled={!live}
+            onClick={() => session.step("stepOut")}
+            title="Step Out (Shift+F11)"
+            type="button"
+          >
+            <Icon name="stepOut" />
+          </button>
+          <button
+            disabled={!live}
+            onClick={() => session.stepTick()}
+            title="Run one tick, then hold (F8)"
+            type="button"
+          >
+            <Icon name="tick" />
+          </button>
+        </div>
+        {IN_TAURI && <WindowControls maximized={maximized} />}
+      </div>
     </div>
   );
 }
 
-export function StatusBar() {
-  const connection = useSession((s) => s.connection);
+export function StatusBar({ onAbout }: { onAbout: () => void }) {
   const targets = useSession((s) => s.targets);
   const targetId = useSession((s) => s.targetId);
   const lastStop = useSession((s) => s.lastStop);
@@ -246,7 +288,7 @@ export function StatusBar() {
   const target = targets.find((t) => t.id === targetId);
   return (
     <div className={`statusbar ${target?.paused ? "paused" : ""}`}>
-      <span>{connection}</span>
+      <ConnectionInfo />
       {server && (
         <span title={server.build}>{server.buildLabel ?? server.build}</span>
       )}
@@ -268,6 +310,15 @@ export function StatusBar() {
       ) : (
         <span>no target</span>
       )}
+      <span className="grow" />
+      <button
+        className="statusbar-build"
+        onClick={onAbout}
+        title="About bullshcript debugger"
+        type="button"
+      >
+        bullshcript debugger {BUILD_INFO.buildString}
+      </button>
     </div>
   );
 }

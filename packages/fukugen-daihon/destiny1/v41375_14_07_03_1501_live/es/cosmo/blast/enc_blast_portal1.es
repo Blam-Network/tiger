@@ -10,15 +10,24 @@ c_objective_sensor_host obj_ground  # true name unknown
 c_squad_sensor_host sq_fallen_left02
 c_squad_sensor_host sq_fallen_right01
 c_squad_sensor_host sq_fallen_right02
+@member_counts({captain: 1, dreg: 2, vandal: 1})
 c_squad_sensor_host sq_fallen_rear01
+@member_counts({dreg: 2, vandal: 2})
 c_squad_sensor_host sq_fallen_door01
+@member_counts({shank: 2})
 c_squad_sensor_host sq_fallen_shanks01
 c_objective_sensor_host obj_shanks  # true name unknown
+@member_counts({shank: 2})
 c_squad_sensor_host sq_fallen_shanks02
+@member_counts({captain: 1, dreg: 2, vandal: 1})
 c_squad_sensor_host sq_fallen_mid01
+@member_counts({dreg: 2, vandal: 2})
 c_squad_sensor_host sq_fallen_mid02
+@member_counts({dreg: 1, vandal: 2})
 c_squad_sensor_host sq_fallen_mid03
+@member_counts({dreg: 1, vandal: 1})
 c_squad_sensor_host sq_fallen_mid04
+@member_counts({vandal: 1})
 c_squad_sensor_host sq_fallen_mid05
 c_player_trigger_sensor_host pt_play_s01_x100_s01_x110  # true name unknown
 c_squad_sensor_host sq_tank

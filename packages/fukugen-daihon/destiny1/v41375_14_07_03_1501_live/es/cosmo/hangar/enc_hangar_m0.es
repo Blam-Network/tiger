@@ -9,14 +9,22 @@ c_object_sensor_host o_hangar_gating_exit
 c_object_sensor_host o_ship
 c_object_sensor_host o_ship_wires
 interactable_placement obj_placement_m0_m05
+@member_counts({dreg: 1, dreg_2: 1})
 c_squad_sensor_host sq_m0_fallen_init
 c_objective_sensor_host obj_m0_hangar_fallen  # true name unknown
+@member_counts({dreg_1: 1})
 c_squad_sensor_host sq_m0_fallen_init_b
+@member_counts({dreg: 1, dreg_1: 1, vandal: 1})
 c_squad_sensor_host sq_m0_fallen_gating
+@member_counts({captain: 1})
 c_squad_sensor_host sq_ch1_fallen_on_playership_1
+@member_counts({0xD1F11E74: 1})
 c_squad_sensor_host sq_ch1_fallen_on_playership_2
+@member_counts({vandal: 1})
 c_squad_sensor_host sq_ch1_fallen_on_playership_3
+@member_counts({dreg: 3})
 c_squad_sensor_host sq_m0_fallen_1
+@member_counts({dreg: 1, shank: 2})
 c_squad_sensor_host sq_m0_fallen_2
 c_player_trigger_sensor_host pt_grenade_reinforce  # true name unknown
 c_player_trigger_sensor_host pt_fallen_ship  # true name unknown

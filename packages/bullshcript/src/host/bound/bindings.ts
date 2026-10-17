@@ -240,11 +240,67 @@ export function rowImportIdent(
   return entry?.importIdent;
 }
 
+// A squad's cells as its script authored them (@member_counts), the
+// host-only squad host's cells: each cell's anonymous bodies. A named cell
+// (the package's 0) has its actor besides: the alpha's hosts give 192 of 206
+// named cells 0 and retail serves them as 0, so the count is what goes out,
+// never the actor counted in.
+export interface AuthoredCells {
+  readonly counts: readonly number[];
+  readonly named: readonly boolean[];
+}
+
+// The bodies authored cells stand with: the counts, and one actor for each
+// named cell.
+function authoredBodies(cells: AuthoredCells): number {
+  return (
+    cells.counts.reduce((sum, count) => sum + count, 0) +
+    cells.named.filter(Boolean).length
+  );
+}
+
+// SquadAuth's roster for `bodies`: the anonymous ones (all but the named
+// actors) split over the cells by their authored counts (largest
+// remainder, the earlier cell on a tie). At the authored total it is the
+// authored counts; how retail splits a refill over several cells is
+// unknown.
+export function authoredRoster(
+  cells: AuthoredCells,
+  bodies: number = authoredBodies(cells)
+): number[] {
+  const weights = [...cells.counts];
+  const total = weights.reduce((sum, weight) => sum + weight, 0);
+  const named = cells.named.filter(Boolean).length;
+  const anonymous = Math.max(0, bodies - named);
+  if (total === 0) {
+    return weights;
+  }
+  const exact = weights.map((weight) => (anonymous * weight) / total);
+  const roster = exact.map(Math.floor);
+  let left = anonymous - roster.reduce((sum, count) => sum + count, 0);
+  const order = exact
+    .map((value, cell) => ({ cell, rest: value - Math.floor(value) }))
+    .sort((a, b) => b.rest - a.rest || a.cell - b.cell);
+  for (const { cell } of order) {
+    if (left <= 0) {
+      break;
+    }
+    roster[cell] += 1;
+    left -= 1;
+  }
+  return roster;
+}
+
 export function squadRosterSize(
   types: ActivityBundleItemTypes,
   tags: readonly ActivityBundleTag[],
-  row: BoundRow
+  row: BoundRow,
+  // the script's @member_counts for the row, over the package's cells
+  scripted?: AuthoredCells
 ): number {
+  if (scripted !== undefined) {
+    return authoredBodies(scripted);
+  }
   const tag = tags.find((t) => t.bundle === row.bundle);
   if (!tag) {
     return 1;

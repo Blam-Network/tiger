@@ -300,6 +300,9 @@ function seatNamedMembers(self: BoundInstance, squad: BoundRow): void {
 
 // Running from our drop id until "drop #N complete" clears field 5
 // (0x835B5984, 0x835B5ADC, 0x835B632C, sub_835B67F8, 0x835B696C), else DROP_TIMEOUT_SECONDS.
+// A report of an earlier drop has not taken ours yet: a placed-again actor's
+// report starts again from 0 (retail), and the timeout still covers a drop
+// the client never takes.
 export function dropInProgress(self: BoundInstance): boolean {
   if (self.row?.typeId !== self.types.Actor || self.actor.dropId === 0) {
     return false;
@@ -307,7 +310,7 @@ export function dropInProgress(self: BoundInstance): boolean {
   const ack = self.context.reports.actorDropAck(
     itemKey(self.row.bundle, self.row.typeIndex)
   );
-  if (ack === undefined) {
+  if (ack === undefined || ack.dropId < self.actor.dropId) {
     return self.squad.dropElapsed < DROP_TIMEOUT_SECONDS;
   }
   return ack.dropId !== self.actor.dropId || ack.inProgress;
@@ -380,7 +383,10 @@ export function abortCommandScript(self: BoundInstance): boolean {
 }
 
 // A cookie stalled before placement is latched and never runs; the same atoms
-// go again under a fresh cookie, which primes once placed (sub_835B7560).
+// go again under a fresh cookie, which primes once placed (sub_835B7560). A
+// script whose pc has moved past where it was issued has run, however long
+// its current atom takes: the 01.29 Fallen skiff sat at pc 4 of 5 on its exit
+// ability, and each re-arm started that ability over.
 export function rearmUnprimedScript(
   self: BoundInstance,
   seconds: number
@@ -393,7 +399,11 @@ export function rearmUnprimedScript(
     itemKey(self.row.bundle, self.row.typeIndex)
   );
   const pc = sense?.pcReached ?? 0;
-  if (sense?.cookieRunning !== script.cookie || pc >= script.atoms.length) {
+  if (
+    sense?.cookieRunning !== script.cookie ||
+    pc !== (script.pc ?? 0) ||
+    pc >= script.atoms.length
+  ) {
     self.actor.scriptWatch = undefined;
     return;
   }
@@ -780,9 +790,12 @@ export function maxCount(self: BoundInstance): number {
 // Actor place()/remove(): the actor's own placed flag (read at 0x835B5844).
 function placeActor(self: BoundInstance, placed: boolean): boolean {
   // Placed again: a new actor, with nothing left to drop from the last one.
+  // Its drops count from 1 again, as retail's do (the Last Array's wave ship,
+  // row 62: drop id 1, 2, then 1 after each place).
   if (placed && self.actor.placed) {
     self.actor.incarnation += 1;
     self.actor.dropRefs = [];
+    self.actor.dropId = 0;
   }
   self.actor.placed = placed;
   notePlacement(self, placed ? 1 : 0);

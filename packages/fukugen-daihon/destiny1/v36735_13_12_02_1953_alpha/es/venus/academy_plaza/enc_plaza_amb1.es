@@ -1,12 +1,12 @@
 @activity_bundle("enc_plaza_amb1")
 c_objective_sensor_host obj_plaza_amb1  # true name unknown
 c_encounter_manager encounters  # true name unknown
-simple_encounter vex_simple_encounter01
-simple_encounter vex_simple_encounter02
-simple_encounter vex_simple_encounter03
-simple_encounter fallen_simple_encounter01
-simple_encounter fallen_simple_encounter02
-simple_encounter fallen_simple_encounter03
+@member_counts({_squad: [{goblins: 3}, {goblins: 3}]}) simple_encounter vex_simple_encounter01
+@member_counts({_squad: [{goblins: 3}, {goblins: 3}]}) simple_encounter vex_simple_encounter02
+@member_counts({_squad: [{goblins: 3}, {goblins: 3}]}) simple_encounter vex_simple_encounter03
+@member_counts({_squad: [{captain: 1, dreg: 5}]}) simple_encounter fallen_simple_encounter01
+@member_counts({_squad: [{dregs: 3}, {vandals: 3}]}) simple_encounter fallen_simple_encounter02
+@member_counts({_squad: [{dregs: 3}, {shank: 2, vandal: 1}]}) simple_encounter fallen_simple_encounter03
 c_squad_group_sensor_host sqg_fallen  # true name unknown
 c_squad_group_sensor_host sqg_vex  # true name unknown
 loot_plaza loot_venus_plaza_1

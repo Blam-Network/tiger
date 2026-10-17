@@ -176,7 +176,7 @@ An encounter also has everything in "Every script class".
 
 | Native | Called as | What it does |
 |---|---|---|
-| `place` | `sq.place()` | Spawns the squad's members. |
+| `place` | `sq.place()` | Spawns the squad's members: the bodies its `@member_counts` give each (LANGUAGE.md), else one per member. |
 | `respawn` | `sq.respawn()` | Brings the squad back up to the number that were placed, replacing members that died. |
 | `remove` | `sq.remove()` | Takes the squad's members out of the game. |
 | `kill` | `sq.kill()` | Kills the squad's members. |

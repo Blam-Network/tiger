@@ -3,7 +3,11 @@
 
 import { LuaHostObject } from "../../hks/env/host_env.ts";
 import { type LuaValue, luaToString } from "../../hks/vm/values.ts";
-import type { BoundRow } from "../bound/bindings.ts";
+import {
+  type AuthoredCells,
+  authoredRoster,
+  type BoundRow,
+} from "../bound/bindings.ts";
 import type { ScriptItemState } from "../state/item_state.ts";
 import {
   type CommandScriptAtom,
@@ -168,6 +172,8 @@ export interface HostContext {
   holdLifetimeForCinematic?(row: BoundRow): void;
   log(line: string): void;
   machineStates?: Map<string, MachineState>;
+  // The scripts' @member_counts by itemKey; unset, no squad has any.
+  memberCounts?: ReadonlyMap<string, AuthoredCells>;
   namedHandles: ReadonlyMap<string, boolean>;
   // A gate whose predicate only touches row-less handles can never change.
   noteRowRead(hasRow: boolean): void;
@@ -228,7 +234,14 @@ export class ItemWriter {
   // Each change carries the whole squad state.
   squad(row: ItemRef, change: Partial<SquadState>, initial = false): void {
     const previous = this.context.state.squad(row);
-    const state = { ...previous, ...change };
+    const state: SquadState = { ...previous, ...change };
+    const authored = this.context.memberCounts?.get(
+      itemKey(row.bundle, row.typeIndex)
+    );
+    if (authored !== undefined) {
+      // A squad nothing placed has no bodies, not its authored total.
+      state.roster = authoredRoster(authored, state.bodies ?? 0);
+    }
     this.context.state.setSquad(row, state);
     if (state.wave !== previous.wave || state.killed !== previous.killed) {
       this.context.onSquadEpochBump?.(itemKey(row.bundle, row.typeIndex));

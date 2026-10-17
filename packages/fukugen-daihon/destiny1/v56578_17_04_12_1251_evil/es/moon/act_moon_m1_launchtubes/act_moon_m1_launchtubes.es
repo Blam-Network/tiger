@@ -18,6 +18,15 @@
 # Written from one capture: every timing below is a single-run fact.
 
 @activity_bundle("act_moon_m1_launchtubes")
+act_moon_m1_launchtubes_mission1 phase_intro_cin
+act_moon_m1_launchtubes_mission2 phase_1_accelerator
+act_moon_m1_launchtubes_mission3 phase_moonbase
+act_moon_m1_launchtubes_mission4 phase_goto_launchtubes
+act_moon_m1_launchtubes_mission5 phase_3_launchtubes
+act_moon_m1_launchtubes_mission6 phase_4_launchtubes
+act_moon_m1_launchtubes_mission7 phase_door_launchtubes
+act_moon_m1_launchtubes_mission8 phase_5_launchtubes
+act_moon_m1_launchtubes_mission9 phase_launchtubes_complete
 startup thread ss_moon_m1_launchtubes:
     print("script startup")
     c_lifetime_script_utilities.get_lifetime_sensor().set_state(e_activity_lifetime_state.pregame)

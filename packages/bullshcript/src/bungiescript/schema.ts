@@ -2,7 +2,8 @@
 // side, default and flags the definition and instance schemas carry.
 
 import { fnv1, parseHashLiteral } from "../host/tags/name_hash.ts";
-import type { BsDecl, BsExpr, BsField, BsType } from "./ast.ts";
+import type { BsCountsValue, BsDecl, BsExpr, BsField, BsType } from "./ast.ts";
+import { BsCompileError } from "./lexer.ts";
 import { type BsNativeKind, nativeTypeNamed } from "./native_types.ts";
 import { bundleHashOf, scriptStem } from "./parser.ts";
 import {
@@ -54,6 +55,20 @@ export type BsSchemaDefault =
   | { readonly kind: "string"; readonly hash: number; readonly value: string }
   | { readonly kind: "vector"; readonly values: readonly number[] };
 
+// One squad's bodies per definition member (@member_counts): the squad the
+// member is, or the one `path` names inside it ("_squad[0]", "[1]").
+export interface BsSchemaMemberCounts {
+  readonly members: readonly BsSchemaSquadMemberCounts[];
+  readonly path?: string;
+}
+
+// The members of a squad's definition named `key` (fnv1 `hash`), in order.
+export interface BsSchemaSquadMemberCounts {
+  readonly counts: readonly number[];
+  readonly hash: number;
+  readonly key: string;
+}
+
 export interface BsSchemaMember {
   readonly autostart?: boolean;
   readonly default?: BsSchemaDefault;
@@ -61,6 +76,8 @@ export interface BsSchemaMember {
   readonly line: number;
   // the Lua method a def, thread or command script compiles to
   readonly luaName?: string;
+  // not Bungie's: their host-only squad hosts held these
+  readonly memberCounts?: readonly BsSchemaMemberCounts[];
   readonly name: string;
   readonly params?: readonly string[];
   readonly side: BsSchemaSide;
@@ -135,7 +152,7 @@ export function emitSchema(
   for (const member of decl.decl.members) {
     switch (member.kind) {
       case "field":
-        members.push(fieldMember(member, project));
+        members.push(fieldMember(member, project, decl.file.path));
         break;
       case "thread":
         members.push({
@@ -255,13 +272,127 @@ export function methodKey(owner: string | undefined, name: string): string {
   return owner === undefined ? name : `${owner}.${name}`;
 }
 
-function fieldMember(field: BsField, project: Project): BsSchemaMember {
+const SQUAD_TYPE = "c_squad_sensor_host";
+const ARRAY_TYPES = new Set(["dynamic_array", "static_array", "static_stack"]);
+
+// @member_counts against the member's type: a squad takes a {member: count}
+// map, an array of them a list by index, a script class a map of its own
+// members. Each squad it reaches is one entry, `path` naming it.
+// an array's element type: T of static_array<T, N> or dynamic_array<T>, T
+// of T[N]
+function arrayElement(type: BsType): BsType | undefined {
+  if (type.count !== undefined) {
+    return { args: [], count: undefined, name: type.name, text: type.name };
+  }
+  const [arg] = type.args;
+  return ARRAY_TYPES.has(type.name) && typeof arg !== "number"
+    ? arg
+    : undefined;
+}
+
+function squadCounts(
+  value: BsCountsValue,
+  type: BsType,
+  path: string,
+  where: string,
+  project: Project,
+  file: string
+): BsSchemaMemberCounts[] {
+  const fail = (why: string): never => {
+    throw new BsCompileError(
+      `@member_counts on ${where}: ${why}`,
+      file,
+      value.line
+    );
+  };
+  const element = arrayElement(type);
+  if (type.text === SQUAD_TYPE) {
+    if (value.kind !== "map") {
+      return fail("a squad takes {member: count, ...}");
+    }
+    const members = value.entries.map(({ hash, key, value: count }) => {
+      const counts =
+        count.kind === "list"
+          ? count.items.map((item) =>
+              item.kind === "count"
+                ? item.value
+                : fail(`'${key}' takes a count or a list of counts`)
+            )
+          : [
+              count.kind === "count"
+                ? count.value
+                : fail(`'${key}' takes a count`),
+            ];
+      return { counts, hash, key };
+    });
+    return [path === "" ? { members } : { members, path }];
+  }
+  if (element !== undefined) {
+    if (value.kind !== "list") {
+      return fail("an array takes [..., ...] by index");
+    }
+    return value.items.flatMap((item, index) =>
+      item.kind === "map" && item.entries.length === 0
+        ? []
+        : squadCounts(
+            item,
+            element,
+            `${path}[${index}]`,
+            `${where}[${index}]`,
+            project,
+            file
+          )
+    );
+  }
+  const decl = project.declNamed(type.name);
+  if (decl === undefined || decl.decl.kind !== "class") {
+    return fail(`a ${type.text} holds no squads`);
+  }
+  if (value.kind !== "map") {
+    return fail(`a ${type.text} takes {member: ..., ...} of its squads`);
+  }
+  return value.entries.flatMap(({ key, value: inner }) => {
+    const member = project
+      .chain(decl)
+      .map((owner) => owner.members.get(key))
+      .find((found) => found !== undefined);
+    if (member?.kind !== "field") {
+      return fail(`${type.text} has no member '${key}'`);
+    }
+    return squadCounts(
+      inner,
+      member.type,
+      path === "" ? key : `${path}.${key}`,
+      `${where}.${key}`,
+      project,
+      file
+    );
+  });
+}
+
+function fieldMember(
+  field: BsField,
+  project: Project,
+  path: string
+): BsSchemaMember {
   const kind = fieldKind(field.type, project);
   return {
     default:
       field.default === undefined ? undefined : defaultOf(field.default, kind),
     kind,
     line: field.line,
+    ...(field.memberCounts === undefined
+      ? {}
+      : {
+          memberCounts: squadCounts(
+            field.memberCounts.value,
+            field.type,
+            "",
+            field.name,
+            project,
+            path
+          ),
+        }),
     name: field.name,
     side: fieldSide(field, kind, project),
     type: field.type.text,

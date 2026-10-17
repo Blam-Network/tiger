@@ -1,19 +1,19 @@
 @activity_bundle("enc_ketch_bay_amb1")
 c_objective_sensor_host obj_ketch_bay_amb1  # true name unknown
-c_squad_sensor_host sq_equipment01
-c_squad_sensor_host sq_equipment02
-c_squad_sensor_host sq_equipment03
-c_squad_sensor_host sq_right_hall
-c_squad_sensor_host sq_control_anchor
-c_squad_sensor_host sq_control01
-c_squad_sensor_host sq_control02
-c_squad_sensor_host sq_control03
-c_squad_sensor_host sq_control_right_mc
-c_squad_sensor_host sq_control_left_mc
-c_squad_sensor_host sq_throne_front
-c_squad_sensor_host sq_throne_mid
-c_squad_sensor_host sq_throne_back
-c_squad_sensor_host sq_throne_captain
+@member_counts({shank: 2, vandal: 1}) c_squad_sensor_host sq_equipment01
+@member_counts({dreg: 2, vandal: 1}) c_squad_sensor_host sq_equipment02
+@member_counts({dreg: 3}) c_squad_sensor_host sq_equipment03
+@member_counts({dreg: 2, vandal: 2}) c_squad_sensor_host sq_right_hall
+@member_counts({captain: 1}) c_squad_sensor_host sq_control_anchor
+@member_counts({dreg: 2, shank: 2}) c_squad_sensor_host sq_control01
+@member_counts({shanks: 2, vandals: 2}) c_squad_sensor_host sq_control02
+@member_counts({dregs: 3, servitor: 1}) c_squad_sensor_host sq_control03
+@member_counts({dregs: 2, vandals: 1}) c_squad_sensor_host sq_control_right_mc
+@member_counts({shanks: 2, vandals: 1}) c_squad_sensor_host sq_control_left_mc
+@member_counts({dregs: 4}) c_squad_sensor_host sq_throne_front
+@member_counts({vandals: 2}) c_squad_sensor_host sq_throne_mid
+@member_counts({vandals: 2}) c_squad_sensor_host sq_throne_back
+@member_counts({captain: 1}) c_squad_sensor_host sq_throne_captain
 c_squad_group_sensor_host sqg_equipment  # true name unknown
 c_squad_group_sensor_host sqg_control  # true name unknown
 c_squad_group_sensor_host sqg_throne  # true name unknown

@@ -1,8 +1,18 @@
-import { CFieldType } from "@craftycodie/cstruct";
+import { CFieldType, c } from "@craftycodie/cstruct";
 import { tag_format_error } from "./tag_block.ts";
 
 // Class 80800065: a u64 length that counts the trailing NUL, then the bytes.
 export const k_tag_string_class = 0x80800065;
+
+// Class 80800070: a string hash on its own, the element of the hash lists
+// many definitions carry. No pointer, so unchanged from the 360.
+export const k_string_hash_class = 0x80800070;
+
+export const s_string_hash = c.struct({
+  hash: c.u32(),
+});
+
+export type s_string_hash = c.infer<typeof s_string_hash>;
 
 export function read_tag_string(buffer: Buffer, offset: number): string {
   const length = Number(buffer.readBigUInt64LE(offset));

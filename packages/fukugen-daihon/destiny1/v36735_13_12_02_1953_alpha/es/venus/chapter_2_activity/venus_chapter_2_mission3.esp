@@ -7,27 +7,27 @@ c_trigger_volume_slot_host tv_southern_tides_md01
 c_player_trigger_sensor_host pt_southern_tides_md01 bind(tv_southern_tides_md01)  # true name unknown
 c_trigger_volume_slot_host tv_southern_tides_md02
 c_player_trigger_sensor_host pt_southern_tides_md02 bind(tv_southern_tides_md02)  # true name unknown
-c_squad_sensor_host sq_vex_reinf00
-c_squad_sensor_host sq_vex_reinf00a
-c_squad_sensor_host sq_vex_reinf01
-c_squad_sensor_host sq_vex_reinf01a
-c_squad_sensor_host sq_vex_reinf01b
-c_squad_sensor_host sq_vex_reinf01c
-c_squad_sensor_host sq_vex_reinf02
-c_squad_sensor_host sq_vex_reinf02a
-c_squad_sensor_host sq_vex_reinf02b
-c_squad_sensor_host sq_vex_reinf02c
-c_squad_sensor_host sq_vex_reinf03
-c_squad_sensor_host sq_vex_reinf03a
-c_squad_sensor_host sq_vex_reinf03b
-c_squad_sensor_host sq_vex_reinf03c
-c_squad_sensor_host sq_vex_sniper01
-c_squad_sensor_host sq_vex_sniper02
-c_squad_sensor_host sq_vex_sniper03
-c_squad_sensor_host sq_vex_sniper04
-c_squad_sensor_host sq_vex_sniper05
-c_squad_sensor_host sq_vex_sniper06
-c_squad_sensor_host sq_vex_sniper07
+@member_counts({goblin: 3}) c_squad_sensor_host sq_vex_reinf00
+@member_counts({goblin: 2, leader: 1}) c_squad_sensor_host sq_vex_reinf00a
+@member_counts({goblin: 3, cell: 1}) c_squad_sensor_host sq_vex_reinf01
+@member_counts({goblin: 2, cell: 1}) c_squad_sensor_host sq_vex_reinf01a
+@member_counts({goblin: 2, cell: 1}) c_squad_sensor_host sq_vex_reinf01b
+@member_counts({goblin: 2, leader: 1}) c_squad_sensor_host sq_vex_reinf01c
+@member_counts({goblin: 4}) c_squad_sensor_host sq_vex_reinf02
+@member_counts({goblin: 2, cell: 1}) c_squad_sensor_host sq_vex_reinf02a
+@member_counts({goblin: 3}) c_squad_sensor_host sq_vex_reinf02b
+@member_counts({goblin: 2, leader: 1}) c_squad_sensor_host sq_vex_reinf02c
+@member_counts({goblin: 3, cell: 1}) c_squad_sensor_host sq_vex_reinf03
+@member_counts({goblin: 2, cell: 1}) c_squad_sensor_host sq_vex_reinf03a
+@member_counts({goblin: 3}) c_squad_sensor_host sq_vex_reinf03b
+@member_counts({goblin: 2, leader: 1}) c_squad_sensor_host sq_vex_reinf03c
+@member_counts({sniper: 0}) c_squad_sensor_host sq_vex_sniper01
+@member_counts({sniper: 0}) c_squad_sensor_host sq_vex_sniper02
+@member_counts({cell_1: 1}) c_squad_sensor_host sq_vex_sniper03
+@member_counts({cell_1: 1}) c_squad_sensor_host sq_vex_sniper04
+@member_counts({cell_1: 1}) c_squad_sensor_host sq_vex_sniper05
+@member_counts({cell_1: 1}) c_squad_sensor_host sq_vex_sniper06
+@member_counts({cell_1: 1}) c_squad_sensor_host sq_vex_sniper07
 c_control_point_sensor_host ps_snipe01  # true name unknown
 c_control_point_sensor_host ps_snipe02  # true name unknown
 c_squad_member_sensor_host sq_vex_sniper01__sniper  # true name unknown
@@ -60,10 +60,10 @@ kill_squad_objective ch2m3_kill_warpgates bind("ch2m3_kill_warpgates", 4)
 trigger_bubble_objective ch2m3_enter_bubble bind(southern_tides)
 dialog_trigger md_c2_m3_d010_trigger
 dialog_trigger md_c2_m3_d020_trigger
-vex_warp_gate vex_warp_gate00
-vex_warp_gate vex_warp_gate01
-vex_warp_gate vex_warp_gate02
-vex_warp_gate vex_warp_gate03
+@member_counts({_squad: {gate: 0}}) vex_warp_gate vex_warp_gate00
+@member_counts({_squad: {gate: 0}}) vex_warp_gate vex_warp_gate01
+@member_counts({_squad: {gate: 0}}) vex_warp_gate vex_warp_gate02
+@member_counts({_squad: {gate: 0}}) vex_warp_gate vex_warp_gate03
 c_hop_on_sensor_host warpgate_invincible  # true name unknown
 c_object_filter_sensor_host warpgates
 string_hash vex_warpgate = "vex_warpgate"

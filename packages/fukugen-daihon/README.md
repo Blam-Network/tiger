@@ -68,3 +68,16 @@ thread sc_ledge_encounter:
 Scripts aren't always so simple though, especially when Incidents get involved. Incidents are events the game sends up to the server about things the player has done, for example enemies they have killed, loot they have picked up, triggers they have activated, devices they have interracted with.
 
 The best way to assess and reimplement a mission script I have found is to play that mission on the live Destiny 1 servers and capture packets. You can observe every incident the game sends to the server, and which items the server interracts with in response. It's still quite fiddly and labourious, but its a good start!
+
+## Tag Data
+
+Bungie's build tools for packages (tool and tool_lib) can be configured to compile "hostonly" packages, a handful of these packages were included in the 36735.13.12.02.1953.alpha (leaked pre-alpha) package. These hostonly packages include compiled scripts and extra tag data needed to run them.
+
+We don't know much about Destiny's loose tags, nor do we need much from them. It appears that each encounter script would have been bound to an encounter host tag in some manner. Script data is a small portion of hostonly packages, so recompiling these packages is beyond the scope of this project. Instead, our compiled scripts include JSON files with supplementrary data which would have come from these hostonly tags, and we dont compile them from loose tags but instead needed data is included within script source using decorators (eg @activity_bundle).
+
+Two decorators carry that data:
+
+- `@activity_bundle("name")` on an encounter: the bundle it runs in, which the bundle's host named.
+- `@member_counts({dreg: 3, vandal: 1})` on a squad (or on an array or archetype instance holding squads): the host-only squad host's cells, by member name, named members included: the anonymous bodies each member of the squad's definition spawns (a named member's actor comes besides). The client packages list a squad's members but not how many bodies each spawns; Bungie's host-only squad hosts held that. A squad without it spawns one body per member. Member counts are reconstructed from retail captures, and for the pre-alpha from its host-only tags.
+
+Everything else we need from tags is read from the retail client packages at runtime with gibbon. There are no offline tag dumps. Every fact the host uses comes from a compiled script or a runtime package read.

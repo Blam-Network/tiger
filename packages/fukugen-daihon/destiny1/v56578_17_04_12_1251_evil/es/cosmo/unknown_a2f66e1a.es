@@ -17,10 +17,15 @@ static_array<c_object_sensor_host, 3> patrol_beacons
 c_object_sensor_host o_sparrow_pod_cage
 c_sequence_host seq_ambient_music
 c_encounter_manager encounters
+@member_counts({_squad: [{vandals: 2}, {captain: 1}]})
 simple_encounter amb_smpl_domea01
+@member_counts({_squad: [{dreg: 2, dreg_captain: 1}]})
 simple_encounter amb_smpl_cave_domea01
+@member_counts({_squad: [{dreg: 1, shank_captain: 1}]})
 simple_encounter amb_smpl_cave_drysea01
+@member_counts({_squad: [{dreg: 2, vandal: 1, shank: 1}]})
 simple_encounter amb_smpl_cluster_mound01
+@member_counts({_squad: [{vandal: 1, dreg: 3}]})
 simple_encounter amb_smpl_cluster_north01
 simple_encounter amb_smpl_cave_entrance_domea01
 simple_encounter amb_smpl_lonetail_drysea01

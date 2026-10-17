@@ -1,16 +1,16 @@
 @activity_bundle("enc_thieves_den_amb1")
 c_objective_sensor_host obj_thieves_den_amb1  # true name unknown
-c_squad_sensor_host sq_caldera_ent01
-c_squad_sensor_host sq_den_bottom01
-c_squad_sensor_host sq_den_bottom02
-c_squad_sensor_host sq_den_bottom03
-c_squad_sensor_host sq_den_ledge01
-c_squad_sensor_host sq_den_ledge02
-c_squad_sensor_host sq_den_ledge03
-c_squad_sensor_host sq_den_ledge04
-c_squad_sensor_host sq_ledge_sniper01
-c_squad_sensor_host sq_ledge_sniper02
-c_squad_sensor_host sq_den_top01
+@member_counts({dregs: 3, vandal: 1}) c_squad_sensor_host sq_caldera_ent01
+@member_counts({dregs: 2, shanks: 2}) c_squad_sensor_host sq_den_bottom01
+@member_counts({dregs: 4}) c_squad_sensor_host sq_den_bottom02
+@member_counts({vandals: 2, captain: 1}) c_squad_sensor_host sq_den_bottom03
+@member_counts({dregs: 3}) c_squad_sensor_host sq_den_ledge01
+@member_counts({dregs: 3}) c_squad_sensor_host sq_den_ledge02
+@member_counts({shanks: 2, captain: 1}) c_squad_sensor_host sq_den_ledge03
+@member_counts({dregs: 3}) c_squad_sensor_host sq_den_ledge04
+@member_counts({vandal: 1}) c_squad_sensor_host sq_ledge_sniper01
+@member_counts({vandal: 1}) c_squad_sensor_host sq_ledge_sniper02
+@member_counts({dregs: 3}) c_squad_sensor_host sq_den_top01
 c_squad_group_sensor_host sqg_den_bottom  # true name unknown
 c_squad_group_sensor_host sqg_den_ledge  # true name unknown
 c_squad_group_sensor_host sqg_den_top  # true name unknown

@@ -25,42 +25,72 @@ c_object_sensor_host o_laserweb_behavior0203
 c_object_sensor_host o_laserweb_behavior0301
 c_object_sensor_host o_laserweb_behavior0302
 interactable_placement sp_placement_array bind("0x1C450A3D")
+@member_counts({thrall: 2})
 c_squad_sensor_host sq_trash01_hive01
 c_objective_sensor_host obj_trash  # true name unknown
+@member_counts({trooper: 2})
 c_squad_sensor_host sq_trash01_hive02
+@member_counts({knight: 1, trooper: 1})
 c_squad_sensor_host sq_trash01_hive03
+@member_counts({dreg: 2, vandal: 1})
 c_squad_sensor_host sq_trash01_fallen01
+@member_counts({dreg: 1, dreg_1: 1, vandal: 1})
 c_squad_sensor_host sq_trash02_fallen01
 c_objective_sensor_host obj_refinery_trash  # true name unknown
+@member_counts({variable: 1, variable_1: 1, variable_2: 1})
 c_squad_sensor_host sq_trash02_fallen02
+@member_counts({captain: 1})
 c_squad_sensor_host sq_trash02_fallen03
+@member_counts({troopers: 3, knight: 1})
 c_squad_sensor_host sq_playfight_hive01
 c_objective_sensor_host obj_refinery_playfight  # true name unknown
+@member_counts({wizard: 1, troopers: 2})
 c_squad_sensor_host sq_playfight_hive02
+@member_counts({dregs: 2, captain: 1, vandals: 2})
 c_squad_sensor_host sq_playfight_fallen01
+@member_counts({vandals: 2})
 c_squad_sensor_host sq_playfight_fallen02
+@member_counts({dregs_pistol: 5, vandal_shock: 0})
 c_squad_sensor_host sq_objective_fallen01a
 c_objective_sensor_host obj_refinery_objective  # true name unknown
+@member_counts({dregs_pistol: 5, 0xDF8CCB01: 0})
 c_squad_sensor_host sq_objective_fallen01b
+@member_counts({dregs_pistol: 2, 0x58330EC6: 3, vandal_shock: 0})
 c_squad_sensor_host sq_objective_fallen01c
 c_squad_sensor_host sq_objective_fallen01d
 c_squad_sensor_host sq_objective_fallen01e
 c_squad_sensor_host sq_objective_fallen02a
+@member_counts({dregs: 1, vandal: 3, captain: 0})
 c_squad_sensor_host sq_objective_fallen02b
+@member_counts({dregs: 1, vandal: 3, captain: 0})
 c_squad_sensor_host sq_objective_fallen02c
+@member_counts({0xD1F11E74: 1, vandal_cloak: 3})
 c_squad_sensor_host sq_objective_fallen02d
+@member_counts({0xD1F11E74: 1, vandal_cloak: 3})
 c_squad_sensor_host sq_objective_fallen02e
+@member_counts({dregs: 2, vandal: 1})
 c_squad_sensor_host sq_objective_fallen03a
+@member_counts({dregs: 2, vandal: 1})
 c_squad_sensor_host sq_objective_fallen03b
+@member_counts({captain_major: 0, vandals: 2, dregs: 2})
 c_squad_sensor_host sq_objective_fallen03c
+@member_counts({thrall: 4})
 c_squad_sensor_host sq_objective_hive01
+@member_counts({wizard: 1, trooper: 2})
 c_squad_sensor_host sq_objective_hive02
+@member_counts({knight_sword: 2})
 c_squad_sensor_host sq_objective_hive03
+@member_counts({knight_boomer: 2, trooper: 2})
 c_squad_sensor_host sq_objective_hive04
+@member_counts({vandals: 2})
 c_squad_sensor_host sq_objective_suppressors01
+@member_counts({captain: 1})
 c_squad_sensor_host sq_objective_suppressors02
+@member_counts({captain: 1})
 c_squad_sensor_host sq_objective_suppressors03
+@member_counts({vandal_sniper_stealth: 1})
 c_squad_sensor_host sq_objective_suppressors04
+@member_counts({vandal_sniper_stealth: 1})
 c_squad_sensor_host sq_objective_suppressors05
 c_trigger_volume_slot_host tv_wake_trash01
 c_player_trigger_sensor_host pt_wake_trash01 bind(tv_wake_trash01)  # true name unknown

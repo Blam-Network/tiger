@@ -74,6 +74,9 @@ export interface ActivityBundleRow {
   childScript?: string;
   importIdent?: number;
   memberCount?: number;
+  // A Squad row's definition members by cell: each one's name hash (dreg,
+  // vandal, thrall_1), what @member_counts keys them by.
+  memberNames?: readonly number[];
   name?: string;
   nameHash: number;
   objective?: { bundle: number; typeIndex: number };

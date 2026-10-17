@@ -29,17 +29,28 @@ interactable_placement obj_placement_m4_finish bind("0x3C97D375")
 c_squad_member_sensor_host sq_ds_fallen_landing01__dropship
 c_control_point_set_sensor_host cps_ds_fallen_landing01_enter
 c_control_point_set_sensor_host cps_ds_fallen_landing01
+@member_counts({dreg: 2})
 c_squad_sensor_host sq_fallen_corridor01a
+@member_counts({vandal: 1, dreg: 1})
 c_squad_sensor_host sq_fallen_corridor01b
 c_squad_sensor_host sq_fallen_corridor01c1
+@member_counts({dreg: 2})
 c_squad_sensor_host sq_fallen_corridor01d
+@member_counts({dreg: 2})
 c_squad_sensor_host sq_fallen_corridor02a
+@member_counts({vandal: 1, dreg: 1})
 c_squad_sensor_host sq_fallen_corridor02b
+@member_counts({vandal: 2, dreg: 1})
 c_squad_sensor_host sq_fallen_flank01
+@member_counts({vandal: 1, captain: 1})
 c_squad_sensor_host sq_fallen_raised01
+@member_counts({dreg: 3, vandal: 1})
 c_squad_sensor_host sq_fallen_landing01
+@member_counts({dreg: 3, vandal: 2})
 c_squad_sensor_host sq_fallen_controlentrance01
+@member_counts({shank: 4})
 c_squad_sensor_host sq_fallen_controlentrance_shanks
+@member_counts({vandal: 1, captain: 1})
 c_squad_sensor_host sq_fallen_controlentrance_guards
 c_squad_sensor_host sq_fallen_ctrlambush01
 c_squad_sensor_host sq_fallen_ctrlambush02
@@ -54,16 +65,27 @@ c_control_point_set_sensor_host cps_ds_hive_assault02
 c_control_point_set_sensor_host cps_ds_hive_assault03
 c_control_point_set_sensor_host cps_ds_hive_assault03_enter
 c_control_point_set_sensor_host cps_ds_hive_assault03_exit
+@member_counts({thrall: 3})
 c_squad_sensor_host sq_hive_assault_thrall_first1
+@member_counts({thrall: 3})
 c_squad_sensor_host sq_hive_assault_thrall_first2
+@member_counts([{thrall: 2, thrall_1: 2}, {thrall_1: 2, thrall_2: 2}])
 static_array<c_squad_sensor_host, 5> sq_hive_assault_thrall
+@member_counts({wizard: 1})
 c_squad_sensor_host sq_hive_assault_heavy01a
+@member_counts({trooper: 2})
 c_squad_sensor_host sq_hive_assault_trooper02a
+@member_counts({trooper: 2})
 c_squad_sensor_host sq_hive_assault_trooper02b
+@member_counts({0xEEAC5E41: 1})
 c_squad_sensor_host sq_hive_assault_heavy02a
+@member_counts({trooper: 2})
 c_squad_sensor_host sq_hive_assault_trooper03a
+@member_counts({trooper: 2})
 c_squad_sensor_host sq_hive_assault_trooper03b
+@member_counts({trooper: 2})
 c_squad_sensor_host sq_hive_assault_trooper03c
+@member_counts({knight_major: 1})
 c_squad_sensor_host sq_hive_assault_heavy03a
 
 startup thread sc_dome_c:

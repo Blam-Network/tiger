@@ -24,6 +24,7 @@ import {
   toNumber,
 } from "../../hks/vm/values.ts";
 import {
+  type AuthoredCells,
   type BoundRow,
   navPointIndex,
   squadRosterSize,
@@ -138,6 +139,7 @@ export interface HostDebugSnapshot {
 
 export class EncounterScriptHost implements EncounterHostContext {
   readonly itemState = new ScriptItemState();
+  readonly memberCounts = new Map<string, AuthoredCells>();
   readonly navPoints: ReturnType<typeof navPointIndex>;
   readonly commandScripts: CommandScriptIndex;
   readonly scalarDefaultCache = new Map<
@@ -297,6 +299,7 @@ export class EncounterScriptHost implements EncounterHostContext {
       namedHandles: new Map(Object.entries(options.namedHandles ?? {})),
       objectStates: new Map(),
       machineStates: new Map(),
+      memberCounts: this.memberCounts,
       placeActors: options.placeActors ?? false,
       players: () =>
         (this.options.players?.() ?? []).map((player) => ({
@@ -1023,12 +1026,12 @@ export class EncounterScriptHost implements EncounterHostContext {
     if (this.options.squadPlacedByDefault?.(bundle, typeIndex) === false) {
       return 0;
     }
-    return squadRosterSize(this.types, this.options.bundles, {
-      bundle,
-      name: "",
-      typeId: this.types.Squad,
-      typeIndex,
-    });
+    return squadRosterSize(
+      this.types,
+      this.options.bundles,
+      { bundle, name: "", typeId: this.types.Squad, typeIndex },
+      this.memberCounts.get(itemKey(bundle, typeIndex))
+    );
   }
 
   // For a squad the incidents name only they count: a reported alive count

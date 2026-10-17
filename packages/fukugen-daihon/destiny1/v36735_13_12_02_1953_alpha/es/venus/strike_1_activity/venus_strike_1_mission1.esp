@@ -5,25 +5,25 @@ c_player_monitor_sensor_host pm_bubble_engineering bind(engineering)  # true nam
 c_objective_sensor_host obj_engineering_strike_phase  # true name unknown
 c_trigger_volume_slot_host tv_engineering_entrance01
 c_player_trigger_sensor_host pt_engineering_entrance01 bind(tv_engineering_entrance01)  # true name unknown
-c_squad_sensor_host sq_floor1_fallen01
-c_squad_sensor_host sq_floor1_fallen02
-c_squad_sensor_host sq_floor1_fallen03
-c_squad_sensor_host sq_floor1_fallen04
-c_squad_sensor_host sq_floor1_fallen05
-c_squad_sensor_host sq_floor1_fallen06
-c_squad_sensor_host sq_floor1_fallen07
-c_squad_sensor_host sq_floor1_fallen08
-c_squad_sensor_host sq_floor1_fallen08a
-c_squad_sensor_host sq_floor1_fallen06a
-c_squad_sensor_host sq_floor1_fallen04a
-c_squad_sensor_host sq_objective01
-c_squad_sensor_host sq_objective02
-c_squad_sensor_host sq_objective03
-c_squad_sensor_host sq_objective04
-c_squad_sensor_host sq_objective05
-c_squad_sensor_host sq_objective06
-c_squad_sensor_host sq_objective07
-c_squad_sensor_host sq_objective08
+@member_counts({dreg: 3, vandal: 3}) c_squad_sensor_host sq_floor1_fallen01
+@member_counts({shank: 3, dreg: 3}) c_squad_sensor_host sq_floor1_fallen02
+@member_counts({shank: 2, dreg: 2, vandal: 2}) c_squad_sensor_host sq_floor1_fallen03
+@member_counts({vandal: 2, captain: 0, shank: 0, dreg: 4}) c_squad_sensor_host sq_floor1_fallen04
+@member_counts({vandal: 3, captain: 0, shank: 0, dreg: 3}) c_squad_sensor_host sq_floor1_fallen05
+@member_counts({vandal: 3, captain: 0, shank: 3}) c_squad_sensor_host sq_floor1_fallen06
+@member_counts({vandal: 0, shank: 2, dreg: 4}) c_squad_sensor_host sq_floor1_fallen07
+@member_counts({dreg: 3, vandal: 3}) c_squad_sensor_host sq_floor1_fallen08
+@member_counts({dreg_1: 3, vandal_1: 1}) c_squad_sensor_host sq_floor1_fallen08a
+@member_counts({captain: 1, shank: 3}) c_squad_sensor_host sq_floor1_fallen06a
+@member_counts({vandal: 2, captain: 0, shank: 0, dreg: 2}) c_squad_sensor_host sq_floor1_fallen04a
+@member_counts({cell_1: 1}) c_squad_sensor_host sq_objective01
+@member_counts({cell_1: 1}) c_squad_sensor_host sq_objective02
+@member_counts({cell_1: 1}) c_squad_sensor_host sq_objective03
+@member_counts({cell_1: 1}) c_squad_sensor_host sq_objective04
+@member_counts({cell_1: 1}) c_squad_sensor_host sq_objective05
+@member_counts({cell_1: 1}) c_squad_sensor_host sq_objective06
+@member_counts({cell_1: 1}) c_squad_sensor_host sq_objective07
+@member_counts({cell_1: 1}) c_squad_sensor_host sq_objective08
 c_squad_group_sensor_host gr_floor1  # true name unknown
 c_squad_group_sensor_host gr_floor2  # true name unknown
 c_squad_group_sensor_host gr_floor3  # true name unknown

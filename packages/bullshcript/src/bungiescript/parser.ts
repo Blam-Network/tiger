@@ -6,6 +6,8 @@ import type {
   BsActivityBundle,
   BsBinaryOp,
   BsCase,
+  BsCountsEntry,
+  BsCountsValue,
   BsDecl,
   BsDeclKind,
   BsEnumValue,
@@ -14,6 +16,7 @@ import type {
   BsFileKind,
   BsIfBranch,
   BsMember,
+  BsMemberCounts,
   BsStmt,
   BsType,
 } from "./ast.ts";
@@ -23,6 +26,21 @@ const FILE_KINDS: readonly BsFileKind[] = ["bs", "es", "esp", "esu"];
 const DECL_KINDS: readonly BsDeclKind[] = ["class", "struct", "enum"];
 const COMPARISONS = new Set(["==", "!=", "<", "<=", ">", ">="]);
 const TERM_OPERATORS = new Set(["*", "/", "%"]);
+const WHOLE_NUMBER = /^\d+$/;
+// words that start a member other than a field
+const NOT_FIELD_WORDS = new Set([
+  "command_script",
+  "def",
+  "delegate",
+  "implements",
+  "pass",
+  "startup",
+  "thread",
+]);
+
+type BsDecorator =
+  | { readonly kind: "activity_bundle"; readonly value: BsActivityBundle }
+  | { readonly kind: "member_counts"; readonly value: BsMemberCounts };
 
 export function bsFileKind(path: string): BsFileKind | undefined {
   const extension = path.slice(path.lastIndexOf(".") + 1).toLowerCase();
@@ -187,7 +205,10 @@ class BsParser {
     const decls: BsDecl[] = [];
     this.skipNewlines();
     while (this.token.kind !== "eof") {
-      const activityBundle = this.decorator();
+      const activityBundle = this.headDecorators(
+        this.decorators(),
+        false
+      ).bundle;
       const start = this.token;
       const kind = DECL_KINDS.find((k) => this.atWord(k));
       if (kind === undefined) {
@@ -222,17 +243,33 @@ class BsParser {
     return decls;
   }
 
-  // `@activity_bundle("name")` or `@activity_bundle(0x<hash>)` on its own
-  // line, if there is one here
-  private decorator(): BsActivityBundle | undefined {
-    if (!this.acceptOp("@")) {
-      return;
+  // The decorators here, each on its own line: `@activity_bundle("name")`
+  // or `@activity_bundle(0x<hash>)`, and `@member_counts(["path",] n0, ...)`.
+  private decorators(): BsDecorator[] {
+    const out: BsDecorator[] = [];
+    while (this.acceptOp("@")) {
+      const name = this.expectName();
+      this.expectOp("(");
+      if (name.text === "activity_bundle") {
+        out.push({ kind: "activity_bundle", value: this.activityBundle(name) });
+      } else if (name.text === "member_counts") {
+        out.push({ kind: "member_counts", value: this.memberCounts(name) });
+      } else {
+        this.error(`unknown decorator '@${name.text}'`, name);
+      }
+      this.expectOp(")");
+      // @member_counts can share its member's line, which keeps a lifted
+      // source's lines where Bungie's chunks have them
+      if (name.text === "member_counts" && this.token.kind === "name") {
+        break;
+      }
+      this.expectKind("newline");
+      this.skipNewlines();
     }
-    const name = this.expectName();
-    if (name.text !== "activity_bundle") {
-      this.error(`unknown decorator '@${name.text}'`, name);
-    }
-    this.expectOp("(");
+    return out;
+  }
+
+  private activityBundle(name: BsToken): BsActivityBundle {
     const arg = this.token;
     let hash: number | undefined;
     if (arg.kind === "string") {
@@ -244,10 +281,114 @@ class BsParser {
       this.error("@activity_bundle takes a bundle name or a 0x<hash>", arg);
     }
     this.next();
-    this.expectOp(")");
-    this.expectKind("newline");
-    this.skipNewlines();
     return { hash, line: name.line, text: arg.text };
+  }
+
+  private memberCounts(name: BsToken): BsMemberCounts {
+    return { line: name.line, value: this.countsValue() };
+  }
+
+  // a count, a [list] or a {map} of them, across lines if need be
+  private countsValue(): BsCountsValue {
+    this.skipLayout();
+    const start = this.token;
+    if (this.acceptOp("[")) {
+      const items: BsCountsValue[] = [];
+      this.skipLayout();
+      while (!this.atOp("]")) {
+        items.push(this.countsValue());
+        this.skipLayout();
+        if (!this.acceptOp(",")) {
+          break;
+        }
+        this.skipLayout();
+      }
+      this.skipLayout();
+      this.expectOp("]");
+      return { items, kind: "list", line: start.line };
+    }
+    if (this.acceptOp("{")) {
+      const entries: BsCountsEntry[] = [];
+      const keys = new Set<number>();
+      this.skipLayout();
+      while (!this.atOp("}")) {
+        const entry = this.countsEntry();
+        if (keys.has(entry.hash)) {
+          this.error(`@member_counts names '${entry.key}' twice`);
+        }
+        keys.add(entry.hash);
+        entries.push(entry);
+        this.skipLayout();
+        if (!this.acceptOp(",")) {
+          break;
+        }
+        this.skipLayout();
+      }
+      this.skipLayout();
+      this.expectOp("}");
+      return { entries, kind: "map", line: start.line };
+    }
+    if (start.kind !== "number" || !WHOLE_NUMBER.test(start.text)) {
+      this.error(
+        "@member_counts takes whole numbers, lists and {member: count} maps",
+        start
+      );
+    }
+    this.next();
+    return { kind: "count", line: start.line, value: start.value };
+  }
+
+  // `name: value`, or `0x<hash>: value` for a member whose name never cracked
+  private countsEntry(): BsCountsEntry {
+    const key = this.token;
+    let hash: number | undefined;
+    if (key.kind === "name") {
+      hash = fnv1(key.text);
+    } else if (key.kind === "number") {
+      hash = parseHashLiteral(key.text);
+    }
+    if (hash === undefined) {
+      this.error("@member_counts keys are member names or 0x<hash>", key);
+    }
+    this.next();
+    this.expectOp(":");
+    return { hash, key: key.text, line: key.line, value: this.countsValue() };
+  }
+
+  // inside brackets a value may run over lines
+  private skipLayout(): void {
+    while (
+      this.token.kind === "newline" ||
+      this.token.kind === "indent" ||
+      this.token.kind === "dedent"
+    ) {
+      this.next();
+    }
+  }
+
+  // A class's or file's head takes one @activity_bundle; an es-family file's
+  // head decorators can also be its first member's, below the bundle's.
+  private headDecorators(
+    decorators: readonly BsDecorator[],
+    memberFollows: boolean
+  ): { bundle: BsActivityBundle | undefined; counts: BsMemberCounts[] } {
+    let bundle: BsActivityBundle | undefined;
+    const counts: BsMemberCounts[] = [];
+    for (const decorator of decorators) {
+      if (decorator.kind === "member_counts") {
+        if (!memberFollows) {
+          this.error("@member_counts decorates a squad member");
+        }
+        counts.push(decorator.value);
+      } else if (counts.length > 0) {
+        this.error("@activity_bundle goes above the member's decorators");
+      } else if (bundle === undefined) {
+        bundle = decorator.value;
+      } else {
+        this.error("an encounter takes one @activity_bundle");
+      }
+    }
+    return { bundle, counts };
   }
 
   // after `class name :`, is this the block's own colon (followed by a
@@ -260,13 +401,19 @@ class BsParser {
     const members: BsMember[] = [];
     this.skipNewlines();
     // an es-family file's decorator heads the file, as its class's would
-    const activityBundle = this.decorator();
+    const head = this.headDecorators(this.decorators(), true);
+    const activityBundle = head.bundle;
+    let leading = head.counts;
     while (this.token.kind !== "eof") {
-      const member = this.member();
+      const member = this.member(leading);
+      leading = [];
       if (member !== undefined) {
         members.push(member);
       }
       this.skipNewlines();
+    }
+    if (leading.length > 0) {
+      this.error("@member_counts decorates a squad member");
     }
     return {
       activityBundle,
@@ -295,7 +442,7 @@ class BsParser {
           value = entry.value + 1;
         }
       } else {
-        const member = this.member();
+        const member = this.member([]);
         if (member !== undefined) {
           members.push(member);
         }
@@ -329,8 +476,12 @@ class BsParser {
     };
   }
 
-  private member(): BsMember | undefined {
+  private member(leading: readonly BsMemberCounts[]): BsMember | undefined {
+    const decorated = [...leading, ...this.memberDecorators()];
     const start = this.token;
+    if (decorated.length > 0 && !this.atFieldStart()) {
+      this.error("@member_counts decorates a squad member", start);
+    }
     if (this.acceptWord("pass")) {
       this.expectKind("newline");
       return;
@@ -437,6 +588,9 @@ class BsParser {
       this.expectOp(")");
     }
     this.expectKind("newline");
+    if (decorated.length > 1) {
+      this.error(`'${name}' takes one @member_counts`, start);
+    }
     return {
       bind,
       default: defaultValue,
@@ -444,10 +598,30 @@ class BsParser {
       isStatic,
       kind: "field",
       line: start.line,
+      memberCounts: decorated[0],
       name,
       start: start.start,
       type,
     };
+  }
+
+  // a member's own decorators: @member_counts only
+  private memberDecorators(): BsMemberCounts[] {
+    return this.decorators().map((decorator) => {
+      if (decorator.kind !== "member_counts") {
+        this.error("@activity_bundle heads the file or its class");
+      }
+      return decorator.value;
+    });
+  }
+
+  // a field starts with its type or `static`, never a member keyword
+  private atFieldStart(): boolean {
+    return (
+      this.token.kind === "name" &&
+      !NOT_FIELD_WORDS.has(this.token.text) &&
+      !(this.atWord("static") && this.peek().text === "def")
+    );
   }
 
   private type(): BsType {

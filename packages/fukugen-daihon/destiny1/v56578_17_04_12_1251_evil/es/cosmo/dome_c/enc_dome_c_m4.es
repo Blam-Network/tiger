@@ -17,6 +17,9 @@ c_objective_sensor_host obj_dome_c_m4_fallen
 c_objective_sensor_host obj_dome_c_m4_hive
 c_player_monitor_sensor_host pm_refresh_corridor01
 c_player_monitor_sensor_host pm_corridor01c_spawn
+c_player_monitor_sensor_host pm_corridor01d_spawn
+c_player_monitor_sensor_host pm_refresh_corridor02
+c_player_monitor_sensor_host pm_outdoor_enc_start
 c_player_monitor_sensor_host pm_refresh_outdoor_enc01
 c_player_monitor_sensor_host pm_refresh_guards01
 c_player_monitor_sensor_host pm_outdoor_enc_wave02
@@ -29,17 +32,28 @@ interactable_placement obj_placement_m4_finish
 c_squad_member_sensor_host sq_ds_fallen_landing01__dropship
 c_control_point_set_sensor_host cps_ds_fallen_landing01_enter
 c_control_point_set_sensor_host cps_ds_fallen_landing01
+@member_counts({dreg: 2})
 c_squad_sensor_host sq_fallen_corridor01a
+@member_counts({vandal: 1, dreg: 1})
 c_squad_sensor_host sq_fallen_corridor01b
 c_squad_sensor_host sq_fallen_corridor01c1
+@member_counts({dreg: 2})
 c_squad_sensor_host sq_fallen_corridor01d
+@member_counts({dreg: 2})
 c_squad_sensor_host sq_fallen_corridor02a
+@member_counts({vandal: 1, dreg: 1})
 c_squad_sensor_host sq_fallen_corridor02b
+@member_counts({vandal: 2, dreg: 1})
 c_squad_sensor_host sq_fallen_flank01
+@member_counts({vandal: 1, captain: 1})
 c_squad_sensor_host sq_fallen_raised01
+@member_counts({dreg: 3, vandal: 1})
 c_squad_sensor_host sq_fallen_landing01
+@member_counts({dreg: 3, vandal: 2})
 c_squad_sensor_host sq_fallen_controlentrance01
+@member_counts({shank: 4})
 c_squad_sensor_host sq_fallen_controlentrance_shanks
+@member_counts({vandal: 1, captain: 1})
 c_squad_sensor_host sq_fallen_controlentrance_guards
 c_squad_sensor_host sq_fallen_ctrlambush01
 c_squad_sensor_host sq_fallen_ctrlambush02
@@ -54,16 +68,27 @@ c_control_point_set_sensor_host cps_ds_hive_assault02
 c_control_point_set_sensor_host cps_ds_hive_assault03
 c_control_point_set_sensor_host cps_ds_hive_assault03_enter
 c_control_point_set_sensor_host cps_ds_hive_assault03_exit
+@member_counts({thrall: 3})
 c_squad_sensor_host sq_hive_assault_thrall_first1
+@member_counts({thrall: 3})
 c_squad_sensor_host sq_hive_assault_thrall_first2
+@member_counts([{thrall: 2, thrall_1: 2}, {thrall_1: 2, thrall_2: 2}])
 static_array<c_squad_sensor_host, 5> sq_hive_assault_thrall
+@member_counts({wizard: 1})
 c_squad_sensor_host sq_hive_assault_heavy01a
+@member_counts({trooper: 2})
 c_squad_sensor_host sq_hive_assault_trooper02a
+@member_counts({trooper: 2})
 c_squad_sensor_host sq_hive_assault_trooper02b
+@member_counts({0xEEAC5E41: 1})
 c_squad_sensor_host sq_hive_assault_heavy02a
+@member_counts({trooper: 2})
 c_squad_sensor_host sq_hive_assault_trooper03a
+@member_counts({trooper: 2})
 c_squad_sensor_host sq_hive_assault_trooper03b
+@member_counts({trooper: 2})
 c_squad_sensor_host sq_hive_assault_trooper03c
+@member_counts({knight_major: 1})
 c_squad_sensor_host sq_hive_assault_heavy03a
 
 startup thread sc_dome_c:
@@ -109,15 +134,17 @@ thread sc_corridors:
     sq_ds_fallen_landing01__dropship.execute(cs_skiff_enter(cps_ds_fallen_landing01_enter))
     sleep(3)
     sq_fallen_corridor01a.set_task("task_4")
-    sleep_until(pm_refresh_corridor01.test_any_inside())
+    # each step also goes on once the player is past it: a run that skips a
+    # volume (a 1.33 run went 01d without crossing 01c) still reaches the landing
+    sleep_until(pm_refresh_corridor01.test_any_inside() or past_corridor01())
     sq_fallen_corridor01a.set_task("t_corridor01")
-    sleep_until(pm_corridor01c_spawn.test_any_inside())
+    sleep_until(pm_corridor01c_spawn.test_any_inside() or past_corridor01())
     place_on_task(sq_fallen_corridor01c1, "t_corridor01_1")
     place_on_task(sq_fallen_corridor01d, "t_corridor01b")
-    sleep_until(sq_fallen_corridor02a.alive_count() == 0)
+    sleep_until(sq_fallen_corridor02a.alive_count() == 0 or outside())
     sq_fallen_corridor02a.set_task("t_corridor02a")
     sq_fallen_corridor02b.set_task("t_corridor02a")
-    sleep_until(pm_refresh_outdoor_enc01.test_any_inside())
+    sleep_until(pm_refresh_outdoor_enc01.test_any_inside() or pm_outdoor_enc_start.test_any_inside())
     for sq in [sq_fallen_corridor01a, sq_fallen_corridor01b, sq_fallen_corridor01c1, sq_fallen_corridor01d, sq_fallen_corridor02a, sq_fallen_corridor02b]:
         sq.set_task("task_5")
     place_on_task(sq_fallen_flank01, "t_raised01")
@@ -229,6 +256,12 @@ def device_working(device):
             sleep(1.7 + mathlib.random_real(1.3))
         else:
             sleep(0.3 + mathlib.random_real(0.4))
+
+def past_corridor01():
+    return pm_corridor01d_spawn.test_any_inside() or pm_refresh_corridor02.test_any_inside() or outside()
+
+def outside():
+    return pm_refresh_outdoor_enc01.test_any_inside() or pm_outdoor_enc_start.test_any_inside()
 
 def drop_on_task(pilot, sq, task):
     sq.set_task(task)

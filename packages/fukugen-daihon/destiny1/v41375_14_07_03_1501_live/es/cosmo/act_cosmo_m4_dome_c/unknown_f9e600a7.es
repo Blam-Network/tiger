@@ -11,19 +11,15 @@ c_sequence_host seq_d_o1_s01
 c_sequence_host seq_d_o1_s02
 c_sequence_host seq_d_o1_s03
 c_sequence_host seq_d_o1_s04
-c_sequence_host seq_d_o1_s045
-c_sequence_host seq_d_o1_s047
 c_sequence_host seq_d_o2_s023
 c_sequence_host seq_d_o2_s032
 c_sequence_host seq_d_o3_s01
 c_sequence_host seq_d_o3_s08
 c_sequence_host seq_cosmo4_rasputin
-trigger_bubble_objective obj_m4_o1a
 c_squad_sensor_host sq_fallen_upper_front01
 c_squad_sensor_host sq_fallen_upper_back01
 c_squad_sensor_host sq_fallen_upper_sniper01
 c_squad_sensor_host sq_fallen_upper_anchors01
-c_squad_sensor_host sq_strike2_captain
 c_object_sensor_host o_terminal_invis_device
 c_player_monitor_sensor_host pm_outdoor_enc_start
 c_player_monitor_sensor_host pm_trigger_volume
@@ -37,17 +33,12 @@ startup thread sc_intro:
     sleep(3)
     seq_d_o1_s01.start()
 
-# dome_a cleared, the Array, the captain
+# dome_a cleared; the Ghost's lines at the Array follow the codes picked up
+# (the mission's obj_m4_o1b)
 startup thread sc_array:
     sleep_until(dome_a_fallen_alive_count() > 0)
     sleep_until(dome_a_fallen_alive_count() == 0)
     seq_d_o1_s03.start()
-    sleep_until(obj_m4_o1a.is_complete())
-    sleep(20)
-    seq_d_o1_s045.start()
-    sleep_until_dead(sq_strike2_captain)
-    sleep(4)
-    seq_d_o1_s047.start()
 
 # the console working
 startup thread sc_console:

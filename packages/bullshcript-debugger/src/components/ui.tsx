@@ -4,6 +4,7 @@ import {
   type KeyboardEvent,
   type ReactNode,
   useEffect,
+  useLayoutEffect,
   useRef,
   useState,
   useSyncExternalStore,
@@ -16,6 +17,8 @@ export interface MenuItem {
   // the current choice
   checked?: boolean;
   disabled?: boolean;
+  // a section's title (DE's menu headings), not an item
+  heading?: boolean;
   // a submenu, opened on hover; with `run` too, clicking the item runs it
   items?: MenuItem[];
   label: string;
@@ -39,7 +42,17 @@ interface Overlay {
         title: string;
       }
     | undefined;
-  menu: { items: MenuItem[]; x: number; y: number } | undefined;
+  // `id` is new for each menu opened, so one never inherits another's state
+  // `owner` is the menu-bar button it drops from, if any
+  menu:
+    | {
+        id: number;
+        items: MenuItem[];
+        owner?: HTMLElement;
+        x: number;
+        y: number;
+      }
+    | undefined;
 }
 
 let overlay: Overlay = { dialog: undefined, menu: undefined };
@@ -71,18 +84,78 @@ export function activateOnKey(activate: () => void) {
   };
 }
 
+let menuSerial = 0;
+
 export function openMenu(
   event: { clientX: number; clientY: number },
-  items: MenuItem[]
+  items: MenuItem[],
+  owner?: HTMLElement
 ): void {
-  setOverlay({ menu: { items, x: event.clientX, y: event.clientY } });
+  menuSerial += 1;
+  setOverlay({
+    menu: { id: menuSerial, items, owner, x: event.clientX, y: event.clientY },
+  });
 }
+
+const closeMenu = () => setOverlay({ menu: undefined });
 
 // The menu at the element's bottom left, for opening it from a click or key
 // on the element instead of a right-click.
-export function openMenuBelow(element: HTMLElement, items: MenuItem[]): void {
+export function openMenuBelow(
+  element: HTMLElement,
+  items: MenuItem[],
+  owner?: HTMLElement
+): void {
   const box = element.getBoundingClientRect();
-  openMenu({ clientX: box.left, clientY: box.bottom }, items);
+  openMenu({ clientX: box.left, clientY: box.bottom }, items, owner);
+}
+
+// A menu-bar button, after Datamine Explorer's File and View menus: a click
+// or Down drops `items()` below it, and a click while it is open closes it.
+export function MenuButton({
+  items,
+  label,
+}: {
+  items: () => MenuItem[];
+  label: string;
+}) {
+  const button = useRef<HTMLButtonElement>(null);
+  const open = useSyncExternalStore(
+    subscribeOverlay,
+    () => overlay.menu !== undefined && overlay.menu.owner === button.current
+  );
+  // The window's mousedown has closed the menu by the time the click lands.
+  const wasOpen = useRef(false);
+  const drop = () => {
+    if (button.current) {
+      openMenuBelow(button.current, items(), button.current);
+    }
+  };
+  return (
+    <button
+      aria-expanded={open}
+      aria-haspopup="menu"
+      className={cx("menu-button", open && "open")}
+      onClick={() => {
+        if (!wasOpen.current) {
+          drop();
+        }
+      }}
+      onKeyDown={(e) => {
+        if (e.key === "ArrowDown" && !open) {
+          e.preventDefault();
+          drop();
+        }
+      }}
+      onMouseDown={() => {
+        wasOpen.current = open;
+      }}
+      ref={button}
+      type="button"
+    >
+      {label}
+    </button>
+  );
 }
 
 export function openDialog(
@@ -102,27 +175,19 @@ export function Overlays() {
     if (!menu) {
       return;
     }
-    const close = () => setOverlay({ menu: undefined });
-    window.addEventListener("mousedown", close);
-    window.addEventListener("blur", close);
+    window.addEventListener("mousedown", closeMenu);
+    window.addEventListener("blur", closeMenu);
+    window.addEventListener("resize", closeMenu);
     return () => {
-      window.removeEventListener("mousedown", close);
-      window.removeEventListener("blur", close);
+      window.removeEventListener("mousedown", closeMenu);
+      window.removeEventListener("blur", closeMenu);
+      window.removeEventListener("resize", closeMenu);
     };
   }, [menu]);
   return (
     <>
       {menu && (
-        <MenuList
-          items={menu.items}
-          style={{
-            left: Math.min(menu.x, window.innerWidth - 220),
-            top: Math.max(
-              0,
-              Math.min(menu.y, window.innerHeight - menu.items.length * 24 - 8)
-            ),
-          }}
-        />
+        <ContextMenu items={menu.items} key={menu.id} x={menu.x} y={menu.y} />
       )}
       {dialog && <FormDialog {...dialog} />}
       <Toasts />
@@ -135,69 +200,247 @@ export function Overlays() {
 function itemKeys(items: MenuItem[]): (readonly [MenuItem, string])[] {
   const seen = new Map<string, number>();
   return items.map((item) => {
-    const label = item.separator ? "-" : item.label;
+    const label = item.separator
+      ? "-"
+      : `${item.heading ? "#" : ""}${item.label}`;
     const n = seen.get(label) ?? 0;
     seen.set(label, n + 1);
     return [item, `${label}#${n}`] as const;
   });
 }
 
-// One level of a menu; a hovered item with items opens the next to its right.
-// A level with no submenus scrolls when it's taller than the window.
-function MenuList({
+// The menu at the mouse, after Datamine Explorer's context menu. Focus goes
+// back to where it came from when it closes; a layout effect, so a dialog
+// the chosen item opens can still take it.
+function ContextMenu({
   items,
-  style,
+  x,
+  y,
 }: {
   items: MenuItem[];
-  style: React.CSSProperties;
+  x: number;
+  y: number;
 }) {
-  const [open, setOpen] = useState<number>();
-  const leaf = items.every((item) => !item.items);
+  useLayoutEffect(() => {
+    const from = document.activeElement as HTMLElement | null;
+    return () => from?.focus?.();
+  }, []);
+  return <MenuList at={{ x, y }} focus items={items} onBack={closeMenu} />;
+}
+
+const selectable = (item: MenuItem | undefined) =>
+  item !== undefined && !(item.separator || item.heading);
+
+// The next selectable entry from `from` in direction `step`, wrapping.
+function stepIndex(items: MenuItem[], from: number, step: 1 | -1): number {
+  for (let n = 1; n <= items.length; n++) {
+    const i =
+      (((from + step * n) % items.length) + items.length) % items.length;
+    if (selectable(items[i])) {
+      return i;
+    }
+  }
+  return from;
+}
+
+// One level of a menu: the arrow keys move, Enter or Space chooses, Right
+// opens a submenu and Left or Escape leaves it, Tab closes the lot. A
+// hovered item with items opens the next level beside it. Every level is
+// fixed and kept inside the window: the root at its point, a submenu to its
+// item's right, or left when there is no room.
+function MenuList({
+  at,
+  focus,
+  items,
+  onBack,
+}: {
+  // the root's point, or the box of the item a submenu hangs off
+  at: { x: number; y: number } | DOMRect;
+  // take the keyboard on opening (the root, or a submenu opened by key)
+  focus: boolean;
+  items: MenuItem[];
+  // leaves this level: closes the menu at the root, else back to the parent
+  onBack: () => void;
+}) {
+  const list = useRef<HTMLDivElement>(null);
+  const rows = useRef<(HTMLButtonElement | null)[]>([]);
+  const [active, setActive] = useState(() =>
+    focus ? stepIndex(items, -1, 1) : -1
+  );
+  // the open submenu: its item, and that item's box when it opened
+  const [open, setOpen] = useState<{
+    at: DOMRect;
+    focus: boolean;
+    index: number;
+  }>();
+  const [place, setPlace] = useState({ left: 0, top: 0 });
+
+  useLayoutEffect(() => {
+    const element = list.current;
+    if (!element) {
+      return;
+    }
+    const width = element.offsetWidth;
+    const height = element.offsetHeight;
+    let left: number;
+    let top: number;
+    if (at instanceof DOMRect) {
+      left = at.right - 2;
+      if (left + width > window.innerWidth - 4) {
+        left = at.left - width + 2;
+      }
+      // the first item lines up with the parent item
+      top = at.top - 5;
+    } else {
+      left = at.x;
+      top = at.y;
+    }
+    setPlace({
+      left: Math.max(0, Math.min(left, window.innerWidth - width - 4)),
+      top: Math.max(0, Math.min(top, window.innerHeight - height - 4)),
+    });
+    if (focus) {
+      element.focus();
+    }
+  }, [at, focus]);
+
+  useEffect(() => {
+    rows.current[active]?.scrollIntoView({ block: "nearest" });
+  }, [active]);
+
+  const submenu = (index: number, withFocus: boolean) => {
+    const item = items[index];
+    const at = rows.current[index]?.getBoundingClientRect();
+    setOpen(
+      item?.items && !item.disabled && at
+        ? { at, focus: withFocus, index }
+        : undefined
+    );
+  };
+
+  // Close first: the action may open a dialog of its own.
+  const choose = (index: number, byKey: boolean) => {
+    const item = items[index];
+    if (!item || item.separator || item.heading || item.disabled) {
+      return;
+    }
+    if (item.items && !item.run) {
+      submenu(index, byKey);
+      return;
+    }
+    closeMenu();
+    item.run?.();
+  };
+
+  const onKeyDown = (event: KeyboardEvent) => {
+    switch (event.key) {
+      case "ArrowDown":
+        setActive(stepIndex(items, active, 1));
+        break;
+      case "ArrowUp":
+        setActive(stepIndex(items, Math.max(active, 0), -1));
+        break;
+      case "Home":
+        setActive(stepIndex(items, -1, 1));
+        break;
+      case "End":
+        setActive(stepIndex(items, items.length, -1));
+        break;
+      case "ArrowRight":
+        submenu(active, true);
+        break;
+      case "ArrowLeft":
+        if (at instanceof DOMRect) {
+          onBack();
+        }
+        break;
+      case "Escape":
+        onBack();
+        break;
+      case "Enter":
+      case " ":
+        choose(active, true);
+        break;
+      case "Tab":
+        closeMenu();
+        return;
+      default:
+        return;
+    }
+    event.preventDefault();
+    event.stopPropagation();
+  };
+
+  const opened = open && items[open.index];
   return (
-    <div
-      className={leaf ? "menu scroll" : "menu"}
-      onMouseDown={(e) => e.stopPropagation()}
-      role="menu"
-      style={style}
-    >
-      {itemKeys(items).map(([item, key], i) =>
-        item.separator ? (
-          <div className="menu-separator" key={key} />
-        ) : (
-          <div className="menu-entry" key={key}>
+    <>
+      <div
+        className="menu"
+        onKeyDown={onKeyDown}
+        onMouseDown={(e) => e.stopPropagation()}
+        ref={list}
+        role="menu"
+        style={place}
+        tabIndex={-1}
+      >
+        {itemKeys(items).map(([item, key], i) => {
+          if (item.separator) {
+            return <hr className="menu-sep" key={key} />;
+          }
+          if (item.heading) {
+            return (
+              <div className="menu-heading" key={key}>
+                {item.label}
+              </div>
+            );
+          }
+          return (
             <button
-              className={item.items ? "menu-item parent" : "menu-item"}
-              disabled={item.disabled}
-              onClick={() => {
-                if (item.items && !item.run) {
-                  setOpen(i);
-                  return;
-                }
-                setOverlay({ menu: undefined });
-                item.run?.();
+              aria-disabled={item.disabled || undefined}
+              aria-expanded={item.items ? open?.index === i : undefined}
+              aria-haspopup={item.items ? "menu" : undefined}
+              className={cx(
+                "bare menu-item",
+                i === active && "active",
+                item.disabled && "disabled"
+              )}
+              key={key}
+              onClick={() => choose(i, false)}
+              onMouseEnter={() => {
+                list.current?.focus();
+                setActive(i);
+                submenu(i, false);
               }}
-              onFocus={() => setOpen(i)}
-              onMouseEnter={() => setOpen(i)}
+              ref={(row) => {
+                rows.current[i] = row;
+              }}
               role="menuitem"
+              tabIndex={-1}
               type="button"
             >
-              <span className="menu-check">{item.checked ? "●" : ""}</span>
+              <span className="menu-icon-slot">{item.checked ? "✓" : ""}</span>
               <span className="menu-label">{item.label}</span>
               {item.badge && (
                 <span className="badge world-public">{item.badge}</span>
               )}
               {item.items && <span className="menu-arrow">▸</span>}
             </button>
-            {item.items && open === i && !item.disabled && (
-              <MenuList
-                items={item.items}
-                style={{ left: "100%", position: "absolute", top: -4 }}
-              />
-            )}
-          </div>
-        )
+          );
+        })}
+      </div>
+      {open && opened?.items && (
+        <MenuList
+          at={open.at}
+          focus={open.focus}
+          items={opened.items}
+          key={open.index}
+          onBack={() => {
+            setOpen(undefined);
+            list.current?.focus();
+          }}
+        />
       )}
-    </div>
+    </>
   );
 }
 

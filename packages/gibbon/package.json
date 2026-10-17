@@ -28,9 +28,14 @@
   },
   "exports": {
     "./destiny1/*": {
-      "types": "./dist/versions/destiny1/*.d.ts",
-      "import": "./dist/versions/destiny1/*.js",
-      "require": "./dist-cjs/versions/destiny1/*.js",
+      "import": {
+        "types": "./dist/versions/destiny1/*.d.ts",
+        "default": "./dist/versions/destiny1/*.js"
+      },
+      "require": {
+        "types": "./dist-cjs/versions/destiny1/*.d.ts",
+        "default": "./dist-cjs/versions/destiny1/*.js"
+      },
       "default": "./dist/versions/destiny1/*.js"
     }
   },

@@ -1,8 +1,8 @@
 @activity_bundle("enc_dig_site_amb1")
 c_encounter_manager encounters  # true name unknown
-ambush_encounter dig_site_ambush_encounter01
-ambush_encounter dig_site_ambush_encounter02
-simple_encounter dig_site_simple_encounter01
+@member_counts({_squad: [{cell: 3, cell_1: 3}, {cell: 3}]}) ambush_encounter dig_site_ambush_encounter01
+@member_counts({_squad: [{cell: 3, cell_1: 2}, {cell: 2}]}) ambush_encounter dig_site_ambush_encounter02
+@member_counts({_squad: [{cell: 2}]}) simple_encounter dig_site_simple_encounter01
 loot_dig_site loot_venus_dig_site_1
 
 

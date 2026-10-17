@@ -1,30 +1,30 @@
 @activity_bundle("enc_military_amb1")
 bool debug_military
-c_squad_sensor_host sq_military_droid_flight
-c_squad_sensor_host sq_military_droid_floor1
-c_squad_sensor_host sq_military_droid_floor2
-c_squad_sensor_host sq_military_droid_floor3
-c_squad_sensor_host sq_military_droid_floor4
-c_squad_sensor_host sq_military_droid_guard1
-c_squad_sensor_host sq_military_droid_guard2
-c_squad_sensor_host sq_military_civ_talkers1
-c_squad_sensor_host sq_military_civ_talkers2
-c_squad_sensor_host sq_military_civ_talkers3
-c_squad_sensor_host sq_military_civ_do1
-c_squad_sensor_host sq_military_civ_do2
-c_squad_sensor_host sq_military_civ_fwc1
-c_squad_sensor_host sq_military_civ_fwc2
-c_squad_sensor_host sq_military_hunter_talkers1
-c_squad_sensor_host sq_military_hunter_talkers2
-c_squad_sensor_host sq_military_hunter_talkers3
-c_squad_sensor_host sq_military_hunter_talkers4
-c_squad_sensor_host sq_military_vendor_ships
-c_squad_sensor_host sq_military_vendor_weapons
-c_squad_sensor_host sq_military_vendor_hunter_mentor
-c_squad_sensor_host sq_military_vendor_hunter_quartermaster
-c_squad_sensor_host sq_military_vendor_hunter_outfitter
-c_squad_sensor_host sq_military_vendor_do
-c_squad_sensor_host sq_military_vendor_fwc
+@member_counts({guard1: 1}) c_squad_sensor_host sq_military_droid_flight
+@member_counts({0x74F6E782: 1, 0x74F6E781: 1, 0x74F6E780: 1}) c_squad_sensor_host sq_military_droid_floor1
+@member_counts({cleaner1: 1}) c_squad_sensor_host sq_military_droid_floor2
+@member_counts({0xCEBF1595: 1}) c_squad_sensor_host sq_military_droid_floor3
+@member_counts({0xCEBF1595: 1, 0xCEBF1596: 1}) c_squad_sensor_host sq_military_droid_floor4
+@member_counts({guard01: 1}) c_squad_sensor_host sq_military_droid_guard1
+@member_counts({patrol1: 0}) c_squad_sensor_host sq_military_droid_guard2
+@member_counts({talker1: 1, talker2: 1, talker3: 0}) c_squad_sensor_host sq_military_civ_talkers1
+@member_counts({talker1: 1, talker2: 1}) c_squad_sensor_host sq_military_civ_talkers2
+@member_counts({talker1: 1, talker2: 1, talker3: 0}) c_squad_sensor_host sq_military_civ_talkers3
+@member_counts({leaner1: 0, sitter1: 0}) c_squad_sensor_host sq_military_civ_do1
+@member_counts({leaner1: 0, sitter1: 0}) c_squad_sensor_host sq_military_civ_do2
+@member_counts({talker1: 1, talker2: 1, talker3: 0}) c_squad_sensor_host sq_military_civ_fwc1
+@member_counts({leaner1: 0}) c_squad_sensor_host sq_military_civ_fwc2
+@member_counts({talker1: 1, talker2: 1, sitter1: 0}) c_squad_sensor_host sq_military_hunter_talkers1
+@member_counts({talker1: 1, talker2: 1, sitter1: 0}) c_squad_sensor_host sq_military_hunter_talkers2
+@member_counts({talker1: 0, sitter1: 0}) c_squad_sensor_host sq_military_hunter_talkers3
+@member_counts({watcher1: 0, watcher2: 0}) c_squad_sensor_host sq_military_hunter_talkers4
+@member_counts({ship: 1}) c_squad_sensor_host sq_military_vendor_ships
+@member_counts({city_weapon: 1}) c_squad_sensor_host sq_military_vendor_weapons
+@member_counts({hunter: 1}) c_squad_sensor_host sq_military_vendor_hunter_mentor
+@member_counts({0x7733A5EE: 1}) c_squad_sensor_host sq_military_vendor_hunter_quartermaster
+@member_counts({0x9D200C0C: 1}) c_squad_sensor_host sq_military_vendor_hunter_outfitter
+@member_counts({dead_orbit: 1}) c_squad_sensor_host sq_military_vendor_do
+@member_counts({fwc: 1}) c_squad_sensor_host sq_military_vendor_fwc
 c_squad_member_sensor_host sq_military_civ_do1__leaner1  # true name unknown
 c_squad_member_sensor_host sq_military_civ_do1__sitter1  # true name unknown
 c_squad_member_sensor_host sq_military_civ_do2__leaner1  # true name unknown

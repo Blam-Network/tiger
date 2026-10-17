@@ -3,13 +3,13 @@ u_globals utils
 c_objective_sensor_host obj_complex_amb1  # true name unknown
 u_event_world_controller event_controller
 c_encounter_manager encounters  # true name unknown
-simple_encounter simple_south
-simple_encounter simple_north
-simple_encounter simple_tower
-simple_encounter simple_bridge
+@member_counts({_squad: [{minotaur: 1, goblins: 2}, {goblins: 3}]}) simple_encounter simple_south
+@member_counts({_squad: [{minotaur: 2}, {goblins: 3}, {goblins: 3}]}) simple_encounter simple_north
+@member_counts({_squad: [{minotaur: 2, major_minotaur: 1}]}) simple_encounter simple_tower
+@member_counts({_squad: [{minotaur: 1, goblins: 3}, {goblins: 4}]}) simple_encounter simple_bridge
 interactable_placement pf_crows_beacon bind("crows_beacon")
-c_squad_sensor_host sq_bridge_guardian01
-c_squad_sensor_host sq_bridge_guardian02
+@member_counts({minotaur_major: 1}) c_squad_sensor_host sq_bridge_guardian01
+@member_counts({minotaur_major: 1}) c_squad_sensor_host sq_bridge_guardian02
 c_squad_group_sensor_host sqg_bridge_guardians  # true name unknown
 loot_complex loot_venus_complex_1
 

@@ -772,6 +772,28 @@ describe("a carrier drop", () => {
     expect(dropping()).toBe(true);
   });
 
+  // Retail's Last Array wave ship (row 62) dropped 1 and 2, was placed again
+  // and dropped from 1; its report starts over from 0.
+  it("numbers a placed-again carrier's drops from 1", () => {
+    const { actor, call, drop, dropping, gate, reported, squad } =
+      makeCarrier();
+    const reinf = squad(107);
+    call(gate, "place");
+    drop(reinf);
+    drop(reinf);
+    reported.ack = { dropId: 2, inProgress: false };
+    expect(actor(72)?.drop?.id).toBe(2);
+    call(gate, "place");
+    reported.ack = { dropId: 0, inProgress: false };
+    drop(reinf);
+    expect(actor(72)?.drop?.id).toBe(1);
+    expect(actor(72)?.incarnation).toBe(2);
+    // an earlier drop's report has not taken this one yet
+    expect(dropping()).toBe(true);
+    reported.ack = { dropId: 1, inProgress: false };
+    expect(dropping()).toBe(false);
+  });
+
   // The client starts each drop with every squad queued: kept across drops,
   // gate01's sixth drop listed #27, #28 and #30 four times.
   it("queues only the current drop's squads", () => {
@@ -978,7 +1000,7 @@ describe("a command script the client never primed", () => {
     pcReached?: number;
   }
 
-  function makeSniper() {
+  function makeSniper(sleepFirst = false) {
     const changes: ItemChange[] = [];
     const trace: string[] = [];
     const holder: { report?: Report } = {};
@@ -1060,6 +1082,9 @@ describe("a command script the client never primed", () => {
       () => undefined
     );
     invoke(cs.object, "clear");
+    if (sleepFirst) {
+      invoke(cs.object, "sleep", 2);
+    }
     invoke(
       cs.object,
       "point_targeted_ability",
@@ -1107,6 +1132,18 @@ describe("a command script the client never primed", () => {
       }
     }
     expect(script()?.cookie).toBe(1);
+  });
+
+  it("leaves a script alone once its PC has moved past where it was issued", () => {
+    const { bound, holder, script } = makeSniper(true);
+    const sent = script();
+    expect(sent?.atoms).toHaveLength(2);
+    // past the sleep, on a long last atom, heartbeat standing still
+    holder.report = { cookieRunning: 1, heartbeat: 3, pcReached: 1 };
+    for (let tick = 0; tick < 20; tick++) {
+      bound.advance(1);
+    }
+    expect(script()).toEqual(sent);
   });
 
   it("leaves a finished script alone", () => {

@@ -2,18 +2,18 @@
 u_globals utils
 c_encounter_manager encounters  # true name unknown
 u_event_world_controller event_controller
-dropship_encounter vex_dropship_encounter01
-dropship_encounter vex_dropship_encounter02
-dropship_encounter vex_dropship_encounter03
-dropship_encounter fallen_dropship_encounter01
-dropship_encounter fallen_dropship_encounter02
-simple_encounter simple_encounter01
-simple_encounter simple_encounter02
-simple_encounter simple_encounter03
-simple_encounter simple_encounter04
-static_array<u_event_countdown, 1> pf_event_countdown
-c_squad_sensor_host sq_turret01
-c_squad_sensor_host sq_turret02
+@member_counts({_squad: [{goblins: 6}], _dropship_squad: {pilot: 0}}) dropship_encounter vex_dropship_encounter01
+@member_counts({_squad: [{goblins: 6}], _dropship_squad: {pilot: 0}}) dropship_encounter vex_dropship_encounter02
+@member_counts({_squad: [{goblins: 6}], _dropship_squad: {pilot: 0}}) dropship_encounter vex_dropship_encounter03
+@member_counts({_squad: [{cell_1: 4}], _dropship_squad: {pilot: 0}}) dropship_encounter fallen_dropship_encounter01
+@member_counts({_squad: [{pilot: 4}], _dropship_squad: {pilot: 0}}) dropship_encounter fallen_dropship_encounter02
+@member_counts({_squad: [{goblins: 4}]}) simple_encounter simple_encounter01
+@member_counts({_squad: [{goblins: 4}]}) simple_encounter simple_encounter02
+@member_counts({_squad: [{goblins: 2}]}) simple_encounter simple_encounter03
+@member_counts({_squad: [{goblins: 1}]}) simple_encounter simple_encounter04
+@member_counts([{sq_event_countdown_wave: [{cell_1: 1, cell_2: 3}, {cell_1: 2, cell_2: 2}, {cell_1: 1, cell_2: 2, cell_3: 1}, {cell_1: 2, cell_2: 1, cell_3: 1}, {cell_1: 1, cell_2: 1, cell_3: 2}, {cell_2: 1, cell_4: 1, cell_3: 2}, {cell_1: 1, cell_2: 2, cell_3: 1}, {cell_1: 2, cell_2: 1, cell_3: 1}]}]) static_array<u_event_countdown, 1> pf_event_countdown
+@member_counts({cell_1: 1}) c_squad_sensor_host sq_turret01
+@member_counts({cell_1: 1}) c_squad_sensor_host sq_turret02
 c_objective_sensor_host obj_headlands_amb1  # true name unknown
 loot_headlands loot_venus_headlands_1
 

@@ -214,6 +214,11 @@ export class Project {
     return this.nativeBase(decl)?.name === "c_encounter";
   }
 
+  // a decl of the project, by name
+  declNamed(name: string): ProjectDecl | undefined {
+    return this.byName.get(name);
+  }
+
   typeNamed(name: string): BsRegistryEntry | undefined {
     return this.registry.get(name);
   }

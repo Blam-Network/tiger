@@ -71,6 +71,15 @@ export const s_activity_bundle = c.struct({
 
 export type s_activity_bundle = c.infer<typeof s_activity_bundle>;
 
+// The head alone: which bundle a tag is, without reading its rows.
+export const s_activity_bundle_head = c.struct({
+  size: c.u64(),
+  world_hash: c.u32(),
+  bundle: c.u32(),
+});
+
+export type s_activity_bundle_head = c.infer<typeof s_activity_bundle_head>;
+
 export interface scenario_bubble_bundles {
   bubble: number;
   // Activity bundle tags, global then authoritative then private: the

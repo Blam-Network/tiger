@@ -12,7 +12,11 @@ import type {
 } from "../../hks/scheduler/scheduler.ts";
 import type { LuaState } from "../../hks/vm/interpreter.ts";
 import type { LuaTable, LuaValue } from "../../hks/vm/values.ts";
-import type { BoundRow, navPointIndex } from "../bound/bindings.ts";
+import type {
+  AuthoredCells,
+  BoundRow,
+  navPointIndex,
+} from "../bound/bindings.ts";
 import type { CommandScriptIndex } from "../natives/command_script.ts";
 import type {
   BoundInstance,
@@ -108,6 +112,8 @@ export interface EncounterHostContext {
   lifetimeSensorHandle: LuaHostObject | undefined;
   lifetimeTimerHandle: LuaHostObject | undefined;
   readonly managers: EncounterManager[];
+  // The scripts' @member_counts by itemKey, as the instances bind them.
+  readonly memberCounts: Map<string, AuthoredCells>;
   readonly navPoints: ReturnType<typeof navPointIndex>;
   now: number;
   readonly objects: BoundInstance[];

@@ -27,6 +27,40 @@ export interface BsActivityBundle {
   readonly text: string;
 }
 
+// `@member_counts(...)` on a squad, or on what holds squads: the bodies each
+// member of a squad's definition spawns, by the member's name. Bungie's
+// host-only squad hosts authored these; we take them from captures.
+//   {dreg: 3, vandal: 1}         a squad: its members by name (or 0x<hash>)
+//   {dreg: [2, 1]}               two members both named dreg, in order
+//   [{thrall: 2}, {}]            an array of squads, by index
+//   {_squad: [{dreg: 2}]}        an archetype instance: its members by name
+export type BsCountsValue =
+  | { readonly kind: "count"; readonly line: number; readonly value: number }
+  | {
+      readonly items: readonly BsCountsValue[];
+      readonly kind: "list";
+      readonly line: number;
+    }
+  | {
+      readonly entries: readonly BsCountsEntry[];
+      readonly kind: "map";
+      readonly line: number;
+    };
+
+export interface BsCountsEntry {
+  // a name's fnv1, or the 0x<hash> as written
+  readonly hash: number;
+  // as written: a name or "0x<hash>"
+  readonly key: string;
+  readonly line: number;
+  readonly value: BsCountsValue;
+}
+
+export interface BsMemberCounts {
+  readonly line: number;
+  readonly value: BsCountsValue;
+}
+
 export interface BsDecl extends BsSpan {
   readonly activityBundle: BsActivityBundle | undefined;
   readonly base: string | undefined;
@@ -60,6 +94,7 @@ export interface BsField extends BsSpan {
   readonly default: BsExpr | undefined;
   readonly isStatic: boolean;
   readonly kind: "field";
+  readonly memberCounts: BsMemberCounts | undefined;
   readonly name: string;
   readonly type: BsType;
 }

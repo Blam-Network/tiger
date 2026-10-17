@@ -16,6 +16,13 @@
 # their own. unknown_3c2f5ed5 holds the music and Ghost lines.
 
 @activity_bundle("act_cosmo_m0_highway")
+act_cosmo_m0_highway_mission1 cosmo_m0_phase00_highway_intro
+act_cosmo_m0_highway_mission2 cosmo_m0_phase00_highway
+act_cosmo_m0_highway_mission3 cosmo_m0_phase01_breach
+act_cosmo_m0_highway_mission4 cosmo_m0_phase01b_breach
+act_cosmo_m0_highway_mission5 cosmo_m0_phase02_graveyard
+act_cosmo_m0_highway_mission6 cosmo_m0_phase03_hangar
+act_cosmo_m0_highway_mission7 cosmo_m0_phase04_outro
 startup thread ss_cosmo_m0_highway:
     print("script startup")
     c_lifetime_script_utilities.get_lifetime_sensor().set_state(e_activity_lifetime_state.pregame)

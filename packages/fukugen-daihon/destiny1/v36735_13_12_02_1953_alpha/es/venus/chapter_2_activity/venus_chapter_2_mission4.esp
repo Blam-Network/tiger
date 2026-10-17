@@ -2,38 +2,38 @@ u_globals utils
 c_location_sensor_host northern_tides  # true name unknown
 c_player_monitor_sensor_host pm_bubble_northern_tides bind(northern_tides)  # true name unknown
 c_objective_sensor_host obj_north_tides_ch2m4_phase  # true name unknown
-c_squad_sensor_host sq_miniboss
+@member_counts({minotaur_mb: 0}) c_squad_sensor_host sq_miniboss
 c_squad_member_sensor_host sq_miniboss__minotaur_mb  # true name unknown
 c_health_sensor_host boss_health  # true name unknown
-c_squad_sensor_host sq_boss_minions01
-c_squad_sensor_host sq_boss_minions02
-c_squad_sensor_host sq_boss_striker01
-c_squad_sensor_host sq_boss_striker02
-c_squad_sensor_host sq_boss_striker03
-c_squad_sensor_host sq_boss_striker04
-c_squad_sensor_host sq_boss_striker05
-c_squad_sensor_host sq_boss_striker06
-c_squad_sensor_host sq_vex_reinf00
-c_squad_sensor_host sq_vex_reinf00a
-c_squad_sensor_host sq_vex_reinf00b
-c_squad_sensor_host sq_vex_reinf00c
-c_squad_sensor_host sq_vex_reinf01
-c_squad_sensor_host sq_vex_reinf01a
-c_squad_sensor_host sq_vex_reinf01b
-c_squad_sensor_host sq_vex_reinf01c
-c_squad_sensor_host sq_vex_warpgate_large
+@member_counts({harpy: 2}) c_squad_sensor_host sq_boss_minions01
+@member_counts({harpy: 2}) c_squad_sensor_host sq_boss_minions02
+@member_counts({cell_1: 1}) c_squad_sensor_host sq_boss_striker01
+@member_counts({cell_1: 1}) c_squad_sensor_host sq_boss_striker02
+@member_counts({cell_1: 1}) c_squad_sensor_host sq_boss_striker03
+@member_counts({cell_1: 1}) c_squad_sensor_host sq_boss_striker04
+@member_counts({cell_1: 1}) c_squad_sensor_host sq_boss_striker05
+@member_counts({cell_1: 1}) c_squad_sensor_host sq_boss_striker06
+@member_counts({goblin: 2, cell: 1}) c_squad_sensor_host sq_vex_reinf00
+@member_counts({goblin: 2}) c_squad_sensor_host sq_vex_reinf00a
+@member_counts({goblin: 2}) c_squad_sensor_host sq_vex_reinf00b
+@member_counts({leader: 2}) c_squad_sensor_host sq_vex_reinf00c
+@member_counts({goblin: 2}) c_squad_sensor_host sq_vex_reinf01
+@member_counts({goblin: 2}) c_squad_sensor_host sq_vex_reinf01a
+@member_counts({goblin: 2}) c_squad_sensor_host sq_vex_reinf01b
+@member_counts({leader: 1}) c_squad_sensor_host sq_vex_reinf01c
+@member_counts({gate: 0}) c_squad_sensor_host sq_vex_warpgate_large
 c_squad_member_sensor_host sq_vex_warpgate_large__gate  # true name unknown
-c_squad_sensor_host sq_vex_warpgate_single_large_a
+@member_counts({gate: 0}) c_squad_sensor_host sq_vex_warpgate_single_large_a
 c_squad_member_sensor_host sq_vex_warpgate_single_large_a__gate  # true name unknown
-c_squad_sensor_host sq_vex_warpgate_single_large_b
+@member_counts({gate: 0}) c_squad_sensor_host sq_vex_warpgate_single_large_b
 c_squad_member_sensor_host sq_vex_warpgate_single_large_b__gate  # true name unknown
-c_squad_sensor_host sq_vex_warpgate_single_large_c
+@member_counts({gate: 0}) c_squad_sensor_host sq_vex_warpgate_single_large_c
 c_squad_member_sensor_host sq_vex_warpgate_single_large_c__gate  # true name unknown
-c_squad_sensor_host sq_vex_warpgate_single_large_d
+@member_counts({gate: 0}) c_squad_sensor_host sq_vex_warpgate_single_large_d
 c_squad_member_sensor_host sq_vex_warpgate_single_large_d__gate  # true name unknown
-c_squad_sensor_host sq_vex_warpgate_single_large_e
+@member_counts({gate: 0}) c_squad_sensor_host sq_vex_warpgate_single_large_e
 c_squad_member_sensor_host sq_vex_warpgate_single_large_e__gate  # true name unknown
-c_squad_sensor_host sq_vex_warpgate_single_large_f
+@member_counts({gate: 0}) c_squad_sensor_host sq_vex_warpgate_single_large_f
 c_squad_member_sensor_host sq_vex_warpgate_single_large_f__gate  # true name unknown
 c_squad_group_sensor_host sg_miniboss  # true name unknown
 c_squad_group_sensor_host sg_strikers  # true name unknown
@@ -63,8 +63,8 @@ bool strikers_spawn
 bool gate_destroyed
 bool text_dialog = true
 bool chapter_complete
-vex_warp_gate vex_warp_gate00
-vex_warp_gate vex_warp_gate01
+@member_counts({_squad: {gate: 0}}) vex_warp_gate vex_warp_gate00
+@member_counts({_squad: {gate: 0}}) vex_warp_gate vex_warp_gate01
 kill_squad_objective ch2m4_kill_gates bind("ch2m4_kill_gates", 2)
 kill_squad_objective ch2m4_kill_boss bind("ch2m4_kill_boss", 1)
 activity_end_objective ch2_end_objective

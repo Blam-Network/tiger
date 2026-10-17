@@ -8,11 +8,11 @@ int destructible_index
 int time_between_spawns = 7
 int spawn_timer
 c_objective_sensor_host obj_action_mock  # true name unknown
-c_squad_sensor_host sq_action_mock_ultra
-c_squad_sensor_host sq_action_mock0
-c_squad_sensor_host sq_action_mock1
-c_squad_sensor_host sq_action_mock2
-c_squad_sensor_host sq_action_mock3
+@member_counts({cell_1: 1}) c_squad_sensor_host sq_action_mock_ultra
+@member_counts({cell: 5}) c_squad_sensor_host sq_action_mock0
+@member_counts({cell: 5}) c_squad_sensor_host sq_action_mock1
+@member_counts({cell: 5}) c_squad_sensor_host sq_action_mock2
+@member_counts({cell: 5}) c_squad_sensor_host sq_action_mock3
 static_array<int, 16> type_list
 static_array<int, 16> parameter_list
 static_array<c_common_reference, 8> obj_list

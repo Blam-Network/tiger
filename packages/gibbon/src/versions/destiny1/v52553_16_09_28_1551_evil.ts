@@ -5,9 +5,11 @@
 export const k_build_string = "52553.16.09.28.1551.evil";
 
 export * from "./v52553_16_09_28_1551_evil/definitions/activity_bundle.ts";
+export * from "./v52553_16_09_28_1551_evil/definitions/activity_lookup.ts";
 export * from "./v52553_16_09_28_1551_evil/definitions/manifest.ts";
 export * from "./v52553_16_09_28_1551_evil/definitions/scenario_client.ts";
 export * from "./v52553_16_09_28_1551_evil/definitions/spawn_point.ts";
+export * from "./v52553_16_09_28_1551_evil/definitions/squad_definition.ts";
 export * from "./v52553_16_09_28_1551_evil/definitions/world_binding.ts";
 export * from "./v52553_16_09_28_1551_evil/pkg/block_cache.ts";
 export * from "./v52553_16_09_28_1551_evil/pkg/byte_source.ts";
