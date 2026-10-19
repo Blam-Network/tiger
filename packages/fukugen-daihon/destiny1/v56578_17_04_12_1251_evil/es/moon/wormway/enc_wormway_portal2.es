@@ -1,9 +1,9 @@
 # es\moon\wormway\enc_wormway_portal2.es
 #
-# The Summoning Pits, Phogoth's chamber. The ogre waits in its chains. When
-# the players drop in and it roars (mission 5 wakes sc_boss_fight), the
-# chamber door shuts behind them, the floor Hive and the snipers take their
-# posts and two thrall packs rush in. As the floor squads fall the next one
+# The Summoning Pits, Phogoth's chamber. The ogre sits in its chains. When the
+# players drop in and it roars (mission 5 wakes sc_boss_fight), the chamber
+# door shuts behind them, the floor Hive and the snipers take their posts and
+# two thrall packs rush in; the chains hold it until a player comes close. As the floor squads fall the next one
 # pushes. Later the sniper reinforcements come up, and the tomb ship makes
 # two passes, dropping knights each time; once the first ship is gone more
 # Hive come up, then the ground squads.
@@ -16,6 +16,9 @@
 
 c_objective_sensor_host obj_bossbattle_hive
 c_squad_sensor_host sq_bossbattle_boss01
+c_squad_member_sensor_host sq_bossbattle_boss01__ogre
+c_passenger_sensor_host phogoth_chains_seat
+c_player_trigger_sensor_host pt_phogoth_prox
 static_array<c_object_sensor_host, 19> dynamics
 c_object_sensor_host o_chains
 c_object_sensor_host o_door_dummy
@@ -62,8 +65,20 @@ startup thread sc_wormway_main:
     o_door_dummy.set_device_position(0)
     for sq in [sq_bossbattle_boss01, sq_bossbattle_hive01, sq_bossbattle_hive02, sq_bossbattle_hive03, sq_bossbattle_hive04, sq_bossbattle_snipers01, sq_bossbattle_snipers02, sq_bossbattle_snipers03, sq_bossbattle_snipers_reinf01, sq_bossbattle_snipers_reinf02, sq_bossbattle_reinf01_2nd, sq_bossbattle_reinf01_3rd, sq_bossbattle_reinf01_4th, sq_bossbattle_reinf02_3rd, sq_bossbattle_reinf02_4th, sq_bossbattle_ground01, sq_bossbattle_ground02]:
         sq.set_objective(obj_bossbattle_hive)
-    # Phogoth, in its chains
+    # Phogoth, seated in its chains and held by its temperament
     place_on_task(sq_bossbattle_boss01, "0x82903A2F")
+    sq_bossbattle_boss01.activate_temperament("0x07882AA8")
+    phogoth_chains_seat.seat(sq_bossbattle_boss01__ogre)
+    sc_chains.wake()
+
+# a player close to Phogoth breaks his chains: the seat lets him go and the
+# temperament is dropped (one run: 1.6 s after the proximity trigger, 83 s
+# into the fight)
+thread sc_chains:
+    sleep_until(pt_phogoth_prox.is_triggered())
+    sleep(1.6)
+    phogoth_chains_seat.release()
+    sq_bossbattle_boss01.deactivate_temperament("0x07882AA8")
 
 thread sc_boss_fight:
     o_door_dummy.set_device_position(1)

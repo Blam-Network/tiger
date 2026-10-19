@@ -1,6 +1,6 @@
 // The tag data the runtime reads, as plain structures (80800533 bundles).
 // A build supplies its row type ids by name; TriggerGroup and Machine rows
-// exist in TU0 only.
+// exist in TU0 only, Passenger rows in 01.29 and later.
 
 import type { CommandScriptAtom } from "../state/items.ts";
 export interface ActivityBundleItemTypes {
@@ -31,6 +31,7 @@ export interface ActivityBundleItemTypes {
   readonly Player: number;
   readonly PlayerMonitor: number;
   readonly PlayerObjective: number;
+  readonly Passenger?: number;
   readonly PlayerTrigger: number;
   readonly SafeZone: number;
   readonly Scoreboard: number;
@@ -55,10 +56,6 @@ export interface WorldPosition {
 export interface ObjectiveTask {
   // -1 = uncapped.
   capacity: number;
-  // A bool field's name hash on the owning script; the empty hash is always true.
-  condition: number;
-  // Unset admits any squad.
-  filter?: { bundle: number; typeId: number; typeIndex: number };
   // -1 for none; children are in priority order.
   firstChild: number;
   // -1 = no bucket.
@@ -79,7 +76,6 @@ export interface ActivityBundleRow {
   memberNames?: readonly number[];
   name?: string;
   nameHash: number;
-  objective?: { bundle: number; typeIndex: number };
   // Object rows only: nav_point_activate's position when the item is the waypoint.
   objectPosition?: WorldPosition;
   sequenceDurationSeconds?: number;

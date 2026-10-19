@@ -1286,7 +1286,6 @@ describe("a squad's objective and task", () => {
   const GATING = fnv1("gating");
   const flat = (name: number, influencer: number) => ({
     capacity: -1,
-    condition: 0x81_1c_9d_c5,
     firstChild: -1,
     influencer,
     name,
@@ -1579,6 +1578,54 @@ describe("an actor placed on its own", () => {
   });
 });
 
+// Phogoth is his squad's one body, a named member. His death is his own
+// ActorSense f7; with no tally the squad's report never falls for it.
+describe("a named member's death before any tally", () => {
+  const squadRow: BoundRow = {
+    bundle: BUNDLE,
+    name: "sq_boss",
+    typeId: ActivityBundleItemType.Squad,
+    typeIndex: 4,
+  };
+  const ogreRow: BoundRow = {
+    bundle: BUNDLE,
+    name: "sq_boss__ogre",
+    typeId: ActivityBundleItemType.Actor,
+    typeIndex: 5,
+  };
+  const makeBoss = (bodies: number, reported: number) => {
+    const report: { sense?: { flag7: boolean; flag8: boolean } } = {};
+    const { bind } = makeRows(
+      {
+        defaultBodies: () => bodies,
+        namedMembers: (row) => (row.typeIndex === 4 ? [ogreRow] : []),
+        owningSquad: (row) =>
+          row.typeId === ActivityBundleItemType.Actor ? squadRow : undefined,
+        roster: () => bodies,
+      },
+      { actorBound: () => report.sense, squadAliveCount: () => reported }
+    );
+    const squad = bind("sq_boss", ActivityBundleItemType.Squad, 4);
+    squad.call("place");
+    return { report, squad };
+  };
+
+  it("leaves a squad of one named member nobody alive", () => {
+    const { report, squad } = makeBoss(1, 1);
+    expect(squad.call("alive_count")).toBe(1);
+    report.sense = { flag7: false, flag8: true };
+    expect(squad.call("alive_count")).toBe(1);
+    report.sense = { flag7: true, flag8: true };
+    expect(squad.call("alive_count")).toBe(0);
+  });
+
+  it("keeps the anonymous bodies standing beside him", () => {
+    const { report, squad } = makeBoss(4, 4);
+    report.sense = { flag7: true, flag8: true };
+    expect(squad.call("alive_count")).toBe(3);
+  });
+});
+
 describe("items cleared, stopped and disarmed", () => {
   it("empties an ObjectFilter on clear()", () => {
     const { bind, last } = makeRows();
@@ -1652,6 +1699,26 @@ describe("Loot enable/disable/reset", () => {
     loot.call("reset");
     expect(last("loot", 5)).toEqual({ enabled: false, epoch: 1 });
     expect(loot.call("get_count")).toBe(0);
+  });
+});
+
+// Phogoth's chains (retail 2.3.1 Summoning Pits, phogoth_chains_seat): the
+// seat holds the ogre at state 1, then lets him go at state 2.
+describe("Passenger seat and release", () => {
+  it("seats an actor at state 1 and releases it at state 2", () => {
+    const PASSENGER = 37;
+    const { bind, last } = makeRows({}, {}, {
+      types: { ...ActivityBundleItemType, Passenger: PASSENGER },
+    });
+    const seat = bind("phogoth_chains_seat", PASSENGER as ActivityBundleItemType, 62);
+    const ogre = bind("sq_bossbattle_boss01__ogre", ActivityBundleItemType.Actor, 5);
+    seat.call("seat", ogre.object);
+    expect(last("passenger", 62)).toEqual({
+      passenger: expect.objectContaining({ typeId: ActivityBundleItemType.Actor, typeIndex: 5 }),
+      state: 1,
+    });
+    seat.call("release");
+    expect(last("passenger", 62)).toEqual({ state: 2 });
   });
 });
 

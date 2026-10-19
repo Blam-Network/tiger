@@ -3,11 +3,15 @@
 # Mission 1, delta_s: the player uses two things in turn, the flare from the
 # crash and then the next object (each ends on the player's interaction on the
 # wire, so they are interactable objectives). The flare goes out as the first
-# is used. The gap before the second is this run's wait.
+# is used. The gap before the second is this run's wait. The two placements'
+# rows are in the Cosmodrome bundle 0xD7F68DA0; the mission places them, so
+# the flag each objective raises is the one its placement's filter reads.
 
 c_object_sensor_host o_crashed_ship_flare
 interactable_objective obj_m0_5_o1 bind("0x6607D3FA")
+interactable_placement obj_placement_m0_5_o1 bind("0x6607D3FA")
 interactable_objective obj_m0_5_o2 bind("0xDE0933DB")
+interactable_placement obj_placement_m0_5_o2 bind("0xDE0933DB")
 c_sequence_host seq_d_o1_s01
 c_sequence_host seq_d_o1_s02
 c_sequence_host seq_d_o2_s02

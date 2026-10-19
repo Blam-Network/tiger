@@ -1,3 +1,7 @@
+# The decorator is ours. Bungie's squad host for a warp gate carries a flag
+# (unknown54, true name unknown) that made the host's table stand the gate
+# from the first apply; nothing in the script places it.
+@placed()
 c_squad_sensor_host _squad
 c_squad_member_sensor_host _squad__gate  # true name unknown
 bool drop_cue

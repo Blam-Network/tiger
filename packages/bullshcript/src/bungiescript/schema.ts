@@ -3,7 +3,16 @@
 
 import { fnv1, parseHashLiteral } from "../host/tags/name_hash.ts";
 import { type ActivityStart, authoredActivityStart } from "./activity_start.ts";
-import type { BsCountsValue, BsDecl, BsExpr, BsField, BsType } from "./ast.ts";
+import type {
+  BsCountsValue,
+  BsDecl,
+  BsExpr,
+  BsField,
+  BsMember,
+  BsObjectiveValue,
+  BsTask,
+  BsType,
+} from "./ast.ts";
 import { BsCompileError } from "./lexer.ts";
 import { type BsNativeKind, nativeTypeNamed } from "./native_types.ts";
 import { bundleHashOf, scriptStem } from "./parser.ts";
@@ -70,6 +79,27 @@ export interface BsSchemaSquadMemberCounts {
   readonly key: string;
 }
 
+// Where a squad is authored against an Objective (@objective). `target` is
+// the Objective member's path in the declaring script's scope; `path` names
+// the squad inside the member ("_squad", "[]._squad"), where `[]` stands for
+// every element of an array. Not Bungie's: their squad hosts held the ref.
+export interface BsSchemaObjective {
+  readonly path?: string;
+  readonly target: string;
+}
+
+// An Objective's task, by the hash of its name, with what its host held that
+// release dropped (@task): the Squad or SquadGroup member it admits (a path
+// in the declaring script's scope) and the bool field gating it. `path`
+// names the Objective inside the member when that is an archetype instance.
+export interface BsSchemaTask {
+  readonly condition?: string;
+  readonly hash: number;
+  readonly name: string;
+  readonly path?: string;
+  readonly squad?: string;
+}
+
 export interface BsSchemaMember {
   readonly autostart?: boolean;
   readonly default?: BsSchemaDefault;
@@ -80,8 +110,14 @@ export interface BsSchemaMember {
   // not Bungie's: their host-only squad hosts held these
   readonly memberCounts?: readonly BsSchemaMemberCounts[];
   readonly name: string;
+  readonly objective?: readonly BsSchemaObjective[];
   readonly params?: readonly string[];
+  // a squad that starts placed (@placed): not Bungie's either, the
+  // host-only flag (+0x54) on their squad hosts
+  readonly placed?: boolean;
   readonly side: BsSchemaSide;
+  // not Bungie's either: their Objective hosts held these
+  readonly tasks?: readonly BsSchemaTask[];
   // the type as written ("c_squad_sensor_host", "static_array<c_device_host, 10>")
   readonly type: string;
   readonly value?: number;
@@ -156,7 +192,7 @@ export function emitSchema(
   for (const member of decl.decl.members) {
     switch (member.kind) {
       case "field":
-        members.push(fieldMember(member, project, decl.file.path));
+        members.push(fieldMember(member, project, decl));
         break;
       case "thread":
         members.push({
@@ -280,7 +316,12 @@ export function methodKey(owner: string | undefined, name: string): string {
   return owner === undefined ? name : `${owner}.${name}`;
 }
 
+// one step of a member path: a name or an [index]
+const PATH_STEP = /[A-Za-z_]\w*|\[\d+\]/g;
+
 const SQUAD_TYPE = "c_squad_sensor_host";
+const SQUAD_GROUP_TYPE = "c_squad_group_sensor_host";
+const OBJECTIVE_TYPE = "c_objective_sensor_host";
 const ARRAY_TYPES = new Set(["dynamic_array", "static_array", "static_stack"]);
 
 // @member_counts against the member's type: a squad takes a {member: count}
@@ -378,11 +419,187 @@ function squadCounts(
   });
 }
 
+// The type of the member a path names from a script ("obj_x",
+// "phase02.obj_x", "inst._squad[0]"): through the members of the script and
+// its bases, and of the class each step holds.
+function memberTypeAt(
+  project: Project,
+  owner: ProjectDecl,
+  path: string
+): string | undefined {
+  let decl: ProjectDecl | undefined = owner;
+  let type: BsType | undefined;
+  for (const [step] of path.matchAll(PATH_STEP)) {
+    if (step.startsWith("[")) {
+      type = type && arrayElement(type);
+    } else {
+      if (type !== undefined) {
+        decl = project.declNamed(type.name);
+      }
+      const found: BsMember | undefined = decl
+        ? project
+            .chain(decl)
+            .map((link) => link.members.get(step))
+            .find((member) => member !== undefined)
+        : undefined;
+      type = found?.kind === "field" ? found.type : undefined;
+    }
+    if (type === undefined) {
+      return;
+    }
+  }
+  return type?.text;
+}
+
+// @objective against the member's type: a squad (or an array of them) takes
+// an Objective, a script class a {member: ...} map of its squads. Each squad
+// it reaches is one entry.
+function objectiveTargets(
+  value: BsObjectiveValue,
+  type: BsType,
+  path: string,
+  where: string,
+  owner: ProjectDecl,
+  project: Project,
+  file: string
+): BsSchemaObjective[] {
+  const fail = (why: string): never => {
+    throw new BsCompileError(
+      `@objective on ${where}: ${why}`,
+      file,
+      value.line
+    );
+  };
+  const element = arrayElement(type);
+  if (type.text === SQUAD_TYPE || element?.text === SQUAD_TYPE) {
+    if (value.kind !== "target") {
+      return fail("a squad takes the Objective it is against");
+    }
+    const found = memberTypeAt(project, owner, value.path);
+    if (found === undefined) {
+      return fail(`${owner.name} has no member '${value.path}'`);
+    }
+    if (found !== OBJECTIVE_TYPE) {
+      return fail(`'${value.path}' is a ${found}, not an Objective`);
+    }
+    const at = element === undefined ? path : `${path}[]`;
+    return [
+      at === "" ? { target: value.path } : { path: at, target: value.path },
+    ];
+  }
+  if (element !== undefined) {
+    return objectiveTargets(
+      value,
+      element,
+      `${path}[]`,
+      `${where}[]`,
+      owner,
+      project,
+      file
+    );
+  }
+  const decl = project.declNamed(type.name);
+  if (decl === undefined || decl.decl.kind !== "class") {
+    return fail(`a ${type.text} holds no squads`);
+  }
+  if (value.kind !== "map") {
+    return fail(`a ${type.text} takes {member: ..., ...} of its squads`);
+  }
+  return value.entries.flatMap(({ key, value: inner }) => {
+    const member = project
+      .chain(decl)
+      .map((link) => link.members.get(key))
+      .find((found) => found !== undefined);
+    if (member?.kind !== "field") {
+      return fail(`${type.text} has no member '${key}'`);
+    }
+    return objectiveTargets(
+      inner,
+      member.type,
+      path === "" ? key : `${path}.${key}`,
+      `${where}.${key}`,
+      owner,
+      project,
+      file
+    );
+  });
+}
+
+// @task on an Objective: the squad is a Squad or SquadGroup member, the
+// condition a bool field of the script.
+function taskSchemas(
+  field: BsField,
+  owner: ProjectDecl,
+  project: Project,
+  file: string
+): BsSchemaTask[] {
+  const fail = (why: string, line: number): never => {
+    throw new BsCompileError(`@task on ${field.name}: ${why}`, file, line);
+  };
+  const instance = project.declNamed(field.type.name);
+  const isInstance =
+    instance?.decl.kind === "class" && field.type.count === undefined;
+  if (field.type.text !== OBJECTIVE_TYPE && !isInstance) {
+    fail(`a ${field.type.text} is no Objective`, field.tasks[0].line);
+  }
+  return field.tasks.map((task: BsTask) => {
+    if (field.type.text === OBJECTIVE_TYPE && task.objective !== undefined) {
+      fail("an Objective has no Objective inside it", task.objective.line);
+    }
+    if (field.type.text !== OBJECTIVE_TYPE) {
+      const found =
+        task.objective === undefined || instance === undefined
+          ? undefined
+          : memberTypeAt(project, instance, task.objective.path);
+      if (found !== OBJECTIVE_TYPE) {
+        fail(
+          task.objective === undefined
+            ? `a ${field.type.text} takes objective: the Objective inside it`
+            : `'${task.objective.path}' is not an Objective of ${field.type.text}`,
+          task.objective?.line ?? task.line
+        );
+      }
+    }
+    if (task.squad !== undefined) {
+      const found = memberTypeAt(project, owner, task.squad.path);
+      if (found !== SQUAD_TYPE && found !== SQUAD_GROUP_TYPE) {
+        fail(
+          found === undefined
+            ? `${owner.name} has no member '${task.squad.path}'`
+            : `'${task.squad.path}' is a ${found}, not a squad or squad group`,
+          task.squad.line
+        );
+      }
+    }
+    if (task.condition !== undefined) {
+      const found = memberTypeAt(project, owner, task.condition.name);
+      if (found !== "bool") {
+        fail(
+          found === undefined
+            ? `${owner.name} has no member '${task.condition.name}'`
+            : `'${task.condition.name}' is a ${found}, not a bool`,
+          task.condition.line
+        );
+      }
+    }
+    return {
+      ...(task.condition === undefined
+        ? {}
+        : { condition: task.condition.name }),
+      hash: task.hash,
+      name: task.name,
+      ...(task.objective === undefined ? {} : { path: task.objective.path }),
+      ...(task.squad === undefined ? {} : { squad: task.squad.path }),
+    };
+  });
+}
+
 function fieldMember(
   field: BsField,
   project: Project,
-  path: string
+  owner: ProjectDecl
 ): BsSchemaMember {
+  const path = owner.file.path;
   const kind = fieldKind(field.type, project);
   return {
     default:
@@ -402,9 +619,38 @@ function fieldMember(
           ),
         }),
     name: field.name,
+    ...(field.objective === undefined
+      ? {}
+      : {
+          objective: objectiveTargets(
+            field.objective.value,
+            field.type,
+            "",
+            field.name,
+            owner,
+            project,
+            path
+          ),
+        }),
+    ...(field.placed === undefined ? {} : { placed: squadPlaced(field, path) }),
     side: fieldSide(field, kind, project),
+    ...(field.tasks.length === 0
+      ? {}
+      : { tasks: taskSchemas(field, owner, project, path) }),
     type: field.type.text,
   };
+}
+
+// @placed stands on a squad host, nothing else.
+function squadPlaced(field: BsField, file: string): true {
+  if (field.type.text !== SQUAD_TYPE) {
+    throw new BsCompileError(
+      `@placed on ${field.name}: a ${field.type.text} is no squad`,
+      file,
+      field.placed ?? field.line
+    );
+  }
+  return true;
 }
 
 // Statics are definition data.

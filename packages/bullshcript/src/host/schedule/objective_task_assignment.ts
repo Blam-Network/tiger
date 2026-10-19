@@ -3,7 +3,10 @@
 // encounter_host.ts.
 
 import { isTruthy } from "../../hks/vm/values.ts";
-import type { EncounterHostContext } from "../activity/host_context.ts";
+import type {
+  EncounterHostContext,
+  TaskGate,
+} from "../activity/host_context.ts";
 import type { BoundRow } from "../bound/bindings.ts";
 import { squadRosterSize } from "../bound/bindings.ts";
 import * as instanceBuilding from "../build/instance_building.ts";
@@ -11,8 +14,16 @@ import { itemKey } from "../tags/item_key.ts";
 import { FNV1_EMPTY } from "../tags/name_hash.ts";
 import type { ObjectiveTask } from "../tags/tag_types.ts";
 
-// A task's condition (+0x60): empty hash is always true; otherwise the live
-// bool on the owning instance, defaulting true before it has written.
+// An Objective as the walk takes it: its bundle (whose script owns the
+// conditions) and the scripts' @task gates, by task name hash.
+interface WalkedObjective {
+  bundle: number;
+  gates: ReadonlyMap<number, TaskGate> | undefined;
+}
+
+// A task's condition (the scripts' @task condition): the empty hash is always
+// true; otherwise the live bool field on the owning instance, defaulting true
+// before it has written.
 export function conditionTrue(
   self: EncounterHostContext,
   hash: number,
@@ -63,18 +74,22 @@ function rebuildSquadGroupMembership(self: EncounterHostContext): void {
   self.squadGroupMembership = membership;
 }
 
-// Every Squad row grouped by its Objective (companion+0x38), built once per
-// assignInfluencers pass.
+// Every Squad row grouped by its Objective (the scripts' @objective), built
+// once per assignInfluencers pass.
 function squadsByObjective(
   self: EncounterHostContext
 ): Map<string, BoundRow[]> {
   const byObjective = new Map<string, BoundRow[]>();
   for (const tag of self.options.bundles) {
     for (const row of tag.rows) {
-      if (row.typeId !== self.types.Squad || !row.objective) {
+      const objective =
+        row.typeId === self.types.Squad
+          ? self.squadObjectives.get(itemKey(tag.bundle, row.typeIndex))
+          : undefined;
+      if (!objective) {
         continue;
       }
-      const key = itemKey(row.objective.bundle, row.objective.typeIndex);
+      const key = itemKey(objective.bundle, objective.typeIndex);
       const squad: BoundRow = {
         bundle: tag.bundle,
         name: row.name ?? `squad #${row.typeIndex}`,
@@ -92,14 +107,14 @@ function squadsByObjective(
   return byObjective;
 }
 
-// A task's filter (+0x28): unset, a Squad row, or a SquadGroup (live
-// membership).
+// A task's filter (the scripts' @task squad): unset, a Squad row, or a
+// SquadGroup (live membership).
 function taskFilterMatches(
   self: EncounterHostContext,
-  task: ObjectiveTask,
+  gate: TaskGate | undefined,
   squad: BoundRow
 ): boolean {
-  const filter = task.filter;
+  const filter = gate?.filter;
   if (!filter) {
     return true;
   }
@@ -147,13 +162,14 @@ function admitsTask(
   squad: BoundRow,
   bodies: number,
   used: ReadonlyMap<number, number>,
-  objectiveBundle: number
+  objective: WalkedObjective
 ): boolean {
   const task = tasks[index];
-  if (!taskFilterMatches(self, task, squad)) {
+  const gate = objective.gates?.get(task.name);
+  if (!taskFilterMatches(self, gate, squad)) {
     return false;
   }
-  if (!conditionTrue(self, task.condition, objectiveBundle)) {
+  if (!conditionTrue(self, gate?.condition ?? FNV1_EMPTY, objective.bundle)) {
     return false;
   }
   if (task.capacity >= 0 && (used.get(index) ?? 0) + bodies > task.capacity) {
@@ -171,12 +187,10 @@ function walkObjectiveTask(
   squad: BoundRow,
   bodies: number,
   used: Map<number, number>,
-  objectiveBundle: number
+  objective: WalkedObjective
 ): number[] | undefined {
   for (const childIndex of taskChildren(self, tasks, nodeIndex)) {
-    if (
-      !admitsTask(self, tasks, childIndex, squad, bodies, used, objectiveBundle)
-    ) {
+    if (!admitsTask(self, tasks, childIndex, squad, bodies, used, objective)) {
       continue;
     }
     const rest = walkObjectiveTask(
@@ -186,7 +200,7 @@ function walkObjectiveTask(
       squad,
       bodies,
       used,
-      objectiveBundle
+      objective
     );
     if (rest !== undefined) {
       return [childIndex, ...rest];
@@ -223,7 +237,7 @@ function assignObjectiveInfluencers(
   self: EncounterHostContext,
   squads: readonly BoundRow[],
   tasks: readonly ObjectiveTask[],
-  objectiveBundle: number
+  objective: WalkedObjective
 ): void {
   const used = new Map<number, number>();
   for (const squad of squads) {
@@ -240,7 +254,7 @@ function assignObjectiveInfluencers(
       squad,
       bodies,
       used,
-      objectiveBundle
+      objective
     );
     for (const index of path ?? []) {
       used.set(index, (used.get(index) ?? 0) + bodies);
@@ -265,7 +279,10 @@ export function assignInfluencers(self: EncounterHostContext): void {
       }
       const squads = byObjective.get(itemKey(tag.bundle, row.typeIndex));
       if (squads) {
-        assignObjectiveInfluencers(self, squads, row.tasks, tag.bundle);
+        assignObjectiveInfluencers(self, squads, row.tasks, {
+          bundle: tag.bundle,
+          gates: self.taskGates.get(itemKey(tag.bundle, row.typeIndex)),
+        });
       }
     }
   }

@@ -381,7 +381,7 @@ describe("the compiled start", () => {
       readFileSync(join(dir, COMPILED_BS_INDEX), "utf8")
     ) as CompiledBsIndex;
     expect(index.format).toBe(COMPILED_BS_FORMAT);
-    expect(COMPILED_BS_FORMAT).toBe(8);
+    expect(COMPILED_BS_FORMAT).toBe(10);
     expect(
       index.files.find((file) => file.path === PATH)?.activityStart?.startSlice
     ).toBe("plaza");

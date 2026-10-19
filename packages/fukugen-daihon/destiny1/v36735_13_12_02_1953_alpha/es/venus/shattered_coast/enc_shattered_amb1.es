@@ -3,6 +3,8 @@
 u_globals utils
 c_location_sensor_host shattered_coast  # true name unknown
 c_location_sensor_host headlands  # true name unknown
+@task("baby_shat", squad: sq_baby_shat)
+@task("street", squad: sq_street)
 c_objective_sensor_host obj_shattered_amb1  # true name unknown
 u_event_world_controller event_controller
 c_encounter_manager encounters  # true name unknown
@@ -19,8 +21,10 @@ simple_encounter simple_headlands
 c_control_point_set_sensor_host cps_dropship_baby_shat_enter  # true name unknown
 c_control_point_set_sensor_host cps_dropship_baby_shat_exit  # true name unknown
 @member_counts({dregs: 2, shanks: 2})
+@objective(obj_shattered_amb1)
 c_squad_sensor_host sq_street
 @member_counts({dregs: 3, vandals: 2})
+@objective(obj_shattered_amb1)
 c_squad_sensor_host sq_baby_shat
 @member_counts({skiff: 0})
 c_squad_sensor_host sq_dropship_baby_shat

@@ -3,16 +3,24 @@
 u_globals utils
 c_location_sensor_host southern_tides  # true name unknown
 c_player_monitor_sensor_host pm_bubble_southern_tides bind(southern_tides)  # true name unknown
+@task(0xC8E719E3, squad: sqg_fallen)
+@task(0x29FEA8EC, condition: bfront)
+@task("front", condition: bfront)
 c_objective_sensor_host obj_south_tides_ch2m3  # true name unknown
 @member_counts({raider: 1})
+@objective(obj_south_tides_ch2m3)
 c_squad_sensor_host sq_fallen01
 @member_counts({dreg_4: 4})
+@objective(obj_south_tides_ch2m3)
 c_squad_sensor_host sq_fallen02
 @member_counts({cell_1: 2})
+@objective(obj_south_tides_ch2m3)
 c_squad_sensor_host sq_fallen03
 @member_counts({raider: 1, shank: 1})
+@objective(obj_south_tides_ch2m3)
 c_squad_sensor_host sq_fallen04
 @member_counts({cell_1: 2})
+@objective(obj_south_tides_ch2m3)
 c_squad_sensor_host sq_fallen05
 @member_counts({pilot: 0})
 c_squad_sensor_host sq_fallen_dropship

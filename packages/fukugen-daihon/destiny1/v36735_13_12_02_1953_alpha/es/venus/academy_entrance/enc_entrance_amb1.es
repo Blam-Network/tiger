@@ -2,6 +2,13 @@
 
 c_location_sensor_host entrance  # true name unknown
 c_player_monitor_sensor_host pm_bubble_entrance bind(entrance)  # true name unknown
+@task("encounter_1", condition: b_encounter_1)
+@task(0x03D141F7, squad: sqg_fallen)
+@task(0xC0DE2E1A, squad: sqg_vex)
+@task("encounter_2", condition: b_encounter_2)
+@task(0x03D141F4, squad: sqg_fallen)
+@task(0xC0DE2E19, squad: sqg_vex)
+@task("encounter_3", condition: b_encounter_3)
 c_objective_sensor_host obj_entrance_amb1  # true name unknown
 @member_counts({_squad: [{goblin: 3, harpy: 1, hybrid: 2}, {harpy: 1, hybrid: 3}], _dropship_squad: {pilot: 0}})
 dropship_encounter vex_dropship_encounter01

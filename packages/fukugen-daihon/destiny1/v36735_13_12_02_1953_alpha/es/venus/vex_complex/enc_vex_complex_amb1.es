@@ -7,6 +7,7 @@ c_encounter_manager encounters  # true name unknown
 @member_counts({_squad: [{minotaur: 1, goblins: 2}, {goblins: 3}]})
 simple_encounter simple_south
 @member_counts({_squad: [{minotaur: 2}, {goblins: 3}, {goblins: 3}]})
+@task(0xA422EB12, squad: simple_north._squad[0], objective: _objective)
 simple_encounter simple_north
 @member_counts({_squad: [{minotaur: 2, major_minotaur: 1}]})
 simple_encounter simple_tower
@@ -14,8 +15,10 @@ simple_encounter simple_tower
 simple_encounter simple_bridge
 interactable_placement pf_crows_beacon bind("crows_beacon")
 @member_counts({minotaur_major: 1})
+@objective(obj_complex_amb1)
 c_squad_sensor_host sq_bridge_guardian01
 @member_counts({minotaur_major: 1})
+@objective(obj_complex_amb1)
 c_squad_sensor_host sq_bridge_guardian02
 c_squad_group_sensor_host sqg_bridge_guardians  # true name unknown
 loot_complex loot_venus_complex_1

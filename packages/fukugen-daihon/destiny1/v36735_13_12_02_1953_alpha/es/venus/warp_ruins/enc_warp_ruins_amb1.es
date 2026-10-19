@@ -12,6 +12,10 @@ ambush_encounter ambush_encounter_3
 simple_encounter simple_encounter_1
 @member_counts({_squad: [{cell_1: 5}]})
 simple_encounter simple_encounter_2
+@task("left_leader", squad: sq_raid_phase00_left_leader)
+@task("left", squad: sq_raid_phase00_left)
+@task("right_leader", squad: sq_raid_phase00_right_leader)
+@task("right", squad: sq_raid_phase00_right)
 c_objective_sensor_host obj_raid_bridge_minotaur_phase00  # true name unknown
 c_activity_flag raid_encounter bind("raid_phase0")  # true name unknown
 c_activity_flag raid_gate bind("raid_gate_phase0")  # true name unknown
@@ -21,16 +25,22 @@ c_timer_sensor_host center_switch_pillar_timer  # true name unknown
 c_timer_sensor_host left_switch_pillar_timer  # true name unknown
 c_timer_sensor_host right_switch_pillar_timer  # true name unknown
 @member_counts({major: 1})
+@objective(obj_raid_bridge_minotaur_phase00)
 c_squad_sensor_host sq_raid_phase00_right_leader
 @member_counts({goblins: 4})
+@objective(obj_raid_bridge_minotaur_phase00)
 c_squad_sensor_host sq_raid_phase00_right
 @member_counts({major: 1})
+@objective(obj_raid_bridge_minotaur_phase00)
 c_squad_sensor_host sq_raid_phase00_left_leader
 @member_counts({goblins: 4})
+@objective(obj_raid_bridge_minotaur_phase00)
 c_squad_sensor_host sq_raid_phase00_left
 @member_counts({minotaurs: 3})
+@objective(obj_raid_bridge_minotaur_phase00)
 c_squad_sensor_host sq_raid_phase00_center
 @member_counts({minotaurs: 1})
+@objective(obj_raid_bridge_minotaur_phase00)
 c_squad_sensor_host sq_raid_phase00_center_leader
 @member_counts({pilot: 0})
 c_squad_sensor_host sq_raid_phase00_cloud

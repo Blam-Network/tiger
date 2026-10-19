@@ -9,45 +9,64 @@ c_squad_member_sensor_host warpstorm02__storm  # true name unknown
 c_squad_sensor_host warpstorm03
 c_squad_member_sensor_host warpstorm03__storm  # true name unknown
 @member_counts({ultra_hydra: 0})
+@objective(obj_ruins_strike)
 c_squad_sensor_host sq_boss
 c_squad_member_sensor_host sq_boss__ultra_hydra  # true name unknown
 c_health_sensor_host hydra_health  # true name unknown
+@objective(obj_ruins_strike)
 c_squad_sensor_host sq_strike_template
 @member_counts({all: 4})
+@objective(obj_ruins_strike)
 c_squad_sensor_host sq_strike01_4
 @member_counts({all: 6})
+@objective(obj_ruins_strike)
 c_squad_sensor_host sq_strike01_6
 @member_counts({all: 8})
+@objective(obj_ruins_strike)
 c_squad_sensor_host sq_strike01_8
 @member_counts({all: 8})
+@objective(obj_ruins_strike)
 c_squad_sensor_host sq_strike02_4
 @member_counts({all: 6})
+@objective(obj_ruins_strike)
 c_squad_sensor_host sq_strike02_6
 @member_counts({all: 8})
+@objective(obj_ruins_strike)
 c_squad_sensor_host sq_strike02_8
 @member_counts({all: 4})
+@objective(obj_ruins_strike)
 c_squad_sensor_host sq_strike03_4
 @member_counts({all: 6})
+@objective(obj_ruins_strike)
 c_squad_sensor_host sq_strike03_6
 @member_counts({all: 8})
+@objective(obj_ruins_strike)
 c_squad_sensor_host sq_strike03_8
 @member_counts({cell_1: 1})
+@objective(obj_ruins_strike)
 c_squad_sensor_host sq_boss_guard01
 @member_counts({cell_1: 1})
+@objective(obj_ruins_strike)
 c_squad_sensor_host sq_boss_guard02
 @member_counts({cell_1: 1})
+@objective(obj_ruins_strike)
 c_squad_sensor_host sq_boss_guard03
 @member_counts({cell_1: 1})
+@objective(obj_ruins_strike)
 c_squad_sensor_host sq_boss_guard04
 @member_counts({cell_1: 1})
+@objective(obj_ruins_strike)
 c_squad_sensor_host sq_boss_guard05
 @member_counts({cell_1: 1})
+@objective(obj_ruins_strike)
 c_squad_sensor_host sq_boss_guard06
 c_squad_group_sensor_host sgq_strike_guards  # true name unknown
 c_squad_group_sensor_host sgq_strike_minions  # true name unknown
 c_object_sensor_host pvp_heavy_cache_respawn_1
 c_object_sensor_host pvp_heavy_cache_respawn_2
 c_object_sensor_host pvp_heavy_cache_respawn_3
+@task(0x62573E8E, squad: sq_boss)
+@task("guards", squad: sgq_strike_guards)
 c_objective_sensor_host obj_ruins_strike  # true name unknown
 c_trigger_volume_slot_host tv_2_vol
 c_trigger_volume_slot_host tv_1_vol

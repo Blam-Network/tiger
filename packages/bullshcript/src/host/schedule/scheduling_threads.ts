@@ -126,6 +126,7 @@ export function advanceMissions(self: EncounterHostContext): void {
   self.options.phaseProgress?.write(self.phaseIndex);
   self.writer.note(`mission ${next.declName} starting`);
   self.options.onPhaseStarted?.(next.declName);
+  next.instantiate();
   for (const name of [...PHASE_LIFECYCLE, ...next.startup]) {
     startThreadGuarded(self, next.instance, next.prefix, name, next.declName);
   }
@@ -154,6 +155,7 @@ export function jumpToPhase(self: EncounterHostContext, index: number): void {
   self.options.phaseProgress?.write(index);
   self.writer.note(`mission ${target.declName} starting (debugger)`);
   self.options.onPhaseStarted?.(target.declName);
+  target.instantiate();
   for (const name of [...PHASE_LIFECYCLE, ...target.startup]) {
     startThreadGuarded(
       self,

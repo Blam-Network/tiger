@@ -27,6 +27,11 @@ static_array<u_event_countdown, 1> pf_event_countdown
 c_squad_sensor_host sq_turret01
 @member_counts({cell_1: 1})
 c_squad_sensor_host sq_turret02
+@task(0x4AD5BC8F, squad: fallen_dropship_encounter01._squad_group)
+@task(0x59275B23, squad: fallen_dropship_encounter02._squad_group)
+@task("vex03", squad: vex_dropship_encounter03._squad_group)
+@task("vex01", squad: vex_dropship_encounter01._squad_group)
+@task("vex02", squad: vex_dropship_encounter02._squad_group)
 c_objective_sensor_host obj_headlands_amb1  # true name unknown
 loot_headlands loot_venus_headlands_1
 

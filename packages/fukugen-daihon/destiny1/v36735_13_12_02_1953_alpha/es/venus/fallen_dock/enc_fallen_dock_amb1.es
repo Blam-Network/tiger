@@ -1,36 +1,59 @@
 @activity_bundle("enc_fallen_dock_amb1")
 
 u_globals utils
+@task("den_entrance", squad: sq_den_entrance)
+@task("dock_anchor", squad: sq_dock_anchor)
+@task("dock_outdoors", squad: sqg_dock_outdoors)
+@task("dock_snipers", squad: sqg_dock_snipers)
+@task("dock_bridge", squad: sqg_dock_bridge)
+@task("bridge_snipers", squad: sqg_bridge_snipers)
+@task("bay", squad: sqg_bay)
+@task("sniper", squad: sq_bay02)
 c_objective_sensor_host obj_fallen_dock_amb1  # true name unknown
 @member_counts({dregs: 3, vandals: 2})
+@objective(obj_fallen_dock_amb1)
 c_squad_sensor_host sq_den_entrance
 @member_counts({dregs: 3, servitor: 1})
+@objective(obj_fallen_dock_amb1)
 c_squad_sensor_host sq_dock01
 @member_counts({dregs: 3, vandal: 1})
+@objective(obj_fallen_dock_amb1)
 c_squad_sensor_host sq_dock02
 @member_counts({dregs: 2, vandal: 2})
+@objective(obj_fallen_dock_amb1)
 c_squad_sensor_host sq_dock03
 @member_counts({shanks: 4})
+@objective(obj_fallen_dock_amb1)
 c_squad_sensor_host sq_dock04
 @member_counts({captain: 1, vandal: 2})
+@objective(obj_fallen_dock_amb1)
 c_squad_sensor_host sq_dock_anchor
 @member_counts({vandal_snipers: 1})
+@objective(obj_fallen_dock_amb1)
 c_squad_sensor_host sq_dock_sniper01
 @member_counts({vandal_snipers: 1})
+@objective(obj_fallen_dock_amb1)
 c_squad_sensor_host sq_dock_sniper02
 @member_counts({shanks: 4})
+@objective(obj_fallen_dock_amb1)
 c_squad_sensor_host sq_bridge01
 @member_counts({dreg: 3, vandal: 1})
+@objective(obj_fallen_dock_amb1)
 c_squad_sensor_host sq_bridge02
 @member_counts({vandal_snipers: 1})
+@objective(obj_fallen_dock_amb1)
 c_squad_sensor_host sq_bridge_sniper01
 @member_counts({vandal_snipers: 1})
+@objective(obj_fallen_dock_amb1)
 c_squad_sensor_host sq_bridge_sniper02
 @member_counts({dregs: 4})
+@objective(obj_fallen_dock_amb1)
 c_squad_sensor_host sq_bay01
 @member_counts({dregs: 2})
+@objective(obj_fallen_dock_amb1)
 c_squad_sensor_host sq_bay02
 @member_counts({vandal_snipers: 2})
+@objective(obj_fallen_dock_amb1)
 c_squad_sensor_host sq_bay_snipers
 c_squad_group_sensor_host sqg_dock_outdoors  # true name unknown
 c_squad_group_sensor_host sqg_dock_snipers  # true name unknown

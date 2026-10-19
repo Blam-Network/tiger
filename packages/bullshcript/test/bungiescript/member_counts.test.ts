@@ -158,22 +158,63 @@ describe("@member_counts", () => {
       errors(
         `${BUNDLE}${squad}@member_counts({dreg: 1})\nthread main:\n    pass\n`
       )
-    ).toEqual([
-      expect.stringContaining("@member_counts decorates a squad member"),
-    ]);
+    ).toEqual([expect.stringContaining("@member_counts decorates a member")]);
     expect(errors(`${BUNDLE}${squad}@member_counts({dreg: 1})\n`)).toEqual([
-      expect.stringContaining("@member_counts decorates a squad member"),
+      expect.stringContaining("@member_counts decorates a member"),
     ]);
     expect(
       errors(
         "@member_counts({dreg: 1})\nclass c_x:\n    int i\n",
         "bs/activities/common/x.bs"
       )
-    ).toEqual([
-      expect.stringContaining("@member_counts decorates a squad member"),
-    ]);
+    ).toEqual([expect.stringContaining("@member_counts decorates a member")]);
     expect(errors(`${squad}${BUNDLE}int i\n`)).toEqual([
       expect.stringContaining("@activity_bundle heads the file or its class"),
     ]);
+  });
+});
+
+describe("@placed", () => {
+  it("parses on its own line or sharing its member's", () => {
+    const [own, shared, plain] = fields(
+      `${BUNDLE}@placed()\nc_squad_sensor_host sq_a\n@placed() c_squad_sensor_host sq_b\nc_squad_sensor_host sq_c\n`
+    );
+    expect(own.placed).toBe(2);
+    expect(shared.placed).toBe(4);
+    expect(plain.placed).toBeUndefined();
+  });
+
+  it("goes with @member_counts on one member, in either order", () => {
+    const [counted, marked] = fields(
+      `${BUNDLE}@placed()\n@member_counts({dreg: 1})\nc_squad_sensor_host sq_a\n@member_counts({dreg: 1})\n@placed()\nc_squad_sensor_host sq_b\n`
+    );
+    expect(counted.placed).toBeDefined();
+    expect(counted.memberCounts).toBeDefined();
+    expect(marked.placed).toBeDefined();
+    expect(marked.memberCounts).toBeDefined();
+  });
+
+  it("is carried by the schema of a squad", () => {
+    const result = compile(
+      `${BUNDLE}@placed()\nc_squad_sensor_host sq_a\nc_squad_sensor_host sq_b\n`
+    );
+    expect(result.diagnostics.filter((d) => d.severity === "error")).toEqual(
+      []
+    );
+    expect(
+      result.decls[0].schema.members.map((member) => member.placed)
+    ).toEqual([true, undefined]);
+  });
+
+  it("is refused on anything but a squad, or twice", () => {
+    expect(
+      errors(`${BUNDLE}@placed()\nc_squad_group_sensor_host sqg_a\n`)
+    ).toEqual([expect.stringContaining("is no squad")]);
+    expect(
+      errors(`${BUNDLE}@placed()\n@placed()\nc_squad_sensor_host sq_a\n`)
+    ).toEqual([expect.stringContaining("takes one @placed")]);
+    expect(
+      errors(`${BUNDLE}@placed()\nstartup thread t:\n    sleep(1)\n`)
+    ).toEqual([expect.stringContaining("decorates a member")]);
   });
 });

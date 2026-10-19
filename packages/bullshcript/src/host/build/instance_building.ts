@@ -46,7 +46,11 @@ import {
   controlPointAtoms,
   CommandScriptBuilder,
 } from "../natives/command_script.ts";
-import type { EncounterHostContext, SharedArchetype } from "../activity/host_context.ts";
+import type {
+  EncounterHostContext,
+  SharedArchetype,
+  TaskGate,
+} from "../activity/host_context.ts";
 import { itemKey } from "../tags/item_key.ts";
 import type { NavPoint } from "../state/items.ts";
 import { fnv1, parseHashLiteral } from "../tags/name_hash.ts";
@@ -408,6 +412,7 @@ export function buildInstance(
   const schema = schemaOf(self, chunk);
   if (schema !== undefined) {
     noteMemberCounts(self, schema, prefix, namespaces, bundles);
+    noteObjectives(self, schema, prefix, namespaces, bundles);
   }
   for (const [key, value] of Object.entries({
     ...(schema === undefined ? {} : schemaDefaults(schema)),
@@ -541,6 +546,140 @@ function noteMemberCounts(
         return fail(`another declaration gives it (${known.counts.join(", ")})`);
       }
       self.memberCounts.set(key, { counts, named });
+    }
+  }
+}
+
+// How many elements of an array a `[]` in an @objective path reaches at most.
+const OBJECTIVE_ARRAY_PROBE = 64;
+
+// The rows a schema path names: the one row, or for each `[]` every element
+// that has a row, in order.
+function rowsAtPath(
+  field: string,
+  rowOf: (name: string) => BoundRow | undefined
+): BoundRow[] {
+  const at = field.indexOf("[]");
+  if (at < 0) {
+    const row = rowOf(field);
+    return row === undefined ? [] : [row];
+  }
+  const rows: BoundRow[] = [];
+  for (let i = 0; i < OBJECTIVE_ARRAY_PROBE; i++) {
+    const found = rowsAtPath(
+      `${field.slice(0, at)}[${i}]${field.slice(at + 2)}`,
+      rowOf
+    );
+    if (found.length === 0) {
+      break;
+    }
+    rows.push(...found);
+  }
+  return rows;
+}
+
+// A script's @objective and @task against the rows it binds: the host-only
+// data of the squad hosts (the Objective a squad is against) and of the
+// Objective host (a task's squad filter and condition). Anything the rows
+// cannot take stops the script loading.
+function noteObjectives(
+  self: EncounterHostContext,
+  schema: BsSchema,
+  prefix: string,
+  namespaces: readonly string[],
+  bundles: readonly ActivityBundleTag[]
+): void {
+  const rowOf = (name: string) =>
+    resolveInstanceField(bundles, prefix, name, namespaces);
+  for (const member of schema.members) {
+    const fail = (decorator: string, why: string): never => {
+      throw new Error(
+        `${schema.name}:${member.line}: @${decorator} on ${member.name}: ${why}`
+      );
+    };
+    for (const { path, target } of member.objective ?? []) {
+      const field =
+        path === undefined
+          ? member.name
+          : `${member.name}${path.startsWith("[") ? "" : "."}${path}`;
+      const objective = rowOf(target);
+      if (objective?.typeId !== self.types.Objective) {
+        return fail("objective", `'${target}' names no Objective row`);
+      }
+      const squads = rowsAtPath(field, rowOf);
+      if (squads.length === 0 && !field.includes("[]")) {
+        return fail("objective", `no Squad row has the name '${field}'`);
+      }
+      for (const squad of squads) {
+        if (squad.typeId !== self.types.Squad) {
+          return fail("objective", `'${squad.name}' is no Squad row`);
+        }
+        const key = itemKey(squad.bundle, squad.typeIndex);
+        const known = self.squadObjectives.get(key);
+        if (
+          known !== undefined &&
+          (known.bundle !== objective.bundle ||
+            known.typeIndex !== objective.typeIndex)
+        ) {
+          return fail(
+            "objective",
+            `another declaration gives '${squad.name}' another Objective`
+          );
+        }
+        self.squadObjectives.set(key, {
+          bundle: objective.bundle,
+          typeIndex: objective.typeIndex,
+        });
+      }
+    }
+    if (member.tasks === undefined) {
+      continue;
+    }
+    for (const task of member.tasks) {
+      const name =
+        task.path === undefined ? member.name : `${member.name}.${task.path}`;
+      const objective = rowOf(name);
+      if (objective?.typeId !== self.types.Objective) {
+        return fail("task", `no Objective row has the name '${name}'`);
+      }
+      const key = itemKey(objective.bundle, objective.typeIndex);
+      const gates = self.taskGates.get(key) ?? new Map<number, TaskGate>();
+      self.taskGates.set(key, gates);
+      let filter: TaskGate["filter"];
+      if (task.squad !== undefined) {
+        const row = rowOf(task.squad);
+        if (
+          row?.typeId !== self.types.Squad &&
+          row?.typeId !== self.types.SquadGroup
+        ) {
+          return fail(
+            "task",
+            `'${task.squad}' names no Squad or SquadGroup row`
+          );
+        }
+        filter = {
+          bundle: row.bundle,
+          typeId: row.typeId,
+          typeIndex: row.typeIndex,
+        };
+      }
+      const gate: TaskGate = {
+        ...(task.condition === undefined
+          ? {}
+          : { condition: fnv1(task.condition) }),
+        ...(filter === undefined ? {} : { filter }),
+      };
+      const known = gates.get(task.hash);
+      if (
+        known !== undefined &&
+        JSON.stringify(known) !== JSON.stringify(gate)
+      ) {
+        return fail(
+          "task",
+          `another declaration gives task ${task.name} another gate`
+        );
+      }
+      gates.set(task.hash, gate);
     }
   }
 }
@@ -699,7 +838,7 @@ function childInstance(
 
 // The archetype members a running root declares exist with it, as the
 // engine builds an instance's class instances with the instance. A
-// mission's members wait for the mission to read them.
+// mission phase's are built as the phase starts (instantiateArchetypes).
 export function instantiateDeclaredArchetypes(
   self: EncounterHostContext,
   built: readonly { chunk: HksBytecode; table: LuaTable }[]
@@ -708,25 +847,35 @@ export function instantiateDeclaredArchetypes(
     if (isDormantPhase(self, chunk) || !isTopLevelActor(self, chunk)) {
       continue;
     }
-    const scope = topLevelScope(self, chunk);
-    for (const member of schemaOf(self, chunk)?.members ?? []) {
-      if (!ARCHETYPE_MEMBER_KINDS.has(member.kind)) {
-        continue;
-      }
-      const field =
-        member.kind === "class_instance" ? member.name : `${member.name}[0]`;
-      const row = resolveInstanceField(
-        scope.bundles,
-        "",
-        field,
-        scope.namespaces
-      );
-      if (
-        row?.typeId === self.types.Encounter &&
-        childChunkFor(self, row, field, self.options.childScripts)
-      ) {
-        table.get(member.name);
-      }
+    instantiateArchetypes(self, chunk, table);
+  }
+}
+
+// One instance's archetype members, built now: each naming an Encounter row
+// runs its child script, startup threads and all.
+export function instantiateArchetypes(
+  self: EncounterHostContext,
+  chunk: HksBytecode,
+  table: LuaTable
+): void {
+  const scope = topLevelScope(self, chunk);
+  for (const member of schemaOf(self, chunk)?.members ?? []) {
+    if (!ARCHETYPE_MEMBER_KINDS.has(member.kind)) {
+      continue;
+    }
+    const field =
+      member.kind === "class_instance" ? member.name : `${member.name}[0]`;
+    const row = resolveInstanceField(
+      scope.bundles,
+      "",
+      field,
+      scope.namespaces
+    );
+    if (
+      row?.typeId === self.types.Encounter &&
+      childChunkFor(self, row, field, self.options.childScripts)
+    ) {
+      table.get(member.name);
     }
   }
 }
@@ -1353,9 +1502,11 @@ function reserveChildSquads(
   }
 }
 
-// Squads left to the table stand their named members from the first apply, as
+// Squads that start placed stand their named members from the first apply, as
 // a script's place() does, so their cells go out at the authored 0 (B63AFDA3).
-export function placeTableNamedMembers(self: EncounterHostContext): void {
+// A squad starts placed when the package's default says so, or a script marks
+// it @placed (the squad host's +0x54 flag, the warp gates').
+export function placeStartingMembers(self: EncounterHostContext): void {
   const seen = new Set<number>();
   for (const tag of self.options.bundles) {
     if (seen.has(tag.bundle)) {
@@ -1381,11 +1532,23 @@ export function placeTableNamedMembers(self: EncounterHostContext): void {
       if (chunk === undefined) {
         continue;
       }
-      for (const [field, methods] of fieldMethodCalls(chunk)) {
+      const marked = new Set(
+        (schemaOf(self, chunk)?.members ?? [])
+          .filter((member) => member.placed === true)
+          .map((member) => member.name)
+      );
+      const fields = new Map(fieldMethodCalls(chunk));
+      for (const field of marked) {
+        fields.set(field, fields.get(field) ?? new Set());
+      }
+      for (const [field, methods] of fields) {
         if ([...methods].some((method) => SQUAD_PLACING_METHODS.has(method))) {
           continue;
         }
         const row = bundleRowByName([tag], `${entry.name}.${field}`);
+        if (row?.typeId === self.types.Squad && marked.has(field)) {
+          self.startsPlaced.add(itemKey(row.bundle, row.typeIndex));
+        }
         if (
           row?.typeId !== self.types.Squad ||
           self.itemState.bodiesFor(row.bundle, row.typeIndex) !== undefined ||

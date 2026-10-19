@@ -73,6 +73,7 @@ import {
   PHASE_LIFECYCLE,
   RANDOM_MODULUS,
   type SharedArchetype,
+  type TaskGate,
 } from "./host_context.ts";
 
 const MS_PER_SECOND = 1000;
@@ -140,6 +141,12 @@ export interface HostDebugSnapshot {
 export class EncounterScriptHost implements EncounterHostContext {
   readonly itemState = new ScriptItemState();
   readonly memberCounts = new Map<string, AuthoredCells>();
+  readonly squadObjectives = new Map<
+    string,
+    { bundle: number; typeIndex: number }
+  >();
+  readonly startsPlaced = new Set<string>();
+  readonly taskGates = new Map<string, Map<number, TaskGate>>();
   readonly navPoints: ReturnType<typeof navPointIndex>;
   readonly commandScripts: CommandScriptIndex;
   readonly scalarDefaultCache = new Map<
@@ -455,7 +462,7 @@ export class EncounterScriptHost implements EncounterHostContext {
     }
     instanceBuilding.reserveScriptPlacedSquads(this, built);
     instanceBuilding.markCarrierCargo(this);
-    instanceBuilding.placeTableNamedMembers(this);
+    instanceBuilding.placeStartingMembers(this);
     // A slot never pointed at a row is a named handle or cut content.
     for (const slot of this.importSlots) {
       if (slot.row === undefined) {
@@ -472,6 +479,15 @@ export class EncounterScriptHost implements EncounterHostContext {
         this.phases.push({
           declName: instance.declName,
           instance: instance.table,
+          instantiate: () => {
+            if (this.options.rowOwners !== undefined) {
+              instanceBuilding.instantiateArchetypes(
+                this,
+                instance.chunk,
+                instance.table
+              );
+            }
+          },
           prefix: "",
           startup: instanceBuilding
             .startupThreads(this, instance.chunk, named, instance.implNames)
@@ -493,6 +509,7 @@ export class EncounterScriptHost implements EncounterHostContext {
         // every phase's main.
         this.writer.note(`mission ${instance.declName} starting`);
         this.options.onPhaseStarted?.(instance.declName);
+        this.phases.at(-1)?.instantiate();
         for (const name of [
           ...PHASE_LIFECYCLE,
           ...(this.phases.at(-1)?.startup ?? []),
@@ -1021,9 +1038,13 @@ export class EncounterScriptHost implements EncounterHostContext {
       : (this.world.at(key)?.creditedKills ?? 0);
   }
 
-  // Table bodies for an unplaced squad (options.squadPlacedByDefault).
+  // Table bodies for an unplaced squad (options.squadPlacedByDefault, and
+  // the squads a script marks @placed).
   defaultBodies(bundle: number, typeIndex: number): number {
-    if (this.options.squadPlacedByDefault?.(bundle, typeIndex) === false) {
+    if (
+      !this.startsPlaced.has(itemKey(bundle, typeIndex)) &&
+      this.options.squadPlacedByDefault?.(bundle, typeIndex) === false
+    ) {
       return 0;
     }
     return squadRosterSize(
@@ -1290,6 +1311,15 @@ export class EncounterScriptHost implements EncounterHostContext {
 
   // Rebuilt once per assignInfluencers() pass; squadScopeOf is O(objects).
   squadGroupMembership = new Map<string, ReadonlySet<string>>();
+
+  // The Objective the scripts author a squad against (@objective): what its
+  // SquadAuth carries as ref0 until a script sets another.
+  squadObjective(
+    bundle: number,
+    typeIndex: number
+  ): { bundle: number; typeIndex: number } | undefined {
+    return this.squadObjectives.get(itemKey(bundle, typeIndex));
+  }
 
   bound(path: string, row: BoundRow | undefined): BoundInstance {
     return instanceBuilding.bound(this, path, row);

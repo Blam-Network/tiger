@@ -969,16 +969,40 @@ export function aliveCount(self: BoundInstance): number {
       : squadBodies(self, squad);
     const died =
       incidentDeaths - (placedHere ? self.squad.incidentDeathsAtPlace : 0);
-    return Math.max(reported ?? 0, placed - died, 0);
+    return lessNamedDeaths(
+      self,
+      squad,
+      Math.max(reported ?? 0, placed - died, 0)
+    );
   }
   // Before any report: as alive as it was asked to be, by this handle or the
   // placing script.
-  return (
+  return lessNamedDeaths(
+    self,
+    squad,
     reported ??
-    (self.squad.desiredBodies > 0
-      ? self.squad.desiredBodies
-      : squadBodies(self, squad))
+      (self.squad.desiredBodies > 0
+        ? self.squad.desiredBodies
+        : squadBodies(self, squad))
   );
+}
+
+// Without a tally the count stands for the named members too, and a named
+// death never reaches it: no more than the anonymous bodies and the named
+// members still standing can be alive.
+function lessNamedDeaths(
+  self: BoundInstance,
+  squad: BoundRow,
+  count: number
+): number {
+  if ((self.rows.namedMembers?.(squad) ?? []).length === 0) {
+    return count;
+  }
+  const anonymous = Math.max(
+    0,
+    squadBodies(self, squad) - namedMembersPlaced(self, squad)
+  );
+  return Math.min(count, anonymous + namedMembersAlive(self, squad));
 }
 
 // alive_count()'s named-member share, summed once per squad (unlike the

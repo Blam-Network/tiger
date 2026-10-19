@@ -82,9 +82,19 @@ export interface SharedArchetype {
   table: LuaTable;
 }
 
+// A task's gate as the scripts' @task write it: the Squad or SquadGroup row
+// it admits, and the name hash of the bool field on the owning script that
+// must hold. Either is left out where the task has none.
+export interface TaskGate {
+  readonly condition?: number;
+  readonly filter?: { bundle: number; typeId: number; typeIndex: number };
+}
+
 export interface HostPhase {
   declName: string;
   instance: LuaTable;
+  // Builds the phase's class instances, as the phase starts.
+  instantiate: () => void;
   prefix: string;
   // Threads nothing wakes, started with init and main.
   startup: string[];
@@ -148,9 +158,18 @@ export interface EncounterHostContext {
   spawned: boolean;
   // Rebuilt once per assignInfluencers() pass; squadScopeOf is O(objects).
   squadGroupMembership: Map<string, ReadonlySet<string>>;
+  // The Objective each squad is authored against (SquadAuth ref0), by the
+  // squad's itemKey, as the scripts' @objective say.
+  readonly squadObjectives: Map<string, { bundle: number; typeIndex: number }>;
   readonly stalls: Map<string, { gate: string; ticks: number }>;
+  // The squads that start placed (@placed), by itemKey: they stand their
+  // named members from the first apply, whatever squadPlacedByDefault says.
+  readonly startsPlaced: Set<string>;
   submitIncidentWithTeam(nameHash: number, team: number | undefined): void;
   readonly tableFields: Set<string>;
+  // The scripts' @task gates, by the Objective's itemKey and the task's name
+  // hash.
+  readonly taskGates: Map<string, Map<number, TaskGate>>;
   readonly threadOwners: WeakMap<LuaScriptThread, LuaTable>;
   readonly threadStarted: WeakMap<LuaTable, Set<string>>;
   readonly topLevelBundles: Map<HksBytecode, readonly ActivityBundleTag[]>;

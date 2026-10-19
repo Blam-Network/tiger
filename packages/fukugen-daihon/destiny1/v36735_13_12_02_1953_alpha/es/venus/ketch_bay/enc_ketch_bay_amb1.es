@@ -1,33 +1,61 @@
 @activity_bundle("enc_ketch_bay_amb1")
 
+@task("equipment_room", squad: sqg_equipment)
+@task("control_room", squad: sqg_control)
+@task(0xAD141C5E, squad: sq_control_anchor, condition: is_player_in_pm_anchor)
+@task(0x55E1B71C, squad: sq_control_anchor)
+@task(0x4D7B1CFE, squad: sq_control01)
+@task(0x4E407B7A, squad: sq_control02)
+@task(0x36A1AEFF, squad: sq_control_right_mc)
+@task("throne", squad: sqg_throne)
+@task(0xA5B8C907, condition: is_body_count_reached)
+@task("captain", squad: sq_throne_captain)
+@task(0xA422EB12, squad: sq_throne_back)
+@task("advance", condition: can_advance)
+@task("mid", squad: sq_throne_mid)
+@task("right_hall", squad: sq_right_hall)
 c_objective_sensor_host obj_ketch_bay_amb1  # true name unknown
 @member_counts({shank: 2, vandal: 1})
+@objective(obj_ketch_bay_amb1)
 c_squad_sensor_host sq_equipment01
 @member_counts({dreg: 2, vandal: 1})
+@objective(obj_ketch_bay_amb1)
 c_squad_sensor_host sq_equipment02
 @member_counts({dreg: 3})
+@objective(obj_ketch_bay_amb1)
 c_squad_sensor_host sq_equipment03
 @member_counts({dreg: 2, vandal: 2})
+@objective(obj_ketch_bay_amb1)
 c_squad_sensor_host sq_right_hall
 @member_counts({captain: 1})
+@objective(obj_ketch_bay_amb1)
 c_squad_sensor_host sq_control_anchor
 @member_counts({dreg: 2, shank: 2})
+@objective(obj_ketch_bay_amb1)
 c_squad_sensor_host sq_control01
 @member_counts({shanks: 2, vandals: 2})
+@objective(obj_ketch_bay_amb1)
 c_squad_sensor_host sq_control02
 @member_counts({dregs: 3, servitor: 1})
+@objective(obj_ketch_bay_amb1)
 c_squad_sensor_host sq_control03
 @member_counts({dregs: 2, vandals: 1})
+@objective(obj_ketch_bay_amb1)
 c_squad_sensor_host sq_control_right_mc
 @member_counts({shanks: 2, vandals: 1})
+@objective(obj_ketch_bay_amb1)
 c_squad_sensor_host sq_control_left_mc
 @member_counts({dregs: 4})
+@objective(obj_ketch_bay_amb1)
 c_squad_sensor_host sq_throne_front
 @member_counts({vandals: 2})
+@objective(obj_ketch_bay_amb1)
 c_squad_sensor_host sq_throne_mid
 @member_counts({vandals: 2})
+@objective(obj_ketch_bay_amb1)
 c_squad_sensor_host sq_throne_back
 @member_counts({captain: 1})
+@objective(obj_ketch_bay_amb1)
 c_squad_sensor_host sq_throne_captain
 c_squad_group_sensor_host sqg_equipment  # true name unknown
 c_squad_group_sensor_host sqg_control  # true name unknown

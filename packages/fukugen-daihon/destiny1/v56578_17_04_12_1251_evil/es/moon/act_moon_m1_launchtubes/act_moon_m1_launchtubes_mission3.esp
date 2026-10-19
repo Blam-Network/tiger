@@ -6,6 +6,7 @@
 # so this waits that long.
 
 interactable_objective pf_obj_moonbase_m1_terminal bind("0x8362596D")
+interactable_placement pf_placement_m1_terminal bind("0x8362596D")
 c_sequence_host seq_d_o1_s14
 c_sequence_host seq_d_o2_s02
 c_sequence_host seq_d_o2_s04

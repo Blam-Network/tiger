@@ -1,8 +1,11 @@
 @activity_bundle("enc_south_tides_amb1")
 
+@task(0x2365A607, squad: fallen_simple_encounter._squad[1])
 c_objective_sensor_host obj_south_tides_amb_fallen  # true name unknown
 c_objective_sensor_host obj_south_tides_amb_south  # true name unknown
+@task(0x7DB16DB9, squad: sqg_wall_snipers)
 c_objective_sensor_host obj_south_tides_amb_mid  # true name unknown
+@task(0x98098F14, squad: sqg_wall_solo)
 c_objective_sensor_host obj_south_tides_amb_north  # true name unknown
 c_squad_group_sensor_host sqg_wall_snipers  # true name unknown
 c_squad_group_sensor_host sqg_wall_solo  # true name unknown

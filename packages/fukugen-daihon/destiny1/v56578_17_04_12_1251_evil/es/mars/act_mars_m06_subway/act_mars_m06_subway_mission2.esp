@@ -7,6 +7,7 @@
 # phase.
 
 interactable_objective pf_objective_battleground_interact bind("0x1A58BFCD")
+interactable_placement pf_placement_m06_interact bind("0x1A58BFCD")
 
 thread init: pass
 

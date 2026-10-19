@@ -3,7 +3,8 @@
 # Dome A in the first dome mission: the Hive hold the basement and the upper
 # floor, each group coming on as the player reaches its trigger. The door
 # scan is a placement the player uses; once its device finishes the thrall
-# and troopers are loosed, and the door below opens as the thralls fall.
+# and troopers are loosed, and the door below opens on the thralls waiting
+# behind it.
 # The upper floor wakes when a player reaches the top of the stairs, and the
 # wizard's death releases the last of the rush. From one retail capture: the
 # gaps without a trigger on the wire are that run's waits.
@@ -18,7 +19,7 @@ c_player_trigger_sensor_host pt_spawn_hive_intro02
 c_player_trigger_sensor_host pt_spawn_hive_intro02_force
 c_player_trigger_sensor_host pt_thrall_unfreeze
 c_sequence_host seq_hive_wave_announce
-interactable_placement obj_placement_m1_o1b
+interactable_placement obj_placement_m1_o1b bind("0x3EA60D3D")
 c_squad_sensor_host sq_hive_scare02a
 c_squad_sensor_host sq_hive_scare02b
 c_squad_sensor_host sq_hive_scare02c
@@ -44,11 +45,9 @@ c_squad_sensor_host sq_hive_upper_rush01
 c_squad_sensor_host sq_hive_upper_rush02
 
 startup thread sc_dome_a:
-    obj_placement_m1_o1b._object_filter.add_players_with_activity_flag(obj_placement_m1_o1b._object.import_identifier())
-    obj_placement_m1_o1b._object.set_enabled_player_filter(obj_placement_m1_o1b._object_filter)
-    obj_placement_m1_o1b._object.create()
     for sq in [sq_hive_scare02a, sq_hive_scare02b, sq_hive_scare02c, sq_hive_scare02d, sq_hive_basement_thrall01, sq_hive_basement_troopers01, sq_hive_basement_troopers02, sq_hive_upper_front01, sq_hive_upper_front02, sq_hive_upper_front03, sq_hive_upper_back01, sq_hive_upper_back02, sq_hive_upper_wizard01, sq_hive_upper_rush01, sq_hive_upper_rush02]:
         sq.set_objective(obj_hive_dome_a01)
+    o_door01.create()
     sc_scan.wake()
     sc_intro01.wake()
     sc_intro02.wake()
@@ -66,7 +65,10 @@ thread sc_scan:
     sleep(1.1)
     place_on_task(sq_hive_basement_thrall01, "0x0A52BC0C")
     place_on_task(sq_hive_basement_troopers01, "0x8F0587D7")
-    sleep_until(sq_hive_basement_thrall01.alive_count() == 0)
+    # the thralls wait frozen behind the door (one run: their squad read
+    # none alive 0.2 s after they were placed, and the door moved 2.5 s
+    # after that)
+    sleep(2.7)
     o_door01.set_device_position(1)
     sleep(2.5)
     sq_hive_scare02b.place()

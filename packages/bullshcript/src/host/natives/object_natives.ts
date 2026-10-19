@@ -217,6 +217,39 @@ export function noteLootGathered(self: BoundInstance): void {
 
 // collect_loot_objective's verbs on `_loot`: LootAuth [bool enabled][ref
 // filter][i32 epoch]; the count stays host-side.
+// A seat (a Passenger row): seat(actor) puts the actor in it, release() lets
+// it go. Retail serves the seated state as 1 and the released one as 2
+// (Phogoth's chains). Verb names ours.
+function passengerVerb(
+  self: BoundInstance,
+  method: string,
+  value: LuaValue
+): LuaValue | undefined {
+  if (!self.row) {
+    return;
+  }
+  switch (method) {
+    case "seat": {
+      const actor = value === undefined ? undefined : boundObjectOf(value)?.row;
+      if (actor?.typeId !== self.types.Actor) {
+        self.writer.note(`${self.path}:seat(${show(value)}) (not an Actor row)`);
+        return true;
+      }
+      self.writer.set(
+        self.row,
+        { kind: "passenger", state: { passenger: itemRef(actor), state: 1 } },
+        `seat(${actor.name})`
+      );
+      return true;
+    }
+    case "release":
+      self.writer.set(self.row, { kind: "passenger", state: { state: 2 } }, "release()");
+      return true;
+    default:
+      return;
+  }
+}
+
 export function lootVerb(
   self: BoundInstance,
   method: string
@@ -867,6 +900,12 @@ export function register(registry: NativeRegistry<BoundInstance>): void {
   registry.rowVerb(
     (self) => self.row?.typeId === self.types.Loot,
     (self, method) => lootVerb(self, method)
+  );
+  registry.rowVerb(
+    (self) =>
+      self.types.Passenger !== undefined &&
+      self.row?.typeId === self.types.Passenger,
+    (self, method, args) => passengerVerb(self, method, args[0])
   );
   registry.onAdvance((self, seconds) => {
     releaseHeldComponents(self);

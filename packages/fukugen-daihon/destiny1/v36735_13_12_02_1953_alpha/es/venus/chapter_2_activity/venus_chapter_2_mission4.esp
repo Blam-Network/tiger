@@ -1,42 +1,62 @@
 u_globals utils
 c_location_sensor_host northern_tides  # true name unknown
 c_player_monitor_sensor_host pm_bubble_northern_tides bind(northern_tides)  # true name unknown
+@task(0x4B93CC0A, squad: sg_strikers)
+@task(0xE83F343C, squad: sg_miniboss)
+@task(0xC7211045, squad: sq_miniboss)
 c_objective_sensor_host obj_north_tides_ch2m4_phase  # true name unknown
 @member_counts({minotaur_mb: 0})
+@objective(obj_north_tides_ch2m4_phase)
 c_squad_sensor_host sq_miniboss
 c_squad_member_sensor_host sq_miniboss__minotaur_mb  # true name unknown
 c_health_sensor_host boss_health  # true name unknown
 @member_counts({harpy: 2})
+@objective(obj_north_tides_ch2m4_phase)
 c_squad_sensor_host sq_boss_minions01
 @member_counts({harpy: 2})
+@objective(obj_north_tides_ch2m4_phase)
 c_squad_sensor_host sq_boss_minions02
 @member_counts({cell_1: 1})
+@objective(obj_north_tides_ch2m4_phase)
 c_squad_sensor_host sq_boss_striker01
 @member_counts({cell_1: 1})
+@objective(obj_north_tides_ch2m4_phase)
 c_squad_sensor_host sq_boss_striker02
 @member_counts({cell_1: 1})
+@objective(obj_north_tides_ch2m4_phase)
 c_squad_sensor_host sq_boss_striker03
 @member_counts({cell_1: 1})
+@objective(obj_north_tides_ch2m4_phase)
 c_squad_sensor_host sq_boss_striker04
 @member_counts({cell_1: 1})
+@objective(obj_north_tides_ch2m4_phase)
 c_squad_sensor_host sq_boss_striker05
 @member_counts({cell_1: 1})
+@objective(obj_north_tides_ch2m4_phase)
 c_squad_sensor_host sq_boss_striker06
 @member_counts({goblin: 2, cell: 1})
+@objective(obj_north_tides_ch2m4_phase)
 c_squad_sensor_host sq_vex_reinf00
 @member_counts({goblin: 2})
+@objective(obj_north_tides_ch2m4_phase)
 c_squad_sensor_host sq_vex_reinf00a
 @member_counts({goblin: 2})
+@objective(obj_north_tides_ch2m4_phase)
 c_squad_sensor_host sq_vex_reinf00b
 @member_counts({leader: 2})
+@objective(obj_north_tides_ch2m4_phase)
 c_squad_sensor_host sq_vex_reinf00c
 @member_counts({goblin: 2})
+@objective(obj_north_tides_ch2m4_phase)
 c_squad_sensor_host sq_vex_reinf01
 @member_counts({goblin: 2})
+@objective(obj_north_tides_ch2m4_phase)
 c_squad_sensor_host sq_vex_reinf01a
 @member_counts({goblin: 2})
+@objective(obj_north_tides_ch2m4_phase)
 c_squad_sensor_host sq_vex_reinf01b
 @member_counts({leader: 1})
+@objective(obj_north_tides_ch2m4_phase)
 c_squad_sensor_host sq_vex_reinf01c
 @member_counts({gate: 0})
 c_squad_sensor_host sq_vex_warpgate_large

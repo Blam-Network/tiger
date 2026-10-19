@@ -1,5 +1,6 @@
 @activity_bundle("enc_north_tides_amb1")
 
+@task(0x5BDE39C3, squad: sqg_hydra)
 c_objective_sensor_host obj_north_tides_amb1  # true name unknown
 c_encounter_manager encounters  # true name unknown
 @member_counts({_squad: [{hobgoblin_2: 2}, {minotaur_1: 1, goblin_3: 3}]})

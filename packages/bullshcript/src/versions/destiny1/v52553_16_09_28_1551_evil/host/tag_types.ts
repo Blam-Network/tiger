@@ -33,6 +33,8 @@ export const ActivityBundleItemType = {
   SafeZone: 27,
   PlayerMonitor: 28,
   PlayerTrigger: 29,
+  // a seat an actor rides (phogoth_chains_seat)
+  Passenger: 37,
   // toggle.
   TriggerGroup: 30,
   PlayerObjective: 32,

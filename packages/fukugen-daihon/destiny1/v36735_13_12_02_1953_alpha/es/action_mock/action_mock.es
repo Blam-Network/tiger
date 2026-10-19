@@ -14,12 +14,16 @@ c_objective_sensor_host obj_action_mock  # true name unknown
 @member_counts({cell_1: 1})
 c_squad_sensor_host sq_action_mock_ultra
 @member_counts({cell: 5})
+@objective(obj_action_mock)
 c_squad_sensor_host sq_action_mock0
 @member_counts({cell: 5})
+@objective(obj_action_mock)
 c_squad_sensor_host sq_action_mock1
 @member_counts({cell: 5})
+@objective(obj_action_mock)
 c_squad_sensor_host sq_action_mock2
 @member_counts({cell: 5})
+@objective(obj_action_mock)
 c_squad_sensor_host sq_action_mock3
 static_array<int, 16> type_list
 static_array<int, 16> parameter_list

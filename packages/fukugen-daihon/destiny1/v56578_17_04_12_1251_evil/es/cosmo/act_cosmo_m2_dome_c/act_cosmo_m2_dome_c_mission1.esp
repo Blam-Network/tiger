@@ -5,6 +5,7 @@
 # players are ready and hands over.
 
 interactable_objective obj_m2_o1 bind("0xEAA339A4")
+interactable_placement obj_placement_m2_o1 bind("0xEAA339A4")
 
 thread init: pass
 

@@ -194,6 +194,14 @@ export interface CinematicState {
   playing?: { startedAt: number };
 }
 
+// Passenger (01.29 and later): a seat an actor rides, served as 80802213
+// {state, the actor}. Phogoth waits in his chains seated, state 1, until the
+// fight releases him, state 2 with no actor (retail 2.3.1 Summoning Pits).
+export interface PassengerState {
+  passenger?: ItemRef;
+  state: number;
+}
+
 export interface PlayerTriggerState {
   // Fires at most once per arming.
   armedAt: number;
@@ -346,6 +354,7 @@ export type ItemState =
   | { kind: "objective"; state: ObjectiveState }
   | { kind: "playerMonitor"; state: FilteredState }
   | { kind: "playerObjective"; state: PlayerObjectiveState }
+  | { kind: "passenger"; state: PassengerState }
   | { kind: "playerTrigger"; state: PlayerTriggerState }
   | { kind: "safeZone"; state: FilteredState }
   | { kind: "scoreboard"; state: ScoreboardState }

@@ -5,8 +5,9 @@
 # and patrol. Nine small encounters share an actor budget: four or five are up
 # at a time, and when one is wiped out another takes its place. Each brings
 # its squads back on its own respawn timer (the objective reset every 32 s on
-# the wire). Also puts out the patrol beacons and mission 2's placement, and
-# keeps dome A's large volume to players on mission 1.
+# the wire). Also puts out the patrol beacons and keeps dome A's large volume
+# to players on mission 1. Mission 2's placement (obj_placement_m2_o1) is
+# act_cosmo_m2_dome_c_mission1's, beside the objective whose flag it reads.
 # From one capture (act_cosmo_m4_dome_c's public host, 780 s): four
 # encounters were up on arrival, cluster_north01 went in 1 s after domea01
 # was wiped, and none of the rest ever did. Budget and order are fit to that
@@ -32,7 +33,6 @@ simple_encounter amb_smpl_cave_entrance_domea01
 simple_encounter amb_smpl_lonetail_drysea01
 simple_encounter amb_smpl_lonemid_deltas01
 simple_encounter amb_smpl_cluster_mid01
-interactable_placement obj_placement_m2_o1
 c_object_filter_sensor_host of_m01_handler
 c_trigger_volume_slot_host tv_domea_large
 c_player_monitor_sensor_host pm_domea_large bind(tv_domea_large)
@@ -51,10 +51,6 @@ u_globals utils
 startup thread ss_main_thread:
     for beacon in patrol_beacons:
         beacon.create()
-
-    # TU0's table runs no script for the placement, so its object goes in here
-    obj_placement_m2_o1._object.create()
-    obj_placement_m2_o1._object_filter.add_players_with_activity_flag(obj_placement_m2_o1._object.import_identifier())
 
     # players on mission 1 (flag name not cracked)
     of_m01_handler.add_players_with_activity_flag("0x31CAA01C")

@@ -1,26 +1,44 @@
 @activity_bundle("enc_archive_amb1")
 
 @member_counts({shanks: 5})
+@objective(obj_archive_amb1)
 c_squad_sensor_host sq_downstairs_shanks
 @member_counts({dregs: 4})
+@objective(obj_archive_amb1)
 c_squad_sensor_host sq_downstairs_melee
 @member_counts({dregs: 3, vandal: 1})
+@objective(obj_archive_amb1)
 c_squad_sensor_host sq_downstairs01
 @member_counts({dregs: 3, vandal: 1})
+@objective(obj_archive_amb1)
 c_squad_sensor_host sq_downstairs02
 @member_counts({dregs: 4})
+@objective(obj_archive_amb1)
 c_squad_sensor_host sq_back_mc
 @member_counts({captain: 1})
+@objective(obj_archive_amb1)
 c_squad_sensor_host sq_anchor_vault01
 @member_counts({captain: 1})
+@objective(obj_archive_amb1)
 c_squad_sensor_host sq_anchor_vault02
 @member_counts({sniper: 1})
+@objective(obj_archive_amb1)
 c_squad_sensor_host sq_upper_sniper
 @member_counts({sniper: 1})
+@objective(obj_archive_amb1)
 c_squad_sensor_host sq_sniper03
 c_squad_group_sensor_host sqg_downstairs  # true name unknown
 c_squad_group_sensor_host sqg_upstairs  # true name unknown
 c_squad_group_sensor_host sqg_anchor_vault  # true name unknown
+@task("sniper01", squad: sq_upper_sniper)
+@task("downstairs_shanks", squad: sq_downstairs_shanks)
+@task(0xC20573BC, condition: can_advance)
+@task("downstairs_melee", squad: sq_downstairs_melee)
+@task(0x78BE709C, condition: can_advance)
+@task("sniper03", squad: sq_sniper03)
+@task("anchor_vault", squad: sqg_anchor_vault)
+@task("back_mc", squad: sq_back_mc)
+@task("downstairs", squad: sqg_downstairs)
 c_objective_sensor_host obj_archive_amb1  # true name unknown
 c_trigger_volume_slot_host tv_archive01
 c_trigger_volume_slot_host tv_back_mc01

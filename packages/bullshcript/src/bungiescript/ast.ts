@@ -72,6 +72,54 @@ export interface BsMemberCounts {
   readonly value: BsCountsValue;
 }
 
+// `@objective(...)`: the Objective a squad is authored against (SquadAuth's
+// ref0), by the Objective member's path in the declaring script's scope
+// ("obj_plaza_amb1", "phase02.obj_x"). Bungie's squad hosts held it. On what
+// holds squads a {member: ...} map reaches them, by the member's name:
+//   obj_x                        a squad, or every element of an array of squads
+//   {_squad: obj_x}              an archetype instance: its squads
+//   {_squad: obj_x, other: {..}} and the instances inside it
+export type BsObjectiveValue =
+  | { readonly kind: "target"; readonly line: number; readonly path: string }
+  | {
+      readonly entries: readonly BsObjectiveEntry[];
+      readonly kind: "map";
+      readonly line: number;
+    };
+
+export interface BsObjectiveEntry {
+  readonly key: string;
+  readonly line: number;
+  readonly value: BsObjectiveValue;
+}
+
+export interface BsMemberObjective {
+  readonly line: number;
+  readonly value: BsObjectiveValue;
+}
+
+// `@task(name, squad: member, condition: field)` on an Objective: the filter
+// and condition of the task `name` (a name, or the 0x<hash> of one that never
+// cracked). Both were host-only data of Bungie's Objective host. On an
+// archetype instance, `objective:` names the Objective inside it the task is
+// of.
+export interface BsTask {
+  // the bool field on the declaring script
+  readonly condition:
+    | { readonly line: number; readonly name: string }
+    | undefined;
+  readonly hash: number;
+  readonly line: number;
+  // as written: the name or "0x<hash>"
+  readonly name: string;
+  // the Objective inside an archetype instance
+  readonly objective:
+    | { readonly line: number; readonly path: string }
+    | undefined;
+  // the Squad or SquadGroup member the task admits
+  readonly squad: { readonly line: number; readonly path: string } | undefined;
+}
+
 export interface BsDecl extends BsSpan {
   readonly activityBundle: BsActivityBundle | undefined;
   readonly activityStart: BsActivityStart | undefined;
@@ -108,6 +156,11 @@ export interface BsField extends BsSpan {
   readonly kind: "field";
   readonly memberCounts: BsMemberCounts | undefined;
   readonly name: string;
+  readonly objective: BsMemberObjective | undefined;
+  // `@placed()` on a squad: the line it is written on
+  readonly placed: number | undefined;
+  // `@task(...)` on an Objective, one per task
+  readonly tasks: readonly BsTask[];
   readonly type: BsType;
 }
 

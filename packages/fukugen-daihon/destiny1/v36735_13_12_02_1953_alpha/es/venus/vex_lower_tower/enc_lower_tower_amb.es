@@ -1,13 +1,19 @@
 @activity_bundle("enc_lower_tower_amb")
 
+@task(0x6CA06FA2, squad: sq_vex_btm01)
+@task("goblins", squad: sq_vex_btm02)
 c_objective_sensor_host obj_lower_tower_amb  # true name unknown
 @member_counts({goblins: 3, harpies: 2})
+@objective(obj_lower_tower_amb)
 c_squad_sensor_host sq_vex_btm01
 @member_counts({goblins: 5})
+@objective(obj_lower_tower_amb)
 c_squad_sensor_host sq_vex_btm02
 @member_counts({minotaur: 1, goblins: 2})
+@objective(obj_lower_tower_amb)
 c_squad_sensor_host sq_vex_btm03
 @member_counts({goblins: 2, minotaur: 1})
+@objective(obj_lower_tower_amb)
 c_squad_sensor_host sq_vex_btm04
 c_squad_group_sensor_host sqg_vex_btm  # true name unknown
 loot_lower_tower loot_venus_lower_tower_1

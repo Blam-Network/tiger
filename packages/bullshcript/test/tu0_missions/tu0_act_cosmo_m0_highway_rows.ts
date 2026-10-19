@@ -21,7 +21,6 @@ const tasks = (
 ): Partial<ActivityBundleRow> => ({
   tasks: list.map(([name, influencer]) => ({
     capacity: -1,
-    condition: 0x81_1c_9d_c5,
     firstChild: -1,
     influencer,
     name,

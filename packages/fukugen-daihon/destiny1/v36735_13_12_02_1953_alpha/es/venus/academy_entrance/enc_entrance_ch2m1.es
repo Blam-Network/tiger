@@ -3,20 +3,32 @@
 u_globals utils
 c_location_sensor_host entrance  # true name unknown
 c_player_monitor_sensor_host pm_bubble_entrance bind(entrance)  # true name unknown
+@task(0x3CB10C27, squad: sq_fallen_captain)
+@task(0x15E7E700, condition: b_init)
+@task(0x6CED22A4, squad: sq_fallen_minions01)
+@task(0xA66C4401, squad: sq_fallen_minions03)
+@task(0x8138828B, squad: sqg_fallen_sniper)
 c_objective_sensor_host obj_entrance_ch2m1  # true name unknown
 @member_counts({cell_1: 4})
+@objective(obj_entrance_ch2m1)
 c_squad_sensor_host sq_fallen_minions01
 @member_counts({cell_1: 3})
+@objective(obj_entrance_ch2m1)
 c_squad_sensor_host sq_fallen_minions02a
 @member_counts({cell_1: 3})
+@objective(obj_entrance_ch2m1)
 c_squad_sensor_host sq_fallen_minions02b
 @member_counts({cell_1: 3})
+@objective(obj_entrance_ch2m1)
 c_squad_sensor_host sq_fallen_minions03
 @member_counts({cell_1: 1})
+@objective(obj_entrance_ch2m1)
 c_squad_sensor_host sq_fallen_minions04
 @member_counts({cell_1: 1})
+@objective(obj_entrance_ch2m1)
 c_squad_sensor_host sq_fallen_minions05
 @member_counts({ch2m1_captain: 0})
+@objective(obj_entrance_ch2m1)
 c_squad_sensor_host sq_fallen_captain
 c_squad_member_sensor_host sq_fallen_captain__ch2m1_captain  # true name unknown
 c_health_sensor_host captain_health  # true name unknown

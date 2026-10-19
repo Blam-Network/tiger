@@ -1,5 +1,8 @@
 @activity_bundle("enc_engineering_amb1")
 
+@task(0x2BFB640C, squad: small_encounter_5._squad_group)
+@task(0x7E4F1728, squad: large_encounter_2._squad_group)
+@task(0x2F3868BC, squad: top_encounter_4._squad_group)
 c_objective_sensor_host obj_engineering_amb1  # true name unknown
 c_encounter_manager encounters  # true name unknown
 @member_counts({_squad: [{cell: 3, cell_1: 2}]})

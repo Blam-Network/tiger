@@ -887,6 +887,8 @@ export const NATIVE_TYPES: readonly BsNativeType[] = [
   { kind: "object", known: false, name: "c_encounter_manager" },
   { kind: "object", known: false, name: "c_faction_host" },
   { kind: "object", known: false, name: "c_loot_host" },
+  // a Passenger row (01.29 and later), which the alpha has none of
+  { kind: "object", known: false, name: "c_passenger_sensor_host" },
   { kind: "object", known: false, name: "c_scoreboard_host" },
   { kind: "object", known: false, name: "c_sequence_host" },
   { kind: "object", known: false, name: "c_team_picker_host" },

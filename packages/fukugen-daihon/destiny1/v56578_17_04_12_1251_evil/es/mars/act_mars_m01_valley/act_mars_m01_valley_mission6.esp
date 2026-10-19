@@ -10,6 +10,7 @@
 # The waits after the monitor are the gaps on the wire.
 
 interactable_objective sp_objective_monitor bind("0xBD366786")
+interactable_placement scp_placement_monitor bind("0xBD366786")
 c_trigger_volume_slot_host tv_overlook_near
 c_player_trigger_sensor_host pt_overlook_near bind(tv_overlook_near)
 c_sequence_host seq_dialog_checkpoint_loot_complete

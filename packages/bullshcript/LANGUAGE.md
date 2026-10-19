@@ -105,6 +105,51 @@ c_squad_sensor_host sq_fallen_landing01
 
 The compiler checks the shape against the member's type. The host checks the names against the squad's definition when the script loads: an unknown name or the wrong number of counts for a name stops the script loading, with a note saying why. On `place()` the squad gets the authored bodies, and its roster goes out per cell.
 
+### Squads that start placed
+
+Bungie's squad host for a warp gate carries a flag (`unknown54`, true name unknown) that made the gate's named member stand from the first apply, with no script placing it (`vex_warp_gate` only ever asks `_squad.alive_count()`). A script writes the flag as `@placed()` on the squad's declaration:
+
+```python
+@placed()
+c_squad_sensor_host _squad
+```
+
+- The decorator goes on its own line above the member, with the comment that explains it, or shares the member's line. It can go with `@member_counts` on the same member, in either order.
+- It decorates a `c_squad_sensor_host` only. A class that declares the squad (an archetype) marks every instance of it: each Encounter row running the class has its own squad stand.
+- The squad's named members are placed when the host starts, and its default body count (the named members, each one body) holds until a script places or removes it: `alive_count()` reads it and the actors stay placed. A squad whose script places it itself is left to the script.
+
+### Which Objective a squad is against
+
+A squad's host named the Objective the squad is authored against, and the client reads it as the squad's first ref; release dropped it from the host, so a script writes it as `@objective(<member>)` on the squad's declaration:
+
+```python
+@objective(obj_plaza_amb1)
+c_squad_sensor_host sq_plaza_sniper
+```
+
+- The target is a `c_objective_sensor_host` member of the script, or of a script it holds: `phase02.obj_x`, `waves[1].obj_y`. A target that is not an Objective member, or not there at all, is an error.
+- On an array of squads it applies to every element: `@objective(obj_x) static_array<c_squad_sensor_host, 4> sq_wave`.
+- On an archetype instance it takes the path form, like `@member_counts`: `@objective({_squad: obj_plaza_amb1}) simple_encounter fallen_simple_encounter01` puts every squad of the instance's `_squad` array against `obj_plaza_amb1`. The target is read in the declaring script, not the archetype: the archetype's squads point at the outer script's Objective, not at its own. An array of instances, and an instance inside one, take the same map (`{_squad: obj_x, inner: {_squad: obj_y}}`).
+- The decorator goes on its own line above the member, like `@member_counts`, and can sit with the other member decorators in any order.
+- The squad has the Objective from the world entry on. A script that calls `set_objective()` on the squad overrides it.
+- It also decides which squads the Objective's tasks walk: the AI assigns each squad its task's influencer from the first task that admits it.
+
+### What an Objective's tasks admit
+
+An Objective's task tree (names, influencers, priority, capacity, children) is in the packages. What release dropped is which squads a task admits and what gates it, so a script writes both with a `@task` per task, on the Objective's declaration:
+
+```python
+@task("gating", squad: sq_fallen_gating, condition: gating_open)
+@task("idle")
+c_objective_sensor_host obj_hangar
+```
+
+- The first argument is the task's name, or its `0x<hash>` where the name never cracked. Each task is written once.
+- `squad:` takes a `c_squad_sensor_host` or a `c_squad_group_sensor_host` member of the script (a path as `@objective` takes): the task admits that squad, or the squads in that group. Left out, it admits any squad.
+- `condition:` takes a `bool` member of the script: the task is closed while it is false. Left out, the task is always open.
+- On an archetype instance (`simple_encounter simple_north`), `objective:` names the Objective inside it the task is of: `@task("0xA422EB12", objective: _objective, squad: simple_north._squad[0])`. `squad:` and `condition:` still read in the declaring script.
+- A task nothing decorates admits any squad and is always open. Its `@task` is only needed to say otherwise.
+
 ### How an activity starts
 
 Where an activity starts (its slice, the phases it runs, the spawn point) was host-only data too: the alpha's scenario tags held the start bubble, and later builds ship no scenario at all. An activity's encounter writes it with decorators under `@activity_bundle`, once per activity the script starts:

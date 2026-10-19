@@ -7,6 +7,7 @@
 # cracked).
 
 interactable_objective pf_objective_button bind("0x481977E3")
+interactable_placement pf_placement_button bind("0x481977E3")
 c_sequence_host seq_d_o1_s06
 c_sequence_host seq_d_o1_s07
 c_sequence_host seq_d_o1_s08
