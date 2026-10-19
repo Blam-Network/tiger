@@ -9,14 +9,23 @@
 # leaves are this run's.
 
 @activity_bundle("enc_strength_m5")
+
 c_objective_sensor_host obj_strength_m5
+@member_counts({trooper: 3, wizard: 1})
 c_squad_sensor_host sq_cave_floor
+@member_counts({trooper: 2, knight: 1})
 c_squad_sensor_host sq_cave_ledge
+@member_counts({trooper: 2})
 c_squad_sensor_host sq_hall
+@member_counts({trooper: 3, knight: 1})
 c_squad_sensor_host sq_annex_troopers
+@member_counts({0xA2DA2AC9: 1, 0xB870FFEE: 1, 0xB870FFED: 1})
 c_squad_sensor_host sq_tower
+@member_counts({trooper: 4})
 c_squad_sensor_host sq_bridge
+@member_counts({thrall: 1, thrall_1: 1, thrall_2: 1})
 c_squad_sensor_host sq_m5_thrall_a
+@member_counts({thrall: 1, thrall_1: 1, thrall_2: 1})
 c_squad_sensor_host sq_m5_thrall_b
 c_squad_sensor_host sq_cutter
 c_squad_member_sensor_host sq_cutter__pilot

@@ -13,6 +13,7 @@
 # ogre).
 
 @activity_bundle(0xD53AAA20)
+
 c_object_sensor_host o_gate_intro
 c_object_sensor_host o_gate_swords
 c_object_sensor_host o_gate_selection

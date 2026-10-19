@@ -4,6 +4,7 @@
 # floor below is clear.
 
 @activity_bundle("enc_engineering_strike1")
+
 c_squad_group_sensor_host gr_top_floor  # true name unknown
 c_squad_sensor_host sq_floor2_fallen01
 c_squad_sensor_host sq_floor2_fallen02

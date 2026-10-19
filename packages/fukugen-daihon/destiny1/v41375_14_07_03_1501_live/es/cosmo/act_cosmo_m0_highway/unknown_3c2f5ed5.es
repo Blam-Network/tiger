@@ -5,6 +5,7 @@
 # through their sections as the player advances.
 
 @activity_bundle(0x3C2F5ED5)
+
 c_sequence_host seq_m_cue2  # true name unknown
 c_sequence_host seq_m_cue1  # true name unknown
 c_sequence_host seq_d_o1_10  # true name unknown

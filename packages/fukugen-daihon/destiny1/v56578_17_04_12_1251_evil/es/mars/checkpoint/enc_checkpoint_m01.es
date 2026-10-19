@@ -11,6 +11,7 @@
 # are the task tree's, not this script's.
 
 @activity_bundle("enc_checkpoint_m01")
+
 c_trigger_volume_slot_host tv_road
 c_player_trigger_sensor_host pt_road bind(tv_road)
 c_trigger_volume_slot_host tv_front
@@ -26,23 +27,37 @@ c_squad_sensor_host sq_road_front_legionary
 c_squad_member_sensor_host sq_road_front_legionary__legionary_a
 c_squad_member_sensor_host sq_road_front_legionary__legionary_b
 c_squad_member_sensor_host sq_road_front_legionary__legionary_c
+@member_counts({0x8C5401A9: 1, 0x8C5401AA: 1})
 c_squad_sensor_host sq_road_front_phalanx
+@member_counts({0x01556B5F: 1, 0x01556B5C: 1})
 c_squad_sensor_host sq_road_overlook_legionary
+@member_counts({phalanx: 2})
 c_squad_sensor_host sq_road_overlook_phalanx
+@member_counts({legionary: 2})
 c_squad_sensor_host sq_bunker_legionary_a
+@member_counts({legionary: 2})
 c_squad_sensor_host sq_bunker_legionary_b
+@member_counts({legionary: 2})
 c_squad_sensor_host sq_bunker_legionary_c
+@member_counts({legionary: 2})
 c_squad_sensor_host sq_bunker_legionary_d
+@member_counts({phalanx: 2})
 c_squad_sensor_host sq_bunker_phalanx
 c_squad_sensor_host sq_dropship_boss
 c_squad_member_sensor_host sq_dropship_boss__pilot
 c_control_point_set_sensor_host cps_dropship_boss_entry
 c_control_point_set_sensor_host cps_dropship_boss_exit
+@member_counts({phalanx: 1})
 c_squad_sensor_host sq_boss_phalanx_a
+@member_counts({phalanx: 1})
 c_squad_sensor_host sq_boss_phalanx_b
+@member_counts({phalanx: 1})
 c_squad_sensor_host sq_boss_phalanx_c
+@member_counts({0xDFD659AC: 3})
 c_squad_sensor_host sq_boss_psion_a
+@member_counts({0xDFD659AC: 3})
 c_squad_sensor_host sq_boss_psion_b
+@member_counts({0xDFD659AC: 3})
 c_squad_sensor_host sq_boss_psion_c
 c_squad_sensor_host sq_boss_legionary_a
 c_squad_sensor_host sq_boss_legionary_b

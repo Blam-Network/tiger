@@ -1,15 +1,26 @@
 @activity_bundle("enc_underwatch_amb1")
+
 bool debug_underwatch
-@member_counts({guards1: 2}) c_squad_sensor_host sq_underwatch_titans_guards1
-@member_counts({guards1: 4}) c_squad_sensor_host sq_underwatch_titans_guards2
-@member_counts({talker1: 0, talker2: 0, listener1: 0}) c_squad_sensor_host sq_underwatch_titans_talkers1
-@member_counts({talker1: 0, talker2: 0, listener1: 0}) c_squad_sensor_host sq_underwatch_titans_talkers2
-@member_counts({talker1: 0, talker2: 0, listener1: 0}) c_squad_sensor_host sq_underwatch_titans_talkers3
-@member_counts({talker1: 0, talker2: 0, listener1: 0}) c_squad_sensor_host sq_underwatch_titans_talkers4
-@member_counts({watcher1: 0, watcher2: 0}) c_squad_sensor_host sq_underwatch_titans_watchers1
-@member_counts({watcher1: 1, watcher2: 1}) c_squad_sensor_host sq_underwatch_titans_watchers2
-@member_counts({wolf1: 0, wolf2: 0}) c_squad_sensor_host sq_underwatch_wolves1
-@member_counts({sweeper1: 0, scrubber1: 0}) c_squad_sensor_host sq_underwatch_droid_cleaners1
+@member_counts({guards1: 2})
+c_squad_sensor_host sq_underwatch_titans_guards1
+@member_counts({guards1: 4})
+c_squad_sensor_host sq_underwatch_titans_guards2
+@member_counts({talker1: 0, talker2: 0, listener1: 0})
+c_squad_sensor_host sq_underwatch_titans_talkers1
+@member_counts({talker1: 0, talker2: 0, listener1: 0})
+c_squad_sensor_host sq_underwatch_titans_talkers2
+@member_counts({talker1: 0, talker2: 0, listener1: 0})
+c_squad_sensor_host sq_underwatch_titans_talkers3
+@member_counts({talker1: 0, talker2: 0, listener1: 0})
+c_squad_sensor_host sq_underwatch_titans_talkers4
+@member_counts({watcher1: 0, watcher2: 0})
+c_squad_sensor_host sq_underwatch_titans_watchers1
+@member_counts({watcher1: 1, watcher2: 1})
+c_squad_sensor_host sq_underwatch_titans_watchers2
+@member_counts({wolf1: 0, wolf2: 0})
+c_squad_sensor_host sq_underwatch_wolves1
+@member_counts({sweeper1: 0, scrubber1: 0})
+c_squad_sensor_host sq_underwatch_droid_cleaners1
 c_squad_member_sensor_host sq_underwatch_titans_talkers1__talker1  # true name unknown
 c_squad_member_sensor_host sq_underwatch_titans_talkers1__talker2  # true name unknown
 c_squad_member_sensor_host sq_underwatch_titans_talkers1__listener1  # true name unknown
@@ -28,9 +39,12 @@ c_squad_member_sensor_host sq_underwatch_droid_cleaners1__sweeper1  # true name 
 c_squad_member_sensor_host sq_underwatch_droid_cleaners1__scrubber1  # true name unknown
 c_squad_member_sensor_host sq_underwatch_wolves1__wolf1  # true name unknown
 c_squad_member_sensor_host sq_underwatch_wolves1__wolf2  # true name unknown
-@member_counts({vendor1: 0}) c_squad_sensor_host sq_underwatch_vendor_guardian_mentor
-@member_counts({vendor1: 0}) c_squad_sensor_host sq_underwatch_vendor_guardian_outfitter
-@member_counts({vendor1: 0}) c_squad_sensor_host sq_underwatch_vendor_guardian_quartermaster
+@member_counts({vendor1: 0})
+c_squad_sensor_host sq_underwatch_vendor_guardian_mentor
+@member_counts({vendor1: 0})
+c_squad_sensor_host sq_underwatch_vendor_guardian_outfitter
+@member_counts({vendor1: 0})
+c_squad_sensor_host sq_underwatch_vendor_guardian_quartermaster
 c_squad_member_sensor_host sq_underwatch_vendor_guardian_mentor__vendor1  # true name unknown
 c_squad_member_sensor_host sq_underwatch_vendor_guardian_outfitter__vendor1  # true name unknown
 c_squad_member_sensor_host sq_underwatch_vendor_guardian_quartermaster__vendor1  # true name unknown

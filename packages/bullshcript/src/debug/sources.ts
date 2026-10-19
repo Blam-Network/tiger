@@ -1,7 +1,9 @@
 // Where a prototype's code came from: its chunk's source path, and the name
 // a script knows it by. BungieScript line numbers are already in lineInfo
-// (the compiler maps them), so a frame's line is lineInfo[pc].
+// (the compiler maps them), but they leave out the source's stand-in lines
+// (decorators), so a frame's file line is lineInfo[pc] put back through them.
 
+import { chunkLineOf, fileLineOf } from "../bungiescript/stand_in.ts";
 import type { HksBytecode, Method } from "../hks/bytecode/proto.ts";
 import { walkProtos } from "../hks/bytecode/reader.ts";
 import { LuaClosure, type LuaTable } from "../hks/vm/values.ts";
@@ -18,10 +20,31 @@ export function sourcePath(source: string | undefined): string | undefined {
 }
 
 export class SourceIndex {
+  private readonly standIns: (path: string) => readonly number[] | undefined;
   private readonly paths = new WeakMap<Method, string>();
   private readonly names = new WeakMap<Method, string>();
   private readonly byPath = new Map<string, Method[]>();
   private readonly seen = new WeakSet<HksBytecode>();
+
+  // standInLines: a source path's stand-in lines, where the embedder knows them
+  constructor(
+    standInLines: (path: string) => readonly number[] | undefined = () =>
+      undefined
+  ) {
+    this.standIns = standInLines;
+  }
+
+  // a chunk line number as the source file's line
+  fileLine(path: string | undefined, chunkLine: number): number {
+    const lines = path === undefined ? undefined : this.standIns(path);
+    return lines === undefined ? chunkLine : fileLineOf(lines, chunkLine);
+  }
+
+  // a source file's line as the chunk's line number
+  chunkLine(path: string, fileLine: number): number {
+    const lines = this.standIns(path);
+    return lines === undefined ? fileLine : chunkLineOf(lines, fileLine);
+  }
 
   addChunk(chunk: HksBytecode): void {
     if (this.seen.has(chunk)) {

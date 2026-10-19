@@ -14,6 +14,13 @@
 # unknown_0de80b0d bundle holds the intro music.
 
 @activity_bundle("act_cosmo_m0_5_hangar")
+# Restoration. From the 2.3.1 capture; its first slice is 56 (bubble 7, state 0).
+@activity("act_cosmo_m0_5_hangar")
+@start_slice("delta_s", "cosmo_m0_5_phase00_delta_s")
+@phase("cosmo_m0_5_phase00_delta_s", "delta_s")
+@phase("cosmo_m0_5_phase01_hangar", "hangar")
+@phase("cosmo_m0_5_phase02_hangar", "hangar")
+
 act_cosmo_m0_5_hangar_mission1 cosmo_m0_5_phase00_delta_s
 act_cosmo_m0_5_hangar_mission2 cosmo_m0_5_phase01_hangar
 act_cosmo_m0_5_hangar_mission3 cosmo_m0_5_phase02_hangar

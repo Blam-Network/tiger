@@ -13,6 +13,7 @@
 # retail's atom for atom.
 
 @activity_bundle("enc_dome_c_m4")
+
 c_objective_sensor_host obj_dome_c_m4_fallen
 c_objective_sensor_host obj_dome_c_m4_hive
 c_player_monitor_sensor_host pm_refresh_corridor01

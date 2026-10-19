@@ -10,6 +10,7 @@
 # Task names were never cracked and are written as "0x" literals.
 
 @activity_bundle("enc_strength_m3")
+
 c_trigger_volume_slot_host tv_bubble
 c_player_trigger_sensor_host pt_bubble bind(tv_bubble)
 c_trigger_volume_slot_host tv_intro_thrall
@@ -26,17 +27,25 @@ c_object_sensor_host o_m3_spec_ops
 interactable_placement pf_obj_strength_interact_place  # the mission's console
 c_squad_sensor_host sq_m3_guard_front
 c_squad_sensor_host sq_m3_guard_rear
+@member_counts({0x271E0082: 1, 0x271E0081: 1, 0x271E0080: 1, 0x271E0087: 1, 0x271E0086: 1, 0x271E0085: 1, 0x271E0084: 1, 0x271E008B: 1})
 c_squad_sensor_host sq_m3_thrall_intro
+@member_counts({trooper: 1, 0x0D746C5A: 1, 0x0D746C59: 1})
 c_squad_sensor_host sq_m3_guard_entry
+@member_counts({thrall: 1, thrall_1: 1, thrall_2: 1})
 c_squad_sensor_host sq_m3_thrall_stairs
+@member_counts({0x0D746C5A: 1, 0x0D746C59: 1})
 c_squad_sensor_host sq_m3_trooper_stairs
+@member_counts({trooper: 3, knight: 1})
 c_squad_sensor_host sq_m3_rear
 c_squad_sensor_host sq_m3_thrall_a
+@member_counts({trooper: 2})
 c_squad_sensor_host sq_m3_push_a_a
 c_squad_sensor_host sq_m3_push_a_b
+@member_counts({trooper: 1, wizard: 1})
 c_squad_sensor_host sq_m3_push_a_c
 c_squad_sensor_host sq_m3_exploder1
 c_squad_sensor_host sq_m3_exploder2
+@member_counts({knight_boomer: 1})
 c_squad_sensor_host sq_m3_push_b_a
 c_squad_sensor_host sq_m3_push_b_b
 

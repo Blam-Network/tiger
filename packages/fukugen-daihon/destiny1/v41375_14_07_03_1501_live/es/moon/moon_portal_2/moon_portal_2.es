@@ -14,6 +14,17 @@
 # scripts of their own. One capture run: every timing in them is unconfirmed.
 
 @activity_bundle("moon_portal_2")
+# The Summoning Pits: the hellmouth (2), an empty spawn transition; the phases run
+# in name order through the citadel (12), the wormway (5) and the pit (14).
+@activity("moon_portal_2")
+@start_slice("hellmouth")
+@phase("phase00", 0x447E4EB5)
+@phase("phase01", 0x447E4EB5)
+@phase("phase02", 0x447E4EB5)
+@phase("phase03", "lowercitadel")
+@phase("phase04", 0xF25CEA8D)
+@phase("phase05", 0xF25CEA8D)
+
 moon_portal_2_mission1 phase00
 moon_portal_2_mission2 phase01
 moon_portal_2_mission3 phase02

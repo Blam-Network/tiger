@@ -1,4 +1,5 @@
 @activity_bundle("story_common")
+
 class c_encounter__story_common : c_encounter:
     c_scoreboard_host scoreboard  # true name unknown
     c_hard_wipe_globals_host hard_wipe_globals  # true name unknown

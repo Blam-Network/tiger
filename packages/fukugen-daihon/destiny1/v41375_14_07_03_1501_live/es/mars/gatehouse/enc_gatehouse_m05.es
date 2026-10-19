@@ -12,6 +12,7 @@
 # retail fell back to.
 
 @activity_bundle("enc_gatehouse_m05")
+
 c_objective_sensor_host obj_gatehouse_m05
 static_array<c_object_sensor_host, 20> dynamics
 c_object_sensor_host mc_door_left

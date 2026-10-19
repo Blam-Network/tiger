@@ -13,6 +13,7 @@
 # most likely Phogoth's health, which the capture does not show.
 
 @activity_bundle("enc_wormway_portal2")
+
 c_objective_sensor_host obj_bossbattle_hive
 c_squad_sensor_host sq_bossbattle_boss01
 static_array<c_object_sensor_host, 19> dynamics

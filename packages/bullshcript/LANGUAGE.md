@@ -101,9 +101,37 @@ c_squad_sensor_host sq_fallen_landing01
 - Named actors' members are written too, as the host had them. A named member's count is the anonymous bodies beside its actor, and it goes out as is: nearly always 0 (192 of the pre-alpha's 206 named cells, and every one retail served), 1 for the pre-alpha Tower talkers.
 - An array of squads takes a list by index, `{}` for one left at its defaults: `@member_counts([{thrall: 2, thrall_1: 2}, {}])`.
 - An archetype instance takes a map of its own members: `@member_counts({_squad: [{dreg: 2}, {vandal: 2}]})` on `simple_encounter amb_x`.
-- The decorator can share its member's line (`@member_counts({dreg: 2}) c_squad_sensor_host sq_x`), which the pre-alpha's scripts use so their lines stay where Bungie's chunks have them.
+- The decorator goes on its own line above the member. It can share the member's line (`@member_counts({dreg: 2}) c_squad_sensor_host sq_x`), but then the line is the member's and counts as a line of the script (see Line numbers).
 
 The compiler checks the shape against the member's type. The host checks the names against the squad's definition when the script loads: an unknown name or the wrong number of counts for a name stops the script loading, with a note saying why. On `place()` the squad gets the authored bodies, and its roster goes out per cell.
+
+### How an activity starts
+
+Where an activity starts (its slice, the phases it runs, the spawn point) was host-only data too: the alpha's scenario tags held the start bubble, and later builds ship no scenario at all. An activity's encounter writes it with decorators under `@activity_bundle`, once per activity the script starts:
+
+```python
+@activity_bundle("act_cosmo_m0_highway")
+@activity("act_cosmo_m0_highway")
+@start_slice("highway", "cosmo_m0_phase00_highway_intro")
+@phase("cosmo_m0_phase00_highway_intro", "highway")
+@phase("cosmo_m0_phase00_highway", "highway")
+@spawn_transition(0xEAEC2335)
+@region_spawn_transition(24, 0x68935472)
+@time_of_day(0.77)
+```
+
+- `@activity("name", ...)` names the activities the script starts (the activity definition's name; the Tower's three states share one script). Every other decorator here needs it, and two scripts cannot name the same activity.
+- `@start_slice("region", "phase")` is the slice the activity starts in and the phase row that owns the state it starts in. A slice is named by its region: the name the scenario client's bubble holds the fnv1 of (`region_name_hash`), such as `plaza`, `dig_site` or `highway`, unique among an activity's bubbles. The slice descriptors' own names are the destination's (`venus`) and cannot tell bubbles apart. The state is never written as a number, and never taken from the order of the `@phase`s: a phase's state in a slice is the one whose phase hash is the fnv1 of its name, so naming the phase names the state (the cutscene state of `highway` is `cosmo_m0_phase00_highway_intro`'s).
+- The phase argument is required when any `@phase` plays in the start slice, and must be one of those (a name or `0x<hash>`, the same row as written there). It is left out only when no `@phase` plays in the start slice, so no phase owns a state there and the activity starts in the slice's state 0. A phase that does not play in the slice, or an argument beside no phase in the slice, is a compile error.
+- `@phase("name", "region")`, repeated, lists the phase rows in the order the lifetime runs them, each with the slice it plays in. The phase's own state in that slice is the one whose phase hash is the fnv1 of its name.
+- `@spawn_transition("spawn point")` is the spawn point the activity starts at; its fnv1 is the GAS spawn transition. Left out, the activity starts at the default one.
+- `@region_spawn_transition(region, "spawn point")`, repeated, is the transition the server names for a region once a client has been there. The region is the number the GAS carries, `bubble << 3 | state`, not a slice name.
+- `@time_of_day(fraction)` locks the clients' time of day from world entry, as a fraction of the day (`0.77` is sunset, `0.025` night); `set_time_of_day` moves it once scripts run. Left out, nothing is locked and each client keeps its own clock (the Tower). No client package holds it: the lifetime carries it from the server.
+- A spawn point, phase or slice name that never cracked is written as its hash, `0x<hash>`; `sliceRegionHash(slice)` turns either form into the region hash to match against the scenario client.
+- A root can be nothing but these decorators: an `.es` with `@activity` and its start decorators, no `@activity_bundle` and no members, starts the activity and runs nothing. It is the minimal script for an activity whose encounters are not written yet; the "runs in no bundle" warning is kept for an encounter that has a body.
+- Each goes on its own line under `@activity_bundle`, with the comment that explains it directly above it. They never need to share a line to keep a script's line numbers (see Line numbers).
+
+The values travel in the compiled tree (`index.json`) beside the script, and `activityStart(name)` on the compiled set or the script folder gives them back with the destination (the script's `es/<destination>/` folder) and the script's path.
 
 ## Members
 

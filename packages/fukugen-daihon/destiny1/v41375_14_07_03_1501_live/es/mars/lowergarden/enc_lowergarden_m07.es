@@ -14,6 +14,7 @@
 # names are uncracked and written as hashes.
 
 @activity_bundle("enc_lowergarden_m07")
+
 c_object_sensor_host o_glyph_a
 c_object_sensor_host o_glyph_b
 c_object_sensor_host o_block

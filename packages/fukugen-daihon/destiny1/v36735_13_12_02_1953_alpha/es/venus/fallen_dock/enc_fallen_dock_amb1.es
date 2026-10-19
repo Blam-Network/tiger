@@ -1,21 +1,37 @@
 @activity_bundle("enc_fallen_dock_amb1")
+
 u_globals utils
 c_objective_sensor_host obj_fallen_dock_amb1  # true name unknown
-@member_counts({dregs: 3, vandals: 2}) c_squad_sensor_host sq_den_entrance
-@member_counts({dregs: 3, servitor: 1}) c_squad_sensor_host sq_dock01
-@member_counts({dregs: 3, vandal: 1}) c_squad_sensor_host sq_dock02
-@member_counts({dregs: 2, vandal: 2}) c_squad_sensor_host sq_dock03
-@member_counts({shanks: 4}) c_squad_sensor_host sq_dock04
-@member_counts({captain: 1, vandal: 2}) c_squad_sensor_host sq_dock_anchor
-@member_counts({vandal_snipers: 1}) c_squad_sensor_host sq_dock_sniper01
-@member_counts({vandal_snipers: 1}) c_squad_sensor_host sq_dock_sniper02
-@member_counts({shanks: 4}) c_squad_sensor_host sq_bridge01
-@member_counts({dreg: 3, vandal: 1}) c_squad_sensor_host sq_bridge02
-@member_counts({vandal_snipers: 1}) c_squad_sensor_host sq_bridge_sniper01
-@member_counts({vandal_snipers: 1}) c_squad_sensor_host sq_bridge_sniper02
-@member_counts({dregs: 4}) c_squad_sensor_host sq_bay01
-@member_counts({dregs: 2}) c_squad_sensor_host sq_bay02
-@member_counts({vandal_snipers: 2}) c_squad_sensor_host sq_bay_snipers
+@member_counts({dregs: 3, vandals: 2})
+c_squad_sensor_host sq_den_entrance
+@member_counts({dregs: 3, servitor: 1})
+c_squad_sensor_host sq_dock01
+@member_counts({dregs: 3, vandal: 1})
+c_squad_sensor_host sq_dock02
+@member_counts({dregs: 2, vandal: 2})
+c_squad_sensor_host sq_dock03
+@member_counts({shanks: 4})
+c_squad_sensor_host sq_dock04
+@member_counts({captain: 1, vandal: 2})
+c_squad_sensor_host sq_dock_anchor
+@member_counts({vandal_snipers: 1})
+c_squad_sensor_host sq_dock_sniper01
+@member_counts({vandal_snipers: 1})
+c_squad_sensor_host sq_dock_sniper02
+@member_counts({shanks: 4})
+c_squad_sensor_host sq_bridge01
+@member_counts({dreg: 3, vandal: 1})
+c_squad_sensor_host sq_bridge02
+@member_counts({vandal_snipers: 1})
+c_squad_sensor_host sq_bridge_sniper01
+@member_counts({vandal_snipers: 1})
+c_squad_sensor_host sq_bridge_sniper02
+@member_counts({dregs: 4})
+c_squad_sensor_host sq_bay01
+@member_counts({dregs: 2})
+c_squad_sensor_host sq_bay02
+@member_counts({vandal_snipers: 2})
+c_squad_sensor_host sq_bay_snipers
 c_squad_group_sensor_host sqg_dock_outdoors  # true name unknown
 c_squad_group_sensor_host sqg_dock_snipers  # true name unknown
 c_squad_group_sensor_host sqg_dock_bridge  # true name unknown

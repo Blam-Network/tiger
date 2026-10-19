@@ -9,6 +9,7 @@
 # trigger on the wire, the wait is that run's.
 
 @activity_bundle("enc_dome_c_m2")
+
 c_objective_sensor_host obj_fallen_dome_c_m2_piperoom
 c_objective_sensor_host obj_fallen_dome_c_m2_guards
 c_object_sensor_host o_basement_door01

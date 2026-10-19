@@ -1,14 +1,22 @@
 @activity_bundle("enc_north_tides_ch2m4")
+
 c_location_sensor_host northern_tides  # true name unknown
 c_player_monitor_sensor_host pm_bubble_northern_tides bind(northern_tides)  # true name unknown
 c_objective_sensor_host obj_north_tides_ch2m4  # true name unknown
-@member_counts({goblins: 3}) c_squad_sensor_host sq_hill_btm01
-@member_counts({goblins: 3}) c_squad_sensor_host sq_hill_btm02
-@member_counts({hobgoblin: 2}) c_squad_sensor_host sq_hill_btm03
-@member_counts({hobgoblins: 2}) c_squad_sensor_host sq_hill_mid01
-@member_counts({goblins: 3}) c_squad_sensor_host sq_hill_mid02
-@member_counts({goblins: 3}) c_squad_sensor_host sq_hill_mid03
-@member_counts({goblins: 1}) c_squad_sensor_host sq_hill_mid04
+@member_counts({goblins: 3})
+c_squad_sensor_host sq_hill_btm01
+@member_counts({goblins: 3})
+c_squad_sensor_host sq_hill_btm02
+@member_counts({hobgoblin: 2})
+c_squad_sensor_host sq_hill_btm03
+@member_counts({hobgoblins: 2})
+c_squad_sensor_host sq_hill_mid01
+@member_counts({goblins: 3})
+c_squad_sensor_host sq_hill_mid02
+@member_counts({goblins: 3})
+c_squad_sensor_host sq_hill_mid03
+@member_counts({goblins: 1})
+c_squad_sensor_host sq_hill_mid04
 c_squad_group_sensor_host sg_bottom  # true name unknown
 c_trigger_volume_slot_host tv_mid_level_fall
 c_player_trigger_sensor_host pt_mid_level_fall bind(tv_mid_level_fall)  # true name unknown

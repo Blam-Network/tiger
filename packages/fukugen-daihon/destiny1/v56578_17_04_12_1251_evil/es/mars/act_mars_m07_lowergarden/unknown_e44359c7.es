@@ -9,6 +9,7 @@
 # are that run's.
 
 @activity_bundle(0xE44359C7)
+
 c_sequence_host seq_music_garden
 c_sequence_host seq_music_catacombs
 c_sequence_host seq_music_lowergarden

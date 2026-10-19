@@ -1,4 +1,7 @@
 @activity_bundle("enc_city_tower_default1")
+@activity("city_tower_default1")
+@start_slice("plaza")
+
 c_fireteam_sensor_host host
 c_player_objective_sensor_host po_mission01
 c_player_objective_sensor_host po_mission02

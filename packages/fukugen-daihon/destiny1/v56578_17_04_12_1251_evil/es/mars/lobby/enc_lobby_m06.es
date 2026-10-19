@@ -7,6 +7,7 @@
 # (a squad worn down to its last member moves up), so they are unconfirmed.
 
 @activity_bundle("enc_lobby_m06")
+
 c_objective_sensor_host obj_lobby_m06_s
 c_objective_sensor_host obj_lobby_m06_n
 c_player_trigger_sensor_host pt_s_cloud_spawn
@@ -18,30 +19,42 @@ c_player_trigger_sensor_host pt_n_pit_approach
 c_player_trigger_sensor_host pt_n_pit_mid
 c_squad_sensor_host sq_s_cloud1
 c_squad_member_sensor_host sq_s_cloud1__vex_cloud
+@member_counts({goblin: 3})
 c_squad_sensor_host sq_s_cloud1_support1
 c_squad_sensor_host sq_s_cloud1_support2
 c_squad_sensor_host sq_s_cloud2
 c_squad_member_sensor_host sq_s_cloud2__vex_cloud
+@member_counts({goblin: 3})
 c_squad_sensor_host sq_s_cloud2_support1
+@member_counts({harpy: 2})
 c_squad_sensor_host sq_s_cloud2_support2
 c_squad_sensor_host sq_s_cloud3
 c_squad_member_sensor_host sq_s_cloud3__vex_cloud
 c_squad_sensor_host sq_s_cloud3_support1
+@member_counts({goblin: 3})
 c_squad_sensor_host sq_s_back_support1
+@member_counts({goblin: 3})
 c_squad_sensor_host sq_s_back_support2
 c_squad_sensor_host sq_s_back_support3
+@member_counts({goblin: 3})
 c_squad_sensor_host sq_n_plat_support1
+@member_counts({goblin: 3})
 c_squad_sensor_host sq_n_mezz_support1
 c_squad_sensor_host sq_n_cloud1
 c_squad_member_sensor_host sq_n_cloud1__vex_cloud
+@member_counts({goblin: 3})
 c_squad_sensor_host sq_n_cloud1_support1
+@member_counts({goblin: 3})
 c_squad_sensor_host sq_n_cloud1_support2
+@member_counts({goblin: 3})
 c_squad_sensor_host sq_n_cloud1_support3
 c_squad_sensor_host sq_n_cloud2
 c_squad_member_sensor_host sq_n_cloud2__vex_cloud
 c_squad_sensor_host sq_n_cloud2_support1
 c_squad_sensor_host sq_n_cloud2_support2
+@member_counts({hobgoblin: 1})
 c_squad_sensor_host sq_n_cloud2_support3
+@member_counts({hobgoblin: 1})
 c_squad_sensor_host sq_n_cloud2_support4
 c_squad_sensor_host sq_n_pit_turret
 c_squad_member_sensor_host sq_n_pit_turret__cyclops

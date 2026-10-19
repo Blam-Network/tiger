@@ -10,6 +10,7 @@
 # and are left alone.
 
 @activity_bundle("enc_array_amb1")
+
 c_encounter_manager encounters
 @member_counts({_squad: [{dreg: 2}, {vandal: 2}]})
 simple_encounter amb_smpl_fallen_domec01

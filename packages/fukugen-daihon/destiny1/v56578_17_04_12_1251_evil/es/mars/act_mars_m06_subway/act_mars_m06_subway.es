@@ -17,6 +17,20 @@
 # enc_subway_m06); unknown_04e6ac69 holds the music and Ghost lines.
 
 @activity_bundle("act_mars_m06_subway")
+# The same landing zone, the battleground (1), the lobby (12) and the subway
+# (22). One 2.3.1 capture.
+@activity("act_mars_m06_subway")
+@start_slice("plains")
+@phase("phase_m06_battleground_goto", "battleground")
+@phase("phase_m06_battleground", "battleground")
+@phase("phase_m06_lobby_goto", "lobby")
+@phase("phase_m06_lobby_s", "lobby")
+@phase("phase_m06_lobby_n", "lobby")
+@phase("phase_m06_subway_goto", "subway")
+@phase("phase_m06_subway", "subway")
+@phase("phase_m06_subway_close", "subway")
+@spawn_transition("landing_zone")
+
 act_mars_m06_subway_mission1 phase_m06_battleground_goto
 act_mars_m06_subway_mission2 phase_m06_battleground
 act_mars_m06_subway_mission3 phase_m06_lobby_goto

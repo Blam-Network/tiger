@@ -10,6 +10,7 @@
 # Task names were never cracked and are written as "0x" literals.
 
 @activity_bundle("enc_strength_m3")
+
 c_trigger_volume_slot_host tv_bubble
 c_player_trigger_sensor_host pt_bubble bind(tv_bubble)
 c_trigger_volume_slot_host tv_intro_thrall

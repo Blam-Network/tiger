@@ -6,6 +6,12 @@ import { join, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { formatScriptTag } from "../hks/source/script_source.ts";
 import { fnv1 } from "../host/tags/name_hash.ts";
+import {
+  type ActivityStart,
+  type ActivityStartData,
+  activityStartData,
+  authoredActivityStart,
+} from "./activity_start.ts";
 import type { BsDeclKind, BsFileKind } from "./ast.ts";
 import { BsCompileError } from "./lexer.ts";
 import { bsFileKind, implicitDeclName, parseBungieScript } from "./parser.ts";
@@ -31,6 +37,9 @@ export interface ScriptStub {
 export interface ScriptFile {
   // the bundle the file's encounter class runs in: its @activity_bundle
   readonly activityBundle: number | undefined;
+  // how the encounter starts the activities it names (@activity and the
+  // decorators below it)
+  readonly activityStart: ActivityStart | undefined;
   // the chunk name Bungie's compiler was given, "@es\venus\venus_bounty_1.es"
   readonly chunkName: string;
   readonly decls: readonly ScriptDecl[];
@@ -56,7 +65,7 @@ const DECL_TAGS =
   /^#\s*See tags?\s+([0-9A-Fa-f]{8}(?:\s*,\s*[0-9A-Fa-f]{8})*)(?:\s+\(([A-Za-z_][A-Za-z0-9_]*)\))?\s*$/;
 const TAG_SEPARATOR = /\s*,\s*/;
 const ACTIVITY_BUNDLE =
-  /^@activity_bundle\(\s*(?:"([^"]*)"|0x([0-9A-Fa-f]{8}))\s*\)\s*(?:#.*)?$/;
+  /^@activity_bundle\(\s*(?:"([^"]*)"|0x([0-9A-Fa-f]{8}))\s*\)\s*(?:[@#].*)?$/;
 const LEADING_AT = /^@/;
 const SOURCE_EXTENSION = /\.(bs|es|esp|esu)$/;
 
@@ -132,12 +141,14 @@ export function parseScriptFile(path: string, text: string): ScriptFile {
           : fnv1(match[1]);
     }
   }
+  const shape = declaredShape(normalized, kind, text);
   return {
     activityBundle,
+    activityStart: shape.activityStart,
     chunkName: scriptChunkName(normalized),
     decls,
     kind,
-    memberTypes: declaredMemberTypes(normalized, kind, text),
+    memberTypes: shape.memberTypes,
     path: normalized,
     stubs,
     text,
@@ -148,6 +159,9 @@ export function parseScriptFile(path: string, text: string): ScriptFile {
 // about itself, so the compiled tree (compiled_bs.ts) answers the same way the
 // source folder does.
 export interface ScriptLookups<T extends ScriptFileSummary> {
+  // how an activity starts, by the activity definition's name, as the
+  // script that names it authored it
+  activityStart(activityName: string): ActivityStartData | undefined;
   // the file declaring a class, by its name: the archetype an Encounter row
   // runs (its childScript)
   archetypeScript(declName: string): T | undefined;
@@ -170,6 +184,8 @@ export interface ScriptLookups<T extends ScriptFileSummary> {
 export interface ScriptFileSummary {
   // the bundle its encounter class runs in (@activity_bundle)
   readonly activityBundle?: number | undefined;
+  // how its encounter starts the activities it names
+  readonly activityStart?: ActivityStart | undefined;
   // the classes, structs and enums it declares
   readonly decls: readonly { readonly name: string }[];
   readonly kind: BsFileKind;
@@ -186,7 +202,16 @@ export function scriptLookups<T extends ScriptFileSummary>(
   const byPath = new Map(files.map((file) => [file.path, file]));
   const byBundle = new Map<number, T[]>();
   const byDecl = new Map<string, T>();
+  const starts = new Map<string, ActivityStartData>();
   for (const file of files) {
+    for (const activity of file.activityStart?.activities ?? []) {
+      if (file.activityStart !== undefined && !starts.has(activity)) {
+        starts.set(
+          activity,
+          activityStartData(file.activityStart, activity, file.path)
+        );
+      }
+    }
     if (file.activityBundle !== undefined) {
       const bundle = file.activityBundle >>> 0;
       byBundle.set(bundle, [...(byBundle.get(bundle) ?? []), file]);
@@ -203,6 +228,7 @@ export function scriptLookups<T extends ScriptFileSummary>(
       return declarer === undefined ? [] : [declarer];
     });
   return {
+    activityStart: (activityName) => starts.get(activityName),
     archetypeScript: (declName) => byDecl.get(declName),
     memberScripts: (file) => [
       ...new Set(declared(file).filter((member) => member.kind !== "esp")),
@@ -223,24 +249,33 @@ export function scriptLookups<T extends ScriptFileSummary>(
   };
 }
 
-// The member types an es-family file's class declares; a file that does not
-// parse declares none.
-function declaredMemberTypes(
+// What a file's class declares: the type of each member (an es-family file's
+// only; a .bs file's classes are its own, see ScriptFileSummary), and how it
+// starts its activities. A file that does not parse declares none.
+function declaredShape(
   path: string,
   kind: BsFileKind,
   text: string
-): readonly string[] {
-  if (kind === "bs") {
-    return [];
-  }
+): {
+  activityStart: ActivityStart | undefined;
+  memberTypes: readonly string[];
+} {
   try {
-    return (
-      parseBungieScript(text, path).decls[0]?.members.flatMap((member) =>
-        member.kind === "field" ? [member.type.name] : []
-      ) ?? []
-    );
+    const decls = parseBungieScript(text, path).decls;
+    const start = decls.find(
+      (decl) => decl.activityStart !== undefined
+    )?.activityStart;
+    return {
+      activityStart: start && authoredActivityStart(start),
+      memberTypes:
+        kind === "bs"
+          ? []
+          : (decls[0]?.members.flatMap((member) =>
+              member.kind === "field" ? [member.type.name] : []
+            ) ?? []),
+    };
   } catch {
-    return [];
+    return { activityStart: undefined, memberTypes: [] };
   }
 }
 

@@ -13,6 +13,7 @@
 # centurion's death are single-run facts.
 
 @activity_bundle("enc_plains_m01")
+
 c_location_sensor_host plains
 c_player_trigger_sensor_host pt_plains bind(plains)
 c_trigger_volume_slot_host tv_base_mid
@@ -38,16 +39,26 @@ c_squad_sensor_host sq_dropship_sand
 c_squad_member_sensor_host sq_dropship_sand__pilot
 c_control_point_set_sensor_host cps_dropship_sand_entry
 c_control_point_set_sensor_host cps_dropship_sand_exit
+@member_counts({phalanx: 2})
 c_squad_sensor_host sq_base_phalanx
+@member_counts({legionary: 1})
 c_squad_sensor_host sq_base_legionary_a
+@member_counts({legionary: 1})
 c_squad_sensor_host sq_base_legionary_b
+@member_counts({legionary: 1})
 c_squad_sensor_host sq_base_legionary_c
+@member_counts({legionary: 3})
 c_squad_sensor_host sq_backup_legionary_a
+@member_counts({legionary: 3})
 c_squad_sensor_host sq_backup_legionary_b
+@member_counts({legionary: 3})
 c_squad_sensor_host sq_sand_legionary_a
+@member_counts({legionary: 3})
 c_squad_sensor_host sq_sand_legionary_b
+@member_counts({legionary: 3})
 c_squad_sensor_host sq_sand_legionary_c
 c_squad_sensor_host sq_anchor_phalanx
+@member_counts({centurion: 1})
 c_squad_sensor_host sq_anchor_centurion
 
 startup thread sc_plains_main:

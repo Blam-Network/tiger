@@ -4,6 +4,7 @@
 # reaches the ledge.
 
 @activity_bundle("enc_ruins_strike1")
+
 c_trigger_volume_slot_host tv_ledge
 c_player_trigger_sensor_host pt_ledge bind(tv_ledge)  # true name unknown
 c_squad_sensor_host sq_ruins_ledge01

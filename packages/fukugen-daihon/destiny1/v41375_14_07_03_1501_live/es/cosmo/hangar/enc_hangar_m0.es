@@ -5,6 +5,7 @@
 # Names that were never cracked are written as "0x" literals.
 
 @activity_bundle("enc_hangar_m0")
+
 c_object_sensor_host o_hangar_gating_exit
 c_object_sensor_host o_ship
 c_object_sensor_host o_ship_wires

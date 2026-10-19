@@ -1,4 +1,7 @@
 @activity_bundle("pvp")
+@activity("pvp_factory")
+@start_slice("pvp_factory")
+
 c_pvp_controller pvp_controller
 c_pvp_slayer slayer
 c_pvp_dominion dominion

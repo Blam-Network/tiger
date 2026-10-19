@@ -4,12 +4,13 @@
 # floor below is clear.
 
 @activity_bundle("enc_engineering_strike1")
+
 c_squad_group_sensor_host gr_top_floor  # true name unknown
-c_squad_sensor_host sq_floor2_fallen01
-c_squad_sensor_host sq_floor2_fallen02
+@member_counts({vandals: 3}) c_squad_sensor_host sq_floor2_fallen01
+@member_counts({vandal: 3}) c_squad_sensor_host sq_floor2_fallen02
 c_squad_sensor_host sq_floor2_fallen03
 c_squad_sensor_host sq_floor2_fallen04
-c_squad_sensor_host sq_floor2_fallen05
+@member_counts({vandal: 3}) c_squad_sensor_host sq_floor2_fallen05
 c_objective_sensor_host obj_engineering_strike  # true name unknown
 c_location_sensor_host engineering  # true name unknown
 c_player_monitor_sensor_host pm_bubble_engineering bind(engineering)  # true name unknown

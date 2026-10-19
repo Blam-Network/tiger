@@ -5,6 +5,7 @@
 # reinforcements come in.
 
 @activity_bundle("enc_ship_portal1")
+
 c_squad_sensor_host sq_bossbattle_boss01
 c_objective_sensor_host obj_bossbattle_fallen  # true name unknown
 @member_counts({dregs: 2, vandal: 1})

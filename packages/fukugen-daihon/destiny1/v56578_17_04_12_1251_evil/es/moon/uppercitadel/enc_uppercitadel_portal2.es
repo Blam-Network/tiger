@@ -12,36 +12,58 @@
 # in here is that run's and unconfirmed.
 
 @activity_bundle("enc_uppercitadel_portal2")
+
 c_objective_sensor_host obj_uppercitadel_trash
 c_objective_sensor_host obj_uppercitadel_objective
+@member_counts({thrall: 2, knight: 1})
 c_squad_sensor_host sq_overlook_hive01a
+@member_counts({trooper: 3})
 c_squad_sensor_host sq_overlook_hive01b
+@member_counts({trooper: 1, trooper_boomer: 1, wizard: 1})
 c_squad_sensor_host sq_overlook_hive02
 interactable_placement pf_i_door_placement bind("0x80296306")
 c_object_sensor_host o_scan_sphere_1
+@member_counts({thrall: 5})
 c_squad_sensor_host sq_wave_left01
+@member_counts({thrall: 5})
 c_squad_sensor_host sq_wave_left02
+@member_counts({thrall: 5})
 c_squad_sensor_host sq_wave_left03
+@member_counts({knight_boomer: 2})
 c_squad_sensor_host sq_wave_left_sustain01
+@member_counts({knight_boomer: 1, 0xBEA57D49: 1})
 c_squad_sensor_host sq_wave_left_sustain02
 c_object_sensor_host o_gate_lock01
+@member_counts({trooper: 4})
 c_squad_sensor_host sq_wave_right01
+@member_counts({trooper: 1, 0x0D746C5A: 3})
 c_squad_sensor_host sq_wave_right02
+@member_counts({trooper: 4})
 c_squad_sensor_host sq_wave_right03
+@member_counts({wizard: 1, knight: 1})
 c_squad_sensor_host sq_wave_right_sustain01
+@member_counts({knight: 2, wizard: 1})
 c_squad_sensor_host sq_wave_right_sustain02
 c_object_sensor_host o_gate_lock02
+@member_counts({thrall: 4, trooper: 1})
 c_squad_sensor_host sq_wave_rear01
+@member_counts({thrall: 4, trooper: 1})
 c_squad_sensor_host sq_wave_rear02
+@member_counts({0x72C51822: 1, 0xEEAC5E41: 1, trooper_boomer: 1})
 c_squad_sensor_host sq_wave_rear03
+@member_counts({0xEEAC5E41: 1, trooper_boomer: 1, 0x72C51822: 1})
 c_squad_sensor_host sq_wave_rear04
+@member_counts({0xA17FC000: 3, wizard: 1})
 c_squad_sensor_host sq_wave_boss
 c_object_sensor_host o_gate_lock03
 c_object_sensor_host o_door_dummy
 c_object_sensor_host o_strike2_norender_scan
 c_player_trigger_sensor_host pt_room_b_spawn
+@member_counts({knight: 1, ogre: 1})
 c_squad_sensor_host sq_lowerhall_bouncer01
+@member_counts({0x8B5EA686: 1, thrall: 3})
 c_squad_sensor_host sq_lowerhall_hive01
+@member_counts({trooper: 1, 0x8B5EA686: 1})
 c_squad_sensor_host sq_lowerhall_hive03
 c_player_trigger_sensor_host pt_ogreroar01
 c_player_trigger_sensor_host pt_ogreroar02

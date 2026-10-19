@@ -8,6 +8,7 @@
 # Mid-fight task changes follow one run and are unconfirmed.
 
 @activity_bundle("enc_subway_m06")
+
 c_objective_sensor_host obj_subway_m06_plat_wide
 c_objective_sensor_host obj_subway_m06_plat_thin
 c_objective_sensor_host obj_subway_m06_tracks_bend

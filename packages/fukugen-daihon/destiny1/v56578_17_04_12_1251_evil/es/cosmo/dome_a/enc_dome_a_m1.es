@@ -9,6 +9,7 @@
 # gaps without a trigger on the wire are that run's waits.
 
 @activity_bundle("enc_dome_a_m1")
+
 c_objective_sensor_host obj_hive_dome_a01
 c_object_sensor_host o_door01
 c_player_monitor_sensor_host pm_basement_cleanup
@@ -24,14 +25,22 @@ c_squad_sensor_host sq_hive_scare02c
 c_squad_sensor_host sq_hive_scare02d
 c_squad_sensor_host sq_hive_basement_thrall01
 c_squad_sensor_host sq_hive_basement_troopers01
+@member_counts({trooper: 2})
 c_squad_sensor_host sq_hive_basement_troopers02
+@member_counts({thrall: 1, thrall_1: 1, thrall_2: 1})
 c_squad_sensor_host sq_hive_upper_front01
+@member_counts({trooper: 3})
 c_squad_sensor_host sq_hive_upper_front02
+@member_counts({trooper: 4})
 c_squad_sensor_host sq_hive_upper_front03
+@member_counts({trooper: 4})
 c_squad_sensor_host sq_hive_upper_back01
+@member_counts({trooper: 2})
 c_squad_sensor_host sq_hive_upper_back02
 c_squad_sensor_host sq_hive_upper_wizard01
+@member_counts({thrall: 2, thrall_1: 2})
 c_squad_sensor_host sq_hive_upper_rush01
+@member_counts({thrall: 2, thrall_1: 2})
 c_squad_sensor_host sq_hive_upper_rush02
 
 startup thread sc_dome_a:

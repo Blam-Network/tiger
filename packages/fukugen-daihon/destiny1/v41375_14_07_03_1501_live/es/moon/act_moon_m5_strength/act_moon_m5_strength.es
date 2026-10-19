@@ -21,6 +21,20 @@
 # unconfirmed.
 
 @activity_bundle("act_moon_m5_strength")
+# The hellmouth (2) at its default spawn point, the launch tubes (3,
+# phase_cinematic owns 3.1) and the chamber (11). One 2.3.1 capture.
+@activity("act_moon_m5_strength")
+@start_slice("hellmouth", "phase_2_hellmouth")
+@phase("phase_2_hellmouth", "hellmouth")
+@phase("phase_goto_launchtubes", "launchtubes")
+@phase("phase_3_launchtubes", "launchtubes")
+@phase("phase_cinematic", "launchtubes")
+@phase("phase_goto_strength", "strength")
+@phase("phase_strength_start", "strength")
+@phase("phase_4_strength", "strength")
+@phase("phase_strength_complete", "strength")
+@spawn_transition("default")
+
 act_moon_m5_strength_mission1 phase_2_hellmouth
 act_moon_m5_strength_mission2 phase_goto_launchtubes
 act_moon_m5_strength_mission3 phase_3_launchtubes

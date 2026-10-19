@@ -9,6 +9,7 @@
 # trigger on the wire, the wait is that run's.
 
 @activity_bundle("enc_dome_c_m2")
+
 c_objective_sensor_host obj_fallen_dome_c_m2_piperoom
 c_objective_sensor_host obj_fallen_dome_c_m2_guards
 c_object_sensor_host o_basement_door01
@@ -17,25 +18,41 @@ c_player_trigger_sensor_host pt_fallen_guards_spawn02
 c_sequence_host seq_fallen_wave_announce
 interactable_placement obj_placement_m2_o3a
 destructible_placement obj_placement_m2_o4b
+@member_counts({dreg: 2})
 c_squad_sensor_host sq_fallen_piperoom01a
+@member_counts({dreg: 1})
 c_squad_sensor_host sq_fallen_piperoom01b
+@member_counts({vandal: 1, vandal_1: 1})
 c_squad_sensor_host sq_fallen_piperoom02a
+@member_counts({dreg: 2})
 c_squad_sensor_host sq_fallen_piperoom02b
+@member_counts({dreg: 3, captain: 1})
 c_squad_sensor_host sq_fallen_piperoom_reinf01
+@member_counts({captain: 1, dreg: 2})
 c_squad_sensor_host sq_fallen_guards01
 c_squad_sensor_host sq_fallen_guards02a
 c_squad_sensor_host sq_fallen_guards02b
 c_squad_sensor_host sq_fallen_guards02c
 c_squad_sensor_host sq_fallen_guards02d
+@member_counts({dreg: 4})
 c_squad_sensor_host sq_fallen_wave01a
+@member_counts({vandal: 2})
 c_squad_sensor_host sq_fallen_wave01b
+@member_counts({dreg: 3, 0xFD2174CD: 1})
 c_squad_sensor_host sq_fallen_wave01c
+@member_counts({dreg: 4, captain: 1})
 c_squad_sensor_host sq_fallen_wave02a
+@member_counts({dreg: 4, captain: 1})
 c_squad_sensor_host sq_fallen_wave02b
+@member_counts({shank: 2})
 c_squad_sensor_host sq_fallen_wave02c
+@member_counts({shank: 2})
 c_squad_sensor_host sq_fallen_wave02d
+@member_counts({shank: 2})
 c_squad_sensor_host sq_fallen_wave02e
+@member_counts({dreg: 3})
 c_squad_sensor_host sq_fallen_wave03a
+@member_counts({dreg: 3})
 c_squad_sensor_host sq_fallen_wave03b
 
 startup thread sc_dome_c_m2:

@@ -8,6 +8,7 @@
 # run's.
 
 @activity_bundle(0xE2388EFA)
+
 c_sequence_host seq_music_intro
 c_sequence_host seq_strength_music
 c_sequence_host seq_music_ascent

@@ -338,8 +338,9 @@ export function lifetimeVerb(
   }
 }
 
-// set_time_of_day(fraction): the lifetime's last two members (808008A3 [9]
-// bool, [10] f32) lock the clients' time of day (sub_831A3928). Verb name ours.
+// set_time_of_day(fraction): the lifetime's time-of-day lock and time of day
+// (808008A3 [9] bool, [10] f32; TU0 sub_831A3928) hold the clients' sun at the
+// fraction; @time_of_day is the value before scripts run. Verb name ours.
 function setLifetimeTimeOfDay(self: BoundInstance, arg: LuaValue): boolean {
   const fraction = typeof arg === "number" ? arg : undefined;
   if (fraction === undefined) {

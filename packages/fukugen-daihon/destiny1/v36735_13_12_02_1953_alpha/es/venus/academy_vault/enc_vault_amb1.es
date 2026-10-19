@@ -1,4 +1,5 @@
 @activity_bundle("enc_vault_amb1")
+
 c_objective_sensor_host obj_vault_amb1  # true name unknown
 c_squad_group_sensor_host sg_left  # true name unknown
 c_squad_group_sensor_host sg_right  # true name unknown

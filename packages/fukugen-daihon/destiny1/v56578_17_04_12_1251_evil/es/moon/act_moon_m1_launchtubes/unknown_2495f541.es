@@ -10,6 +10,7 @@
 # sequence restart at the end of the wave.
 
 @activity_bundle(0x2495F541)
+
 c_player_trigger_sensor_host pt_bubble  # true name unknown
 c_player_trigger_sensor_host pt_drop_exit  # true name unknown
 c_player_trigger_sensor_host pt_accel_exit  # true name unknown
@@ -21,16 +22,27 @@ c_objective_sensor_host obj_patrol_exit  # true name unknown
 c_squad_sensor_host sq_interior_back
 c_squad_sensor_host sq_interior_melee
 c_squad_sensor_host sq_interior_front
+@member_counts({dreg_pistol: 3, captain: 1})
 c_squad_sensor_host sq_drop_initial
+@member_counts({dreg_pistol: 3, 0xD1F11E74: 1})
 c_squad_sensor_host sq_drop_a
+@member_counts({dreg_pistol: 2})
 c_squad_sensor_host sq_drop_c
+@member_counts({dreg_pistol: 2, 0xD1F11E74: 1, captain: 1, servitor: 1})
 c_squad_sensor_host sq_drop_d
+@member_counts({captain: 1, dreg_pistol: 2, 0xD1F11E74: 1})
 c_squad_sensor_host sq_north_dome
+@member_counts({vandal_shock: 1, shank: 3})
 c_squad_sensor_host sq_north_ridge
+@member_counts({captain: 1, shank: 2})
 c_squad_sensor_host sq_east_left
+@member_counts({vandal_rifle: 2, shank: 2})
 c_squad_sensor_host sq_east_right
+@member_counts({pilot: 1})
 c_squad_sensor_host sq_pike
+@member_counts({pilot: 1})
 c_squad_sensor_host sq_pike_a
+@member_counts({pilot: 1})
 c_squad_sensor_host sq_pike_b
 c_squad_sensor_host sq_dropship_west
 c_squad_member_sensor_host sq_dropship_west__pilot  # true name unknown

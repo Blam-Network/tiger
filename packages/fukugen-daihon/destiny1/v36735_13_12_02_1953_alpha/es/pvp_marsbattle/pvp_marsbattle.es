@@ -1,4 +1,7 @@
 @activity_bundle("pvp")
+@activity("pvp_marsbattle")
+@start_slice("pvp_marsbattle")
+
 c_pvp_controller pvp_controller
 c_pvp_slayer slayer
 c_pvp_slayer_ffa slayer_ffa

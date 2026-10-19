@@ -3,6 +3,13 @@
 // type ids) on scripts the package-level BungieScript compiler produces.
 export const k_build_string = "41375.14.07.03.1501.live";
 
+export {
+  type ActivityPhaseStart,
+  type ActivityStart,
+  type ActivityStartData,
+  activityStartData,
+  sliceRegionHash,
+} from "../../bungiescript/activity_start.ts";
 export type {
   BsBinaryOp,
   BsDecl,
@@ -106,6 +113,10 @@ export {
   scriptChunkName,
   scriptLookups,
 } from "../../bungiescript/script_folder.ts";
+export {
+  chunkLineOf,
+  fileLineOf,
+} from "../../bungiescript/stand_in.ts";
 export {
   type BsImportKind,
   type BsRegistryEntry,

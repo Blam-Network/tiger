@@ -1,21 +1,36 @@
 @activity_bundle("enc_fallen_caldera_amb1")
+
 c_objective_sensor_host obj_caldera_amb1  # true name unknown
 u_event_world_controller event_controller
 c_encounter_manager encounters  # true name unknown
-@member_counts({_squad: [{dregs: 3, vandals: 2, captain: 1}]}) simple_encounter simple_amb_pocket
-@member_counts({_squad: [{dregs: 3, vandals: 2}]}) simple_encounter simple_btm_ramp
-@member_counts({_squad: [{dregs: 3, captain: 1}]}) simple_encounter simple_tank_inf
-@member_counts({_squad: [{dregs: 2, vandals: 2}, {captain: 1, vandals: 2}]}) simple_encounter simple_thieves
-@member_counts([{sq_event_dropship_pilot: {pilot: 0}, pf_event_dropship_point: [{sq_event_dropship_wave0a: {cell_1: 0, cell_2: 0}, sq_event_dropship_wave0b: {cell_1: 0, cell_2: 0, cell_3: 0}, sq_event_dropship_wave0_leader: {cell_1: 0}}, {sq_event_dropship_wave0a: {cell_1: 0, cell_2: 0}, sq_event_dropship_wave0b: {cell_1: 0, cell_2: 0, cell_3: 0}, sq_event_dropship_wave0_leader: {cell_1: 0}}, {sq_event_dropship_wave0a: {cell_1: 0, cell_2: 0}, sq_event_dropship_wave0b: {cell_1: 0, cell_2: 1, cell_3: 0}, sq_event_dropship_wave0_leader: {cell_1: 0}}, {sq_event_dropship_wave0a: {cell_1: 0, cell_2: 0}, sq_event_dropship_wave0b: {cell_1: 1, cell_2: 0, cell_3: 0}, sq_event_dropship_wave0_leader: {cell_1: 0}}]}]) static_array<u_event_dropship_multipoint_temp, 1> pf_event_dropship_multipoint_fallen_temp
-@member_counts([{sq_vex_cloud_init: {pilot: 0}, sq_initialize: {goblin: 0}, pf_event_vex_cloud_point: [{sq_vex_cloud: {pilot: 0}}, {sq_vex_cloud: {pilot: 0}}, {sq_vex_cloud: {pilot: 0}}, {sq_vex_cloud: {pilot: 0}}, {sq_vex_cloud: {pilot: 0}}, {sq_vex_cloud: {pilot: 0}}, {sq_vex_cloud: {pilot: 0}}, {sq_vex_cloud: {pilot: 0}}], pf_event_vex_block_wave: [{}, {sq_vex01: {vex: 0}, sq_vex02: {vex: 0}, sq_vex03: {vex: 0}, sq_vex04: {vex_block_ai: 0}}, {sq_vex01: {vex: 0}, sq_vex02: {vex: 0}, sq_vex03: {vex: 0}, sq_vex04: {vex_block_ai: 0}}, {sq_vex01: {vex: 0}, sq_vex02: {vex: 0}, sq_vex03: {vex: 0}, sq_vex04: {vex_block_ai: 0}}, {sq_vex01: {vex: 0}, sq_vex02: {vex: 0}, sq_vex03: {vex: 0}, sq_vex04: {vex_block_ai: 0}}, {sq_vex01: {vex: 0}, sq_vex02: {vex: 0}, sq_vex03: {vex: 0}, sq_vex04: {vex_block_ai: 0}}, {sq_vex01: {vex: 0}, sq_vex02: {vex: 0}, sq_vex03: {vex: 0}, sq_vex04: {vex_block_ai: 0}}, {sq_vex01: {vex: 0}, sq_vex02: {vex: 0}, sq_vex03: {vex: 0}, sq_vex04: {vex_block_ai: 0}}]}]) static_array<u_event_vex_block, 1> pf_event_vex_block
-@member_counts({vandals: 2, captain: 1}) c_squad_sensor_host sq_rim01
-@member_counts({dregs: 3, captain: 1}) c_squad_sensor_host sq_rim02
-@member_counts({dregs: 2, vandals: 2}) c_squad_sensor_host sq_lower01
-@member_counts({dregs: 3, captain: 1}) c_squad_sensor_host sq_tank_inf
-@member_counts({dreg: 1}) c_squad_sensor_host sq_pike01
-@member_counts({dreg: 1}) c_squad_sensor_host sq_pike02
-@member_counts({spider_tank: 1}) c_squad_sensor_host sq_spider_tank01
-@member_counts({dregs: 3, captain: 1}) c_squad_sensor_host sq_pocket01
+@member_counts({_squad: [{dregs: 3, vandals: 2, captain: 1}]})
+simple_encounter simple_amb_pocket
+@member_counts({_squad: [{dregs: 3, vandals: 2}]})
+simple_encounter simple_btm_ramp
+@member_counts({_squad: [{dregs: 3, captain: 1}]})
+simple_encounter simple_tank_inf
+@member_counts({_squad: [{dregs: 2, vandals: 2}, {captain: 1, vandals: 2}]})
+simple_encounter simple_thieves
+@member_counts([{sq_event_dropship_pilot: {pilot: 0}, pf_event_dropship_point: [{sq_event_dropship_wave0a: {cell_1: 0, cell_2: 0}, sq_event_dropship_wave0b: {cell_1: 0, cell_2: 0, cell_3: 0}, sq_event_dropship_wave0_leader: {cell_1: 0}}, {sq_event_dropship_wave0a: {cell_1: 0, cell_2: 0}, sq_event_dropship_wave0b: {cell_1: 0, cell_2: 0, cell_3: 0}, sq_event_dropship_wave0_leader: {cell_1: 0}}, {sq_event_dropship_wave0a: {cell_1: 0, cell_2: 0}, sq_event_dropship_wave0b: {cell_1: 0, cell_2: 1, cell_3: 0}, sq_event_dropship_wave0_leader: {cell_1: 0}}, {sq_event_dropship_wave0a: {cell_1: 0, cell_2: 0}, sq_event_dropship_wave0b: {cell_1: 1, cell_2: 0, cell_3: 0}, sq_event_dropship_wave0_leader: {cell_1: 0}}]}])
+static_array<u_event_dropship_multipoint_temp, 1> pf_event_dropship_multipoint_fallen_temp
+@member_counts([{sq_vex_cloud_init: {pilot: 0}, sq_initialize: {goblin: 0}, pf_event_vex_cloud_point: [{sq_vex_cloud: {pilot: 0}}, {sq_vex_cloud: {pilot: 0}}, {sq_vex_cloud: {pilot: 0}}, {sq_vex_cloud: {pilot: 0}}, {sq_vex_cloud: {pilot: 0}}, {sq_vex_cloud: {pilot: 0}}, {sq_vex_cloud: {pilot: 0}}, {sq_vex_cloud: {pilot: 0}}], pf_event_vex_block_wave: [{}, {sq_vex01: {vex: 0}, sq_vex02: {vex: 0}, sq_vex03: {vex: 0}, sq_vex04: {vex_block_ai: 0}}, {sq_vex01: {vex: 0}, sq_vex02: {vex: 0}, sq_vex03: {vex: 0}, sq_vex04: {vex_block_ai: 0}}, {sq_vex01: {vex: 0}, sq_vex02: {vex: 0}, sq_vex03: {vex: 0}, sq_vex04: {vex_block_ai: 0}}, {sq_vex01: {vex: 0}, sq_vex02: {vex: 0}, sq_vex03: {vex: 0}, sq_vex04: {vex_block_ai: 0}}, {sq_vex01: {vex: 0}, sq_vex02: {vex: 0}, sq_vex03: {vex: 0}, sq_vex04: {vex_block_ai: 0}}, {sq_vex01: {vex: 0}, sq_vex02: {vex: 0}, sq_vex03: {vex: 0}, sq_vex04: {vex_block_ai: 0}}, {sq_vex01: {vex: 0}, sq_vex02: {vex: 0}, sq_vex03: {vex: 0}, sq_vex04: {vex_block_ai: 0}}]}])
+static_array<u_event_vex_block, 1> pf_event_vex_block
+@member_counts({vandals: 2, captain: 1})
+c_squad_sensor_host sq_rim01
+@member_counts({dregs: 3, captain: 1})
+c_squad_sensor_host sq_rim02
+@member_counts({dregs: 2, vandals: 2})
+c_squad_sensor_host sq_lower01
+@member_counts({dregs: 3, captain: 1})
+c_squad_sensor_host sq_tank_inf
+@member_counts({dreg: 1})
+c_squad_sensor_host sq_pike01
+@member_counts({dreg: 1})
+c_squad_sensor_host sq_pike02
+@member_counts({spider_tank: 1})
+c_squad_sensor_host sq_spider_tank01
+@member_counts({dregs: 3, captain: 1})
+c_squad_sensor_host sq_pocket01
 c_squad_group_sensor_host sqg_pikes  # true name unknown
 c_squad_group_sensor_host sqg_rim  # true name unknown
 c_squad_group_sensor_host sqg_lower  # true name unknown

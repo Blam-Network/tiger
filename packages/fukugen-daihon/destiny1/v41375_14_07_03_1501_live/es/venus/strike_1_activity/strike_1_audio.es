@@ -9,6 +9,7 @@
 # site line waits on the bubble monitor, which the replay cannot feed.
 
 @activity_bundle("strike_1_audio")
+
 c_sequence_host intro
 c_sequence_host music01
 c_sequence_host md_s1_m1_d010

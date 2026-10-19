@@ -34,8 +34,8 @@ const LINE_BUMP_CALL = 8;
 const LINE_AFTER_BUMP = 9;
 const LINE_TOTAL = 12;
 
-function harness() {
-  const compiled = compileScriptFiles([{ path: PATH, text: SOURCE }]);
+function harness(source = SOURCE) {
+  const compiled = compileScriptFiles([{ path: PATH, text: source }]);
   expect(compiled.diagnostics.filter((d) => d.severity === "error")).toEqual(
     []
   );
@@ -80,7 +80,7 @@ function harness() {
   host.start();
   host.reportPlayerSpawned();
   const dbg = new ScriptDebugger({
-    sourceText: (path) => (path === PATH ? SOURCE : undefined),
+    sourceText: (path) => (path === PATH ? source : undefined),
   });
   const events: DapEvent[] = [];
   const responses: DapResponse[] = [];
@@ -101,7 +101,10 @@ function harness() {
     }
     return response.body as Record<string, unknown>;
   };
-  dbg.attach("t", "test", host);
+  dbg.attach("t", "test", host, {
+    standInLines: (path) =>
+      path === PATH ? compiled.compiledDecl(PATH).standInLines : undefined,
+  });
   const counter = () => {
     const instance = host.instances.get("enc_debug_test");
     return instance?.get("counter");
@@ -355,5 +358,25 @@ describe("the script debugger", () => {
       kind: "lifetime",
       state: { state: 2 },
     });
+  });
+
+  it("stands on the file's lines when decorators above them are not counted", () => {
+    // the decorator line above the script is left out of the chunk's lines
+    const source = `@activity_bundle("enc_debug_test")
+${SOURCE}`;
+    const h = harness(source);
+    const fileLine = LINE_COUNTER_2 + 1;
+    const set = breakAt(h.request, fileLine);
+    expect(set.breakpoints).toMatchObject([{ line: fileLine, verified: true }]);
+    for (let i = 0; i < 4 && h.stops().length === 0; i++) {
+      h.host.tick();
+    }
+    expect(h.stops()).toHaveLength(1);
+    expect(h.topLine(h.mainThread())).toBe(fileLine);
+    // a breakpoint on the decorator's own line lands on the next line with code
+    const onDecorator = breakAt(h.request, 1);
+    expect(onDecorator.breakpoints).toMatchObject([
+      { line: 2, verified: true },
+    ]);
   });
 });

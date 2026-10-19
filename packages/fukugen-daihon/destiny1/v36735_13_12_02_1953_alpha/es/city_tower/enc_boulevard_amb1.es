@@ -1,22 +1,40 @@
 @activity_bundle("enc_boulevard_amb1")
+
 bool debug_boulevard
-@member_counts({vendor1: 1}) c_squad_sensor_host sq_boulevard_vendor_warlock_mentor
-@member_counts({vendor1: 1}) c_squad_sensor_host sq_boulevard_vendor_warlock_quartermaster
-@member_counts({vendor1: 1}) c_squad_sensor_host sq_boulevard_vendor_warlock_outfitter
-@member_counts({vendor1: 1}) c_squad_sensor_host sq_boulevard_vendor_shaders
-@member_counts({vendor1: 1}) c_squad_sensor_host sq_boulevard_vendor_nm
-@member_counts({vendor1: 1}) c_squad_sensor_host sq_boulevard_vendor_clan
-@member_counts({guard1: 1}) c_squad_sensor_host sq_boulevard_droid_guard1
-@member_counts({guard1: 0, guard2: 0}) c_squad_sensor_host sq_boulevard_droid_patrol1
-@member_counts({sweeper1: 0, scrubber1: 0}) c_squad_sensor_host sq_boulevard_droid_cleaners1
-@member_counts({watchers1: 4}) c_squad_sensor_host sq_boulevard_warlocks1
-@member_counts({talker1: 0, talker2: 0, listener1: 0}) c_squad_sensor_host sq_boulevard_civ_talkers1
-@member_counts({talker1: 0, talker2: 0, listener1: 0}) c_squad_sensor_host sq_boulevard_civ_talkers2
-@member_counts({talker1: 0, talker2: 0, listener1: 0}) c_squad_sensor_host sq_boulevard_civ_nm1
-@member_counts({talker1: 0, talker2: 0, listener1: 0}) c_squad_sensor_host sq_boulevard_civ_nm2
-@member_counts({talker1: 0, talker2: 0, listener1: 0}) c_squad_sensor_host sq_boulevard_civ_nm3
-@member_counts({watcher1: 0}) c_squad_sensor_host sq_boulevard_civ_watchers1
-@member_counts({watcher1: 0, player1: 0, player2: 0}) c_squad_sensor_host sq_boulevard_civ_chess1
+@member_counts({vendor1: 1})
+c_squad_sensor_host sq_boulevard_vendor_warlock_mentor
+@member_counts({vendor1: 1})
+c_squad_sensor_host sq_boulevard_vendor_warlock_quartermaster
+@member_counts({vendor1: 1})
+c_squad_sensor_host sq_boulevard_vendor_warlock_outfitter
+@member_counts({vendor1: 1})
+c_squad_sensor_host sq_boulevard_vendor_shaders
+@member_counts({vendor1: 1})
+c_squad_sensor_host sq_boulevard_vendor_nm
+@member_counts({vendor1: 1})
+c_squad_sensor_host sq_boulevard_vendor_clan
+@member_counts({guard1: 1})
+c_squad_sensor_host sq_boulevard_droid_guard1
+@member_counts({guard1: 0, guard2: 0})
+c_squad_sensor_host sq_boulevard_droid_patrol1
+@member_counts({sweeper1: 0, scrubber1: 0})
+c_squad_sensor_host sq_boulevard_droid_cleaners1
+@member_counts({watchers1: 4})
+c_squad_sensor_host sq_boulevard_warlocks1
+@member_counts({talker1: 0, talker2: 0, listener1: 0})
+c_squad_sensor_host sq_boulevard_civ_talkers1
+@member_counts({talker1: 0, talker2: 0, listener1: 0})
+c_squad_sensor_host sq_boulevard_civ_talkers2
+@member_counts({talker1: 0, talker2: 0, listener1: 0})
+c_squad_sensor_host sq_boulevard_civ_nm1
+@member_counts({talker1: 0, talker2: 0, listener1: 0})
+c_squad_sensor_host sq_boulevard_civ_nm2
+@member_counts({talker1: 0, talker2: 0, listener1: 0})
+c_squad_sensor_host sq_boulevard_civ_nm3
+@member_counts({watcher1: 0})
+c_squad_sensor_host sq_boulevard_civ_watchers1
+@member_counts({watcher1: 0, player1: 0, player2: 0})
+c_squad_sensor_host sq_boulevard_civ_chess1
 c_squad_member_sensor_host sq_boulevard_droid_patrol1__guard1  # true name unknown
 c_squad_member_sensor_host sq_boulevard_droid_patrol1__guard2  # true name unknown
 c_squad_member_sensor_host sq_boulevard_droid_cleaners1__sweeper1  # true name unknown

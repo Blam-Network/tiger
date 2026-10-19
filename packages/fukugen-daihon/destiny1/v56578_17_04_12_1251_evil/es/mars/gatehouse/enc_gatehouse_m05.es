@@ -12,6 +12,7 @@
 # retail fell back to.
 
 @activity_bundle("enc_gatehouse_m05")
+
 c_objective_sensor_host obj_gatehouse_m05
 static_array<c_object_sensor_host, 20> dynamics
 c_object_sensor_host mc_door_left
@@ -21,12 +22,19 @@ c_object_sensor_host mc_door_b
 c_object_sensor_host ambush_door
 c_object_sensor_host o_device_invis_ambush
 c_squad_sensor_host sq_wave_1_a
+@member_counts({0xDFD659AC: 1, 0x2681BE63: 1, 0x07FE7F30: 1, 0x7BB7C1C3: 1})
 c_squad_sensor_host sq_wave_1_b
+@member_counts({0x2681BE63: 2, 0xDFD659AC: 2})
 c_squad_sensor_host sq_wave_2_a
+@member_counts({centurion: 1, 0xDFD659AC: 3})
 c_squad_sensor_host sq_wave_2_b
+@member_counts({0x43775E2E: 2, 0x2681BE63: 2})
 c_squad_sensor_host sq_wave_3_a
+@member_counts({centurion: 1, 0x2681BE63: 1, 0xDFD659AC: 2})
 c_squad_sensor_host sq_wave_3_b
+@member_counts({miniboss: 1})
 c_squad_sensor_host sq_miniboss
+@member_counts({backup: 1, 0xEAC226FF: 1})
 c_squad_sensor_host sq_miniboss_backup
 c_sequence_host seq_alarm
 c_sequence_host seq_wave_announce1

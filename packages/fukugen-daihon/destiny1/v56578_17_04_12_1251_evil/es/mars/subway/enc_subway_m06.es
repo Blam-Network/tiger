@@ -8,6 +8,7 @@
 # Mid-fight task changes follow one run and are unconfirmed.
 
 @activity_bundle("enc_subway_m06")
+
 c_objective_sensor_host obj_subway_m06_plat_wide
 c_objective_sensor_host obj_subway_m06_plat_thin
 c_objective_sensor_host obj_subway_m06_tracks_bend
@@ -27,34 +28,51 @@ vex_warp_gate pf_warp_gate2
 vex_warp_gate pf_warp_gate3
 vex_warp_gate pf_warp_gate4
 vex_warp_gate pf_warp_gate5
+@member_counts({harpy: 2})
 c_squad_sensor_host sq_plat_wide_support1
+@member_counts({harpy: 2})
 c_squad_sensor_host sq_plat_wide_support2
+@member_counts({harpy: 2})
 c_squad_sensor_host sq_plat_wide_support3
+@member_counts({hobgoblin: 2})
 c_squad_sensor_host sq_plat_wide_support4
 c_squad_sensor_host sq_plat_wide_cloud
 c_squad_member_sensor_host sq_plat_wide_cloud__vex_cloud
+@member_counts({goblin: 2})
 c_squad_sensor_host sq_plat_thin_support1
+@member_counts({goblin: 3})
 c_squad_sensor_host sq_plat_thin_support2
+@member_counts({goblin: 3})
 c_squad_sensor_host sq_warpgate1_support1
 c_squad_sensor_host sq_warpgate1_support2
+@member_counts({goblin: 3})
 c_squad_sensor_host sq_warpgate1_support3
 c_squad_sensor_host sq_warpgate1_support4
 c_squad_sensor_host sq_warpgate1_support_infinite
+@member_counts({harpy: 2})
 c_squad_sensor_host sq_warpgate2_support1
+@member_counts({harpy: 2})
 c_squad_sensor_host sq_warpgate2_support2
 c_squad_sensor_host sq_warpgate2_support3
+@member_counts({hobgoblin: 2})
 c_squad_sensor_host sq_warpgate2_support4
 c_squad_sensor_host sq_warpgate2_support_infinite
 c_squad_sensor_host sq_warpgate3_anchor1
+@member_counts({goblin: 3})
 c_squad_sensor_host sq_warpgate3_support1
+@member_counts({goblin: 3})
 c_squad_sensor_host sq_warpgate3_support2
 c_squad_sensor_host sq_warpgate3_support_infinite
+@member_counts({major_minotaur: 1})
 c_squad_sensor_host sq_warpgate4_major_anchor1
+@member_counts({goblin: 3})
 c_squad_sensor_host sq_warpgate4_support1
 c_squad_sensor_host sq_warpgate4_support2
 c_squad_sensor_host sq_warpgate4_support_infinite
 c_squad_sensor_host sq_warpgate5_anchor1
+@member_counts({goblin: 3})
 c_squad_sensor_host sq_warpgate5_support1
+@member_counts({goblin: 3})
 c_squad_sensor_host sq_warpgate5_support2
 c_squad_sensor_host sq_warpgate5_support_infinite
 

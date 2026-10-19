@@ -13,26 +13,41 @@
 # most likely Phogoth's health, which the capture does not show.
 
 @activity_bundle("enc_wormway_portal2")
+
 c_objective_sensor_host obj_bossbattle_hive
 c_squad_sensor_host sq_bossbattle_boss01
 static_array<c_object_sensor_host, 19> dynamics
 c_object_sensor_host o_chains
 c_object_sensor_host o_door_dummy
+@member_counts({trooper: 3})
 c_squad_sensor_host sq_bossbattle_hive01
+@member_counts({trooper: 3})
 c_squad_sensor_host sq_bossbattle_hive02
 c_squad_sensor_host sq_bossbattle_hive03
 c_squad_sensor_host sq_bossbattle_hive04
+@member_counts({knight: 1, trooper: 2})
 c_squad_sensor_host sq_bossbattle_snipers01
+@member_counts({knight: 2})
 c_squad_sensor_host sq_bossbattle_snipers02
+@member_counts({trooper: 2, knight: 1})
 c_squad_sensor_host sq_bossbattle_snipers03
+@member_counts({trooper: 1})
 c_squad_sensor_host sq_bossbattle_snipers_reinf01
+@member_counts({trooper: 1})
 c_squad_sensor_host sq_bossbattle_snipers_reinf02
+@member_counts({thrall: 3, knight: 1})
 c_squad_sensor_host sq_bossbattle_reinf01_2nd
+@member_counts({trooper: 3, knight: 1})
 c_squad_sensor_host sq_bossbattle_reinf01_3rd
+@member_counts({trooper: 3, knight: 1})
 c_squad_sensor_host sq_bossbattle_reinf01_4th
+@member_counts({knight: 1, thrall: 3})
 c_squad_sensor_host sq_bossbattle_reinf02_3rd
+@member_counts({knight: 1, thrall: 3})
 c_squad_sensor_host sq_bossbattle_reinf02_4th
+@member_counts({thrall: 3})
 c_squad_sensor_host sq_bossbattle_ground01
+@member_counts({thrall: 3})
 c_squad_sensor_host sq_bossbattle_ground02
 c_squad_sensor_host sq_dropship_hive01
 c_squad_member_sensor_host sq_dropship_hive01__pilot

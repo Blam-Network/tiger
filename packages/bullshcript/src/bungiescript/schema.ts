@@ -2,6 +2,7 @@
 // side, default and flags the definition and instance schemas carry.
 
 import { fnv1, parseHashLiteral } from "../host/tags/name_hash.ts";
+import { type ActivityStart, authoredActivityStart } from "./activity_start.ts";
 import type { BsCountsValue, BsDecl, BsExpr, BsField, BsType } from "./ast.ts";
 import { BsCompileError } from "./lexer.ts";
 import { type BsNativeKind, nativeTypeNamed } from "./native_types.ts";
@@ -90,6 +91,9 @@ export interface BsSchema {
   // an encounter class's bundle (@activity_bundle), the hash Bungie's bundle
   // build stamped as the host's activity_bundle_name
   readonly activityBundleName?: number;
+  // an encounter class's start (@activity and the decorators below it); not
+  // Bungie's: their host-only scenario tags held it
+  readonly activityStart?: ActivityStart;
   readonly kind: BsDecl["kind"];
   readonly members: readonly BsSchemaMember[];
   readonly modulePath: string;
@@ -238,8 +242,12 @@ export function emitSchema(
   }
   const nameHash = definitionNameHash(decl, project);
   const bundle = decl.decl.activityBundle;
+  const start = decl.decl.activityStart;
   return {
     ...(bundle === undefined ? {} : { activityBundleName: bundle.hash }),
+    ...(start === undefined
+      ? {}
+      : { activityStart: authoredActivityStart(start) }),
     kind: decl.decl.kind,
     members,
     modulePath: decl.modulePath,

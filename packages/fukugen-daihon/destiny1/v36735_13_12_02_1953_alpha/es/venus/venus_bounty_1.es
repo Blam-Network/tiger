@@ -1,4 +1,7 @@
 @activity_bundle("bounty_1_activity")
+@activity("venus_bounty_1")
+@start_slice("shattered_coast")
+
 string_hash sh_first_play = "first_play"
 u_globals u_globals
 string_hash invalid

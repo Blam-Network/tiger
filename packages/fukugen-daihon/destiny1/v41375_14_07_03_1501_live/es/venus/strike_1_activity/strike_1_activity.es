@@ -16,6 +16,13 @@
 # fact until more runs land.
 
 @activity_bundle("strike_1_activity")
+# Starts in the academy plaza at the plaza's venus_strike_1_phase01 spawn point.
+# Its default spawn point is the entrance_to_plaza one, on the entrance's load
+# zone: a player started there crosses straight into the entrance (8).
+@activity("venus_portal_1")
+@start_slice("plaza")
+@spawn_transition("venus_strike_1_phase01")
+
 venus_strike_1_mission1 engineering_phase
 venus_strike_1_mission2 engineering_trans_phase
 venus_strike_1_mission3 dig_site_phase

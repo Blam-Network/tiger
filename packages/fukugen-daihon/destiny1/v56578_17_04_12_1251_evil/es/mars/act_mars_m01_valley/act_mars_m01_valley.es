@@ -18,6 +18,17 @@
 # From one capture run: every timing here is a single-run fact.
 
 @activity_bundle("act_mars_m01_valley")
+# The plains' cinematic state (18.1), an empty spawn transition; the checkpoint
+# (3) and the valley (26) follow. One 2.3.1 capture.
+@activity("act_mars_m01_valley")
+@start_slice("plains", "phase_plains_cinematic")
+@phase("phase_plains_cinematic", "plains")
+@phase("phase_plains_intro", "plains")
+@phase("phase_plains_base", "plains")
+@phase("phase_checkpoint", "cabal_checkpoint")
+@phase("phase_checkpoint_boss", "cabal_checkpoint")
+@phase("phase_valley", "valley")
+
 act_mars_m01_valley_mission1 phase_plains_cinematic
 act_mars_m01_valley_mission2 phase_plains_intro
 act_mars_m01_valley_mission3 phase_plains_base

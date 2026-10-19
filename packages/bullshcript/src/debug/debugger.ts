@@ -102,6 +102,10 @@ export interface AttachOptions {
   // What the embedder says the target is (its activity, the scenario it
   // runs), passed through to clients as is.
   meta?: Record<string, unknown>;
+  // A source path's stand-in lines (CompiledBsFile.standInLines): a chunk's
+  // line numbers leave them out, so the file's lines are put back through
+  // them. Paths it does not know have none.
+  standInLines?: (path: string) => readonly number[] | undefined;
 }
 
 export interface DebugEventSink {
@@ -262,7 +266,7 @@ export class ScriptDebugger {
     options: AttachOptions = {}
   ): void {
     this.detach(id);
-    const sources = new SourceIndex();
+    const sources = new SourceIndex(options.standInLines);
     for (const chunk of host.allChunks) {
       sources.addChunk(chunk);
     }
@@ -371,9 +375,12 @@ export class ScriptDebugger {
     const thread = target.host.vm.resuming.at(-1);
     const frame = thread?.debugFrames().at(-1);
     const prototype = frame?.closure.prototype;
+    const path = prototype ? target.sources.pathOf(prototype) : undefined;
     return {
-      line: prototype ? prototype.lineInfo[frame.currentPc] : undefined,
-      path: prototype ? target.sources.pathOf(prototype) : undefined,
+      line: prototype
+        ? target.sources.fileLine(path, prototype.lineInfo[frame.currentPc])
+        : undefined,
+      path,
       thread: target.host.scheduler.current?.name,
     };
   }
@@ -478,17 +485,19 @@ export class ScriptDebugger {
   private resolveAll(): void {
     this.breakAt = new WeakMap();
     for (const [path, list] of this.breakpoints) {
-      const prototypes = new Set<Method>();
+      const prototypes = new Map<Method, SourceIndex>();
       for (const target of this.targets.values()) {
         for (const prototype of target.sources.prototypesOf(path)) {
-          prototypes.add(prototype);
+          prototypes.set(prototype, target.sources);
         }
       }
       for (const bp of list) {
         bp.resolvedLine = undefined;
+        // the file's lines, which a chunk's numbers are put back to
         let best: number | undefined;
-        for (const prototype of prototypes) {
-          for (const line of prototype.lineInfo) {
+        for (const [prototype, sources] of prototypes) {
+          for (const chunkLine of prototype.lineInfo) {
+            const line = sources.fileLine(path, chunkLine);
             if (line >= bp.line && (best === undefined || line < best)) {
               best = line;
             }
@@ -498,10 +507,14 @@ export class ScriptDebugger {
           continue;
         }
         bp.resolvedLine = best;
-        for (const prototype of prototypes) {
+        for (const [prototype, sources] of prototypes) {
           const lines = prototype.lineInfo;
+          const landing = sources.chunkLine(path, best);
           for (let pc = 0; pc < lines.length; pc++) {
-            if (lines[pc] !== best || (pc > 0 && lines[pc - 1] === best)) {
+            if (
+              lines[pc] !== landing ||
+              (pc > 0 && lines[pc - 1] === landing)
+            ) {
               continue;
             }
             let at = this.breakAt.get(prototype);
@@ -642,16 +655,23 @@ export class ScriptDebugger {
     for (const { name, register } of activeLocals(frame, frame.pc)) {
       locals[name] = luaToString(frame.registers[register]);
     }
-    const frames = [...this.resumingFrames(target)].reverse().map((f) => ({
-      line: f.closure.prototype.lineInfo[f.currentPc],
-      name: target.sources.nameOf(f.closure.prototype),
-      path: target.sources.pathOf(f.closure.prototype),
-    }));
+    const frames = [...this.resumingFrames(target)].reverse().map((f) => {
+      const framePath = target.sources.pathOf(f.closure.prototype);
+      return {
+        line: target.sources.fileLine(
+          framePath,
+          f.closure.prototype.lineInfo[f.currentPc]
+        ),
+        name: target.sources.nameOf(f.closure.prototype),
+        path: framePath,
+      };
+    });
+    const path = target.sources.pathOf(prototype);
     const hit: TigerHit = {
       frames,
-      line: prototype.lineInfo[frame.pc],
+      line: target.sources.fileLine(path, prototype.lineInfo[frame.pc]),
       locals,
-      path: target.sources.pathOf(prototype),
+      path,
       targetId: target.id,
       tick: target.host.ticks,
     };
@@ -910,7 +930,10 @@ export class ScriptDebugger {
             : (bundle >>> 0).toString(16).padStart(8, "0"),
         id: this.threadId(target, script),
         line: prototype
-          ? prototype.lineInfo[stoppedHere ? top.pc : top.currentPc]
+          ? target.sources.fileLine(
+              target.sources.pathOf(prototype),
+              prototype.lineInfo[stoppedHere ? top.pc : top.currentPc]
+            )
           : undefined,
         name: script.name,
         owner: owner ? instanceLabel(host, owner) : undefined,
@@ -978,7 +1001,7 @@ export class ScriptDebugger {
       out.push({
         column: 1,
         id,
-        line: prototype.lineInfo[pc] ?? 0,
+        line: target.sources.fileLine(path, prototype.lineInfo[pc] ?? 0),
         name: target.sources.nameOf(prototype),
         source: path
           ? { name: path.split("/").at(-1) ?? path, path }

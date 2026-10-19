@@ -9,6 +9,7 @@ import {
   writeFileSync,
 } from "node:fs";
 import { dirname, join } from "node:path";
+import type { ActivityStart } from "./activity_start.ts";
 import type { BsDeclKind, BsFileKind } from "./ast.ts";
 import type { BsCompiledDecl, BsDiagnostic } from "./compile.ts";
 import { BsCompileError } from "./lexer.ts";
@@ -21,9 +22,12 @@ import {
 } from "./script_folder.ts";
 
 export const COMPILED_BS_INDEX = "index.json";
-// the shape of index.json and the schemas (3: @member_counts); bumped when
-// it changes, so an old tree is rebuilt
-export const COMPILED_BS_FORMAT = 3;
+// the shape of index.json and the schemas (3: @member_counts, 4: activity
+// starts, 5: starts name their slices, 6: starts name the phase that owns
+// their state, 7: starts lock the time of day, 8: chunk line numbers leave out
+// the stand-in lines, which the index lists); bumped when it changes, so an
+// old tree is rebuilt
+export const COMPILED_BS_FORMAT = 8;
 
 export interface CompiledBsDecl {
   // the chunk's file, relative to the tree; a struct or enum has none
@@ -37,6 +41,9 @@ export interface CompiledBsDecl {
 export interface CompiledBsFile {
   // the bundle the file's encounter class runs in (@activity_bundle)
   readonly activityBundle?: number;
+  // how its encounter starts the activities it names (@activity and the
+  // decorators below it)
+  readonly activityStart?: ActivityStart;
   readonly chunkName: string;
   // in declaration order; the first is the file's own decl
   readonly decls: readonly CompiledBsDecl[];
@@ -45,6 +52,9 @@ export interface CompiledBsFile {
   readonly memberTypes: readonly string[];
   // relative to the build folder, forward slashes, extension kept
   readonly path: string;
+  // the source lines the chunks' line numbers leave out, ascending (see
+  // fileLineOf and chunkLineOf); a debugger maps its lines through them
+  readonly standInLines?: readonly number[];
 }
 
 export interface CompiledBsIndex {
@@ -151,11 +161,16 @@ export function compiledBsIndex(
       kind: decl.fileKind,
       memberTypes: memberTypesOf(decl),
       path,
+      ...(decl.standInLines.length === 0
+        ? {}
+        : { standInLines: decl.standInLines }),
     };
     const bundle = decl.schema.activityBundleName;
+    const start = decl.schema.activityStart;
     files.set(path, {
       ...file,
       ...(bundle === undefined ? {} : { activityBundle: bundle }),
+      ...(start === undefined ? {} : { activityStart: start }),
       decls: [...file.decls, entry],
     });
   }

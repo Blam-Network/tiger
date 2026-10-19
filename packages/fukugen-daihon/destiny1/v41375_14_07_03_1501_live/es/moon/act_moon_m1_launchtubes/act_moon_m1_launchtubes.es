@@ -18,6 +18,22 @@
 # Written from one capture: every timing below is a single-run fact.
 
 @activity_bundle("act_moon_m1_launchtubes")
+# The accelerator's intro state (1.1, phase_intro_cin's) at spawn 87875158, the
+# moonbase (6) and the launch tubes (3, whose phase_4_launchtubes owns 3.1). One
+# 2.3.1 capture.
+@activity("act_moon_m1_launchtubes")
+@start_slice("accelerator", "phase_intro_cin")
+@phase("phase_intro_cin", "accelerator")
+@phase("phase_1_accelerator", "accelerator")
+@phase("phase_moonbase", "moonbase")
+@phase("phase_goto_launchtubes", "launchtubes")
+@phase("phase_3_launchtubes", "launchtubes")
+@phase("phase_4_launchtubes", "launchtubes")
+@phase("phase_door_launchtubes", "launchtubes")
+@phase("phase_5_launchtubes", "launchtubes")
+@phase("phase_launchtubes_complete", "launchtubes")
+@spawn_transition(0x87875158)
+
 act_moon_m1_launchtubes_mission1 phase_intro_cin
 act_moon_m1_launchtubes_mission2 phase_1_accelerator
 act_moon_m1_launchtubes_mission3 phase_moonbase

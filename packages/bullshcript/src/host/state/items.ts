@@ -218,7 +218,8 @@ export interface LootState {
 export interface LifetimeState {
   joinFlag: boolean;
   state: number;
-  // A fraction of a day; the lifetime's last two members on the TU0 wire.
+  // A fraction of a day the clients are locked to; on the TU0 wire the
+  // lifetime's time-of-day lock and time of day.
   timeOfDay?: number;
 }
 

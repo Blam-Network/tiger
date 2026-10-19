@@ -13,6 +13,7 @@
 # centurion's death are single-run facts.
 
 @activity_bundle("enc_plains_m01")
+
 c_location_sensor_host plains
 c_player_trigger_sensor_host pt_plains bind(plains)
 c_trigger_volume_slot_host tv_base_mid

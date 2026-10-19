@@ -10,6 +10,7 @@
 # the tv_seq_* volumes would start.
 
 @activity_bundle(0xD66CE681)
+
 c_sequence_host seq_music_intro  # true name unknown
 c_sequence_host seq_music_accelerator  # true name unknown
 c_sequence_host seq_music_launchtubes  # true name unknown

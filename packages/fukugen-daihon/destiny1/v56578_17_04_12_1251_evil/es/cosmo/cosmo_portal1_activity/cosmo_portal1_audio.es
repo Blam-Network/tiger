@@ -5,6 +5,7 @@
 # strike goes on.
 
 @activity_bundle("cosmo_portal1_audio")
+
 c_sequence_host music_intro01  # true name unknown
 c_player_trigger_sensor_host pt_wake_trash01  # true name unknown
 c_sequence_host s01_xx40  # true name unknown

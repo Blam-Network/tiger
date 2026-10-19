@@ -5,6 +5,7 @@
 # balls and balloons (their rows are gone).
 
 @activity_bundle("enc_plaza_amb1")
+
 bool debug_plaza
 c_squad_sensor_host sq_plaza_vendor_postmaster
 c_squad_sensor_host sq_plaza_vendor_cryptarch

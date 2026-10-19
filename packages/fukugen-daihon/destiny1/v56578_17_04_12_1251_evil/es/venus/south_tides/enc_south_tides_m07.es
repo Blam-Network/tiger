@@ -8,22 +8,39 @@
 # Most task names are uncracked (hashes).
 
 @activity_bundle("enc_south_tides_m07")
+
 c_objective_sensor_host obj_south_tides_m07
+@member_counts({goblins: 4})
 c_squad_sensor_host sq_hco_goblins
+@member_counts({hobgoblins: 2})
 c_squad_sensor_host sq_pocket_snipers
+@member_counts({goblins: 3})
 c_squad_sensor_host sq_pocket_goblins01
+@member_counts({hobgoblins: 1})
 c_squad_sensor_host sq_gate01_sniper01
+@member_counts({hobgoblins: 1})
 c_squad_sensor_host sq_gate01_sniper02
+@member_counts({goblins: 4})
 c_squad_sensor_host sq_gate01_goblins
+@member_counts({hobgoblins: 1})
 c_squad_sensor_host sq_gate02_sniper01
+@member_counts({hobgoblins: 1})
 c_squad_sensor_host sq_gate02_sniper02
+@member_counts({hobgoblins: 1})
 c_squad_sensor_host sq_gate02_sniper03
+@member_counts({harpies: 3})
 c_squad_sensor_host sq_gate02_harpies
+@member_counts({goblins: 3})
 c_squad_sensor_host sq_gate03_goblins
+@member_counts({minotaur: 1, goblins: 2})
 c_squad_sensor_host sq_gate05_anchor
+@member_counts({goblins: 3})
 c_squad_sensor_host sq_gate05_goblins
+@member_counts({harpies: 3})
 c_squad_sensor_host sq_gate06_harpies
+@member_counts({hobgoblins: 1})
 c_squad_sensor_host sq_north_tides_snipers
+@member_counts({hydra: 1})
 c_squad_sensor_host sq_north_tides_hydra
 vex_warp_gate vex_warp_gate_pocket
 vex_warp_gate vex_warp_gate01

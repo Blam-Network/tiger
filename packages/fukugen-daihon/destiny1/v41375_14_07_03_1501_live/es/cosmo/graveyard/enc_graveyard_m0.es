@@ -4,6 +4,7 @@
 # drop their troops, then the sniper and the exit shanks come in.
 
 @activity_bundle("enc_graveyard_m0")
+
 c_object_sensor_host o_ketch_gantry
 @member_counts({vandal: 1})
 c_squad_sensor_host sq_fallen_m0_sniper

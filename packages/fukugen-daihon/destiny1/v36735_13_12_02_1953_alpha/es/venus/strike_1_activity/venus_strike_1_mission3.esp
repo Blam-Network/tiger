@@ -1,29 +1,48 @@
 u_globals utils
-@member_counts({storm: 0}) c_squad_sensor_host warpstorm01
+@member_counts({storm: 0})
+c_squad_sensor_host warpstorm01
 c_squad_member_sensor_host warpstorm01__storm  # true name unknown
-@member_counts({storm: 0}) c_squad_sensor_host warpstorm02
+@member_counts({storm: 0})
+c_squad_sensor_host warpstorm02
 c_squad_member_sensor_host warpstorm02__storm  # true name unknown
-@member_counts({storm: 0}) c_squad_sensor_host warpstorm03
+@member_counts({storm: 0})
+c_squad_sensor_host warpstorm03
 c_squad_member_sensor_host warpstorm03__storm  # true name unknown
-@member_counts({ultra_hydra: 0}) c_squad_sensor_host sq_boss
+@member_counts({ultra_hydra: 0})
+c_squad_sensor_host sq_boss
 c_squad_member_sensor_host sq_boss__ultra_hydra  # true name unknown
 c_health_sensor_host hydra_health  # true name unknown
 c_squad_sensor_host sq_strike_template
-@member_counts({all: 4}) c_squad_sensor_host sq_strike01_4
-@member_counts({all: 6}) c_squad_sensor_host sq_strike01_6
-@member_counts({all: 8}) c_squad_sensor_host sq_strike01_8
-@member_counts({all: 8}) c_squad_sensor_host sq_strike02_4
-@member_counts({all: 6}) c_squad_sensor_host sq_strike02_6
-@member_counts({all: 8}) c_squad_sensor_host sq_strike02_8
-@member_counts({all: 4}) c_squad_sensor_host sq_strike03_4
-@member_counts({all: 6}) c_squad_sensor_host sq_strike03_6
-@member_counts({all: 8}) c_squad_sensor_host sq_strike03_8
-@member_counts({cell_1: 1}) c_squad_sensor_host sq_boss_guard01
-@member_counts({cell_1: 1}) c_squad_sensor_host sq_boss_guard02
-@member_counts({cell_1: 1}) c_squad_sensor_host sq_boss_guard03
-@member_counts({cell_1: 1}) c_squad_sensor_host sq_boss_guard04
-@member_counts({cell_1: 1}) c_squad_sensor_host sq_boss_guard05
-@member_counts({cell_1: 1}) c_squad_sensor_host sq_boss_guard06
+@member_counts({all: 4})
+c_squad_sensor_host sq_strike01_4
+@member_counts({all: 6})
+c_squad_sensor_host sq_strike01_6
+@member_counts({all: 8})
+c_squad_sensor_host sq_strike01_8
+@member_counts({all: 8})
+c_squad_sensor_host sq_strike02_4
+@member_counts({all: 6})
+c_squad_sensor_host sq_strike02_6
+@member_counts({all: 8})
+c_squad_sensor_host sq_strike02_8
+@member_counts({all: 4})
+c_squad_sensor_host sq_strike03_4
+@member_counts({all: 6})
+c_squad_sensor_host sq_strike03_6
+@member_counts({all: 8})
+c_squad_sensor_host sq_strike03_8
+@member_counts({cell_1: 1})
+c_squad_sensor_host sq_boss_guard01
+@member_counts({cell_1: 1})
+c_squad_sensor_host sq_boss_guard02
+@member_counts({cell_1: 1})
+c_squad_sensor_host sq_boss_guard03
+@member_counts({cell_1: 1})
+c_squad_sensor_host sq_boss_guard04
+@member_counts({cell_1: 1})
+c_squad_sensor_host sq_boss_guard05
+@member_counts({cell_1: 1})
+c_squad_sensor_host sq_boss_guard06
 c_squad_group_sensor_host sgq_strike_guards  # true name unknown
 c_squad_group_sensor_host sgq_strike_minions  # true name unknown
 c_object_sensor_host pvp_heavy_cache_respawn_1

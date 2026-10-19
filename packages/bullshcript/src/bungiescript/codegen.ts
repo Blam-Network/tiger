@@ -21,6 +21,7 @@ import {
   SPECIAL_FORMS,
 } from "./project.ts";
 import { py2DictOrder } from "./pydict.ts";
+import { chunkLineOf } from "./stand_in.ts";
 import type { BsRegistryEntry } from "./types.ts";
 
 export interface BsDiagnostic {
@@ -169,6 +170,12 @@ class DeclGenerator {
       lineMap: [first, ...lines.map((line) => line.sourceLine)],
       lua: `${lines.map((line) => line.text).join("\n")}\n`,
     };
+  }
+
+  // a source line's number in the chunk, where the names Bungie's compiler
+  // gave locals come from
+  chunkLine(line: number): number {
+    return chunkLineOf(this.decl.file.standInLines, line);
   }
 
   private warn(line: number, message: string): void {
@@ -478,7 +485,7 @@ class FunctionBody {
         );
         return;
       case "switch": {
-        const name = `switch_value_${statement.line}`;
+        const name = `switch_value_${this.gen.chunkLine(statement.line)}`;
         this.line(
           `local ${name} = ${this.expr(statement.subject).text}`,
           statement.line,
@@ -566,7 +573,9 @@ class FunctionBody {
       header = `for ${targets.join(", ")} in ${this.expr(iter).text} do`;
     } else {
       const names =
-        targets.length === 1 ? [`index_${line}_unused`, targets[0]] : targets;
+        targets.length === 1
+          ? [`index_${this.gen.chunkLine(line)}_unused`, targets[0]]
+          : targets;
       if (names.length !== 2) {
         this.gen.error(line, "a collection loop takes one or two variables");
       }

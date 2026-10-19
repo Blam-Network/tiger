@@ -14,6 +14,7 @@
 # refilling, the marchers spreading out) are the AI's, not the script's.
 
 @activity_bundle("enc_entrance_m01")
+
 c_objective_sensor_host obj_entrance_m01
 c_object_sensor_host o_vex_block_network_a
 interactable_placement pf_vex_block
@@ -27,18 +28,28 @@ c_player_monitor_sensor_host pm_top_left bind(tv_top_left)
 c_trigger_volume_slot_host tv_top_right
 c_player_monitor_sensor_host pm_top_right bind(tv_top_right)
 c_action_point_host ps_enter
+@member_counts({hobgoblins: 2, minotaur: 1})
 c_squad_sensor_host sq_anchor
 c_squad_sensor_host sq_anchor_tier2
+@member_counts({goblins: 3})
 c_squad_sensor_host sq_center01
 c_squad_sensor_host sq_mid_minotaur
+@member_counts({hobgoblins: 2})
 c_squad_sensor_host sq_mid_snipers
+@member_counts({goblins: 3})
 c_squad_sensor_host sq_mid_goblins
+@member_counts({goblins: 3})
 c_squad_sensor_host sq_def_center01
+@member_counts({goblins: 3})
 c_squad_sensor_host sq_def_center02
+@member_counts({minotaur: 1, goblins: 2})
 c_squad_sensor_host sq_def_anchor01
+@member_counts({minotaur: 1, goblins: 2})
 c_squad_sensor_host sq_def_anchor02
 c_squad_sensor_host sq_def_anchor_tier2
+@member_counts({hobgoblins: 1, goblin: 2})
 c_squad_sensor_host sq_left_ledge_sniper
+@member_counts({hobgoblins: 1, goblin: 2})
 c_squad_sensor_host sq_right_ledge_sniper
 c_squad_sensor_host sq_cloud01
 c_squad_member_sensor_host sq_cloud01__cloud

@@ -1,9 +1,14 @@
 @activity_bundle("enc_lower_tower_amb")
+
 c_objective_sensor_host obj_lower_tower_amb  # true name unknown
-@member_counts({goblins: 3, harpies: 2}) c_squad_sensor_host sq_vex_btm01
-@member_counts({goblins: 5}) c_squad_sensor_host sq_vex_btm02
-@member_counts({minotaur: 1, goblins: 2}) c_squad_sensor_host sq_vex_btm03
-@member_counts({goblins: 2, minotaur: 1}) c_squad_sensor_host sq_vex_btm04
+@member_counts({goblins: 3, harpies: 2})
+c_squad_sensor_host sq_vex_btm01
+@member_counts({goblins: 5})
+c_squad_sensor_host sq_vex_btm02
+@member_counts({minotaur: 1, goblins: 2})
+c_squad_sensor_host sq_vex_btm03
+@member_counts({goblins: 2, minotaur: 1})
+c_squad_sensor_host sq_vex_btm04
 c_squad_group_sensor_host sqg_vex_btm  # true name unknown
 loot_lower_tower loot_venus_lower_tower_1
 

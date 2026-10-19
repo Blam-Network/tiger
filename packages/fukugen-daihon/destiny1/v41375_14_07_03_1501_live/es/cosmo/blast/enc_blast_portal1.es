@@ -5,6 +5,7 @@
 # exit door.
 
 @activity_bundle("enc_blast_portal1")
+
 c_squad_sensor_host sq_fallen_left01
 c_objective_sensor_host obj_ground  # true name unknown
 c_squad_sensor_host sq_fallen_left02

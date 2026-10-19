@@ -6,6 +6,7 @@ import { fukugenDaihonDir } from "@blamnetwork/bullshcript/destiny1/v41375_14_07
 
 export const ALPHA_BUILD = "v36735_13_12_02_1953_alpha";
 export const TU0_BUILD = "v41375_14_07_03_1501_live";
+export const EVIL_BUILD = "v56578_17_04_12_1251_evil";
 
 // Resolved from this package's own entry module, the way a consumer's
 // require.resolve result would be.

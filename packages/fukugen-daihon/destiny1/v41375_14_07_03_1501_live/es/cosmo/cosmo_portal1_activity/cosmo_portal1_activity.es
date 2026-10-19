@@ -16,6 +16,22 @@
 # scripts of their own.
 
 @activity_bundle("cosmo_portal1_activity")
+# The Devils' Lair. The 2.3.1 capture starts it in the rocketyard (20, public)
+# at spawn point cosmo_portal_1_phase00; the lifetime runs the eight phase rows in
+# name order: the rocketyard, three refinery phases (19), the blast (2) and
+# three ship phases (21).
+@activity("cosmo_portal_1")
+@start_slice("rocketyard", "phase00")
+@phase("phase00", "rocketyard")
+@phase("phase01", "refinery")
+@phase("phase02", "refinery")
+@phase("phase03", "refinery")
+@phase("phase04", "blast")
+@phase("phase05", "ship")
+@phase("phase06", "ship")
+@phase("phase07", "ship")
+@spawn_transition("cosmo_portal_1_phase00")
+
 cosmo_portal1_activity_mission1 phase00
 cosmo_portal1_activity_mission2 phase01
 cosmo_portal1_activity_mission3 phase02

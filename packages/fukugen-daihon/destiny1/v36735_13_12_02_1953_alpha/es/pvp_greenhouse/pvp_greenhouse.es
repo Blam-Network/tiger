@@ -1,4 +1,7 @@
 @activity_bundle("pvp")
+@activity("pvp_greenhouse")
+@start_slice("pvp_greenhouse")
+
 c_pvp_controller pvp_controller
 c_pvp_slayer slayer
 c_pvp_dominion dominion

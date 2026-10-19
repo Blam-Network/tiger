@@ -30,7 +30,7 @@ Other versions of the game have had their scripts written from scratch, using th
 
 A script's file name is its encounter's name, and the root of its rows' names (`enc_x.sq_y`). Name a script after its rows.
 
-Every encounter names the bundle it runs in with an `@activity_bundle` decorator, at the top of a `.es` file or above a shared `.bs` encounter's class. A script without one runs in no bundle. The name is usually the encounter's own, but not always: in the Alpha, `venus_bounty_1.es` runs in the bundle `bounty_1_activity`, and each PvP map's script runs in that map's bundle `pvp`. A name never cracked is written as its hash:
+Every encounter names the bundle it runs in with an `@activity_bundle` decorator, at the top of a `.es` file or above a shared `.bs` encounter's class. A script without one runs in no bundle (a root that is only start decorators, with no members, is left alone: it only starts its activity). The name is usually the encounter's own, but not always: in the Alpha, `venus_bounty_1.es` runs in the bundle `bounty_1_activity`, and each PvP map's script runs in that map's bundle `pvp`. A name never cracked is written as its hash:
 
 ```python
 @activity_bundle("bounty_1_activity")
@@ -75,9 +75,10 @@ Bungie's build tools for packages (tool and tool_lib) can be configured to compi
 
 We don't know much about Destiny's loose tags, nor do we need much from them. It appears that each encounter script would have been bound to an encounter host tag in some manner. Script data is a small portion of hostonly packages, so recompiling these packages is beyond the scope of this project. Instead, our compiled scripts include JSON files with supplementrary data which would have come from these hostonly tags, and we dont compile them from loose tags but instead needed data is included within script source using decorators (eg @activity_bundle).
 
-Two decorators carry that data:
+These decorators carry that data:
 
 - `@activity_bundle("name")` on an encounter: the bundle it runs in, which the bundle's host named.
 - `@member_counts({dreg: 3, vandal: 1})` on a squad (or on an array or archetype instance holding squads): the host-only squad host's cells, by member name, named members included: the anonymous bodies each member of the squad's definition spawns (a named member's actor comes besides). The client packages list a squad's members but not how many bodies each spawns; Bungie's host-only squad hosts held that. A squad without it spawns one body per member. Member counts are reconstructed from retail captures, and for the pre-alpha from its host-only tags.
+- `@activity("name", ...)` with `@start_slice("region", "phase")`, `@phase("name", "region")`, `@spawn_transition("spawn point")`, `@region_spawn_transition(region, "spawn point")` and `@time_of_day(fraction)` under it, on the encounter that starts those activities: how the activity starts. For the pre-alpha the start slice is the host-only scenario_fah's (initial_bubble, named by its region) and the phases are the strike's; for TU0 (whose packages ship no scenario) the values come from retail captures. A script without them has no start data authored, and its activity cannot start. An activity whose encounters are not written yet has a script of only these decorators. Decorator lines are left out of a chunk's line numbers, so they sit on their own lines under `@activity_bundle` without moving any line of Bungie's code (bullshcript's LANGUAGE.md, Line numbers).
 
 Everything else we need from tags is read from the retail client packages at runtime with gibbon. There are no offline tag dumps. Every fact the host uses comes from a compiled script or a runtime package read.

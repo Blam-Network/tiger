@@ -13,6 +13,7 @@
 # ogre).
 
 @activity_bundle(0xD53AAA20)
+
 c_object_sensor_host o_gate_intro
 c_object_sensor_host o_gate_swords
 c_object_sensor_host o_gate_selection
@@ -22,15 +23,25 @@ c_player_trigger_sensor_host pt_gate_rush
 c_objective_sensor_host obj_strength_ch1
 c_squad_sensor_host sq_dark_ritual
 c_encounter_handle specops_moon_anomaly
+@member_counts({thrall: 3, exploders: 1})
 c_squad_sensor_host sq_thrall_exploders_a1
+@member_counts({knight: 1, 0xFA650FD6: 1, 0xFA650FD5: 1, trooper: 2})
 c_squad_sensor_host sq_knights_a
+@member_counts({trooper: 3})
 c_squad_sensor_host sq_troopers_a
+@member_counts({exploders: 1, thrall: 2})
 c_squad_sensor_host sq_thrall_exploders_b1
+@member_counts({exploders: 2, thrall: 2})
 c_squad_sensor_host sq_thrall_exploders_b2
+@member_counts({wizard: 1, knights: 2})
 c_squad_sensor_host sq_knights_b
+@member_counts({trooper: 5})
 c_squad_sensor_host sq_troopers_b
+@member_counts({0xB19FA1DF: 1})
 c_squad_sensor_host sq_minibosses
+@member_counts({thrall: 1, thrall_1: 1, thrall_2: 1})
 c_squad_sensor_host sq_thrall_miniboss
+@member_counts({trooper: 3})
 c_squad_sensor_host sq_troopers_c
 c_sequence_host seq_wave_announce1
 c_sequence_host seq_wave_announce3

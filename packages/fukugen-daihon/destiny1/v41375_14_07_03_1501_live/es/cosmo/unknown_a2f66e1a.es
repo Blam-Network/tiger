@@ -13,6 +13,7 @@
 # run. domea01 came back 1 s after the player left its volume, 690 s later.
 
 @activity_bundle(0xA2F66E1A)
+
 static_array<c_object_sensor_host, 3> patrol_beacons
 c_object_sensor_host o_sparrow_pod_cage
 c_sequence_host seq_ambient_music

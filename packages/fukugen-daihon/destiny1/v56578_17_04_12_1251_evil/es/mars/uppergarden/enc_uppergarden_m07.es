@@ -9,29 +9,47 @@
 # that run's. Task names are uncracked and written as hashes, except boss.
 
 @activity_bundle("enc_uppergarden_m07")
+
 c_object_sensor_host o_door_lowergarden
 c_objective_sensor_host obj_uppergarden_m07
+@member_counts({0xB84FD02D: 1, 0xB84FD02E: 1})
 c_squad_sensor_host sq_overlook_hobgoblin
+@member_counts({goblin: 3})
 c_squad_sensor_host sq_overlook_goblin
+@member_counts({harpy: 1})
 c_squad_sensor_host sq_landing_harpy_a
+@member_counts({harpy: 1})
 c_squad_sensor_host sq_landing_harpy_b
+@member_counts({harpy: 1})
 c_squad_sensor_host sq_landing_harpy_c
 c_squad_sensor_host sq_gulch_cyclops
 c_squad_sensor_host sq_gulch_minotaur
+@member_counts({goblin: 3})
 c_squad_sensor_host sq_gulch_goblin_a_a
+@member_counts({goblin: 3})
 c_squad_sensor_host sq_gulch_goblin_a_b
+@member_counts({goblin: 3})
 c_squad_sensor_host sq_gulch_goblin_b_a
 c_squad_sensor_host sq_pit_hobgoblin_a
 c_squad_sensor_host sq_pit_hobgoblin_b
 c_squad_sensor_host sq_boss
+@member_counts({goblin: 3})
 c_squad_sensor_host sq_pit_goblin_a
+@member_counts({goblin: 3})
 c_squad_sensor_host sq_pit_goblin_b
+@member_counts({goblin: 3})
 c_squad_sensor_host sq_pit_goblin_c
+@member_counts({goblin: 3})
 c_squad_sensor_host sq_stair_goblin
+@member_counts({hobgoblin: 1})
 c_squad_sensor_host sq_stair_hobgoblin_a
+@member_counts({hobgoblin: 1})
 c_squad_sensor_host sq_stair_hobgoblin_b
+@member_counts({minotaur: 1})
 c_squad_sensor_host sq_bottom_minotaur
+@member_counts({harpy: 2})
 c_squad_sensor_host sq_bottom_harpy_a
+@member_counts({harpy: 2})
 c_squad_sensor_host sq_bottom_harpy_b
 c_squad_sensor_host sq_cloud_boss
 c_squad_member_sensor_host sq_cloud_boss__pilot

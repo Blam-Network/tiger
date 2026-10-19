@@ -3,6 +3,7 @@
 # The strike's dig site encounter.
 
 @activity_bundle("enc_dig_site_strike1")
+
 c_squad_group_sensor_host sg_fallen  # true name unknown
 c_squad_sensor_host sq_strike09
 c_squad_sensor_host sq_strike10

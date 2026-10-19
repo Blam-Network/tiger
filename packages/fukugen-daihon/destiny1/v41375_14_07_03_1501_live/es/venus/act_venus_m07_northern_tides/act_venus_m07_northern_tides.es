@@ -14,6 +14,17 @@
 # every wait below and in the missions is that run's, unconfirmed.
 
 @activity_bundle("act_venus_m07_northern_tides")
+# Bubble 3 at spawn FFBA6F9C, the complex's scan phase in 4, then the tides (21,
+# 13). One 2.3.1 capture.
+@activity("act_venus_m07_northern_tides")
+@start_slice("baby_shat")
+@phase("phase_complex_scan_node", "complex")
+@phase("phase_southern_tides_goto", "southern_tides")
+@phase("phase_northern_tides_ascend_steps", "northern_tides")
+@phase("phase_northern_tides_boss", "northern_tides")
+@phase("phase_northern_tides_outro", "northern_tides")
+@spawn_transition(0xFFBA6F9C)
+
 act_venus_m07_northern_tides_mission1 phase_complex_scan_node
 act_venus_m07_northern_tides_mission2 phase_southern_tides_goto
 act_venus_m07_northern_tides_mission3 phase_northern_tides_ascend_steps

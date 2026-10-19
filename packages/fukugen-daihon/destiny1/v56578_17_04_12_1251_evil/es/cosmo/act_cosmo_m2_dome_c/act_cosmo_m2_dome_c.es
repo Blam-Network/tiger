@@ -17,6 +17,15 @@
 # unknown_82945a01 bundle holds the music and the first Ghost lines.
 
 @activity_bundle("act_cosmo_m2_dome_c")
+# From the 2.3.1 capture.
+@activity("act_cosmo_m2_dome_c")
+@start_slice("delta_s")
+@phase("cosmo_m2_phase00_delta_n", "delta_n")
+@phase("cosmo_m2_phase01_dry_sea", "dry_sea")
+@phase("cosmo_m2_phase02_dome_c", "dome_c")
+@phase("cosmo_m2_phase03_dome_c", "dome_c")
+@phase("cosmo_m2_phase04_dome_c", "dome_c")
+
 act_cosmo_m2_dome_c_mission1 cosmo_m2_phase00_delta_n
 act_cosmo_m2_dome_c_mission2 cosmo_m2_phase01_dry_sea
 act_cosmo_m2_dome_c_mission3 cosmo_m2_phase02_dome_c

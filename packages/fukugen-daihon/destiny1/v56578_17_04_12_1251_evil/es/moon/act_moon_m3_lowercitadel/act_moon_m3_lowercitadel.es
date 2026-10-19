@@ -18,6 +18,17 @@
 # the start; it only works for players holding the scan objective's flag.
 
 @activity_bundle("act_moon_m3_lowercitadel")
+# The accelerator (1) at the same spawn, the wisdom and citadel phases in 5, the
+# strength phases in 11. One 2.3.1 capture.
+@activity("act_moon_m3_lowercitadel")
+@start_slice("accelerator")
+@phase("phase_wisdom", "lowercitadel")
+@phase("phase_lowercitadel", "lowercitadel")
+@phase("phase_strength", "strength")
+@phase("phase_strength_b", "strength")
+@phase("phase_strength_complete", "strength")
+@spawn_transition(0x87875158)
+
 act_moon_m3_lowercitadel_mission1 phase_wisdom
 act_moon_m3_lowercitadel_mission2 phase_lowercitadel
 act_moon_m3_lowercitadel_mission3 phase_strength

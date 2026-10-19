@@ -15,6 +15,13 @@
 # unknown_8bd80dbe bundle holds the music and Ghost lines.
 
 @activity_bundle("act_cosmo_m1_dome_a")
+# From the 2.3.1 capture.
+@activity("act_cosmo_m1_dome_a")
+@start_slice("delta_s")
+@phase("cosmo_m1_phase00_dome_a", "dome_a")
+@phase("cosmo_m1_phase01_dome_a", "dome_a")
+@phase("cosmo_m1_phase_end", "dome_a")
+
 act_cosmo_m1_dome_a_mission1 cosmo_m1_phase00_dome_a
 act_cosmo_m1_dome_a_mission2 cosmo_m1_phase01_dome_a
 act_cosmo_m1_dome_a_mission3 cosmo_m1_phase_end

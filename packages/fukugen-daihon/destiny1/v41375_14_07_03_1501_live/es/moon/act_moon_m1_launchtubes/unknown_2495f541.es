@@ -10,6 +10,7 @@
 # sequence restart at the end of the wave.
 
 @activity_bundle(0x2495F541)
+
 c_player_trigger_sensor_host pt_bubble  # true name unknown
 c_player_trigger_sensor_host pt_drop_exit  # true name unknown
 c_player_trigger_sensor_host pt_accel_exit  # true name unknown

@@ -6,6 +6,7 @@
 # From one retail capture, so the waits are that run's.
 
 @activity_bundle("enc_hangar_m0_5")
+
 c_object_sensor_host o_ultra_audio
 c_objective_sensor_host obj_hangar_m0_5_fallen  # true name unknown
 c_squad_sensor_host sq_amb_fallen_ultra
@@ -22,7 +23,9 @@ c_squad_sensor_host sq_amb_fallen_1
 c_squad_sensor_host sq_amb_shank
 c_squad_sensor_host sq_amb_fallen_ship_2
 c_squad_sensor_host sq_amb_fallen_north_1
+@member_counts({dregs: 3, shanks: 2})
 c_squad_sensor_host sq_amb_fallen_north_2
+@member_counts({vandal: 2, shanks: 2})
 c_squad_sensor_host sq_amb_fallen_south_1
 c_squad_sensor_host sq_amb_fallen_south_2
 

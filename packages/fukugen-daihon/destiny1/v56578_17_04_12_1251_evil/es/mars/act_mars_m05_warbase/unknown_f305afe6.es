@@ -16,17 +16,26 @@
 # objective's default; the dropships dropped nothing before the boss died.
 
 @activity_bundle(0xF305AFE6)
+
 c_objective_sensor_host obj_warbase_ch3
 c_squad_sensor_host sq_bridge_a_a
 c_squad_sensor_host sq_bridge_a_b
+@member_counts({0x3C775323: 3})
 c_squad_sensor_host sq_bridge_b_a
+@member_counts({0x3C775323: 3})
 c_squad_sensor_host sq_bridge_b_b
+@member_counts({0x3C775323: 1, 0xAFD60E03: 1, 0x43775E2E: 1, 0xEA33395E: 1})
 c_squad_sensor_host sq_bridge_b_c
+@member_counts({0xDFD659AC: 2, 0x43775E2E: 2})
 c_squad_sensor_host sq_lastline
+@member_counts({0x31D24833: 1})
 c_squad_sensor_host sq_lastline_top_a
+@member_counts({0x3C775323: 3})
 c_squad_sensor_host sq_preboss1
+@member_counts({0x43775E2E: 1, 0xDDAD9C63: 1, 0x2681BE63: 2})
 c_squad_sensor_host sq_preboss2
 c_squad_sensor_host sq_boss
+@member_counts({0x3C775323: 2, legionary: 2})
 c_squad_sensor_host sq_boss_intro
 c_squad_sensor_host sq_dropship
 c_squad_member_sensor_host sq_dropship__pilot

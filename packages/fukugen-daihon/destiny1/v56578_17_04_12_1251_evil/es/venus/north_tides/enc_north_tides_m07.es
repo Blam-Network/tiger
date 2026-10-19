@@ -12,14 +12,21 @@
 # are uncracked (hashes).
 
 @activity_bundle("enc_north_tides_m07")
+
 c_objective_sensor_host obj_north_tides_m07
 c_squad_sensor_host sq_boss
 c_squad_member_sensor_host sq_boss__ultra_minotaur
+@member_counts({goblins: 2})
 c_squad_sensor_host sq_boss_goblins01
+@member_counts({goblins: 2})
 c_squad_sensor_host sq_boss_goblins02
+@member_counts({goblins: 2})
 c_squad_sensor_host sq_boss_goblins03
+@member_counts({hobgoblin: 1})
 c_squad_sensor_host sq_boss_hobgoblin_left
+@member_counts({hobgoblin: 1})
 c_squad_sensor_host sq_boss_hobgoblin_right01
+@member_counts({hobgoblin: 1})
 c_squad_sensor_host sq_boss_hobgoblin_right02
 c_squad_sensor_host sq_cloud_left_hobgoblin
 c_squad_sensor_host sq_cloud_right_hobgoblin01
@@ -27,14 +34,23 @@ c_squad_sensor_host sq_cloud_right_hobgoblin02
 c_squad_sensor_host sq_cloud_adds
 c_squad_sensor_host sq_cloud_mid_hill
 c_squad_sensor_host sq_cloud_top_hill
+@member_counts({goblins: 4})
 c_squad_sensor_host sq_transition_front
+@member_counts({goblins: 3, hobgoblins: 2})
 c_squad_sensor_host sq_transition_back
+@member_counts({goblins: 3, hobgoblins: 2})
 c_squad_sensor_host sq_btm_hill
+@member_counts({goblins: 4})
 c_squad_sensor_host sq_mid_hill01
+@member_counts({goblins: 4})
 c_squad_sensor_host sq_mid_hill02
+@member_counts({hobgoblins: 2})
 c_squad_sensor_host sq_mid_hill_snipers
+@member_counts({goblins: 4})
 c_squad_sensor_host sq_top_hill01
+@member_counts({goblins: 4})
 c_squad_sensor_host sq_top_hill02
+@member_counts({0x1F507240: 1, 0x1F507243: 1, 0xD2F2F789: 1, 0xD2F2F78A: 1, 0xD2F2F78B: 1})
 c_squad_sensor_host sq_top_hill_snipers
 c_hop_on_sensor_host ho_invincible
 c_object_filter_sensor_host of_boss

@@ -17,6 +17,19 @@
 # every timing and wave rule in these files is unconfirmed.
 
 @activity_bundle("act_venus_m01_engineering")
+# The shattered coast's intro state (20.1, phase_shattered_coast_intro's), an
+# empty spawn transition. After the cinematic the player stands in bubble 3 and
+# walks into 20. One 2.3.1 capture: the GAS's slice and spawn transition for the
+# start, the lifetime's phase index, name hash and slice for the phase order.
+@activity("act_venus_m01_engineering")
+@start_slice("shattered_coast", "phase_shattered_coast_intro")
+@phase("phase_shattered_coast_intro", "shattered_coast")
+@phase("phase_shattered_coast_sensors", "shattered_coast")
+@phase("phase_entrance_goto", "entrance")
+@phase("phase_entrance_vex_conflux", "entrance")
+@phase("phase_entrance_resist_vex", "entrance")
+@phase("phase_engineering_outro", "entrance")
+
 act_venus_m01_engineering_mission1 phase_shattered_coast_intro
 act_venus_m01_engineering_mission2 phase_shattered_coast_sensors
 act_venus_m01_engineering_mission3 phase_entrance_goto

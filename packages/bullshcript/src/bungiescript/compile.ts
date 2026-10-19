@@ -13,6 +13,7 @@ import {
 } from "./parser.ts";
 import { Project, type ProjectDecl } from "./project.ts";
 import { type BsSchema, emitSchema, methodKey } from "./schema.ts";
+import { chunkLineOf } from "./stand_in.ts";
 import type { BsRegistryEntry } from "./types.ts";
 
 export type { BsDiagnostic } from "./codegen.ts";
@@ -35,13 +36,16 @@ export interface BsCompiledDecl {
   readonly fileKind: BsFileKind;
   readonly imports: readonly BsRegistryEntry[];
   readonly kind: BsDeclKind;
-  // generated Lua line -> source line, [0] being the fallback (see codegen)
+  // generated Lua line -> source line (the file's own), [0] being the
+  // fallback (see codegen)
   readonly lineMap: readonly number[];
   readonly lua: string;
   readonly modulePath: string;
   readonly name: string;
   readonly path: string;
   readonly schema: BsSchema;
+  // the file's lines the chunk's line numbers leave out (stand_in.ts)
+  readonly standInLines: readonly number[];
 }
 
 export interface BsCompileResult {
@@ -105,6 +109,7 @@ export function compileBungieScript(
   const project = new Project(parsed.map((entry) => entry.file));
   const sources = new Map(parsed.map((entry) => [entry.file, entry.source]));
   const decls: BsCompiledDecl[] = [];
+  diagnostics.push(...activityStartDiagnostics(project.decls));
   for (const decl of project.decls) {
     diagnostics.push(...encounterDiagnostics(decl, project));
     try {
@@ -126,7 +131,8 @@ export function compileBungieScript(
 
 // An encounter class is named c_encounter__<file stem>, and only encounter
 // classes carry the prefix (implicit .es classes always are). Its bundle is
-// the one its @activity_bundle names; without one it runs in none.
+// the one its @activity_bundle names; without one it runs in none (reported,
+// unless the file is only start decorators).
 function encounterDiagnostics(
   decl: ProjectDecl,
   project: Project
@@ -154,7 +160,11 @@ function encounterDiagnostics(
     );
   }
   const bundle = decl.decl.activityBundle;
-  if (encounter && bundle === undefined) {
+  // A root that only says how its activity starts (decorators, no members)
+  // has no bundle to run in and nothing to run.
+  const startOnly =
+    decl.decl.activityStart !== undefined && decl.decl.members.length === 0;
+  if (encounter && bundle === undefined && !startOnly) {
     report(
       `encounter class '${decl.name}' runs in no bundle; give it @activity_bundle("<bundle name>")`,
       "warning"
@@ -165,6 +175,40 @@ function encounterDiagnostics(
       "error",
       bundle.line
     );
+  }
+  const start = decl.decl.activityStart;
+  if (!encounter && start !== undefined) {
+    report(
+      `@activity on '${decl.name}', which is not an encounter class`,
+      "error",
+      start.line
+    );
+  }
+  return out;
+}
+
+// An activity starts one way: two scripts naming the same activity is an error
+// at the second.
+function activityStartDiagnostics(
+  decls: readonly ProjectDecl[]
+): BsDiagnostic[] {
+  const owners = new Map<string, string>();
+  const out: BsDiagnostic[] = [];
+  for (const decl of decls) {
+    const start = decl.decl.activityStart;
+    for (const activity of start?.activities ?? []) {
+      const owner = owners.get(activity);
+      if (owner === undefined) {
+        owners.set(activity, decl.file.path);
+      } else {
+        out.push({
+          line: start?.line ?? 1,
+          message: `activity '${activity}' already starts in ${owner}`,
+          path: decl.file.path,
+          severity: "error",
+        });
+      }
+    }
   }
   return out;
 }
@@ -183,7 +227,7 @@ function compileDecl(
     decl.decl.kind === "class" && options.chunks !== false
       ? compileLua(Buffer.from(generated.lua, "latin1"), {
           chunkName: decl.chunkName,
-          lineMap: lineMapper(generated.lineMap),
+          lineMap: lineMapper(generated.lineMap, decl.file.standInLines),
         })
       : undefined;
   return {
@@ -198,13 +242,17 @@ function compileDecl(
     name: decl.name,
     path: decl.file.path,
     schema,
+    standInLines: decl.file.standInLines,
   };
 }
 
-// hks's m_debugMap for this decl: a generated Lua line's source line, and
-// the first function's line for anything unmapped (the main chunk's 0).
+// hks's m_debugMap for this decl: a generated Lua line's line in the chunk, and
+// the first function's line for anything unmapped (the main chunk's 0). That
+// is its source line less the stand-in lines above it.
 export function lineMapper(
-  lineMap: readonly number[]
+  lineMap: readonly number[],
+  standInLines: readonly number[] = []
 ): (luaLine: number) => number {
-  return (luaLine) => lineMap[luaLine] ?? lineMap[0] ?? luaLine;
+  return (luaLine) =>
+    chunkLineOf(standInLines, lineMap[luaLine] ?? lineMap[0] ?? luaLine);
 }

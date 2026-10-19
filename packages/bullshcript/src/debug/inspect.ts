@@ -165,7 +165,7 @@ export class Inspector {
       return {
         name,
         type: "function",
-        value: `${target.sources.nameOf(prototype)} (${path ?? "?"}:${prototype.lineDefined})`,
+        value: `${target.sources.nameOf(prototype)} (${path ?? "?"}:${target.sources.fileLine(path, prototype.lineDefined)})`,
         variablesReference:
           value.upvalues.length > 0
             ? this.handles.add({ kind: "lua", target, value })

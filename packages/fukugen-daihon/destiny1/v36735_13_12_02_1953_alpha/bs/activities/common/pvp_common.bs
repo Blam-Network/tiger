@@ -1,4 +1,5 @@
 @activity_bundle("pvp_common")
+
 class c_encounter__pvp_common : c_encounter:
     c_scoreboard_host scoreboard  # true name unknown
     c_timer_sensor_host lifetime_timer  # true name unknown

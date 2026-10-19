@@ -1,6 +1,8 @@
 // BungieScript syntax tree. Every node keeps its source line (the line the
 // chunk's debug info ends up pointing at) and the byte span of its text.
 
+import type { ActivityStart } from "./activity_start.ts";
+
 export type BsFileKind = "bs" | "es" | "esp" | "esu";
 
 interface BsSpan {
@@ -14,6 +16,9 @@ export interface BsFile {
   readonly kind: BsFileKind;
   // as given, forward slashes: "es/utility_scripts/kill_squad_objective.esu"
   readonly path: string;
+  // the lines holding only decorators (and their comments), ascending: they
+  // are left out of the chunk's line numbers (stand_in.ts)
+  readonly standInLines: readonly number[];
 }
 
 export type BsDeclKind = "class" | "struct" | "enum";
@@ -25,6 +30,12 @@ export interface BsActivityBundle {
   readonly line: number;
   // as written: the name, or "0x<hash>"
   readonly text: string;
+}
+
+// The head decorators that say how an activity starts (@activity and the
+// start data after it), gathered; the line is the first one's.
+export interface BsActivityStart extends ActivityStart {
+  readonly line: number;
 }
 
 // `@member_counts(...)` on a squad, or on what holds squads: the bodies each
@@ -63,6 +74,7 @@ export interface BsMemberCounts {
 
 export interface BsDecl extends BsSpan {
   readonly activityBundle: BsActivityBundle | undefined;
+  readonly activityStart: BsActivityStart | undefined;
   readonly base: string | undefined;
   // es-family files declare their one class implicitly
   readonly implicit: boolean;

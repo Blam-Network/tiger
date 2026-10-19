@@ -9,21 +9,31 @@
 # uncracked and written as hashes.
 
 @activity_bundle("enc_catacombs_m07")
+
 c_objective_sensor_host obj_catacombs_m07
 c_squad_sensor_host sq_hall_goblin_a
 c_squad_sensor_host sq_hall_goblin_b
 c_squad_sensor_host sq_hall_goblin_c
+@member_counts({minotaur: 1})
 c_squad_sensor_host sq_hall_anchor_minotaur
+@member_counts({harpy: 2})
 c_squad_sensor_host sq_hall_anchor_harpy
 c_squad_sensor_host sq_pit_cloud
 c_squad_member_sensor_host sq_pit_cloud__pilot
+@member_counts({minotaur: 1})
 c_squad_sensor_host sq_pit_minotaur_a
+@member_counts({harpy: 1})
 c_squad_sensor_host sq_pit_harpy_a
+@member_counts({harpy: 2})
 c_squad_sensor_host sq_pit_harpy_b
+@member_counts({harpy: 2})
 c_squad_sensor_host sq_pit_harpy_c
+@member_counts({0xB84FD02D: 1, 0xB84FD02E: 1})
 c_squad_sensor_host sq_foyer_hobgoblin
 c_squad_sensor_host sq_foyer_minotaur_a
+@member_counts({goblin: 3})
 c_squad_sensor_host sq_foyer_goblin_a
+@member_counts({goblin: 3})
 c_squad_sensor_host sq_foyer_goblin_b
 c_sequence_host seq_vex_announce
 c_player_trigger_sensor_host pt_hall

@@ -1,4 +1,5 @@
 @activity_bundle("enc_south_tides_amb1")
+
 c_objective_sensor_host obj_south_tides_amb_fallen  # true name unknown
 c_objective_sensor_host obj_south_tides_amb_south  # true name unknown
 c_objective_sensor_host obj_south_tides_amb_mid  # true name unknown
@@ -7,31 +8,56 @@ c_squad_group_sensor_host sqg_wall_snipers  # true name unknown
 c_squad_group_sensor_host sqg_wall_solo  # true name unknown
 loot_south_tides loot_venus_south_tides_1
 c_encounter_manager encounters  # true name unknown
-@member_counts({_squad: [{goblins_4: 4}]}) ambush_encounter vex_ambush_encounter
-@member_counts({_squad: [{harpy_2: 2, minotaur_1: 1}]}) ambush_encounter vex_ambush_encounter_1
-@member_counts({_squad: [{goblin_3: 3}]}) ambush_encounter vex_ambush_encounter_2
-@member_counts({_squad: [{hobgoblin_3: 3}]}) ambush_encounter vex_ambush_encounter_3
-@member_counts({_squad: [{harpy_4: 4}]}) ambush_encounter vex_ambush_encounter_4
-@member_counts({_squad: [{minotaur_1: 1, goblins_3: 3}]}) ambush_encounter vex_ambush_encounter_5
-@member_counts({_squad: [{hobgoblin_1: 1}]}) ambush_encounter vex_ambush_encounter_6
-@member_counts({_squad: [{goblin_4: 4, minotaur_2: 1}]}) ambush_encounter vex_ambush_encounter_7
-@member_counts({_squad: [{hobgoblin_2: 2}]}) ambush_encounter vex_ambush_encounter_8
-@member_counts({_squad: [{goblins_4: 4}]}) simple_encounter vex_simple_encounter
-@member_counts({_squad: [{harpy_2: 2, minotaur_1: 1}]}) simple_encounter vex_simple_encounter_1
-@member_counts({_squad: [{goblin_3: 3}]}) simple_encounter vex_simple_encounter_2
-@member_counts({_squad: [{hobgoblin_3: 3}]}) simple_encounter vex_simple_encounter_3
-@member_counts({_squad: [{harpy_4: 4}]}) simple_encounter vex_simple_encounter_4
-@member_counts({_squad: [{minotaur_1: 1, goblins_3: 3}]}) simple_encounter vex_simple_encounter_5
-@member_counts({_squad: [{hobgoblin_1: 1}]}) simple_encounter vex_simple_encounter_6
-@member_counts({_squad: [{goblin_4: 4, minotaur_2: 1}]}) simple_encounter vex_simple_encounter_7
-@member_counts({_squad: [{hobgoblin_2: 2}]}) simple_encounter vex_simple_encounter_8
-@member_counts({_squad: [{cyclops: 1}]}) simple_encounter vex_simple_encounter_turret_1
-@member_counts({_squad: [{cyclops: 1}]}) simple_encounter vex_simple_encounter_turret_2
-@member_counts({_squad: [{shank_6: 6}, {vandal_1: 1}]}) simple_encounter fallen_simple_encounter
-@member_counts({_squad: {gate: 0}}) vex_warp_gate vex_warp_gate00
-@member_counts({_squad: {gate: 0}}) vex_warp_gate vex_warp_gate01
-@member_counts({_squad: {gate: 0}}) vex_warp_gate vex_warp_gate02
-@member_counts({_squad: {gate: 0}}) vex_warp_gate vex_warp_gate03
+@member_counts({_squad: [{goblins_4: 4}]})
+ambush_encounter vex_ambush_encounter
+@member_counts({_squad: [{harpy_2: 2, minotaur_1: 1}]})
+ambush_encounter vex_ambush_encounter_1
+@member_counts({_squad: [{goblin_3: 3}]})
+ambush_encounter vex_ambush_encounter_2
+@member_counts({_squad: [{hobgoblin_3: 3}]})
+ambush_encounter vex_ambush_encounter_3
+@member_counts({_squad: [{harpy_4: 4}]})
+ambush_encounter vex_ambush_encounter_4
+@member_counts({_squad: [{minotaur_1: 1, goblins_3: 3}]})
+ambush_encounter vex_ambush_encounter_5
+@member_counts({_squad: [{hobgoblin_1: 1}]})
+ambush_encounter vex_ambush_encounter_6
+@member_counts({_squad: [{goblin_4: 4, minotaur_2: 1}]})
+ambush_encounter vex_ambush_encounter_7
+@member_counts({_squad: [{hobgoblin_2: 2}]})
+ambush_encounter vex_ambush_encounter_8
+@member_counts({_squad: [{goblins_4: 4}]})
+simple_encounter vex_simple_encounter
+@member_counts({_squad: [{harpy_2: 2, minotaur_1: 1}]})
+simple_encounter vex_simple_encounter_1
+@member_counts({_squad: [{goblin_3: 3}]})
+simple_encounter vex_simple_encounter_2
+@member_counts({_squad: [{hobgoblin_3: 3}]})
+simple_encounter vex_simple_encounter_3
+@member_counts({_squad: [{harpy_4: 4}]})
+simple_encounter vex_simple_encounter_4
+@member_counts({_squad: [{minotaur_1: 1, goblins_3: 3}]})
+simple_encounter vex_simple_encounter_5
+@member_counts({_squad: [{hobgoblin_1: 1}]})
+simple_encounter vex_simple_encounter_6
+@member_counts({_squad: [{goblin_4: 4, minotaur_2: 1}]})
+simple_encounter vex_simple_encounter_7
+@member_counts({_squad: [{hobgoblin_2: 2}]})
+simple_encounter vex_simple_encounter_8
+@member_counts({_squad: [{cyclops: 1}]})
+simple_encounter vex_simple_encounter_turret_1
+@member_counts({_squad: [{cyclops: 1}]})
+simple_encounter vex_simple_encounter_turret_2
+@member_counts({_squad: [{shank_6: 6}, {vandal_1: 1}]})
+simple_encounter fallen_simple_encounter
+@member_counts({_squad: {gate: 0}})
+vex_warp_gate vex_warp_gate00
+@member_counts({_squad: {gate: 0}})
+vex_warp_gate vex_warp_gate01
+@member_counts({_squad: {gate: 0}})
+vex_warp_gate vex_warp_gate02
+@member_counts({_squad: {gate: 0}})
+vex_warp_gate vex_warp_gate03
 
 
 

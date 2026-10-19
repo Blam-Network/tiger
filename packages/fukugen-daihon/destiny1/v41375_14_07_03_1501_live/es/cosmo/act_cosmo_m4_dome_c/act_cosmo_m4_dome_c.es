@@ -12,6 +12,16 @@
 # unknown_f9e600a7 holds the music and Ghost lines. From one retail capture
 
 @activity_bundle("act_cosmo_m4_dome_c")
+# The 2.3.1 capture starts it in bubble 6 (slice 48); its lifetime runs the array
+# phase (bubble 0, array), then the three dome_c phases (9). The spawn is not
+# decoded from the capture.
+@activity("act_cosmo_m4_dome_c")
+@start_slice("delta_n")
+@phase("cosmo_m4_phase00_array", "array")
+@phase("cosmo_m4_phase01_dome_c", "dome_c")
+@phase("cosmo_m4_phase02_dome_c", "dome_c")
+@phase("cosmo_m4_phase_end", "dome_c")
+
 act_cosmo_m4_dome_c_mission1 cosmo_m4_phase00_array
 act_cosmo_m4_dome_c_mission2 cosmo_m4_phase01_dome_c
 act_cosmo_m4_dome_c_mission3 cosmo_m4_phase02_dome_c

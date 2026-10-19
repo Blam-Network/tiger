@@ -8,6 +8,7 @@
 # not used.
 
 @activity_bundle(0x529D4BDC)
+
 c_sequence_host venus_m01_intro_music
 c_sequence_host venus_m01_music_cue1
 c_sequence_host venus_m01_music_ascent

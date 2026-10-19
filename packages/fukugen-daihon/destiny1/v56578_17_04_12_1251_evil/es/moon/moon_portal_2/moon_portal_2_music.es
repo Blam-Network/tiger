@@ -7,6 +7,7 @@
 # (likely the ogre's health).
 
 @activity_bundle("moon_portal_2_music")
+
 c_sequence_host cue_intro
 c_sequence_host cue1
 c_sequence_host cue2

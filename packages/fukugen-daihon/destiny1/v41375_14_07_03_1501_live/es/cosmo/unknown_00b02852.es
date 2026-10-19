@@ -10,6 +10,7 @@
 # and none came back.
 
 @activity_bundle(0x00B02852)
+
 c_object_sensor_host chest_mc_north
 c_object_sensor_host chest_mc_south
 c_object_sensor_host chest_dome

@@ -141,6 +141,8 @@ describe("the compiled_bs tree", () => {
       kind: "bs",
       memberTypes: [],
       path: "bs/activities/common/story_common.bs",
+      // the decorator's line is left out of the chunks' line numbers
+      standInLines: [7],
     });
     expect(existsSync(`${dir}.tmp-20261013T000000000Z`)).toBe(false);
   });

@@ -21,6 +21,23 @@
 # The ending cinematic is its own activity (cine_end), not this script's.
 
 @activity_bundle("act_mars_m07_lowergarden")
+# The same landing zone, then the valley (26), catacombs (4), upper garden (25)
+# and the lower garden (13, whose cinematic phase owns state 13.1). One 2.3.1
+# capture.
+@activity("act_mars_m07_lowergarden")
+@start_slice("plains", "phase_plains")
+@phase("phase_plains", "plains")
+@phase("phase_valley", "valley")
+@phase("phase_catacombs", "catacombs")
+@phase("phase_uppergarden", "uppergarden")
+@phase("phase_lowergarden", "lowergarden")
+@phase("phase_lowergarden_cinematic", "lowergarden")
+@phase("phase_lowergarden_hopdown", "lowergarden")
+@phase("phase_lowergarden_darkness", "lowergarden")
+@phase("phase_lowergarden_climax", "lowergarden")
+@phase("phase_lowergarden_final", "lowergarden")
+@spawn_transition("landing_zone")
+
 act_mars_m07_lowergarden_mission1 phase_plains
 act_mars_m07_lowergarden_mission2 phase_valley
 act_mars_m07_lowergarden_mission3 phase_catacombs

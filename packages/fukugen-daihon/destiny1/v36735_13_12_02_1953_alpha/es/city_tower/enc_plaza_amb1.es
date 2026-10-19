@@ -1,28 +1,52 @@
 @activity_bundle("enc_plaza_amb1")
+
 bool debug_plaza
-@member_counts({vendor1: 1, vendor2: 1}) c_squad_sensor_host sq_plaza_vendor_postmaster
-@member_counts({vendor1: 1}) c_squad_sensor_host sq_plaza_vendor_crm
-@member_counts({vendor1: 1}) c_squad_sensor_host sq_plaza_vendor_pvp
-@member_counts({vendor1: 1}) c_squad_sensor_host sq_plaza_vendor_pve
-@member_counts({vendor1: 1}) c_squad_sensor_host sq_plaza_vendor_cryptarch
-@member_counts({vendor1: 1}) c_squad_sensor_host sq_plaza_vendor_tournament
-@member_counts({vendor1: 1}) c_squad_sensor_host sq_plaza_vendor_vanguard
-@member_counts({guard1: 1, guard2: 1}) c_squad_sensor_host sq_plaza_droid_guard1
-@member_counts({guard1: 1, guard2: 1}) c_squad_sensor_host sq_plaza_droid_guard2
-@member_counts({guard1: 1, guard2: 1}) c_squad_sensor_host sq_plaza_droid_guard3
-@member_counts({guard1: 1, guard2: 1}) c_squad_sensor_host sq_plaza_droid_guard4
-@member_counts({guard1: 1}) c_squad_sensor_host sq_plaza_droid_guard5
-@member_counts({guard1: 0, guard2: 0, guard3: 0, guard4: 0}) c_squad_sensor_host sq_plaza_droid_patrol1
-@member_counts({guard1: 0, guard2: 0, guard3: 0}) c_squad_sensor_host sq_plaza_droid_patrol2
-@member_counts({guard1: 0, guard2: 0, guard3: 0, guard4: 0, guard5: 0, guard6: 0}) c_squad_sensor_host sq_plaza_droid_patrol3
-@member_counts({sweeper1: 0, scrubber1: 0}) c_squad_sensor_host sq_plaza_droid_cleaners1
-@member_counts({talker1: 0, talker2: 0, listener1: 0}) c_squad_sensor_host sq_plaza_civ_talkers1
-@member_counts({talker1: 0, talker2: 0, listener1: 0}) c_squad_sensor_host sq_plaza_civ_talkers2
-@member_counts({talker1: 0, talker2: 0}) c_squad_sensor_host sq_plaza_civ_talkers3
-@member_counts({talker1: 0, talker2: 0}) c_squad_sensor_host sq_plaza_civ_talkers4
-@member_counts({talker1: 0, talker2: 0}) c_squad_sensor_host sq_plaza_civ_talkers5
-@member_counts({talker1: 0, talker2: 0, listener1: 0}) c_squad_sensor_host sq_plaza_civ_talkers6
-@member_counts({sitter1: 1}) c_squad_sensor_host sq_plaza_civ_sitters1
+@member_counts({vendor1: 1, vendor2: 1})
+c_squad_sensor_host sq_plaza_vendor_postmaster
+@member_counts({vendor1: 1})
+c_squad_sensor_host sq_plaza_vendor_crm
+@member_counts({vendor1: 1})
+c_squad_sensor_host sq_plaza_vendor_pvp
+@member_counts({vendor1: 1})
+c_squad_sensor_host sq_plaza_vendor_pve
+@member_counts({vendor1: 1})
+c_squad_sensor_host sq_plaza_vendor_cryptarch
+@member_counts({vendor1: 1})
+c_squad_sensor_host sq_plaza_vendor_tournament
+@member_counts({vendor1: 1})
+c_squad_sensor_host sq_plaza_vendor_vanguard
+@member_counts({guard1: 1, guard2: 1})
+c_squad_sensor_host sq_plaza_droid_guard1
+@member_counts({guard1: 1, guard2: 1})
+c_squad_sensor_host sq_plaza_droid_guard2
+@member_counts({guard1: 1, guard2: 1})
+c_squad_sensor_host sq_plaza_droid_guard3
+@member_counts({guard1: 1, guard2: 1})
+c_squad_sensor_host sq_plaza_droid_guard4
+@member_counts({guard1: 1})
+c_squad_sensor_host sq_plaza_droid_guard5
+@member_counts({guard1: 0, guard2: 0, guard3: 0, guard4: 0})
+c_squad_sensor_host sq_plaza_droid_patrol1
+@member_counts({guard1: 0, guard2: 0, guard3: 0})
+c_squad_sensor_host sq_plaza_droid_patrol2
+@member_counts({guard1: 0, guard2: 0, guard3: 0, guard4: 0, guard5: 0, guard6: 0})
+c_squad_sensor_host sq_plaza_droid_patrol3
+@member_counts({sweeper1: 0, scrubber1: 0})
+c_squad_sensor_host sq_plaza_droid_cleaners1
+@member_counts({talker1: 0, talker2: 0, listener1: 0})
+c_squad_sensor_host sq_plaza_civ_talkers1
+@member_counts({talker1: 0, talker2: 0, listener1: 0})
+c_squad_sensor_host sq_plaza_civ_talkers2
+@member_counts({talker1: 0, talker2: 0})
+c_squad_sensor_host sq_plaza_civ_talkers3
+@member_counts({talker1: 0, talker2: 0})
+c_squad_sensor_host sq_plaza_civ_talkers4
+@member_counts({talker1: 0, talker2: 0})
+c_squad_sensor_host sq_plaza_civ_talkers5
+@member_counts({talker1: 0, talker2: 0, listener1: 0})
+c_squad_sensor_host sq_plaza_civ_talkers6
+@member_counts({sitter1: 1})
+c_squad_sensor_host sq_plaza_civ_sitters1
 c_squad_member_sensor_host sq_plaza_droid_cleaners1__sweeper1  # true name unknown
 c_squad_member_sensor_host sq_plaza_droid_cleaners1__scrubber1  # true name unknown
 c_squad_member_sensor_host sq_plaza_droid_patrol1__guard1  # true name unknown

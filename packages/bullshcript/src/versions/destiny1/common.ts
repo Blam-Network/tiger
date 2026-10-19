@@ -2,6 +2,13 @@
 // host's build-neutral pieces. Build-bound parts (the runtime, the row type
 // ids) come from the build's own barrel.
 
+export {
+  type ActivityPhaseStart,
+  type ActivityStart,
+  type ActivityStartData,
+  activityStartData,
+  sliceRegionHash,
+} from "../../bungiescript/activity_start.ts";
 export type {
   BsBinaryOp,
   BsDecl,
@@ -105,6 +112,10 @@ export {
   scriptChunkName,
   scriptLookups,
 } from "../../bungiescript/script_folder.ts";
+export {
+  chunkLineOf,
+  fileLineOf,
+} from "../../bungiescript/stand_in.ts";
 export {
   type BsImportKind,
   type BsRegistryEntry,

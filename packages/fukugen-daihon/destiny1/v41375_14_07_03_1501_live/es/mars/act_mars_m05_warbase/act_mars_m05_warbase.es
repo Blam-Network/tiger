@@ -20,6 +20,21 @@
 # the phases play.
 
 @activity_bundle("act_mars_m05_warbase")
+# The Mars landing zone (18, spawn point landing_zone); the first phase is
+# already the rubicon's (20). One 2.3.1 capture.
+@activity("act_mars_m05_warbase")
+@start_slice("plains")
+@phase("phase_1_rubicon_goto", "rubicon")
+@phase("phase_3_mesa_goto", "mesa")
+@phase("phase_4_mesa", "mesa")
+@phase("phase_5_gatehouse_goto", "gatehouse")
+@phase("phase_6_gatehouse", "gatehouse")
+@phase("phase_7_warbase_goto", "warbase")
+@phase("phase_7_5_warbase", "warbase")
+@phase("phase_8_warbase", "warbase")
+@phase("phase_warbase_complete", "warbase")
+@spawn_transition("landing_zone")
+
 act_mars_m05_warbase_mission1 phase_1_rubicon_goto
 act_mars_m05_warbase_mission2 phase_3_mesa_goto
 act_mars_m05_warbase_mission3 phase_4_mesa

@@ -1,13 +1,23 @@
 @activity_bundle("enc_archive_amb1")
-@member_counts({shanks: 5}) c_squad_sensor_host sq_downstairs_shanks
-@member_counts({dregs: 4}) c_squad_sensor_host sq_downstairs_melee
-@member_counts({dregs: 3, vandal: 1}) c_squad_sensor_host sq_downstairs01
-@member_counts({dregs: 3, vandal: 1}) c_squad_sensor_host sq_downstairs02
-@member_counts({dregs: 4}) c_squad_sensor_host sq_back_mc
-@member_counts({captain: 1}) c_squad_sensor_host sq_anchor_vault01
-@member_counts({captain: 1}) c_squad_sensor_host sq_anchor_vault02
-@member_counts({sniper: 1}) c_squad_sensor_host sq_upper_sniper
-@member_counts({sniper: 1}) c_squad_sensor_host sq_sniper03
+
+@member_counts({shanks: 5})
+c_squad_sensor_host sq_downstairs_shanks
+@member_counts({dregs: 4})
+c_squad_sensor_host sq_downstairs_melee
+@member_counts({dregs: 3, vandal: 1})
+c_squad_sensor_host sq_downstairs01
+@member_counts({dregs: 3, vandal: 1})
+c_squad_sensor_host sq_downstairs02
+@member_counts({dregs: 4})
+c_squad_sensor_host sq_back_mc
+@member_counts({captain: 1})
+c_squad_sensor_host sq_anchor_vault01
+@member_counts({captain: 1})
+c_squad_sensor_host sq_anchor_vault02
+@member_counts({sniper: 1})
+c_squad_sensor_host sq_upper_sniper
+@member_counts({sniper: 1})
+c_squad_sensor_host sq_sniper03
 c_squad_group_sensor_host sqg_downstairs  # true name unknown
 c_squad_group_sensor_host sqg_upstairs  # true name unknown
 c_squad_group_sensor_host sqg_anchor_vault  # true name unknown

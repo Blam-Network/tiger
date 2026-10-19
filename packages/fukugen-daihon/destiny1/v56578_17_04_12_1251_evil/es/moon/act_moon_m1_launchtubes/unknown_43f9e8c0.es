@@ -8,6 +8,7 @@
 # triggers, so none of those squads is scripted.
 
 @activity_bundle(0x43F9E8C0)
+
 c_object_sensor_host o_gate_lock01
 c_object_sensor_host o_gate_lock02
 c_object_sensor_host o_gate_lock03
@@ -20,11 +21,17 @@ c_sequence_host seq_d_o2_s093  # true name unknown
 c_objective_sensor_host obj_launchtubes_ch01_m03_friendly  # true name unknown
 c_squad_sensor_host sq_gate_knights
 c_squad_sensor_host sq_gate_thrall_intro
+@member_counts({thrall: 1})
 c_squad_sensor_host sq_gate_thrall_a
+@member_counts({thrall: 1})
 c_squad_sensor_host sq_gate_thrall_c
+@member_counts({troopers: 1})
 c_squad_sensor_host sq_gate_thrall_d
+@member_counts({troopers: 1, 0x628B7A51: 1})
 c_squad_sensor_host sq_court_low_a
+@member_counts({troopers: 1, 0x628B7A51: 1, 0x628B7A52: 1})
 c_squad_sensor_host sq_court_high_a
+@member_counts({sq_court_high_a: 1})
 c_squad_sensor_host sq_court_high_a_b
 c_squad_sensor_host sq_court_high_b
 c_performance_host sq_court_high_b_major_spawn_performance  # true name unknown

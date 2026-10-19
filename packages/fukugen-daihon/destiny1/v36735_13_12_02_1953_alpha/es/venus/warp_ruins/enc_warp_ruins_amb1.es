@@ -1,11 +1,17 @@
 @activity_bundle("enc_warp_ruins_amb1")
+
 u_globals utils
 c_encounter_manager encounters  # true name unknown
-@member_counts({_squad: [{cell: 5}]}) ambush_encounter ambush_encounter_1
-@member_counts({_squad: [{cell: 4, cell_1: 1}]}) ambush_encounter ambush_encounter_2
-@member_counts({_squad: [{cell: 4, leader: 1}]}) ambush_encounter ambush_encounter_3
-@member_counts({_squad: [{cell_1: 2, cell_2: 1}]}) simple_encounter simple_encounter_1
-@member_counts({_squad: [{cell_1: 5}]}) simple_encounter simple_encounter_2
+@member_counts({_squad: [{cell: 5}]})
+ambush_encounter ambush_encounter_1
+@member_counts({_squad: [{cell: 4, cell_1: 1}]})
+ambush_encounter ambush_encounter_2
+@member_counts({_squad: [{cell: 4, leader: 1}]})
+ambush_encounter ambush_encounter_3
+@member_counts({_squad: [{cell_1: 2, cell_2: 1}]})
+simple_encounter simple_encounter_1
+@member_counts({_squad: [{cell_1: 5}]})
+simple_encounter simple_encounter_2
 c_objective_sensor_host obj_raid_bridge_minotaur_phase00  # true name unknown
 c_activity_flag raid_encounter bind("raid_phase0")  # true name unknown
 c_activity_flag raid_gate bind("raid_gate_phase0")  # true name unknown
@@ -14,15 +20,24 @@ c_device_host d_vex_infinity_portal_gate bind(vex_infinity_portal_gate)
 c_timer_sensor_host center_switch_pillar_timer  # true name unknown
 c_timer_sensor_host left_switch_pillar_timer  # true name unknown
 c_timer_sensor_host right_switch_pillar_timer  # true name unknown
-@member_counts({major: 1}) c_squad_sensor_host sq_raid_phase00_right_leader
-@member_counts({goblins: 4}) c_squad_sensor_host sq_raid_phase00_right
-@member_counts({major: 1}) c_squad_sensor_host sq_raid_phase00_left_leader
-@member_counts({goblins: 4}) c_squad_sensor_host sq_raid_phase00_left
-@member_counts({minotaurs: 3}) c_squad_sensor_host sq_raid_phase00_center
-@member_counts({minotaurs: 1}) c_squad_sensor_host sq_raid_phase00_center_leader
-@member_counts({pilot: 0}) c_squad_sensor_host sq_raid_phase00_cloud
-@member_counts({pilot: 0}) c_squad_sensor_host sq_raid_phase00_right_cloud
-@member_counts({pilot: 0}) c_squad_sensor_host sq_raid_phase00_left_cloud
+@member_counts({major: 1})
+c_squad_sensor_host sq_raid_phase00_right_leader
+@member_counts({goblins: 4})
+c_squad_sensor_host sq_raid_phase00_right
+@member_counts({major: 1})
+c_squad_sensor_host sq_raid_phase00_left_leader
+@member_counts({goblins: 4})
+c_squad_sensor_host sq_raid_phase00_left
+@member_counts({minotaurs: 3})
+c_squad_sensor_host sq_raid_phase00_center
+@member_counts({minotaurs: 1})
+c_squad_sensor_host sq_raid_phase00_center_leader
+@member_counts({pilot: 0})
+c_squad_sensor_host sq_raid_phase00_cloud
+@member_counts({pilot: 0})
+c_squad_sensor_host sq_raid_phase00_right_cloud
+@member_counts({pilot: 0})
+c_squad_sensor_host sq_raid_phase00_left_cloud
 c_squad_member_sensor_host sq_raid_phase00_cloud__pilot  # true name unknown
 c_squad_member_sensor_host sq_raid_phase00_right_cloud__pilot  # true name unknown
 c_squad_member_sensor_host sq_raid_phase00_left_cloud__pilot  # true name unknown

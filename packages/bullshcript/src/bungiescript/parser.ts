@@ -2,8 +2,14 @@
 // command scripts) and Python 2 statements plus `switch`.
 
 import { fnv1, parseHashLiteral } from "../host/tags/name_hash.ts";
+import {
+  type ActivityPhaseStart,
+  type ActivityStartPhase,
+  sliceRegionHash,
+} from "./activity_start.ts";
 import type {
   BsActivityBundle,
+  BsActivityStart,
   BsBinaryOp,
   BsCase,
   BsCountsEntry,
@@ -21,6 +27,7 @@ import type {
   BsType,
 } from "./ast.ts";
 import { BsCompileError, type BsToken, tokenize } from "./lexer.ts";
+import { type BsTokenSpan, standInLinesOf } from "./stand_in.ts";
 
 const FILE_KINDS: readonly BsFileKind[] = ["bs", "es", "esp", "esu"];
 const DECL_KINDS: readonly BsDeclKind[] = ["class", "struct", "enum"];
@@ -38,9 +45,50 @@ const NOT_FIELD_WORDS = new Set([
   "thread",
 ]);
 
+// One of the decorators that say how an activity starts.
+type BsStartPart =
+  | { readonly kind: "activity"; readonly names: readonly string[] }
+  | { readonly kind: "phase"; readonly value: ActivityPhaseStart }
+  | {
+      readonly kind: "region_spawn_transition";
+      readonly region: number;
+      readonly value: number;
+    }
+  | { readonly kind: "spawn_transition"; readonly value: number }
+  | {
+      readonly kind: "start_slice";
+      readonly phase?: ActivityStartPhase;
+      readonly value: string;
+    }
+  | { readonly kind: "time_of_day"; readonly value: number };
+
+interface BsStartDecorator {
+  readonly kind: "start";
+  readonly line: number;
+  readonly name: string;
+  readonly part: BsStartPart;
+}
+
 type BsDecorator =
-  | { readonly kind: "activity_bundle"; readonly value: BsActivityBundle }
-  | { readonly kind: "member_counts"; readonly value: BsMemberCounts };
+  | {
+      readonly kind: "activity_bundle";
+      readonly name: string;
+      readonly value: BsActivityBundle;
+    }
+  | {
+      readonly kind: "member_counts";
+      readonly name: string;
+      readonly value: BsMemberCounts;
+    }
+  | BsStartDecorator;
+
+// What the head decorators gave: the bundle, the activity's start and the
+// first member's own decorators.
+interface BsHead {
+  readonly bundle: BsActivityBundle | undefined;
+  readonly counts: BsMemberCounts[];
+  readonly start: BsActivityStart | undefined;
+}
 
 export function bsFileKind(path: string): BsFileKind | undefined {
   const extension = path.slice(path.lastIndexOf(".") + 1).toLowerCase();
@@ -102,10 +150,16 @@ export function parseBungieScript(source: string, path: string): BsFile {
     kind === "bs"
       ? parser.bsFile()
       : [parser.implicitDecl(implicitDeclName(normalized, kind))];
-  return { decls, kind, path: normalized };
+  return {
+    decls,
+    kind,
+    path: normalized,
+    standInLines: parser.standInLines(),
+  };
 }
 
 class BsParser {
+  private readonly decoratorSpans: BsTokenSpan[] = [];
   private readonly path: string;
   private position = 0;
   private readonly source: string;
@@ -115,6 +169,11 @@ class BsParser {
     this.source = source;
     this.path = path;
     this.tokens = tokenize(source, path);
+  }
+
+  // the lines chunks are numbered without (stand_in.ts)
+  standInLines(): number[] {
+    return standInLinesOf(this.source, this.tokens, this.decoratorSpans);
   }
 
   private get token(): BsToken {
@@ -205,10 +264,8 @@ class BsParser {
     const decls: BsDecl[] = [];
     this.skipNewlines();
     while (this.token.kind !== "eof") {
-      const activityBundle = this.headDecorators(
-        this.decorators(),
-        false
-      ).bundle;
+      const head = this.headDecorators(this.decorators(), false);
+      const activityBundle = head.bundle;
       const start = this.token;
       const kind = DECL_KINDS.find((k) => this.atWord(k));
       if (kind === undefined) {
@@ -226,9 +283,13 @@ class BsParser {
       if (activityBundle !== undefined && kind !== "class") {
         this.error("@activity_bundle decorates a class", start);
       }
+      if (head.start !== undefined && kind !== "class") {
+        this.error("@activity decorates a class", start);
+      }
       const members = this.declSuite(kind);
       decls.push({
         activityBundle,
+        activityStart: head.start,
         base,
         end: this.peek(-1).end,
         implicit: false,
@@ -243,30 +304,159 @@ class BsParser {
     return decls;
   }
 
-  // The decorators here, each on its own line: `@activity_bundle("name")`
-  // or `@activity_bundle(0x<hash>)`, and `@member_counts(["path",] n0, ...)`.
+  // The decorators here, each on its own line or sharing one:
+  // `@activity_bundle("name")` or `@activity_bundle(0x<hash>)`,
+  // `@member_counts(["path",] n0, ...)` and the ones that say how an activity
+  // starts (startPart).
   private decorators(): BsDecorator[] {
     const out: BsDecorator[] = [];
     while (this.acceptOp("@")) {
+      const first = this.position - 1;
       const name = this.expectName();
       this.expectOp("(");
-      if (name.text === "activity_bundle") {
-        out.push({ kind: "activity_bundle", value: this.activityBundle(name) });
-      } else if (name.text === "member_counts") {
-        out.push({ kind: "member_counts", value: this.memberCounts(name) });
-      } else {
-        this.error(`unknown decorator '@${name.text}'`, name);
-      }
+      out.push(this.decorator(name));
       this.expectOp(")");
-      // @member_counts can share its member's line, which keeps a lifted
-      // source's lines where Bungie's chunks have them
+      this.decoratorSpans.push({ first, last: this.position - 1 });
+      // @member_counts can share its member's line
       if (name.text === "member_counts" && this.token.kind === "name") {
         break;
+      }
+      if (this.atOp("@")) {
+        continue;
       }
       this.expectKind("newline");
       this.skipNewlines();
     }
     return out;
+  }
+
+  private decorator(name: BsToken): BsDecorator {
+    if (name.text === "activity_bundle") {
+      return {
+        kind: "activity_bundle",
+        name: name.text,
+        value: this.activityBundle(name),
+      };
+    }
+    if (name.text === "member_counts") {
+      return {
+        kind: "member_counts",
+        name: name.text,
+        value: this.memberCounts(name),
+      };
+    }
+    const part = this.startPart(name);
+    if (part === undefined) {
+      this.error(`unknown decorator '@${name.text}'`, name);
+    }
+    return { kind: "start", line: name.line, name: name.text, part };
+  }
+
+  // `@activity("name", ...)`, `@start_slice("region", "phase")`,
+  // `@phase("name", "region")`, `@spawn_transition("spawn point")`,
+  // `@region_spawn_transition(region, "spawn point")` and
+  // `@time_of_day(fraction)`; a name that never cracked is its 0x<hash>.
+  private startPart(name: BsToken): BsStartPart | undefined {
+    switch (name.text) {
+      case "activity":
+        return { kind: "activity", names: this.activityNames() };
+      case "start_slice": {
+        const slice = this.sliceName(name);
+        if (!this.acceptOp(",")) {
+          return { kind: "start_slice", value: slice };
+        }
+        const { hash, text } = this.nameOrHash(name);
+        return {
+          kind: "start_slice",
+          phase: { hash, name: text },
+          value: slice,
+        };
+      }
+      case "phase": {
+        const phase = this.nameOrHash(name);
+        this.expectOp(",");
+        return {
+          kind: "phase",
+          value: {
+            hash: phase.hash,
+            name: phase.text,
+            slice: this.sliceName(name),
+          },
+        };
+      }
+      case "spawn_transition":
+        return { kind: "spawn_transition", value: this.nameOrHash(name).hash };
+      case "region_spawn_transition": {
+        const region = this.wholeNumber(name);
+        this.expectOp(",");
+        return {
+          kind: "region_spawn_transition",
+          region,
+          value: this.nameOrHash(name).hash,
+        };
+      }
+      case "time_of_day":
+        return { kind: "time_of_day", value: this.timeOfDay() };
+      default:
+        return;
+    }
+  }
+
+  private activityNames(): string[] {
+    const names: string[] = [];
+    do {
+      const token = this.expectKind("string");
+      if (token.text === "") {
+        this.error("@activity takes activity names", token);
+      }
+      names.push(token.text);
+    } while (this.acceptOp(","));
+    return names;
+  }
+
+  // `0.77`: a fraction of the day, as written (the wire rounds it to an f32)
+  private timeOfDay(): number {
+    const number = this.expectKind("number");
+    const fraction = Number.parseFloat(number.text);
+    if (!(fraction >= 0 && fraction < 1)) {
+      this.error("@time_of_day takes a fraction of the day, 0 up to 1", number);
+    }
+    return fraction;
+  }
+
+  // a slice's region name, as written (a name, or the 0x<hash> of one that
+  // never cracked)
+  private sliceName(decorator: BsToken): string {
+    const token = this.token;
+    if (token.kind === "string" && token.text === "") {
+      this.error(`@${decorator.text} takes a slice name`, token);
+    }
+    return this.nameOrHash(decorator).text;
+  }
+
+  private wholeNumber(decorator: BsToken): number {
+    const token = this.token;
+    if (token.kind !== "number" || !WHOLE_NUMBER.test(token.text)) {
+      this.error(`@${decorator.text} takes whole numbers`, token);
+    }
+    this.next();
+    return token.value;
+  }
+
+  // a name (hashed with fnv1) or the 0x<hash> of one that never cracked
+  private nameOrHash(decorator: BsToken): { hash: number; text: string } {
+    const token = this.token;
+    let hash: number | undefined;
+    if (token.kind === "string") {
+      hash = fnv1(token.text);
+    } else if (token.kind === "number") {
+      hash = parseHashLiteral(token.text);
+    }
+    if (hash === undefined) {
+      this.error(`@${decorator.text} takes a name or a 0x<hash>`, token);
+    }
+    this.next();
+    return { hash, text: token.text };
   }
 
   private activityBundle(name: BsToken): BsActivityBundle {
@@ -366,14 +556,16 @@ class BsParser {
     }
   }
 
-  // A class's or file's head takes one @activity_bundle; an es-family file's
-  // head decorators can also be its first member's, below the bundle's.
+  // A class's or file's head takes one @activity_bundle and the decorators
+  // that say how its activity starts; an es-family file's head decorators
+  // can also be its first member's, below those.
   private headDecorators(
     decorators: readonly BsDecorator[],
     memberFollows: boolean
-  ): { bundle: BsActivityBundle | undefined; counts: BsMemberCounts[] } {
+  ): BsHead {
     let bundle: BsActivityBundle | undefined;
     const counts: BsMemberCounts[] = [];
+    const starts: BsStartDecorator[] = [];
     for (const decorator of decorators) {
       if (decorator.kind === "member_counts") {
         if (!memberFollows) {
@@ -381,14 +573,127 @@ class BsParser {
         }
         counts.push(decorator.value);
       } else if (counts.length > 0) {
-        this.error("@activity_bundle goes above the member's decorators");
+        this.error(`@${decorator.name} goes above the member's decorators`);
+      } else if (decorator.kind === "start") {
+        starts.push(decorator);
       } else if (bundle === undefined) {
         bundle = decorator.value;
       } else {
         this.error("an encounter takes one @activity_bundle");
       }
     }
-    return { bundle, counts };
+    return { bundle, counts, start: this.activityStart(starts) };
+  }
+
+  // The start decorators together: @activity names the activities and the
+  // rest is their start. Each is written once but @phase (in the order the
+  // lifetime runs them) and @region_spawn_transition.
+  private activityStart(
+    starts: readonly BsStartDecorator[]
+  ): BsActivityStart | undefined {
+    if (starts.length === 0) {
+      return;
+    }
+    const fail = (message: string, line: number): never => {
+      throw new BsCompileError(message, this.path, line);
+    };
+    const once = (current: unknown, { line, name }: BsStartDecorator) => {
+      if (current !== undefined) {
+        fail(`@${name} is written once`, line);
+      }
+    };
+    let activities: readonly string[] | undefined;
+    let spawnTransition: number | undefined;
+    let startSlice: string | undefined;
+    let startPhase: ActivityStartPhase | undefined;
+    let timeOfDay: number | undefined;
+    const phases: ActivityPhaseStart[] = [];
+    const regionSpawnTransitions: Record<number, number> = {};
+    for (const decorator of starts) {
+      const { part } = decorator;
+      switch (part.kind) {
+        case "activity":
+          once(activities, decorator);
+          activities = part.names;
+          break;
+        case "start_slice":
+          once(startSlice, decorator);
+          startSlice = part.value;
+          startPhase = part.phase;
+          break;
+        case "spawn_transition":
+          once(spawnTransition, decorator);
+          spawnTransition = part.value;
+          break;
+        case "time_of_day":
+          once(timeOfDay, decorator);
+          timeOfDay = part.value;
+          break;
+        case "phase":
+          phases.push(part.value);
+          break;
+        case "region_spawn_transition":
+          if (part.region in regionSpawnTransitions) {
+            fail(
+              `@region_spawn_transition names region ${part.region} twice`,
+              decorator.line
+            );
+          }
+          regionSpawnTransitions[part.region] = part.value;
+          break;
+        default:
+          break;
+      }
+    }
+    const line = starts[0].line;
+    if (activities === undefined) {
+      return fail("the start decorators need an @activity", line);
+    }
+    this.checkStartPhase(starts, startSlice, startPhase, phases);
+    return {
+      activities,
+      line,
+      phases,
+      regionSpawnTransitions,
+      ...(spawnTransition === undefined ? {} : { spawnTransition }),
+      ...(startPhase === undefined ? {} : { startPhase }),
+      ...(startSlice === undefined ? {} : { startSlice }),
+      ...(timeOfDay === undefined ? {} : { timeOfDay }),
+    };
+  }
+
+  // The start state is the one a phase owns in the start slice, so the
+  // @start_slice names that phase: required when a @phase plays in the slice,
+  // and then one of those. Left out, no phase owns the start state and the
+  // activity starts in the slice's state 0.
+  private checkStartPhase(
+    starts: readonly BsStartDecorator[],
+    startSlice: string | undefined,
+    startPhase: ActivityStartPhase | undefined,
+    phases: readonly ActivityPhaseStart[]
+  ): void {
+    const decorator = starts.find(({ part }) => part.kind === "start_slice");
+    if (decorator === undefined || startSlice === undefined) {
+      return;
+    }
+    const sliceHash = sliceRegionHash(startSlice);
+    const inSlice = phases.filter(
+      (p) => sliceRegionHash(p.slice) === sliceHash
+    );
+    const fail = (message: string): never => {
+      throw new BsCompileError(message, this.path, decorator.line);
+    };
+    if (startPhase === undefined) {
+      if (inSlice.length > 0) {
+        fail(
+          `@start_slice("${startSlice}") needs the @phase that owns the start state (a @phase plays in ${startSlice})`
+        );
+      }
+    } else if (!inSlice.some((p) => p.hash === startPhase.hash)) {
+      fail(
+        `@start_slice names phase '${startPhase.name}', which is not a @phase in ${startSlice}`
+      );
+    }
   }
 
   // after `class name :`, is this the block's own colon (followed by a
@@ -417,6 +722,7 @@ class BsParser {
     }
     return {
       activityBundle,
+      activityStart: head.start,
       base: undefined,
       end: this.source.length,
       implicit: true,
@@ -609,7 +915,7 @@ class BsParser {
   private memberDecorators(): BsMemberCounts[] {
     return this.decorators().map((decorator) => {
       if (decorator.kind !== "member_counts") {
-        this.error("@activity_bundle heads the file or its class");
+        this.error(`@${decorator.name} heads the file or its class`);
       }
       return decorator.value;
     });

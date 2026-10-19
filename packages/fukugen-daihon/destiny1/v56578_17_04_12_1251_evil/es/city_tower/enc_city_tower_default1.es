@@ -3,6 +3,11 @@
 # The Tower's activity root. It only waits for the fireteam to join.
 
 @activity_bundle("enc_city_tower_default1")
+# The Tower's three states (default, Iron Banner, Queen) start in the bubble
+# whose blueprint set loads the plaza, at its default spawn point.
+@activity("city_tower_default1", "city_tower_iron_banner", "city_tower_queen")
+@start_slice("plaza")
+
 c_fireteam_sensor_host host
 
 startup thread sc_main_thread:

@@ -8,6 +8,7 @@
 # Most task names are uncracked (hashes).
 
 @activity_bundle("enc_south_tides_m07")
+
 c_objective_sensor_host obj_south_tides_m07
 c_squad_sensor_host sq_hco_goblins
 c_squad_sensor_host sq_pocket_snipers
