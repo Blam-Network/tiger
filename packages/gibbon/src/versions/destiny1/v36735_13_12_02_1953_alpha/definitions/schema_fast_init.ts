@@ -120,3 +120,28 @@ export function read_schema_scalar(
       return;
   }
 }
+
+// A vector member's floats out of an instance image. aligned_vector3 reads
+// its first three; the fourth lane's use is unknown.
+export function read_schema_vector(
+  mem: Buffer,
+  member: Pick<s_schema_member, "kind" | "offset">
+): number[] | undefined {
+  let count: number;
+  switch (member.kind) {
+    case k_schema_kind.vector2:
+      count = 2;
+      break;
+    case k_schema_kind.vector3:
+    case k_schema_kind.aligned_vector3:
+      count = 3;
+      break;
+    default:
+      return;
+  }
+  const values: number[] = [];
+  for (let i = 0; i < count; i++) {
+    values.push(mem.readFloatBE(member.offset + i * 4));
+  }
+  return values;
+}

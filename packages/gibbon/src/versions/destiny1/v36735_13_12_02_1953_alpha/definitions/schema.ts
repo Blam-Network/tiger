@@ -13,10 +13,23 @@ export const k_schema_kind = {
   i16: 0x02,
   typed_pointer: 0x04,
   self_reference: 0x05,
+  // A native struct held by pointer (attacker_list, hop_on_state). True name
+  // unknown.
+  unknown06: 0x06,
   pointer: 0x07,
+  // 8 bytes, default {0, 0xffffffff}.
+  tag_reference: 0x08,
   f32: 0x09,
   bool: 0x0b,
   delegate: 0x0c,
+  // 24 bytes on an instance class (magazine_interface, heat_interface).
+  interface_instance: 0x0e,
+  // 28 bytes, always the same type (inventory, channel_manager,
+  // weapon_*_interface). True name unknown.
+  generic_interface_instance: 0x0f,
+  // A 4-byte key: a table pair's key, and the name-like fields of
+  // s_cosmetic_garbage_response. True name unknown.
+  table_key: 0x11,
   string_hash: 0x12,
   handle: 0x13,
   // A member's offset is its method index.
@@ -29,9 +42,19 @@ export const k_schema_kind = {
   c_array: 0x1a,
   script_instance: 0x1b,
   script_definition: 0x1c,
+  // 20 bytes on a definition class (24 for a message handler).
+  interface_definition: 0x1d,
   // A member's offset is its value.
   enum_value: 0x1f,
   enum: 0x20,
+  // A native enum or flags field, 1, 2 or 4 bytes wide; the member doesn't
+  // say which.
+  native_enum: 0x21,
+  native_flags: 0x22,
+  vector2: 0x28,
+  // 16 bytes at a 16-aligned offset. The fourth float's use is unknown.
+  aligned_vector3: 0x29,
+  vector3: 0x2a,
 } as const;
 
 export const s_schema = c.struct({
