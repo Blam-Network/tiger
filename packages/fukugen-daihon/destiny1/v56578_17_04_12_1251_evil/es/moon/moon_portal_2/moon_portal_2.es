@@ -32,6 +32,7 @@ moon_portal_2_mission4 phase03
 moon_portal_2_mission5 phase04
 moon_portal_2_mission6 phase05
 
-startup thread ss_moon_portal2:
+@startup()
+script ss_moon_portal2():
     print("script startup")
     c_lifetime_script_utilities.get_lifetime_sensor().set_state(e_activity_lifetime_state.pregame)

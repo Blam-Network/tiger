@@ -49,7 +49,7 @@ describe("parseScriptFile", () => {
   it("reads an es-family file as the one class its name gives it", () => {
     const file = parseScriptFile(
       "@es\\cosmodrome\\x\\x.es",
-      "c_squad_sensor_host sq\n\nthread main:\n    sq.place()\n\n# Decompiled from 36735.13.12.02.1953.alpha script tags\n# See tag 80CB0001\n"
+      "squad sq\n\nscript main():\n    sq.place()\n\n# Decompiled from 36735.13.12.02.1953.alpha script tags\n# See tag 80CB0001\n"
     );
     expect(file.path).toBe("es/cosmodrome/x/x.es");
     expect(file.decls).toEqual([
@@ -123,30 +123,30 @@ describe("loadScriptFolder", () => {
   );
   write(
     "es/city_tower/enc_plaza_amb1.es",
-    '@activity_bundle("enc_plaza_amb1")\r\nthread main: pass\r\n'
+    '@activity_bundle("enc_plaza_amb1")\r\nscript main(): pass\r\n'
   );
   write(
     "es/venus/academy_plaza/enc_plaza_amb1.es",
-    '@activity_bundle("enc_plaza_amb1")\nthread main: pass\n'
+    '@activity_bundle("enc_plaza_amb1")\nscript main(): pass\n'
   );
   write(
     "es/venus/strike_1_activity/strike_1_activity.es",
-    "venus_strike_1_mission10 end_phase\nvenus_strike_1_mission2 dig_site_phase\n\nthread main: pass\n"
+    "venus_strike_1_mission10 end_phase\nvenus_strike_1_mission2 dig_site_phase\n\nscript main(): pass\n"
   );
   write(
     "es/venus/venus_bounty_1.es",
-    '@activity_bundle("bounty_1_activity")\nthread main: pass\n'
+    '@activity_bundle("bounty_1_activity")\nscript main(): pass\n'
   );
   write(
     "es/venus/strike_1_activity/venus_strike_1_mission10.esp",
-    "thread init: pass\n"
+    "script init(): pass\n"
   );
   write(
     "es/venus/strike_1_activity/venus_strike_1_mission2.esp",
-    "thread init: pass\n"
+    "script init(): pass\n"
   );
   write("es/venus/strike_1_activity/notes.txt", "not a script");
-  write("es/utility_scripts/kill_squad_objective.esu", "thread main: pass\n");
+  write("es/utility_scripts/kill_squad_objective.esu", "script main(): pass\n");
   const scripts = loadScriptFolder(dir);
   afterAll(() => rmSync(dir, { force: true, recursive: true }));
 
@@ -165,7 +165,7 @@ describe("loadScriptFolder", () => {
     ]);
     expect(
       scripts.scriptByPath("@es\\city_tower\\enc_plaza_amb1.es")?.text
-    ).toBe('@activity_bundle("enc_plaza_amb1")\nthread main: pass\n');
+    ).toBe('@activity_bundle("enc_plaza_amb1")\nscript main(): pass\n');
     expect(scripts.scriptSources()[0]).toEqual({
       path: "bs/activities/common/public_common.bs",
       source: "# See tags 821B8003, 821E2006 (c_encounter__public_common)\n",

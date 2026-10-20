@@ -12,8 +12,7 @@ const BUNDLE = '@activity_bundle("enc_x")\n';
 // an archetype holding squads, as simple_encounter does
 const ARCHETYPE = {
   path: "es/utility_scripts/amb_test.esu",
-  source:
-    "dynamic_array<c_squad_sensor_host> _squad\nc_squad_group_sensor_host _squad_group\n",
+  source: "dynamic_array<squad> _squad\nsquad_group _squad_group\n",
 };
 
 function fields(source: string, path = PATH): BsField[] {
@@ -41,7 +40,7 @@ function schemaCounts(source: string) {
 describe("@member_counts", () => {
   it("parses a map of member names, lists and hashes", () => {
     const [plain, landing] = fields(
-      `${BUNDLE}c_squad_sensor_host sq_a\n@member_counts({dreg: 3, vandal: [1, 2], 0xD1F11E74: 0})\nc_squad_sensor_host sq_landing\n`
+      `${BUNDLE}squad sq_a\n@member_counts({dreg: 3, vandal: [1, 2], 0xD1F11E74: 0})\nsquad sq_landing\n`
     );
     expect(plain.memberCounts).toBeUndefined();
     const value = landing.memberCounts?.value;
@@ -59,7 +58,7 @@ describe("@member_counts", () => {
 
   it("takes the first member's from the head of a file with no bundle", () => {
     const [first] = fields(
-      "# a comment\n@member_counts({dreg: 2})\nc_squad_sensor_host sq_a\n",
+      "# a comment\n@member_counts({dreg: 2})\nsquad sq_a\n",
       "es/utility_scripts/t.esu"
     );
     expect(first.memberCounts?.line).toBe(2);
@@ -71,12 +70,12 @@ describe("@member_counts", () => {
         [
           BUNDLE,
           "@member_counts({dreg: 3, vandal: 1})",
-          "c_squad_sensor_host sq_landing",
+          "squad sq_landing",
           "@member_counts({_squad: [{dreg: 2}, {}, {thrall: [1, 2]}]})",
           "amb_test amb_x",
           "@member_counts([{}, {thrall: 2, thrall_1: 2}])",
-          "static_array<c_squad_sensor_host, 5> sq_wave",
-          "c_squad_sensor_host sq_plain",
+          "static_array<squad, 5> sq_wave",
+          "squad sq_plain",
           "",
         ].join("\n")
       )
@@ -113,7 +112,7 @@ describe("@member_counts", () => {
   });
 
   it("refuses counts that do not fit the member", () => {
-    const squad = "c_squad_sensor_host sq_a\n";
+    const squad = "squad sq_a\n";
     expect(errors(`${BUNDLE}@member_counts({dreg: 1})\nint i\n`)).toEqual([
       expect.stringContaining("@member_counts on i: a int holds no squads"),
     ]);
@@ -130,7 +129,7 @@ describe("@member_counts", () => {
     ).toEqual([expect.stringContaining("amb_test has no member '_squads'")]);
     expect(
       errors(
-        `${BUNDLE}@member_counts({dreg: 1})\nstatic_array<c_squad_sensor_host, 2> sq_w\n`
+        `${BUNDLE}@member_counts({dreg: 1})\nstatic_array<squad, 2> sq_w\n`
       )
     ).toEqual([expect.stringContaining("an array takes [..., ...] by index")]);
     expect(
@@ -156,7 +155,7 @@ describe("@member_counts", () => {
     ]);
     expect(
       errors(
-        `${BUNDLE}${squad}@member_counts({dreg: 1})\nthread main:\n    pass\n`
+        `${BUNDLE}${squad}@member_counts({dreg: 1})\nscript main():\n    pass\n`
       )
     ).toEqual([expect.stringContaining("@member_counts decorates a member")]);
     expect(errors(`${BUNDLE}${squad}@member_counts({dreg: 1})\n`)).toEqual([
@@ -177,7 +176,7 @@ describe("@member_counts", () => {
 describe("@placed", () => {
   it("parses on its own line or sharing its member's", () => {
     const [own, shared, plain] = fields(
-      `${BUNDLE}@placed()\nc_squad_sensor_host sq_a\n@placed() c_squad_sensor_host sq_b\nc_squad_sensor_host sq_c\n`
+      `${BUNDLE}@placed()\nsquad sq_a\n@placed() squad sq_b\nsquad sq_c\n`
     );
     expect(own.placed).toBe(2);
     expect(shared.placed).toBe(4);
@@ -186,7 +185,7 @@ describe("@placed", () => {
 
   it("goes with @member_counts on one member, in either order", () => {
     const [counted, marked] = fields(
-      `${BUNDLE}@placed()\n@member_counts({dreg: 1})\nc_squad_sensor_host sq_a\n@member_counts({dreg: 1})\n@placed()\nc_squad_sensor_host sq_b\n`
+      `${BUNDLE}@placed()\n@member_counts({dreg: 1})\nsquad sq_a\n@member_counts({dreg: 1})\n@placed()\nsquad sq_b\n`
     );
     expect(counted.placed).toBeDefined();
     expect(counted.memberCounts).toBeDefined();
@@ -195,9 +194,7 @@ describe("@placed", () => {
   });
 
   it("is carried by the schema of a squad", () => {
-    const result = compile(
-      `${BUNDLE}@placed()\nc_squad_sensor_host sq_a\nc_squad_sensor_host sq_b\n`
-    );
+    const result = compile(`${BUNDLE}@placed()\nsquad sq_a\nsquad sq_b\n`);
     expect(result.diagnostics.filter((d) => d.severity === "error")).toEqual(
       []
     );
@@ -207,14 +204,14 @@ describe("@placed", () => {
   });
 
   it("is refused on anything but a squad, or twice", () => {
+    expect(errors(`${BUNDLE}@placed()\nsquad_group sqg_a\n`)).toEqual([
+      expect.stringContaining("is no squad"),
+    ]);
+    expect(errors(`${BUNDLE}@placed()\n@placed()\nsquad sq_a\n`)).toEqual([
+      expect.stringContaining("takes one @placed"),
+    ]);
     expect(
-      errors(`${BUNDLE}@placed()\nc_squad_group_sensor_host sqg_a\n`)
-    ).toEqual([expect.stringContaining("is no squad")]);
-    expect(
-      errors(`${BUNDLE}@placed()\n@placed()\nc_squad_sensor_host sq_a\n`)
-    ).toEqual([expect.stringContaining("takes one @placed")]);
-    expect(
-      errors(`${BUNDLE}@placed()\nstartup thread t:\n    sleep(1)\n`)
+      errors(`${BUNDLE}@placed()\n@startup()\nscript t():\n    sleep(1)\n`)
     ).toEqual([expect.stringContaining("decorates a member")]);
   });
 });

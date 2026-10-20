@@ -4,16 +4,16 @@
 # the Hive door panel. The panel lights up as its objective goes active; the
 # objective listens for the interaction with it.
 
-c_encounter_handle enc_uppercitadel_portal2
+encounter_handle enc_uppercitadel_portal2
 trigger_volume_objective pf_tv_uppercitadel_entrance
 trigger_volume_objective pf_tv_objective_entrance
 interactable_objective pf_i_door bind("0x80296306")
 
-thread init: pass
+script init(): pass
 
-thread complete: pass
+script complete(): pass
 
-thread main:
+script main():
     sleep_until(c_player_script_utilities.all_players_are_ready())
     c_lifetime_script_utilities.get_lifetime_sensor().set_state(e_activity_lifetime_state.active)
     pf_tv_uppercitadel_entrance.objective_begin()

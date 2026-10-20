@@ -5,14 +5,14 @@
 
 trigger_volume_objective obj_s1_phase01_m1
 generic_objective obj_s1_phase01_m2
-c_nav_point_host ap_refinery_central01  # true name unknown
-c_encounter_handle enc_refinery_portal1  # true name unknown
+nav_point ap_refinery_central01
+encounter_handle enc_refinery_portal1
 
-thread init: pass
+script init(): pass
 
-thread complete: pass
+script complete(): pass
 
-thread main:
+script main():
     obj_s1_phase01_m1.objective_begin()
     sleep_until(obj_s1_phase01_m1.is_complete())
     obj_s1_phase01_m1.objective_end_silent()

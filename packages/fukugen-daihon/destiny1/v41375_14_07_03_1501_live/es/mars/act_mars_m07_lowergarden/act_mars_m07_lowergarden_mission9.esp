@@ -5,14 +5,14 @@
 # heart dies with it; the objective clears two seconds later. One run.
 
 generic_objective sp_objective_kill
-c_encounter_handle enc_lowergarden_m07
-c_sequence_host seq_music_lowergarden
+encounter_handle enc_lowergarden_m07
+sequence seq_music_lowergarden
 
-thread init: pass
+script init(): pass
 
-thread complete: pass
+script complete(): pass
 
-thread main:
+script main():
     enc = enc_lowergarden_m07
     heart = enc.sp_specops_heart
     sleep(10)

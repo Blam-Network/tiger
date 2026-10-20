@@ -9,22 +9,23 @@
 
 @activity_bundle(0xE2388EFA)
 
-c_sequence_host seq_music_intro
-c_sequence_host seq_strength_music
-c_sequence_host seq_music_ascent
-c_sequence_host seq_d_o1_s01
-c_sequence_host seq_d_o1_s03
-c_sequence_host seq_d_o1_s031
-c_sequence_host seq_d_o1_s05
-c_sequence_host seq_d_o2_s05
-c_sequence_host seq_wis_wave_announce1
-c_trigger_volume_slot_host tv_wis_spawn_thrall
-c_player_trigger_sensor_host pt_wis_spawn_thrall bind(tv_wis_spawn_thrall)
-c_squad_sensor_host sq_m3_guard_rear
-c_object_sensor_host o_m3_spec_ops
-c_object_sensor_host o_m3_console_scan
+sequence seq_music_intro
+sequence seq_strength_music
+sequence seq_music_ascent
+sequence seq_d_o1_s01
+sequence seq_d_o1_s03
+sequence seq_d_o1_s031
+sequence seq_d_o1_s05
+sequence seq_d_o2_s05
+sequence seq_wis_wave_announce1
+trigger_volume tv_wis_spawn_thrall
+player_trigger pt_wis_spawn_thrall bind(tv_wis_spawn_thrall)
+squad sq_m3_guard_rear
+object o_m3_spec_ops
+object o_m3_console_scan
 
-startup thread sc_intro:
+@startup()
+script sc_intro():
     seq_strength_music.set_switch_mask(0)
     sleep_until(c_player_script_utilities.all_players_are_ready())
     seq_music_intro.start()
@@ -34,24 +35,28 @@ startup thread sc_intro:
     sleep(3)
     seq_d_o1_s01.start()
 
-startup thread sc_wave_announce:
+@startup()
+script sc_wave_announce():
     sleep_until(pt_wis_spawn_thrall.is_triggered())
     sleep(1)
     seq_wis_wave_announce1.start()
 
+@startup()
 # the guards nearly down
-startup thread sc_strength_music_guards:
+script sc_strength_music_guards():
     sleep_until(sq_m3_guard_rear.alive_count() > 1)
     sleep_until(sq_m3_guard_rear.alive_count() <= 1)
     seq_strength_music.set_switch_mask(7)
 
+@startup()
 # the waves coming for the Ghost
-startup thread sc_strength_music_waves:
+script sc_strength_music_waves():
     sleep_until(o_m3_spec_ops.is_alive())
     sleep(4)
     seq_strength_music.set_switch_mask(31)
 
-startup thread sc_ascent:
+@startup()
+script sc_ascent():
     sleep_until(o_m3_console_scan.get_device_position() >= 1)
     seq_strength_music.set_switch_mask(63)
     seq_strength_music.stop()

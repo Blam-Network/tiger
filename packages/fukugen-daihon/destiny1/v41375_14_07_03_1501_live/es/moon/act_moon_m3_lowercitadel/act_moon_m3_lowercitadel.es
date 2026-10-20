@@ -38,6 +38,7 @@ act_moon_m3_lowercitadel_mission5 phase_strength_complete
 
 interactable_placement pf_obj_strength_interact_place bind("0x9D0AD7E7")
 
-startup thread ss_moon_m3_lowercitadel:
+@startup()
+script ss_moon_m3_lowercitadel():
     print("script startup")
     c_lifetime_script_utilities.get_lifetime_sensor().set_state(e_activity_lifetime_state.pregame)

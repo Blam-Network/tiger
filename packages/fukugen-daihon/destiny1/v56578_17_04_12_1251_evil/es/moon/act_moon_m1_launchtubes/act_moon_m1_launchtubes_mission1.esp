@@ -5,11 +5,11 @@
 
 cinematic_midmission pf_cine_109_mnr
 
-thread init: pass
+script init(): pass
 
-thread complete: pass
+script complete(): pass
 
-thread main:
+script main():
     sleep(1)
     pf_cine_109_mnr.start()
     sleep_until(pf_cine_109_mnr.is_complete())

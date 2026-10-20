@@ -14,33 +14,34 @@
 
 @activity_bundle("enc_wormway_portal2")
 
-c_objective_sensor_host obj_bossbattle_hive
-c_squad_sensor_host sq_bossbattle_boss01
-static_array<c_object_sensor_host, 19> dynamics
-c_object_sensor_host o_chains
-c_object_sensor_host o_door_dummy
-c_squad_sensor_host sq_bossbattle_hive01
-c_squad_sensor_host sq_bossbattle_hive02
-c_squad_sensor_host sq_bossbattle_hive03
-c_squad_sensor_host sq_bossbattle_hive04
-c_squad_sensor_host sq_bossbattle_snipers01
-c_squad_sensor_host sq_bossbattle_snipers02
-c_squad_sensor_host sq_bossbattle_snipers03
-c_squad_sensor_host sq_bossbattle_snipers_reinf01
-c_squad_sensor_host sq_bossbattle_snipers_reinf02
-c_squad_sensor_host sq_bossbattle_reinf01_2nd
-c_squad_sensor_host sq_bossbattle_reinf01_3rd
-c_squad_sensor_host sq_bossbattle_reinf01_4th
-c_squad_sensor_host sq_bossbattle_reinf02_3rd
-c_squad_sensor_host sq_bossbattle_reinf02_4th
-c_squad_sensor_host sq_bossbattle_ground01
-c_squad_sensor_host sq_bossbattle_ground02
-c_squad_sensor_host sq_dropship_hive01
-c_squad_member_sensor_host sq_dropship_hive01__pilot
-c_control_point_set_sensor_host cp_dropship_hive01_enter
-c_control_point_set_sensor_host cp_dropship_hive01_exit
+objective obj_bossbattle_hive
+squad sq_bossbattle_boss01
+static_array<object, 19> dynamics
+object o_chains
+object o_door_dummy
+squad sq_bossbattle_hive01
+squad sq_bossbattle_hive02
+squad sq_bossbattle_hive03
+squad sq_bossbattle_hive04
+squad sq_bossbattle_snipers01
+squad sq_bossbattle_snipers02
+squad sq_bossbattle_snipers03
+squad sq_bossbattle_snipers_reinf01
+squad sq_bossbattle_snipers_reinf02
+squad sq_bossbattle_reinf01_2nd
+squad sq_bossbattle_reinf01_3rd
+squad sq_bossbattle_reinf01_4th
+squad sq_bossbattle_reinf02_3rd
+squad sq_bossbattle_reinf02_4th
+squad sq_bossbattle_ground01
+squad sq_bossbattle_ground02
+squad sq_dropship_hive01
+squad_member sq_dropship_hive01__pilot
+control_point_set cp_dropship_hive01_enter
+control_point_set cp_dropship_hive01_exit
 
-startup thread sc_wormway_main:
+@startup()
+script sc_wormway_main():
     for dynamic in dynamics:
         dynamic.create()
     o_chains.create()
@@ -51,7 +52,7 @@ startup thread sc_wormway_main:
     # Phogoth, in its chains
     place_on_task(sq_bossbattle_boss01, "0x82903A2F")
 
-thread sc_boss_fight:
+script sc_boss_fight():
     o_door_dummy.set_device_position(1)
     place_on_task(sq_bossbattle_hive01, "0xF0BD0FA3")
     place_on_task(sq_bossbattle_hive02, "0xF0BD0FA3")
@@ -88,7 +89,7 @@ thread sc_boss_fight:
     tomb_ship_leave()
 
 # as each floor squad is cleared the next one pushes
-thread sc_floor:
+script sc_floor():
     sleep_until_wiped(sq_bossbattle_hive01)
     sq_bossbattle_hive02.set_task("0xE419C3BA")
     sleep_until_wiped(sq_bossbattle_hive02)
@@ -96,7 +97,7 @@ thread sc_floor:
     sleep_until_wiped(sq_bossbattle_hive01)
     sq_bossbattle_snipers03.set_task("0xE419C3BA")
 
-thread sc_thrall_rush:
+script sc_thrall_rush():
     sleep(23)
     sq_bossbattle_hive04.set_task("0xE419C3BA")
 

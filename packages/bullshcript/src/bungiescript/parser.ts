@@ -1,4 +1,4 @@
-// Parser for BungieScript: declarations (members, threads, methods, delegates,
+// Parser for BungieScript: declarations (members, scripts, methods, delegates,
 // command scripts) and Python 2 statements plus `switch`.
 
 import { fnv1, parseHashLiteral } from "../host/tags/name_hash.ts";
@@ -45,8 +45,7 @@ const NOT_FIELD_WORDS = new Set([
   "delegate",
   "implements",
   "pass",
-  "startup",
-  "thread",
+  "script",
 ]);
 
 // One of the decorators that say how an activity starts.
@@ -95,6 +94,11 @@ type BsDecorator =
       readonly name: string;
     }
   | {
+      readonly kind: "startup";
+      readonly line: number;
+      readonly name: string;
+    }
+  | {
       readonly kind: "task";
       readonly name: string;
       readonly value: BsTask;
@@ -102,16 +106,18 @@ type BsDecorator =
   | BsStartDecorator;
 
 // What decorates a member: its squad counts, that it starts placed, the
-// Objective its squads are against and its Objective's tasks.
+// Objective its squads are against and its Objective's tasks; on a script,
+// that it starts with its class.
 type BsMemberDecorator = Extract<
   BsDecorator,
-  { kind: "member_counts" | "objective" | "placed" | "task" }
+  { kind: "member_counts" | "objective" | "placed" | "startup" | "task" }
 >;
 
 const MEMBER_DECORATORS: ReadonlySet<string> = new Set([
   "member_counts",
   "objective",
   "placed",
+  "startup",
   "task",
 ]);
 
@@ -393,6 +399,9 @@ class BsParser {
     }
     if (name.text === "placed") {
       return { kind: "placed", line: name.line, name: name.text };
+    }
+    if (name.text === "startup") {
+      return { kind: "startup", line: name.line, name: name.text };
     }
     if (name.text === "task") {
       return { kind: "task", name: name.text, value: this.task(name) };
@@ -926,17 +935,26 @@ class BsParser {
   private member(leading: readonly BsMemberDecorator[]): BsMember | undefined {
     const decorated = [...leading, ...this.memberDecorators()];
     const start = this.token;
-    if (decorated.length > 0 && !this.atFieldStart()) {
-      this.error(`@${decorated[0].name} decorates a member`, start);
+    const startups = decorated.filter((d) => d.kind === "startup");
+    const fieldDecorators = decorated.filter((d) => d.kind !== "startup");
+    if (startups.length > 0 && !this.atWord("script")) {
+      this.error("@startup decorates a script", start);
+    }
+    if (fieldDecorators.length > 0 && !this.atFieldStart()) {
+      this.error(`@${fieldDecorators[0].name} decorates a member`, start);
+    }
+    if (startups.length > 1) {
+      this.error("a script takes one @startup", start);
     }
     if (this.acceptWord("pass")) {
       this.expectKind("newline");
       return;
     }
-    if (this.atWord("startup") || this.atWord("thread")) {
-      const startup = this.acceptWord("startup");
-      this.expectWord("thread");
+    if (this.acceptWord("script")) {
       const name = this.expectName().text;
+      // a script takes no arguments, but its parentheses are written
+      this.expectOp("(");
+      this.expectOp(")");
       this.expectOp(":");
       const body = this.suite();
       return {
@@ -946,7 +964,7 @@ class BsParser {
         line: start.line,
         name,
         start: start.start,
-        startup,
+        startup: startups.length > 0,
       };
     }
     if (this.atWord("delegate")) {

@@ -22,10 +22,9 @@ const BUNDLE = '@activity_bundle("enc_x")\n';
 const ARCHETYPE = {
   path: "es/utility_scripts/amb_test.esu",
   source:
-    "dynamic_array<c_squad_sensor_host> _squad\nc_squad_group_sensor_host _squad_group\nc_objective_sensor_host _objective\n",
+    "dynamic_array<squad> _squad\nsquad_group _squad_group\nobjective _objective\n",
 };
-const OBJECTIVES =
-  "c_objective_sensor_host obj_x\nc_objective_sensor_host obj_y\n";
+const OBJECTIVES = "objective obj_x\nobjective obj_y\n";
 
 function fields(source: string, path = PATH): BsField[] {
   return parseBungieScript(source, path).decls[0].members.filter(
@@ -53,10 +52,10 @@ describe("@objective", () => {
   it("parses a member path, and a map of them across lines", () => {
     const [plain, squad, deep, nested] = fields(
       [
-        `${BUNDLE}${OBJECTIVES}c_squad_sensor_host sq_plain`,
+        `${BUNDLE}${OBJECTIVES}squad sq_plain`,
         "@objective(phase02.obj_x)",
-        "c_squad_sensor_host sq_a",
-        "@objective(waves[1].obj_y) c_squad_sensor_host sq_b",
+        "squad sq_a",
+        "@objective(waves[1].obj_y) squad sq_b",
         "@objective({",
         "    _squad: obj_x,",
         "    inner: {_squad: obj_y},",
@@ -83,7 +82,7 @@ describe("@objective", () => {
 
   it("takes the first member's from the head of a file with no bundle", () => {
     const [first] = fields(
-      "# a comment\n@objective(obj_x)\nc_squad_sensor_host sq_a\n",
+      "# a comment\n@objective(obj_x)\nsquad sq_a\n",
       "es/utility_scripts/t.esu"
     );
     expect(first.objective?.line).toBe(2);
@@ -95,14 +94,14 @@ describe("@objective", () => {
         BUNDLE,
         OBJECTIVES,
         "@objective(obj_x)",
-        "c_squad_sensor_host sq_a",
+        "squad sq_a",
         "@objective(obj_y)",
-        "static_array<c_squad_sensor_host, 5> sq_wave",
+        "static_array<squad, 5> sq_wave",
         "@objective({_squad: obj_x})",
         "amb_test amb_a",
         "@objective({_squad: obj_y})",
         "static_array<amb_test, 2> amb_b",
-        "c_squad_sensor_host sq_plain",
+        "squad sq_plain",
         "",
       ].join("\n")
     ).map((member) => [member.name, member.objective]);
@@ -115,7 +114,7 @@ describe("@objective", () => {
   });
 
   it("refuses what does not fit the member", () => {
-    const squad = "c_squad_sensor_host sq_a\n";
+    const squad = "squad sq_a\n";
     expect(errors(`${BUNDLE}${OBJECTIVES}@objective(obj_z)\n${squad}`)).toEqual(
       [
         expect.stringContaining(
@@ -124,14 +123,8 @@ describe("@objective", () => {
       ]
     );
     expect(
-      errors(
-        `${BUNDLE}${OBJECTIVES}@objective(sq_b)\n${squad}c_squad_sensor_host sq_b\n`
-      )
-    ).toEqual([
-      expect.stringContaining(
-        "'sq_b' is a c_squad_sensor_host, not an Objective"
-      ),
-    ]);
+      errors(`${BUNDLE}${OBJECTIVES}@objective(sq_b)\n${squad}squad sq_b\n`)
+    ).toEqual([expect.stringContaining("'sq_b' is a squad, not an Objective")]);
     expect(
       errors(`${BUNDLE}${OBJECTIVES}@objective({_squad: obj_x})\n${squad}`)
     ).toEqual([
@@ -178,8 +171,7 @@ describe("@objective", () => {
 });
 
 describe("@task", () => {
-  const SQUADS =
-    "c_squad_sensor_host sq_a\nc_squad_group_sensor_host sqg_a\nbool open\n";
+  const SQUADS = "squad sq_a\nsquad_group sqg_a\nbool open\n";
 
   it("parses a name or a hash, the squad and the condition, once per task", () => {
     const [, , , gated] = fields(
@@ -188,7 +180,7 @@ describe("@task", () => {
         '@task("gating", squad: sq_a, condition: open)',
         "@task(0xD1F11E74)",
         '@task("idle", condition: open, squad: sqg_a)',
-        "c_objective_sensor_host obj_x",
+        "objective obj_x",
         "",
       ].join("\n")
     );
@@ -210,7 +202,7 @@ describe("@task", () => {
         '@task("gating", squad: sq_a, condition: open)',
         "@task(0xD1F11E74)",
         '@task("idle", squad: sqg_a)',
-        "c_objective_sensor_host obj_x",
+        "objective obj_x",
         "",
       ].join("\n")
     );
@@ -242,7 +234,7 @@ describe("@task", () => {
   });
 
   it("refuses what does not fit", () => {
-    const objective = "c_objective_sensor_host obj_x\n";
+    const objective = "objective obj_x\n";
     expect(errors(`${BUNDLE}@task("a")\namb_test amb_x\n`)).toEqual([
       expect.stringContaining(
         "@task on amb_x: a amb_test takes objective: the Objective inside it"
@@ -273,9 +265,7 @@ describe("@task", () => {
     ]);
     expect(
       errors(`${BUNDLE}${SQUADS}@task("a", condition: sq_a)\n${objective}`)
-    ).toEqual([
-      expect.stringContaining("'sq_a' is a c_squad_sensor_host, not a bool"),
-    ]);
+    ).toEqual([expect.stringContaining("'sq_a' is a squad, not a bool")]);
     expect(
       errors(`${BUNDLE}${SQUADS}@task("a", condition: gone)\n${objective}`)
     ).toEqual([
@@ -319,12 +309,12 @@ describe("@objective and @task through a compiled tree", () => {
         ? [
             BUNDLE,
             "bool open",
-            "c_squad_sensor_host sq_a",
+            "squad sq_a",
             '@task("gating", squad: sq_a, condition: open)',
             "@task(0xD1F11E74)",
-            "c_objective_sensor_host obj_x",
+            "objective obj_x",
             "@objective(obj_x)",
-            "static_array<c_squad_sensor_host, 3> sq_wave",
+            "static_array<squad, 3> sq_wave",
             "@objective({_squad: obj_x})",
             "amb_test amb_x",
             "",

@@ -45,6 +45,7 @@ act_mars_m05_warbase_mission7 phase_7_5_warbase
 act_mars_m05_warbase_mission8 phase_8_warbase
 act_mars_m05_warbase_mission9 phase_warbase_complete
 
-startup thread ss_mars_m05_warbase:
+@startup()
+script ss_mars_m05_warbase():
     print("script startup")
     c_lifetime_script_utilities.get_lifetime_sensor().set_state(e_activity_lifetime_state.pregame)

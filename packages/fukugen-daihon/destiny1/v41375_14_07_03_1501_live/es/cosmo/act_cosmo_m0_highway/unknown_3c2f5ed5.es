@@ -6,67 +6,68 @@
 
 @activity_bundle(0x3C2F5ED5)
 
-c_sequence_host seq_m_cue2  # true name unknown
-c_sequence_host seq_m_cue1  # true name unknown
-c_sequence_host seq_d_o1_10  # true name unknown
-c_sequence_host seq_fallen_scream_far  # true name unknown
-c_sequence_host seq_fallen_scream_mid  # true name unknown
-c_player_trigger_sensor_host pt_ab_2  # true name unknown
-c_sequence_host seq_fallen_scream_close  # true name unknown
-c_sequence_host seq_d_o1_15  # true name unknown
+sequence seq_m_cue2
+sequence seq_m_cue1
+sequence seq_d_o1_10
+sequence seq_fallen_scream_far
+sequence seq_fallen_scream_mid
+player_trigger pt_ab_2
+sequence seq_fallen_scream_close
+sequence seq_d_o1_15
 trigger_volume_objective obj_m0_phase00_m1
-c_sequence_host seq_d_o2_10  # true name unknown
-c_sequence_host seq_drone_2  # true name unknown
-c_player_trigger_sensor_host pt_fallen_above  # true name unknown
-c_sequence_host seq_fallen_above  # true name unknown
-c_sequence_host seq_d_o2_20  # true name unknown
-c_player_trigger_sensor_host pt_nux_ghost_light_up_start  # true name unknown
-c_sequence_host seq_d_o2_40  # true name unknown
-c_sequence_host seq_d_o2_50  # true name unknown
-c_sequence_host seq_fallen_scramble  # true name unknown
-c_sequence_host seq_drone_3  # true name unknown
-c_sequence_host seq_fallen_scamper_amb  # true name unknown
-c_sequence_host seq_d_o2_80  # true name unknown
-c_player_trigger_sensor_host pt_fallen_around_corner  # true name unknown
-c_sequence_host seq_d_o2_90  # true name unknown
-c_sequence_host seq_d_o3_30  # true name unknown
-c_sequence_host seq_fallen_around_corner  # true name unknown
-c_player_trigger_sensor_host pt_fallen_b_spawn  # true name unknown
-c_sequence_host seq_d_o2_95  # true name unknown
-c_player_trigger_sensor_host pt_fallen_arena_spawn  # true name unknown
-c_sequence_host seq_ambush_garage  # true name unknown
-c_player_trigger_sensor_host pt_fallen_c_spawn  # true name unknown
-c_squad_sensor_host sq_fallen_first_vandal
-c_sequence_host seq_d_o3_10  # true name unknown
-c_player_trigger_sensor_host pt_corr_spawn_b_melee  # true name unknown
-c_squad_sensor_host sq_fallen_garage_melee
-c_squad_sensor_host sq_fallen_garage_vandals_2
-c_squad_sensor_host sq_fallen_garage_vandals_3
-c_player_trigger_sensor_host pt_mine_nux  # true name unknown
-c_sequence_host seq_d_o3_40  # true name unknown
-c_player_trigger_sensor_host pt_fallen_vandal_spawn  # true name unknown
-c_sequence_host seq_ambush_finalroom  # true name unknown
-c_player_trigger_sensor_host pt_audio_drone_end  # true name unknown
-c_squad_sensor_host sq_fallen_garage_exit
-c_sequence_host seq_d_o3_20  # true name unknown
-c_player_trigger_sensor_host pt_graveyard_reveal  # true name unknown
-c_sequence_host seq_d_o4_30  # true name unknown
-c_player_trigger_sensor_host pt_ketch  # true name unknown
-c_sequence_host seq_d_o4_40  # true name unknown
-c_sequence_host seq_d_o4_45  # true name unknown
+sequence seq_d_o2_10
+sequence seq_drone_2
+player_trigger pt_fallen_above
+sequence seq_fallen_above
+sequence seq_d_o2_20
+player_trigger pt_nux_ghost_light_up_start
+sequence seq_d_o2_40
+sequence seq_d_o2_50
+sequence seq_fallen_scramble
+sequence seq_drone_3
+sequence seq_fallen_scamper_amb
+sequence seq_d_o2_80
+player_trigger pt_fallen_around_corner
+sequence seq_d_o2_90
+sequence seq_d_o3_30
+sequence seq_fallen_around_corner
+player_trigger pt_fallen_b_spawn
+sequence seq_d_o2_95
+player_trigger pt_fallen_arena_spawn
+sequence seq_ambush_garage
+player_trigger pt_fallen_c_spawn
+squad sq_fallen_first_vandal
+sequence seq_d_o3_10
+player_trigger pt_corr_spawn_b_melee
+squad sq_fallen_garage_melee
+squad sq_fallen_garage_vandals_2
+squad sq_fallen_garage_vandals_3
+player_trigger pt_mine_nux
+sequence seq_d_o3_40
+player_trigger pt_fallen_vandal_spawn
+sequence seq_ambush_finalroom
+player_trigger pt_audio_drone_end
+squad sq_fallen_garage_exit
+sequence seq_d_o3_20
+player_trigger pt_graveyard_reveal
+sequence seq_d_o4_30
+player_trigger pt_ketch
+sequence seq_d_o4_40
+sequence seq_d_o4_45
 trigger_volume_objective obj_m0_m04a
-c_sequence_host seq_d_o5_20  # true name unknown
-c_squad_sensor_host sq_m0_fallen_2
-c_squad_sensor_host sq_m0_fallen_gating
-c_squad_sensor_host sq_ch1_fallen_on_playership_1
-c_squad_sensor_host sq_ch1_fallen_on_playership_2
-c_squad_sensor_host sq_ch1_fallen_on_playership_3
-c_squad_sensor_host sq_m0_fallen_1
-c_sequence_host seq_d_o5_30  # true name unknown
+sequence seq_d_o5_20
+squad sq_m0_fallen_2
+squad sq_m0_fallen_gating
+squad sq_ch1_fallen_on_playership_1
+squad sq_ch1_fallen_on_playership_2
+squad sq_ch1_fallen_on_playership_3
+squad sq_m0_fallen_1
+sequence seq_d_o5_30
 cinematic_midmission pf_105_cto
-c_sequence_host seq_m_ascent  # true name unknown
+sequence seq_m_ascent
 
-startup thread sc_audio_main:
+@startup()
+script sc_audio_main():
     seq_m_cue2.start()
     seq_m_cue2.set_switch_mask(3)
     sleep_until(c_player_script_utilities.all_players_are_ready())
@@ -85,19 +86,22 @@ startup thread sc_audio_main:
         if not pt_ab_2.is_triggered():
             seq_d_o1_15.start()
 
-startup thread sc_wall_entry:
+@startup()
+script sc_wall_entry():
     sleep_until(obj_m0_phase00_m1._player_trigger.is_triggered())
     seq_d_o2_10.start()
     seq_drone_2.start()
     seq_m_cue1.set_switch_mask(3)
 
-startup thread sc_fallen_above:
+@startup()
+script sc_fallen_above():
     sleep_until(pt_fallen_above.is_triggered())
     seq_fallen_above.start()
     sleep(2)
     seq_d_o2_20.start()
 
-startup thread sc_ghost_lines:
+@startup()
+script sc_ghost_lines():
     sleep_until(pt_nux_ghost_light_up_start.is_triggered())
     sleep(2)
     seq_d_o2_40.start()
@@ -113,83 +117,99 @@ startup thread sc_ghost_lines:
     sleep(6)
     seq_d_o2_80.start()
 
-startup thread sc_fallen_around_corner:
+@startup()
+script sc_fallen_around_corner():
     sleep_until(pt_fallen_around_corner.is_triggered())
     seq_d_o2_90.start()
     seq_d_o3_30.start()
     seq_fallen_around_corner.start()
 
-startup thread sc_fallen_b:
+@startup()
+script sc_fallen_b():
     sleep_until(pt_fallen_b_spawn.is_triggered())
     seq_d_o2_95.start()
 
-startup thread sc_ambush_garage:
+@startup()
+script sc_ambush_garage():
     sleep_until(pt_fallen_arena_spawn.is_triggered())
     seq_ambush_garage.start()
 
-startup thread sc_fallen_c_music:
+@startup()
+script sc_fallen_c_music():
     sleep_until(pt_fallen_c_spawn.is_triggered())
     seq_m_cue1.set_switch_mask(15)
 
-startup thread sc_first_vandal:
+@startup()
+script sc_first_vandal():
     sleep_until_dead(sq_fallen_first_vandal)
     sleep(1)
     seq_m_cue1.set_switch_mask(31)
     sleep(2)
     seq_d_o3_10.start()
 
-startup thread sc_corridor_b_music:
+@startup()
+script sc_corridor_b_music():
     sleep_until(pt_corr_spawn_b_melee.is_triggered())
     seq_m_cue1.set_switch_mask(63)
 
-startup thread sc_garage_music:
+@startup()
+script sc_garage_music():
     sleep_until(sq_fallen_garage_melee.alive_count() > 0)
     sleep_until(sq_fallen_garage_vandals_2.alive_count() + sq_fallen_garage_vandals_3.alive_count() + sq_fallen_garage_melee.alive_count() == 0)
     sleep(4)
     seq_m_cue1.stop()
 
-startup thread sc_mine:
+@startup()
+script sc_mine():
     sleep_until(pt_mine_nux.is_triggered())
     seq_d_o3_40.start()
 
-startup thread sc_ambush_finalroom:
+@startup()
+script sc_ambush_finalroom():
     sleep_until(pt_fallen_vandal_spawn.is_triggered())
     seq_ambush_finalroom.start()
 
-startup thread sc_drone_end:
+@startup()
+script sc_drone_end():
     sleep_until(pt_audio_drone_end.is_triggered())
     seq_fallen_scamper_amb.stop()
     seq_drone_3.stop()
 
-startup thread sc_garage_exit:
+@startup()
+script sc_garage_exit():
     sleep_until_dead(sq_fallen_garage_exit)
     sleep(4)
     seq_d_o3_20.start()
 
-startup thread sc_graveyard_reveal:
+@startup()
+script sc_graveyard_reveal():
     sleep_until(pt_graveyard_reveal.is_triggered())
     seq_d_o4_30.start()
 
-startup thread sc_ketch_lines:
+@startup()
+script sc_ketch_lines():
     sleep_until(pt_ketch.is_triggered())
     sleep(6)
     seq_d_o4_40.start()
     sleep(2)
     seq_d_o4_45.start()
 
-startup thread sc_ship:
+@startup()
+script sc_ship():
     sleep_until(obj_m0_m04a._player_trigger.is_triggered())
     seq_d_o5_20.start()
     seq_m_cue2.set_switch_mask(7)
 
-startup thread sc_hangar_clear:
+@startup()
+script sc_hangar_clear():
     sleep_until(sq_m0_fallen_2.alive_count() > 0)
     sleep_until(sq_m0_fallen_gating.alive_count() + sq_ch1_fallen_on_playership_1.alive_count() + sq_ch1_fallen_on_playership_2.alive_count() + sq_ch1_fallen_on_playership_3.alive_count() + sq_m0_fallen_1.alive_count() + sq_m0_fallen_2.alive_count() == 0)
     seq_m_cue2.stop()
     sleep(3)
     seq_d_o5_30.start()
 
-startup thread sc_ascent:
+@startup()
+script sc_ascent():
     sleep_until(pf_105_cto._cinematic.is_done())
     sleep(1)
     seq_m_ascent.start()

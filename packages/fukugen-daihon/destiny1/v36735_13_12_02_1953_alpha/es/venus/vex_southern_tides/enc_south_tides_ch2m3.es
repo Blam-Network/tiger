@@ -1,40 +1,40 @@
 @activity_bundle("enc_south_tides_ch2m3")
 
 u_globals utils
-c_location_sensor_host southern_tides  # true name unknown
-c_player_monitor_sensor_host pm_bubble_southern_tides bind(southern_tides)  # true name unknown
+location southern_tides
+player_monitor pm_bubble_southern_tides bind(southern_tides)
 @task(0xC8E719E3, squad: sqg_fallen)
 @task(0x29FEA8EC, condition: bfront)
 @task("front", condition: bfront)
-c_objective_sensor_host obj_south_tides_ch2m3  # true name unknown
+objective obj_south_tides_ch2m3
 @member_counts({raider: 1})
 @objective(obj_south_tides_ch2m3)
-c_squad_sensor_host sq_fallen01
+squad sq_fallen01
 @member_counts({dreg_4: 4})
 @objective(obj_south_tides_ch2m3)
-c_squad_sensor_host sq_fallen02
+squad sq_fallen02
 @member_counts({cell_1: 2})
 @objective(obj_south_tides_ch2m3)
-c_squad_sensor_host sq_fallen03
+squad sq_fallen03
 @member_counts({raider: 1, shank: 1})
 @objective(obj_south_tides_ch2m3)
-c_squad_sensor_host sq_fallen04
+squad sq_fallen04
 @member_counts({cell_1: 2})
 @objective(obj_south_tides_ch2m3)
-c_squad_sensor_host sq_fallen05
+squad sq_fallen05
 @member_counts({pilot: 0})
-c_squad_sensor_host sq_fallen_dropship
-c_squad_member_sensor_host sq_fallen_dropship__pilot  # true name unknown
-c_squad_group_sensor_host sqg_fallen  # true name unknown
-c_trigger_volume_slot_host tv_fallen_fallback01
-c_player_trigger_sensor_host pt_fallen_fallback01 bind(tv_fallen_fallback01)  # true name unknown
-c_trigger_volume_slot_host tv_fallen_fallback02
-c_player_trigger_sensor_host pt_fallen_fallback02 bind(tv_fallen_fallback02)  # true name unknown
-c_trigger_volume_slot_host tv_fallen_drop
-c_player_trigger_sensor_host pv_fallen_drop bind(tv_fallen_drop)  # true name unknown
-c_control_point_set_sensor_host fallen_dropship01_enter  # true name unknown
-c_control_point_set_sensor_host fallen_dropship01_next  # true name unknown
-c_control_point_set_sensor_host fallen_dropship01_exit  # true name unknown
+squad sq_fallen_dropship
+squad_member sq_fallen_dropship__pilot
+squad_group sqg_fallen
+trigger_volume tv_fallen_fallback01
+player_trigger pt_fallen_fallback01 bind(tv_fallen_fallback01)
+trigger_volume tv_fallen_fallback02
+player_trigger pt_fallen_fallback02 bind(tv_fallen_fallback02)
+trigger_volume tv_fallen_drop
+player_trigger pv_fallen_drop bind(tv_fallen_drop)
+control_point_set fallen_dropship01_enter
+control_point_set fallen_dropship01_next
+control_point_set fallen_dropship01_exit
 bool bfront = true
 bool text_dialog = true
 interactable_placement ch2m3_interactable bind("ch2m3_interactable")
@@ -50,7 +50,8 @@ loot_south_tides loot_venus_south_tides_1
 
 
 
-startup thread ss_south_tides_ch2m3:
+@startup()
+script ss_south_tides_ch2m3():
     print("script startup")
     sqg_fallen.add_child(sq_fallen01)
     sqg_fallen.add_child(sq_fallen02)
@@ -63,7 +64,7 @@ startup thread ss_south_tides_ch2m3:
 
 
 
-thread sc_fallen_dropship:
+script sc_fallen_dropship():
     sq_fallen_dropship.place()
     sq_fallen_dropship__pilot.execute(fallen_dropship01_enter); sleep_until(sq_fallen_dropship__pilot.get_command_script_state() != e_command_script_state.executing)
     print("DROPSHIP PLACED")
@@ -81,7 +82,7 @@ thread sc_fallen_dropship:
     sq_fallen_dropship__pilot.execute(fallen_dropship01_exit); sleep_until(sq_fallen_dropship__pilot.get_command_script_state() != e_command_script_state.executing)
     sq_fallen_dropship.remove()
 
-thread sc_node01_fallback_trigger:
+script sc_node01_fallback_trigger():
     sleep_until(pt_fallen_fallback01.is_triggered() or pt_fallen_fallback02.is_triggered())
     bfront = false
     print("FALLBACK TRIGGER")

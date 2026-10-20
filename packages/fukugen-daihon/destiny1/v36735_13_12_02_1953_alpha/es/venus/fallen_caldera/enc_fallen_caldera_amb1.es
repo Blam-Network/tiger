@@ -7,9 +7,9 @@
 @task("tank", squad: sq_spider_tank01)
 @task("tank_inf", squad: sq_tank_inf)
 @task(0x4791FEA6, squad: sq_pocket01)
-c_objective_sensor_host obj_caldera_amb1  # true name unknown
+objective obj_caldera_amb1
 u_event_world_controller event_controller
-c_encounter_manager encounters  # true name unknown
+encounter_manager encounters
 @member_counts({_squad: [{dregs: 3, vandals: 2, captain: 1}]})
 simple_encounter simple_amb_pocket
 @member_counts({_squad: [{dregs: 3, vandals: 2}]})
@@ -26,33 +26,33 @@ static_array<u_event_dropship_multipoint_temp, 1> pf_event_dropship_multipoint_f
 static_array<u_event_vex_block, 1> pf_event_vex_block
 @member_counts({vandals: 2, captain: 1})
 @objective(obj_caldera_amb1)
-c_squad_sensor_host sq_rim01
+squad sq_rim01
 @member_counts({dregs: 3, captain: 1})
 @objective(obj_caldera_amb1)
-c_squad_sensor_host sq_rim02
+squad sq_rim02
 @member_counts({dregs: 2, vandals: 2})
 @objective(obj_caldera_amb1)
-c_squad_sensor_host sq_lower01
+squad sq_lower01
 @member_counts({dregs: 3, captain: 1})
 @objective(obj_caldera_amb1)
-c_squad_sensor_host sq_tank_inf
+squad sq_tank_inf
 @member_counts({dreg: 1})
 @objective(obj_caldera_amb1)
-c_squad_sensor_host sq_pike01
+squad sq_pike01
 @member_counts({dreg: 1})
 @objective(obj_caldera_amb1)
-c_squad_sensor_host sq_pike02
+squad sq_pike02
 @member_counts({spider_tank: 1})
 @objective(obj_caldera_amb1)
-c_squad_sensor_host sq_spider_tank01
+squad sq_spider_tank01
 @member_counts({dregs: 3, captain: 1})
 @objective(obj_caldera_amb1)
-c_squad_sensor_host sq_pocket01
-c_squad_group_sensor_host sqg_pikes  # true name unknown
-c_squad_group_sensor_host sqg_rim  # true name unknown
-c_squad_group_sensor_host sqg_lower  # true name unknown
-c_control_point_sensor_host dropship_enter  # true name unknown
-c_control_point_sensor_host dropship_exit  # true name unknown
+squad sq_pocket01
+squad_group sqg_pikes
+squad_group sqg_rim
+squad_group sqg_lower
+control_point dropship_enter
+control_point dropship_exit
 loot_caldera loot_venus_caldera_1
 
 
@@ -64,7 +64,8 @@ loot_caldera loot_venus_caldera_1
 
 
 
-startup thread ss_main_thread:
+@startup()
+script ss_main_thread():
 
     print("---------------------------------------------------------")
     print("FALLEN CALDERA ENCOUNTER AMBIENT")
@@ -89,7 +90,8 @@ startup thread ss_main_thread:
 
 
 
-startup thread ss_encounter_controller_thread:
+@startup()
+script ss_encounter_controller_thread():
 
     encounters.actor_budget = 23
 
@@ -101,7 +103,8 @@ startup thread ss_encounter_controller_thread:
     encounters.add_unmanaged_encounter(pf_event_dropship_multipoint_fallen_temp[0], 8)
     encounters.add_unmanaged_encounter(pf_event_vex_block[0], 7)
 
-startup thread ss_event_thread:
+@startup()
+script ss_event_thread():
 
     sleep(mathlib.random_int_inclusive(40, 90))
 
@@ -109,7 +112,7 @@ startup thread ss_event_thread:
     event_controller.set_event_frequency(60)
     event_controller.start_2_weighted(pf_event_vex_block, 50, pf_event_dropship_multipoint_fallen_temp, 50)
 
-thread sc_pike_squads:
+script sc_pike_squads():
 
 
 
@@ -122,7 +125,7 @@ thread sc_pike_squads:
         sq_pike01.respawn()
         sq_pike02.respawn()
 
-thread sc_rim_squads:
+script sc_rim_squads():
 
     sq_rim01.respawn()
     sq_rim02.respawn()
@@ -137,7 +140,7 @@ thread sc_rim_squads:
         sleep(75)
         sqg_rim.respawn()
 
-thread sc_lower_squads:
+script sc_lower_squads():
 
     sq_lower01.respawn()
 
@@ -147,7 +150,7 @@ thread sc_lower_squads:
         sleep(45)
         sq_lower01.respawn()
 
-thread sc_spider_tank:
+script sc_spider_tank():
 
     sq_spider_tank01.respawn()
 
@@ -157,7 +160,7 @@ thread sc_spider_tank:
         sleep(90)
         sq_spider_tank01.respawn()
 
-thread sc_tank_inf:
+script sc_tank_inf():
 
     sq_tank_inf.respawn()
 
@@ -167,7 +170,7 @@ thread sc_tank_inf:
         sleep(60)
         sq_tank_inf.respawn()
 
-thread sc_pockets:
+script sc_pockets():
 
     sq_pocket01.respawn()
 

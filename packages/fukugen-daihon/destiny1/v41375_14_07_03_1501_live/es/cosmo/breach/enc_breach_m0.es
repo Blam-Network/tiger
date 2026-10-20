@@ -7,128 +7,129 @@
 
 @activity_bundle("enc_breach_m0")
 
-c_squad_sensor_host sq_fallen_nest1
-c_squad_member_sensor_host sq_fallen_nest1__dropper1  # true name unknown
-c_performance_host dropper1  # true name unknown
-c_squad_member_sensor_host sq_fallen_nest1__crawler1  # true name unknown
-c_performance_host crawler1  # true name unknown
-c_squad_member_sensor_host sq_fallen_nest1__crawler2  # true name unknown
-c_performance_host crawler2  # true name unknown
-c_squad_member_sensor_host sq_fallen_nest1__crawler3  # true name unknown
-c_performance_host crawler3  # true name unknown
-c_squad_member_sensor_host sq_fallen_nest1__crawler4  # true name unknown
-c_performance_host crawler4  # true name unknown
-c_squad_member_sensor_host sq_fallen_nest1__crawler5  # true name unknown
-c_performance_host crawler5  # true name unknown
-c_squad_member_sensor_host sq_fallen_nest1__swinger1  # true name unknown
-c_performance_host swinger1  # true name unknown
-c_squad_member_sensor_host sq_fallen_nest1__runner1  # true name unknown
-c_performance_host runner1  # true name unknown
-c_squad_sensor_host sq_fallen_nest2
-c_squad_member_sensor_host sq_fallen_nest2__crawler6  # true name unknown
-c_performance_host crawler6  # true name unknown
-c_squad_member_sensor_host sq_fallen_nest2__crawler7  # true name unknown
-c_performance_host crawler7  # true name unknown
-c_squad_member_sensor_host sq_fallen_nest2__runner3  # true name unknown
-c_performance_host runner3  # true name unknown
-c_squad_member_sensor_host sq_fallen_nest2__runner4  # true name unknown
-c_performance_host runner4  # true name unknown
-c_squad_member_sensor_host sq_fallen_nest2__shank1  # true name unknown
-c_performance_host shank1  # true name unknown
-c_squad_member_sensor_host sq_fallen_nest2__shank2  # true name unknown
-c_performance_host shank2  # true name unknown
+squad sq_fallen_nest1
+squad_member sq_fallen_nest1__dropper1
+performance dropper1
+squad_member sq_fallen_nest1__crawler1
+performance crawler1
+squad_member sq_fallen_nest1__crawler2
+performance crawler2
+squad_member sq_fallen_nest1__crawler3
+performance crawler3
+squad_member sq_fallen_nest1__crawler4
+performance crawler4
+squad_member sq_fallen_nest1__crawler5
+performance crawler5
+squad_member sq_fallen_nest1__swinger1
+performance swinger1
+squad_member sq_fallen_nest1__runner1
+performance runner1
+squad sq_fallen_nest2
+squad_member sq_fallen_nest2__crawler6
+performance crawler6
+squad_member sq_fallen_nest2__crawler7
+performance crawler7
+squad_member sq_fallen_nest2__runner3
+performance runner3
+squad_member sq_fallen_nest2__runner4
+performance runner4
+squad_member sq_fallen_nest2__shank1
+performance shank1
+squad_member sq_fallen_nest2__shank2
+performance shank2
 @member_counts({vandal: 1})
-c_squad_sensor_host sq_fallen_first_vandal
-c_objective_sensor_host obj_breach_fallen01  # true name unknown
-c_squad_sensor_host sq_fallen_bouncedown_a
-c_squad_sensor_host sq_fallen_bouncedown_c
-c_squad_sensor_host sq_fallen_wall_l_a
-c_squad_sensor_host sq_fallen_floor_a
-c_squad_sensor_host sq_fallen_floor_b
-c_squad_sensor_host sq_fallen_wall_r_b
-c_squad_sensor_host sq_fallen_wall_l_b
-c_squad_sensor_host sq_fallen_dropdown_c
-c_squad_sensor_host sq_fallen_wall_l_c
-c_squad_sensor_host sq_fallen_floor_c
-c_squad_sensor_host sq_fallen_dropdown_e
-c_squad_sensor_host sq_fallen_dropdown_f
-c_squad_sensor_host sq_fallen_floor_f
-c_squad_sensor_host sq_fallen_wall_r_f
-c_squad_sensor_host sq_fallen_dropdown_g
-c_squad_sensor_host sq_fallen_wall_l_g
+squad sq_fallen_first_vandal
+objective obj_breach_fallen01
+squad sq_fallen_bouncedown_a
+squad sq_fallen_bouncedown_c
+squad sq_fallen_wall_l_a
+squad sq_fallen_floor_a
+squad sq_fallen_floor_b
+squad sq_fallen_wall_r_b
+squad sq_fallen_wall_l_b
+squad sq_fallen_dropdown_c
+squad sq_fallen_wall_l_c
+squad sq_fallen_floor_c
+squad sq_fallen_dropdown_e
+squad sq_fallen_dropdown_f
+squad sq_fallen_floor_f
+squad sq_fallen_wall_r_f
+squad sq_fallen_dropdown_g
+squad sq_fallen_wall_l_g
 @member_counts({dreg: 1, dreg_1: 1})
-c_squad_sensor_host sq_fallen_h
-c_squad_sensor_host sq_fallen_1c
-c_squad_sensor_host sq_fallen_2
-c_squad_sensor_host sq_fallen_bridge
-c_squad_sensor_host sq_fallen_sniper
-c_squad_sensor_host sq_fallen_garage_obj
-c_squad_sensor_host sq_fallen_garage_melee
-c_squad_sensor_host sq_fallen_garage_vandals_2
-c_squad_sensor_host sq_fallen_garage_vandals_3
+squad sq_fallen_h
+squad sq_fallen_1c
+squad sq_fallen_2
+squad sq_fallen_bridge
+squad sq_fallen_sniper
+squad sq_fallen_garage_obj
+squad sq_fallen_garage_melee
+squad sq_fallen_garage_vandals_2
+squad sq_fallen_garage_vandals_3
 @member_counts({dregs: 1, dregs_1: 1, vandal: 1})
-c_squad_sensor_host sq_fallen_garage_exit
-c_location_sensor_host breach  # true name unknown
-c_player_trigger_sensor_host pt_bubble bind(breach)  # true name unknown
-c_object_sensor_host o_breach_gating_lights
-c_object_sensor_host o_fallen_tripwire_1
-c_object_sensor_host o_fallen_tripwire_2
-c_object_sensor_host o_fallen_tripwire_3
-c_object_sensor_host o_fallen_tripwire_4
-c_object_sensor_host o_fallen_tripwire_5
-c_object_sensor_host o_fallen_tripwire_6
-c_object_sensor_host o_fallen_tripwire_7
-c_object_sensor_host o_chest_primary_weapon
-c_object_sensor_host o_device_invis_light
-c_object_sensor_host o_floor_grate_2a
-c_object_sensor_host o_floor_grate_2b
-c_player_trigger_sensor_host pt_nux_first_fallen_wall_climb  # true name unknown
-c_squad_member_sensor_host sq_fallen_nest2__crawler8  # true name unknown
-c_performance_host crawler8  # true name unknown
-c_player_trigger_sensor_host pt_nux_ghost_light_up_start  # true name unknown
-c_object_sensor_host o_breach_nut_back
-c_squad_sensor_host sq_nux_ghost
-c_squad_member_sensor_host sq_nux_ghost__ghost  # true name unknown
-c_performance_host nux_ghost  # true name unknown
-c_object_filter_sensor_host of_ghostlight
-c_hop_on_sensor_host ho_ghostlight  # true name unknown
-c_object_sensor_host o_breach_gating_back
-c_object_sensor_host o_breach_control
-c_player_trigger_sensor_host pt_fallen_1b_spawn  # true name unknown
-c_player_trigger_sensor_host pt_fallen_c_spawn  # true name unknown
-c_squad_member_sensor_host sq_fallen_bouncedown_c__vandal_blade  # true name unknown
-c_sequence_host seq_fallen_intro_vandal_drop  # true name unknown
-c_squad_member_sensor_host sq_fallen_wall_l_c__dreg  # true name unknown
-c_sequence_host seq_fallen_vault_right  # true name unknown
-c_player_trigger_sensor_host pt_fallen_melee  # true name unknown
-c_squad_member_sensor_host sq_fallen_dropdown_e__dreg  # true name unknown
-c_sequence_host seq_breach_fallen_drop  # true name unknown
-c_player_trigger_sensor_host pt_fallen_arena_spawn  # true name unknown
-c_squad_member_sensor_host sq_fallen_1c__dreg  # true name unknown
-c_squad_member_sensor_host sq_fallen_2__dreg_a  # true name unknown
-c_squad_member_sensor_host sq_fallen_2__dreg_b  # true name unknown
-c_object_sensor_host o_breach_cables
-c_player_trigger_sensor_host pt_corr_spawn_b  # true name unknown
-c_squad_member_sensor_host sq_fallen_dropdown_f__dreg  # true name unknown
-c_squad_member_sensor_host sq_fallen_dropdown_f__dreg1  # true name unknown
-c_player_trigger_sensor_host pt_corr_spawn_b_melee  # true name unknown
-c_squad_member_sensor_host sq_fallen_floor_f__dreg  # true name unknown
-c_sequence_host seq_breach_fallen_grate_intro  # true name unknown
-c_squad_member_sensor_host sq_fallen_wall_r_f__dreg  # true name unknown
-c_sequence_host seq_fallen_vault_left  # true name unknown
-c_player_trigger_sensor_host pt_corr_spawn_b_rear  # true name unknown
-c_squad_member_sensor_host sq_fallen_dropdown_g__dreg  # true name unknown
-c_squad_member_sensor_host sq_fallen_wall_l_g__dreg  # true name unknown
-c_player_trigger_sensor_host pt_fallen_vandal_spawn  # true name unknown
-c_squad_member_sensor_host sq_fallen_garage_vandals_2__vandal_2  # true name unknown
-c_squad_member_sensor_host sq_fallen_garage_vandals_3__vandal_3  # true name unknown
-c_squad_member_sensor_host sq_fallen_garage_melee__dreg1  # true name unknown
-c_squad_member_sensor_host sq_fallen_garage_melee__dreg2  # true name unknown
-c_squad_member_sensor_host sq_fallen_garage_melee__dreg3  # true name unknown
-c_player_trigger_sensor_host pt_fallen_3_spawn  # true name unknown
+squad sq_fallen_garage_exit
+location breach
+player_trigger pt_bubble bind(breach)
+object o_breach_gating_lights
+object o_fallen_tripwire_1
+object o_fallen_tripwire_2
+object o_fallen_tripwire_3
+object o_fallen_tripwire_4
+object o_fallen_tripwire_5
+object o_fallen_tripwire_6
+object o_fallen_tripwire_7
+object o_chest_primary_weapon
+object o_device_invis_light
+object o_floor_grate_2a
+object o_floor_grate_2b
+player_trigger pt_nux_first_fallen_wall_climb
+squad_member sq_fallen_nest2__crawler8
+performance crawler8
+player_trigger pt_nux_ghost_light_up_start
+object o_breach_nut_back
+squad sq_nux_ghost
+squad_member sq_nux_ghost__ghost
+performance nux_ghost
+object_filter of_ghostlight
+hop_on ho_ghostlight
+object o_breach_gating_back
+object o_breach_control
+player_trigger pt_fallen_1b_spawn
+player_trigger pt_fallen_c_spawn
+squad_member sq_fallen_bouncedown_c__vandal_blade
+sequence seq_fallen_intro_vandal_drop
+squad_member sq_fallen_wall_l_c__dreg
+sequence seq_fallen_vault_right
+player_trigger pt_fallen_melee
+squad_member sq_fallen_dropdown_e__dreg
+sequence seq_breach_fallen_drop
+player_trigger pt_fallen_arena_spawn
+squad_member sq_fallen_1c__dreg
+squad_member sq_fallen_2__dreg_a
+squad_member sq_fallen_2__dreg_b
+object o_breach_cables
+player_trigger pt_corr_spawn_b
+squad_member sq_fallen_dropdown_f__dreg
+squad_member sq_fallen_dropdown_f__dreg1
+player_trigger pt_corr_spawn_b_melee
+squad_member sq_fallen_floor_f__dreg
+sequence seq_breach_fallen_grate_intro
+squad_member sq_fallen_wall_r_f__dreg
+sequence seq_fallen_vault_left
+player_trigger pt_corr_spawn_b_rear
+squad_member sq_fallen_dropdown_g__dreg
+squad_member sq_fallen_wall_l_g__dreg
+player_trigger pt_fallen_vandal_spawn
+squad_member sq_fallen_garage_vandals_2__vandal_2
+squad_member sq_fallen_garage_vandals_3__vandal_3
+squad_member sq_fallen_garage_melee__dreg1
+squad_member sq_fallen_garage_melee__dreg2
+squad_member sq_fallen_garage_melee__dreg3
+player_trigger pt_fallen_3_spawn
 c_command_script __cs  # true name unknown
 
-startup thread sc_breach_main:
+@startup()
+script sc_breach_main():
     sq_fallen_nest1__dropper1.place()
     dropper1.start_performance("act_perch_drop_1")
     sq_fallen_nest1__crawler1.place()
@@ -204,7 +205,7 @@ startup thread sc_breach_main:
     sc_fallen_tripwire_6.wake()
     sc_fallen_tripwire_7.wake()
 
-thread sc_breach_objects:
+script sc_breach_objects():
     sleep_until(pt_bubble.is_triggered())
     o_breach_gating_lights.create()
     o_fallen_tripwire_1.create()
@@ -219,7 +220,7 @@ thread sc_breach_objects:
     o_floor_grate_2a.create()
     o_floor_grate_2b.create()
 
-thread sc_nest_wall_climb:
+script sc_nest_wall_climb():
     sleep_until(pt_nux_first_fallen_wall_climb.is_triggered())
     sq_fallen_nest2__crawler8.place()
     crawler8.start_performance("0x74E80629")
@@ -227,7 +228,7 @@ thread sc_nest_wall_climb:
     sleep(3)
     enter(sq_fallen_nest2__crawler8, "delete_self")
 
-thread sc_nest_scatter:
+script sc_nest_scatter():
     sleep(6)
     crawler5.cue_performance("begin_action")
     sleep(3)
@@ -272,7 +273,7 @@ thread sc_nest_scatter:
     sleep(1)
     enter(sq_fallen_nest1__swinger1, "delete_self")
 
-thread sc_ghost_light_up:
+script sc_ghost_light_up():
     sleep_until(pt_nux_ghost_light_up_start.is_triggered())
     o_breach_nut_back.create()
     sq_nux_ghost__ghost.place()
@@ -293,13 +294,13 @@ thread sc_ghost_light_up:
     sleep(2)
     o_breach_gating_lights.set_device_position(1)
 
-thread sc_fallen_first_vandal:
+script sc_fallen_first_vandal():
     sleep_until(pt_fallen_1b_spawn.is_triggered())
     sq_fallen_first_vandal.activate_temperament("temper_combat_flee")
     sq_fallen_first_vandal.set_task("drop_downs_anchor_fallback")
     sq_fallen_first_vandal.place()
 
-thread sc_fallen_c:
+script sc_fallen_c():
     sleep_until(pt_fallen_c_spawn.is_triggered())
     sq_fallen_bouncedown_c.set_task("0xAE2DC12E")
     sq_fallen_bouncedown_c.place()
@@ -308,13 +309,13 @@ thread sc_fallen_c:
     sq_fallen_wall_l_c.place()
     enter(sq_fallen_wall_l_c__dreg, "act_fallen_vault_right", seq_fallen_vault_right)
 
-thread sc_fallen_melee:
+script sc_fallen_melee():
     sleep_until(pt_fallen_melee.is_triggered())
     sq_fallen_dropdown_e.set_task("drop_downs_melee")
     sq_fallen_dropdown_e.place()
     enter(sq_fallen_dropdown_e__dreg, "fallen_drop", seq_breach_fallen_drop)
 
-thread sc_fallen_arena:
+script sc_fallen_arena():
     sleep_until(pt_fallen_arena_spawn.is_triggered())
     sq_fallen_1c.set_task("bridge_rush")
     sq_fallen_2.set_task("bridge_rush")
@@ -326,14 +327,14 @@ thread sc_fallen_arena:
     sq_fallen_first_vandal.set_task("first_vandal")
     o_breach_cables.create()
 
-thread sc_fallen_corridor_b:
+script sc_fallen_corridor_b():
     sleep_until(pt_corr_spawn_b.is_triggered())
     sq_fallen_dropdown_f.set_task("drop_downs_c")
     sq_fallen_dropdown_f.place()
     enter(sq_fallen_dropdown_f__dreg, "fallen_drop")
     enter(sq_fallen_dropdown_f__dreg1, "fallen_drop")
 
-thread sc_fallen_corridor_b_melee:
+script sc_fallen_corridor_b_melee():
     sleep_until(pt_corr_spawn_b_melee.is_triggered())
     sq_fallen_floor_f.set_task("drop_downs_f_rear")
     sq_fallen_floor_f.place()
@@ -342,7 +343,7 @@ thread sc_fallen_corridor_b_melee:
     sq_fallen_wall_r_f.place()
     enter(sq_fallen_wall_r_f__dreg, "act_fallen_vault_left", seq_fallen_vault_left)
 
-thread sc_fallen_corridor_b_rear:
+script sc_fallen_corridor_b_rear():
     sleep_until(pt_corr_spawn_b_rear.is_triggered())
     sq_fallen_dropdown_g.set_task("drop_downs_f")
     sq_fallen_wall_l_g.set_task("drop_downs_f")
@@ -354,7 +355,7 @@ thread sc_fallen_corridor_b_rear:
     sq_fallen_h.set_task("drop_downs_g")
     sq_fallen_h.place()
 
-thread sc_fallen_garage:
+script sc_fallen_garage():
     sleep_until(pt_fallen_vandal_spawn.is_triggered())
     sq_fallen_garage_vandals_2.activate_temperament("temper_combat_no_active_camo")
     sq_fallen_garage_vandals_3.activate_temperament("temper_combat_no_active_camo")
@@ -376,28 +377,28 @@ thread sc_fallen_garage:
     sq_fallen_garage_exit.set_task("garage_exit")
     sq_fallen_garage_exit.place()
 
-thread sc_chest_primary_weapon:
+script sc_chest_primary_weapon():
     delete_when_destroyed(o_chest_primary_weapon)
 
-thread sc_fallen_tripwire_1:
+script sc_fallen_tripwire_1():
     delete_when_destroyed(o_fallen_tripwire_1)
 
-thread sc_fallen_tripwire_2:
+script sc_fallen_tripwire_2():
     delete_when_destroyed(o_fallen_tripwire_2)
 
-thread sc_fallen_tripwire_3:
+script sc_fallen_tripwire_3():
     delete_when_destroyed(o_fallen_tripwire_3)
 
-thread sc_fallen_tripwire_4:
+script sc_fallen_tripwire_4():
     delete_when_destroyed(o_fallen_tripwire_4)
 
-thread sc_fallen_tripwire_5:
+script sc_fallen_tripwire_5():
     delete_when_destroyed(o_fallen_tripwire_5)
 
-thread sc_fallen_tripwire_6:
+script sc_fallen_tripwire_6():
     delete_when_destroyed(o_fallen_tripwire_6)
 
-thread sc_fallen_tripwire_7:
+script sc_fallen_tripwire_7():
     delete_when_destroyed(o_fallen_tripwire_7)
 
 def enter(actor, sequence, audio):

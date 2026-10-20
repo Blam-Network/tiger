@@ -6,18 +6,18 @@
 # Fallen on the way belong to enc_dome_c_m4.
 
 interactable_objective obj_m4_o2 bind("0x4CBCA57B")
-c_sequence_host seq_m_cue1
-c_sequence_host seq_d_o2_s01
-c_sequence_host seq_d_o2_s014
-c_sequence_host seq_d_o2_s016
-c_sequence_host seq_d_o2_s02
-c_encounter_handle unknown_f9e600a7
+sequence seq_m_cue1
+sequence seq_d_o2_s01
+sequence seq_d_o2_s014
+sequence seq_d_o2_s016
+sequence seq_d_o2_s02
+encounter_handle unknown_f9e600a7
 
-thread init: pass
+script init(): pass
 
-thread complete: pass
+script complete(): pass
 
-thread main:
+script main():
     seq_m_cue1.start()
     seq_m_cue1.set_switch_mask(7)
     sc_control_room.wake()
@@ -32,6 +32,6 @@ thread main:
     # the Ghost's line before the Hive arrive (one run)
     sleep(6)
 
-thread sc_control_room:
+script sc_control_room():
     sleep_until(unknown_f9e600a7.pm_trigger_volume.test_any_inside())
     seq_m_cue1.set_switch_mask(15)

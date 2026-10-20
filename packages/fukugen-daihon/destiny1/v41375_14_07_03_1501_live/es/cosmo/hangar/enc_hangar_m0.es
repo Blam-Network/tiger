@@ -6,33 +6,34 @@
 
 @activity_bundle("enc_hangar_m0")
 
-c_object_sensor_host o_hangar_gating_exit
-c_object_sensor_host o_ship
-c_object_sensor_host o_ship_wires
+object o_hangar_gating_exit
+object o_ship
+object o_ship_wires
 interactable_placement obj_placement_m0_m05
 @member_counts({dreg: 1, dreg_2: 1})
-c_squad_sensor_host sq_m0_fallen_init
-c_objective_sensor_host obj_m0_hangar_fallen  # true name unknown
+squad sq_m0_fallen_init
+objective obj_m0_hangar_fallen
 @member_counts({dreg_1: 1})
-c_squad_sensor_host sq_m0_fallen_init_b
+squad sq_m0_fallen_init_b
 @member_counts({dreg: 1, dreg_1: 1, vandal: 1})
-c_squad_sensor_host sq_m0_fallen_gating
+squad sq_m0_fallen_gating
 @member_counts({captain: 1})
-c_squad_sensor_host sq_ch1_fallen_on_playership_1
+squad sq_ch1_fallen_on_playership_1
 @member_counts({0xD1F11E74: 1})
-c_squad_sensor_host sq_ch1_fallen_on_playership_2
+squad sq_ch1_fallen_on_playership_2
 @member_counts({vandal: 1})
-c_squad_sensor_host sq_ch1_fallen_on_playership_3
+squad sq_ch1_fallen_on_playership_3
 @member_counts({dreg: 3})
-c_squad_sensor_host sq_m0_fallen_1
+squad sq_m0_fallen_1
 @member_counts({dreg: 1, shank: 2})
-c_squad_sensor_host sq_m0_fallen_2
-c_player_trigger_sensor_host pt_grenade_reinforce  # true name unknown
-c_player_trigger_sensor_host pt_fallen_ship  # true name unknown
-c_player_trigger_sensor_host pt_main_room  # true name unknown
-c_player_trigger_sensor_host pt_fallen_backup  # true name unknown
+squad sq_m0_fallen_2
+player_trigger pt_grenade_reinforce
+player_trigger pt_fallen_ship
+player_trigger pt_main_room
+player_trigger pt_fallen_backup
 
-startup thread sc_hangar_main:
+@startup()
+script sc_hangar_main():
     o_hangar_gating_exit.create()
     o_ship.create()
     o_ship_wires.create()
@@ -54,12 +55,12 @@ startup thread sc_hangar_main:
     sc_fallen_main_room.wake()
     sc_fallen_backup.wake()
 
-thread sc_fallen_gating:
+script sc_fallen_gating():
     sleep_until(pt_grenade_reinforce.is_triggered())
     sq_m0_fallen_gating.set_task("gating")
     sq_m0_fallen_gating.place()
 
-thread sc_fallen_on_playership:
+script sc_fallen_on_playership():
     sleep_until(pt_fallen_ship.is_triggered())
     sq_ch1_fallen_on_playership_1.activate_temperament("0xFD455938")
     sq_ch1_fallen_on_playership_2.activate_temperament("0xC88E5DC7")
@@ -71,7 +72,7 @@ thread sc_fallen_on_playership:
     sq_ch1_fallen_on_playership_2.place()
     sq_ch1_fallen_on_playership_3.place()
 
-thread sc_fallen_main_room:
+script sc_fallen_main_room():
     sleep_until(pt_main_room.is_triggered())
     sq_m0_fallen_1.set_task("task_1")
     sq_m0_fallen_1.place()
@@ -79,7 +80,7 @@ thread sc_fallen_main_room:
     sq_ch1_fallen_on_playership_2.set_task("objective_1")
     sq_ch1_fallen_on_playership_3.set_task("objective_1")
 
-thread sc_fallen_backup:
+script sc_fallen_backup():
     sleep_until(pt_fallen_backup.is_triggered())
     sq_m0_fallen_2.set_task("front")
     sq_m0_fallen_2.place()

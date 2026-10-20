@@ -12,9 +12,9 @@ class c_pvp_dominion : c_pvp_slayer:
     int base_capture_score
     static_array<int, 4> zone_control_score_bonus  # true name unknown
     int dominating_team = -1
-    static_array<c_object_sensor_host, 3> zones
-    static_array<c_capturable_host, 3> zone_capturables
-    c_incident_listener capture_incident_listener
+    static_array<object, 3> zones
+    static_array<capturable, 3> zone_capturables
+    incident_listener capture_incident_listener
 
 
 
@@ -27,7 +27,7 @@ class c_pvp_dominion : c_pvp_slayer:
 
 
 
-    thread zone_watcher:
+    script zone_watcher():
         while not game_over:
             new_dominating_team = -1
             for team in range(2):

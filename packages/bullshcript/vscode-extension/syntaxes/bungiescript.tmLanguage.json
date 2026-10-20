@@ -39,11 +39,10 @@
           }
         },
         {
-          "match": "^\\s*(?:(startup)\\s+)?(thread)\\s+([A-Za-z_]\\w*)",
+          "match": "^\\s*(script)\\s+([A-Za-z_]\\w*)",
           "captures": {
-            "1": { "name": "storage.modifier.bungiescript" },
-            "2": { "name": "storage.type.thread.bungiescript" },
-            "3": { "name": "entity.name.function.thread.bungiescript" }
+            "1": { "name": "storage.type.script.bungiescript" },
+            "2": { "name": "entity.name.function.script.bungiescript" }
           }
         },
         {

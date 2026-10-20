@@ -6,11 +6,11 @@
 
 trigger_volume_objective pf_obj_cine_trigger
 
-thread init: pass
+script init(): pass
 
-thread complete: pass
+script complete(): pass
 
-thread main:
+script main():
     sleep(3)
     pf_obj_cine_trigger.objective_begin()
     sleep_until(pf_obj_cine_trigger.is_complete())

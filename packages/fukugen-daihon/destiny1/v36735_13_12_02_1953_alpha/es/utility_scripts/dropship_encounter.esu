@@ -1,15 +1,15 @@
-c_trigger_volume_slot_host _trigger_volume
-dynamic_array<c_squad_sensor_host> _squad
-c_squad_group_sensor_host _squad_group  # true name unknown
-c_squad_sensor_host _dropship_squad
-c_squad_member_sensor_host _dropship_squad__pilot  # true name unknown
-c_objective_sensor_host _objective  # true name unknown
-c_common_reference _objective_reference
-c_control_point_set_sensor_host _dropship_entry_path  # true name unknown
-c_control_point_set_sensor_host _dropship_exit_path  # true name unknown
+trigger_volume _trigger_volume
+dynamic_array<squad> _squad
+squad_group _squad_group
+squad _dropship_squad
+squad_member _dropship_squad__pilot
+objective _objective
+common_reference _objective_reference
+control_point_set _dropship_entry_path
+control_point_set _dropship_exit_path
 int respawn_time = 30
-c_timer_sensor_host _respawn_timer  # true name unknown
-c_player_monitor_sensor_host _player_monitor bind(_trigger_volume)  # true name unknown
+timer _respawn_timer
+player_monitor _player_monitor bind(_trigger_volume)
 
 
 
@@ -30,7 +30,7 @@ def set_objective(override_objective):
 def activate():
     main.restart()
 
-thread init:
+script init():
     if not _player_monitor.test_any_inside():
         main.restart()
 
@@ -38,7 +38,7 @@ def deactivate():
     main.kill()
     complete.restart()
 
-thread main:
+script main():
     for s in _squad:
         _squad_group.add_child(s)
 
@@ -72,7 +72,7 @@ thread main:
 
         sleep(1)
 
-thread complete:
+script complete():
     if _squad_group.alive_count() > 0:
         _squad_group.activate_temperament("temper_despawn")
         sleep(4)
@@ -84,13 +84,13 @@ thread complete:
     if dropship_leave.is_running():
         sleep_until(dropship_leave.is_finished())
 
-thread dropship_enter:
+script dropship_enter():
     _dropship_squad.place()
     _dropship_squad__pilot.execute(_dropship_entry_path); sleep_until(_dropship_squad__pilot.get_command_script_state() != e_command_script_state.executing)
     if not complete.is_running():
         _dropship_squad__pilot.execute(cs_dropship_open_doors()); sleep_until(_dropship_squad__pilot.get_command_script_state() != e_command_script_state.executing)
 
-thread dropship_leave:
+script dropship_leave():
     _dropship_squad__pilot.execute(cs_dropship_close_doors()); sleep_until(_dropship_squad__pilot.get_command_script_state() != e_command_script_state.executing)
     _dropship_squad__pilot.execute(_dropship_exit_path); sleep_until(_dropship_squad__pilot.get_command_script_state() != e_command_script_state.executing)
     _dropship_squad.remove()

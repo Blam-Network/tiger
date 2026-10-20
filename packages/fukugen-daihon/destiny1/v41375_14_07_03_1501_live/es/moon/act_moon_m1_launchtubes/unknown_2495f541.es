@@ -11,51 +11,52 @@
 
 @activity_bundle(0x2495F541)
 
-c_player_trigger_sensor_host pt_bubble  # true name unknown
-c_player_trigger_sensor_host pt_drop_exit  # true name unknown
-c_player_trigger_sensor_host pt_accel_exit  # true name unknown
-c_object_sensor_host o_device_invis_a
-c_object_sensor_host o_device_invis_b
-c_objective_sensor_host obj_accelerator_ch1  # true name unknown
-c_objective_sensor_host obj_patrol  # true name unknown
-c_objective_sensor_host obj_patrol_exit  # true name unknown
-c_squad_sensor_host sq_interior_back
-c_squad_sensor_host sq_interior_melee
-c_squad_sensor_host sq_interior_front
-c_squad_sensor_host sq_drop_initial
-c_squad_sensor_host sq_drop_a
-c_squad_sensor_host sq_drop_c
-c_squad_sensor_host sq_drop_d
-c_squad_sensor_host sq_north_dome
-c_squad_sensor_host sq_north_ridge
-c_squad_sensor_host sq_east_left
-c_squad_sensor_host sq_east_right
-c_squad_sensor_host sq_pike
-c_squad_sensor_host sq_pike_a
-c_squad_sensor_host sq_pike_b
-c_squad_sensor_host sq_dropship_west
-c_squad_member_sensor_host sq_dropship_west__pilot  # true name unknown
-c_control_point_set_sensor_host cps_dropship_west_enter
-c_control_point_set_sensor_host cps_dropship_west_exit
-c_squad_sensor_host sq_dropship_east
-c_squad_member_sensor_host sq_dropship_east__pilot  # true name unknown
-c_control_point_set_sensor_host cps_dropship_east_1_enter
-c_control_point_set_sensor_host cps_dropship_east_1_exit
-c_control_point_set_sensor_host cps_dropship_east_2_enter
-c_control_point_set_sensor_host cps_dropship_east_2_exit
-c_sequence_host seq_accel_audio_room_rear  # true name unknown
-c_sequence_host seq_accel_audio_room_front  # true name unknown
-c_sequence_host seq_accel_audio_false_start  # true name unknown
-c_sequence_host seq_accel_audio_true_start  # true name unknown
-c_sequence_host seq_wave_announce_drop1  # true name unknown
-c_sequence_host seq_wave_announce_drop2  # true name unknown
-c_sequence_host seq_music_accelerator  # true name unknown
-c_sequence_host seq_d_o1_s11  # true name unknown
-c_sequence_host seq_d_o1_s12  # true name unknown
+player_trigger pt_bubble
+player_trigger pt_drop_exit
+player_trigger pt_accel_exit
+object o_device_invis_a
+object o_device_invis_b
+objective obj_accelerator_ch1
+objective obj_patrol
+objective obj_patrol_exit
+squad sq_interior_back
+squad sq_interior_melee
+squad sq_interior_front
+squad sq_drop_initial
+squad sq_drop_a
+squad sq_drop_c
+squad sq_drop_d
+squad sq_north_dome
+squad sq_north_ridge
+squad sq_east_left
+squad sq_east_right
+squad sq_pike
+squad sq_pike_a
+squad sq_pike_b
+squad sq_dropship_west
+squad_member sq_dropship_west__pilot
+control_point_set cps_dropship_west_enter
+control_point_set cps_dropship_west_exit
+squad sq_dropship_east
+squad_member sq_dropship_east__pilot
+control_point_set cps_dropship_east_1_enter
+control_point_set cps_dropship_east_1_exit
+control_point_set cps_dropship_east_2_enter
+control_point_set cps_dropship_east_2_exit
+sequence seq_accel_audio_room_rear
+sequence seq_accel_audio_room_front
+sequence seq_accel_audio_false_start
+sequence seq_accel_audio_true_start
+sequence seq_wave_announce_drop1
+sequence seq_wave_announce_drop2
+sequence seq_music_accelerator
+sequence seq_d_o1_s11
+sequence seq_d_o1_s12
 interactable_placement pf_placement_button_a bind("0x0F93E94C")
 c_command_script __cs  # true name unknown
 
-startup thread sc_accelerator_main:
+@startup()
+script sc_accelerator_main():
     sq_interior_back.set_objective(obj_accelerator_ch1)
     sq_interior_melee.set_objective(obj_accelerator_ch1)
     sq_interior_front.set_objective(obj_accelerator_ch1)
@@ -75,14 +76,14 @@ startup thread sc_accelerator_main:
     sc_east_ship_first.wake()
     sc_after_wave.wake()
 
-thread sc_accelerator_objects:
+script sc_accelerator_objects():
     sleep_until(pt_bubble.is_triggered())
     o_device_invis_a.create()
     o_device_invis_b.create()
 
 # The first button press is a false start: the Fallen inside the room come
 # for the player and the west dropship arrives.
-thread sc_false_start:
+script sc_false_start():
     sleep_until(pf_placement_button_a._interactable.is_active())
     sleep(6)
     seq_accel_audio_room_rear.start()
@@ -95,7 +96,7 @@ thread sc_false_start:
     sq_interior_melee.place()
     sc_west_ship.wake()
 
-thread sc_west_ship:
+script sc_west_ship():
     ship_enter_west()
     seq_music_accelerator.set_switch_mask(3)
     sleep(2)
@@ -112,7 +113,7 @@ thread sc_west_ship:
     ship_leave_west()
 
 # The true start follows the last of the Fallen from the first drop.
-thread sc_east_ship_first:
+script sc_east_ship_first():
     sleep_until(sq_drop_initial.alive_count() > 0)
     sleep_until(sq_drop_initial.alive_count() == 0)
     sleep(1)
@@ -141,7 +142,7 @@ thread sc_east_ship_first:
 
 # Once the dropped troops are dead the music winds down and the patrols
 # (the pike squad and the lookouts) take the accelerator.
-thread sc_after_wave:
+script sc_after_wave():
     sleep_until(sq_drop_d.alive_count() > 0)
     sleep_until(sq_drop_d.alive_count() == 0)
     sq_drop_a.set_task("0xA66A1E64")

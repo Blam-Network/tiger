@@ -1,84 +1,84 @@
 u_globals utils
 @member_counts({storm: 0})
-c_squad_sensor_host warpstorm01
-c_squad_member_sensor_host warpstorm01__storm  # true name unknown
+squad warpstorm01
+squad_member warpstorm01__storm
 @member_counts({storm: 0})
-c_squad_sensor_host warpstorm02
-c_squad_member_sensor_host warpstorm02__storm  # true name unknown
+squad warpstorm02
+squad_member warpstorm02__storm
 @member_counts({storm: 0})
-c_squad_sensor_host warpstorm03
-c_squad_member_sensor_host warpstorm03__storm  # true name unknown
+squad warpstorm03
+squad_member warpstorm03__storm
 @member_counts({ultra_hydra: 0})
 @objective(obj_ruins_strike)
-c_squad_sensor_host sq_boss
-c_squad_member_sensor_host sq_boss__ultra_hydra  # true name unknown
-c_health_sensor_host hydra_health  # true name unknown
+squad sq_boss
+squad_member sq_boss__ultra_hydra
+health hydra_health
 @objective(obj_ruins_strike)
-c_squad_sensor_host sq_strike_template
+squad sq_strike_template
 @member_counts({all: 4})
 @objective(obj_ruins_strike)
-c_squad_sensor_host sq_strike01_4
+squad sq_strike01_4
 @member_counts({all: 6})
 @objective(obj_ruins_strike)
-c_squad_sensor_host sq_strike01_6
+squad sq_strike01_6
 @member_counts({all: 8})
 @objective(obj_ruins_strike)
-c_squad_sensor_host sq_strike01_8
+squad sq_strike01_8
 @member_counts({all: 8})
 @objective(obj_ruins_strike)
-c_squad_sensor_host sq_strike02_4
+squad sq_strike02_4
 @member_counts({all: 6})
 @objective(obj_ruins_strike)
-c_squad_sensor_host sq_strike02_6
+squad sq_strike02_6
 @member_counts({all: 8})
 @objective(obj_ruins_strike)
-c_squad_sensor_host sq_strike02_8
+squad sq_strike02_8
 @member_counts({all: 4})
 @objective(obj_ruins_strike)
-c_squad_sensor_host sq_strike03_4
+squad sq_strike03_4
 @member_counts({all: 6})
 @objective(obj_ruins_strike)
-c_squad_sensor_host sq_strike03_6
+squad sq_strike03_6
 @member_counts({all: 8})
 @objective(obj_ruins_strike)
-c_squad_sensor_host sq_strike03_8
+squad sq_strike03_8
 @member_counts({cell_1: 1})
 @objective(obj_ruins_strike)
-c_squad_sensor_host sq_boss_guard01
+squad sq_boss_guard01
 @member_counts({cell_1: 1})
 @objective(obj_ruins_strike)
-c_squad_sensor_host sq_boss_guard02
+squad sq_boss_guard02
 @member_counts({cell_1: 1})
 @objective(obj_ruins_strike)
-c_squad_sensor_host sq_boss_guard03
+squad sq_boss_guard03
 @member_counts({cell_1: 1})
 @objective(obj_ruins_strike)
-c_squad_sensor_host sq_boss_guard04
+squad sq_boss_guard04
 @member_counts({cell_1: 1})
 @objective(obj_ruins_strike)
-c_squad_sensor_host sq_boss_guard05
+squad sq_boss_guard05
 @member_counts({cell_1: 1})
 @objective(obj_ruins_strike)
-c_squad_sensor_host sq_boss_guard06
-c_squad_group_sensor_host sgq_strike_guards  # true name unknown
-c_squad_group_sensor_host sgq_strike_minions  # true name unknown
-c_object_sensor_host pvp_heavy_cache_respawn_1
-c_object_sensor_host pvp_heavy_cache_respawn_2
-c_object_sensor_host pvp_heavy_cache_respawn_3
+squad sq_boss_guard06
+squad_group sgq_strike_guards
+squad_group sgq_strike_minions
+object pvp_heavy_cache_respawn_1
+object pvp_heavy_cache_respawn_2
+object pvp_heavy_cache_respawn_3
 @task(0x62573E8E, squad: sq_boss)
 @task("guards", squad: sgq_strike_guards)
-c_objective_sensor_host obj_ruins_strike  # true name unknown
-c_trigger_volume_slot_host tv_2_vol
-c_trigger_volume_slot_host tv_1_vol
-c_trigger_volume_slot_host tv_3_vol
-c_trigger_volume_slot_host tv_start_boss
-c_player_monitor_sensor_host pm_2_vol bind(tv_2_vol)  # true name unknown
-c_player_monitor_sensor_host pm_1_vol bind(tv_1_vol)  # true name unknown
-c_player_monitor_sensor_host pm_3_vol bind(tv_3_vol)  # true name unknown
-c_player_trigger_sensor_host pt_start_boss bind(tv_start_boss)  # true name unknown
-c_sequence_host md_s1_m3_d020  # true name unknown
-c_sequence_host md_s1_m3_d030  # true name unknown
-c_sequence_host md_s1_m3_d040  # true name unknown
+objective obj_ruins_strike
+trigger_volume tv_2_vol
+trigger_volume tv_1_vol
+trigger_volume tv_3_vol
+trigger_volume tv_start_boss
+player_monitor pm_2_vol bind(tv_2_vol)
+player_monitor pm_1_vol bind(tv_1_vol)
+player_monitor pm_3_vol bind(tv_3_vol)
+player_trigger pt_start_boss bind(tv_start_boss)
+sequence md_s1_m3_d020
+sequence md_s1_m3_d030
+sequence md_s1_m3_d040
 int g_spawn_direction
 int g_wave_num
 kill_squad_objective kill_squad_ruins bind("strike_kill_boss", 1)
@@ -97,13 +97,13 @@ dialog_trigger md_s1_m3_d010_trigger
 
 
 
-thread init:
+script init():
     sc_heavy_ammo_recycle.wake()
 
-thread complete:
+script complete():
     c_lifetime_script_utilities.get_lifetime_sensor().end_game()
 
-thread main:
+script main():
     sgq_strike_minions.add_child(sq_strike01_4)
     sgq_strike_minions.add_child(sq_strike01_6)
     sgq_strike_minions.add_child(sq_strike01_8)
@@ -132,7 +132,7 @@ thread main:
     kill_squad_ruins.objective_end()
     sleep(3)
 
-thread sc_heavy_ammo_recycle:
+script sc_heavy_ammo_recycle():
     while true:
         pvp_heavy_cache_respawn_1.create()
         pvp_heavy_cache_respawn_2.create()
@@ -143,7 +143,7 @@ thread sc_heavy_ammo_recycle:
         pvp_heavy_cache_respawn_3.delete_object()
 
 
-thread sc_mission_logic:
+script sc_mission_logic():
 
     print("place guards")
     sq_boss_guard01.place()
@@ -251,15 +251,15 @@ def strike_player_direction():
     print("!!!!!!!!!!!!!!!!!!g_spawn_direction!!!!!!!!!!!!!!!!!!!!!!! : " + g_spawn_direction)
 
 
-thread venus_s1_m03_d20:
+script venus_s1_m03_d20():
     md_s1_m3_d020.start()
     print("md_s1_m3_d020")
 
-thread venus_s1_m03_d30:
+script venus_s1_m03_d30():
     md_s1_m3_d030.start()
     print("md_s1_m3_d030")
 
-thread venus_s1_m03_d40:
+script venus_s1_m03_d40():
     md_s1_m3_d040.start()
     print("md_s1_m3_d040")
 

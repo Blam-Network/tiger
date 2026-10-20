@@ -11,22 +11,23 @@
 
 @activity_bundle(0xD66CE681)
 
-c_sequence_host seq_music_intro  # true name unknown
-c_sequence_host seq_music_accelerator  # true name unknown
-c_sequence_host seq_music_launchtubes  # true name unknown
-c_sequence_host seq_d_o1_s01  # true name unknown
-c_sequence_host seq_d_o1_s02  # true name unknown
-c_sequence_host seq_d_o1_s07  # true name unknown
-c_sequence_host seq_d_o1_s09  # true name unknown
-c_sequence_host seq_d_o2_s09  # true name unknown
-c_player_trigger_sensor_host pt_accel_enter  # true name unknown
-c_player_trigger_sensor_host pt_music_lt_alt  # true name unknown
-c_player_trigger_sensor_host pt_spawn_court_interior  # true name unknown
-c_squad_sensor_host sq_court_high_a_b
-c_squad_sensor_host sq_court_high_b
+sequence seq_music_intro
+sequence seq_music_accelerator
+sequence seq_music_launchtubes
+sequence seq_d_o1_s01
+sequence seq_d_o1_s02
+sequence seq_d_o1_s07
+sequence seq_d_o1_s09
+sequence seq_d_o2_s09
+player_trigger pt_accel_enter
+player_trigger pt_music_lt_alt
+player_trigger pt_spawn_court_interior
+squad sq_court_high_a_b
+squad sq_court_high_b
 trigger_bubble_objective pf_objective_goto
 
-startup thread sc_main_thread:
+@startup()
+script sc_main_thread():
     sleep_until(c_player_script_utilities.all_players_are_ready())
     seq_music_intro.start()
     seq_music_accelerator.start()
@@ -36,18 +37,20 @@ startup thread sc_main_thread:
     sleep(9)
     seq_d_o1_s02.start()
 
+@startup()
 # Into the accelerator proper: the Ghost talks while the player looks around.
-startup thread sc_pt_accel_enter:
+script sc_pt_accel_enter():
     sleep_until(pt_accel_enter.is_triggered())
     sleep(1)
     seq_d_o1_s07.start()
     sleep(14)
     seq_d_o1_s09.start()
 
+@startup()
 # The launch tubes' music starts as the player reaches the tubes and moves up
 # a section each time the fight moves on. The gate and the Guardian's button
 # move it on elsewhere.
-startup thread sc_launchtubes_music:
+script sc_launchtubes_music():
     sleep_until(pf_objective_goto._player_trigger.is_triggered())
     seq_music_launchtubes.start()
     seq_music_launchtubes.set_switch_mask(1)
@@ -55,7 +58,8 @@ startup thread sc_launchtubes_music:
     sleep(1)
     seq_music_launchtubes.set_switch_mask(3)
 
-startup thread sc_court_music:
+@startup()
+script sc_court_music():
     sleep_until(pt_spawn_court_interior.is_triggered())
     sleep(2)
     seq_d_o2_s09.start()

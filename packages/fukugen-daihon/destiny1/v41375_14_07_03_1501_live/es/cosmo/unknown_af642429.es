@@ -10,33 +10,40 @@
 
 @activity_bundle(0xAF642429)
 
-c_object_sensor_host chest_mc_helipad
-c_object_sensor_host chest_mc_hivedome
-c_object_sensor_host chest_dome_c_high
-c_object_sensor_host chest_dome_c_low
-c_object_sensor_host chest_underpad
-c_object_sensor_host chest_edges_a
-c_object_sensor_host chest_edges_c
+object chest_mc_helipad
+object chest_mc_hivedome
+object chest_dome_c_high
+object chest_dome_c_low
+object chest_underpad
+object chest_edges_a
+object chest_edges_c
 
-startup thread sc_chest_mc_helipad:
+@startup()
+script sc_chest_mc_helipad():
     spawn_chest(chest_mc_helipad)
 
-startup thread sc_chest_mc_hivedome:
+@startup()
+script sc_chest_mc_hivedome():
     spawn_chest(chest_mc_hivedome)
 
-startup thread sc_chest_dome_c_high:
+@startup()
+script sc_chest_dome_c_high():
     spawn_chest(chest_dome_c_high)
 
-startup thread sc_chest_dome_c_low:
+@startup()
+script sc_chest_dome_c_low():
     spawn_chest(chest_dome_c_low)
 
-startup thread sc_chest_underpad:
+@startup()
+script sc_chest_underpad():
     spawn_chest(chest_underpad)
 
-startup thread sc_chest_edges_a:
+@startup()
+script sc_chest_edges_a():
     spawn_chest(chest_edges_a)
 
-startup thread sc_chest_edges_c:
+@startup()
+script sc_chest_edges_c():
     spawn_chest(chest_edges_c)
 
 def spawn_chest(chest):

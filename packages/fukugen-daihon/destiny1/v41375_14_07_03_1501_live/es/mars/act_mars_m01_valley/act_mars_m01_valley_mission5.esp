@@ -9,16 +9,16 @@
 # next phase.
 
 collect_loot_objective sp_objective_loot bind("0x0CD4D5F7", 1)
-c_nav_point_host np_choke
-c_squad_sensor_host sq_boss
-c_squad_member_sensor_host sq_boss__boss
-c_sequence_host seq_music_checkpoint
+nav_point np_choke
+squad sq_boss
+squad_member sq_boss__boss
+sequence seq_music_checkpoint
 
-thread init: pass
+script init(): pass
 
-thread complete: pass
+script complete(): pass
 
-thread main:
+script main():
     insertion_point()
     seq_music_checkpoint.set_switch_mask(7)
     sleep_until(sq_boss__boss.is_bound())

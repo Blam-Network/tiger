@@ -9,17 +9,17 @@
 # later. Timings are one run's.
 
 generic_objective sp_objective_kill
-c_trigger_volume_slot_host tv_boss
-c_player_trigger_sensor_host pt_boss bind(tv_boss)
-c_encounter_handle enc_lowergarden_m07
-c_sequence_host seq_dialog_lowergarden_kill
-c_sequence_host seq_music_lowergarden
+trigger_volume tv_boss
+player_trigger pt_boss bind(tv_boss)
+encounter_handle enc_lowergarden_m07
+sequence seq_dialog_lowergarden_kill
+sequence seq_music_lowergarden
 
-thread init: pass
+script init(): pass
 
-thread complete: pass
+script complete(): pass
 
-thread main:
+script main():
     sleep_until(pt_boss.is_triggered())
     enc = enc_lowergarden_m07
     heart = enc.sp_specops_heart
@@ -45,7 +45,7 @@ thread main:
     heart.o_statue_c.delete_object()
 
 # the objective comes up ten seconds into the first statue's waking
-thread sc_objective:
+script sc_objective():
     sleep(10)
     seq_dialog_lowergarden_kill.start()
     sp_objective_kill.objective_begin(nil)

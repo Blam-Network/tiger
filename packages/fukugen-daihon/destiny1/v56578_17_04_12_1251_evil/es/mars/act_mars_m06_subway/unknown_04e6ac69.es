@@ -9,62 +9,64 @@
 
 @activity_bundle(0x04E6AC69)
 
-c_sequence_host seq_m_intro_s01
-c_sequence_host seq_m_climax_s01
-c_sequence_host seq_m_ascent_s01
-c_sequence_host seq_d_plains_lz_s01
-c_sequence_host seq_plains_to_bg_s01
-c_sequence_host seq_d_bg_travel_s01
-c_sequence_host seq_d_bg_obj_s01
-c_sequence_host seq_d_bg_to_transit_s01
-c_sequence_host seq_d_lobby_dark_s01
-c_sequence_host seq_d_lobby_to_subway_s01
-c_sequence_host seq_d_subway_gate_s01
-c_sequence_host seq_d_subway_clear_s01
-c_sequence_host seq_d_subway_clear_s02
-c_sequence_host seq_d_subway_obj_s01
-c_trigger_volume_slot_host tv_plains_to_bg
-c_trigger_volume_slot_host tv_bg_obj_near
-c_trigger_volume_slot_host tv_bg_to_ruin_or_downtown
-c_trigger_volume_slot_host tv_lobby_to_subway
-c_trigger_volume_slot_host tv_subway_warpgate_area_all
-c_trigger_volume_slot_host tv_subway_warpgate_area_end
-c_location_sensor_host downtown
-c_location_sensor_host bg_ruin
-c_location_sensor_host lobby
-c_location_sensor_host subway
+sequence seq_m_intro_s01
+sequence seq_m_climax_s01
+sequence seq_m_ascent_s01
+sequence seq_d_plains_lz_s01
+sequence seq_plains_to_bg_s01
+sequence seq_d_bg_travel_s01
+sequence seq_d_bg_obj_s01
+sequence seq_d_bg_to_transit_s01
+sequence seq_d_lobby_dark_s01
+sequence seq_d_lobby_to_subway_s01
+sequence seq_d_subway_gate_s01
+sequence seq_d_subway_clear_s01
+sequence seq_d_subway_clear_s02
+sequence seq_d_subway_obj_s01
+trigger_volume tv_plains_to_bg
+trigger_volume tv_bg_obj_near
+trigger_volume tv_bg_to_ruin_or_downtown
+trigger_volume tv_lobby_to_subway
+trigger_volume tv_subway_warpgate_area_all
+trigger_volume tv_subway_warpgate_area_end
+location downtown
+location bg_ruin
+location lobby
+location subway
 # bound to the two scan objects, so only their own interaction counts
-c_incident_listener il_scan_battleground bind("0x1A58BFCD")
-c_incident_listener il_scan_subway bind("0xB0327A81")
+incident_listener il_scan_battleground bind("0x1A58BFCD")
+incident_listener il_scan_subway bind("0xB0327A81")
 
 # the mission's and the encounters' rows the lines play off
-c_location_sensor_host battleground
+location battleground
 trigger_bubble_objective pf_objective_battleground_goto bind(battleground)
 trigger_bubble_objective pf_objective_lobby_goto bind(lobby)
 trigger_volume_objective pf_objective_lobby_n_trigger
-c_player_trigger_sensor_host pt_n_plat_spawn
-c_player_trigger_sensor_host pt_warpgate1
-c_player_trigger_sensor_host pt_warpgate3and4and5
+player_trigger pt_n_plat_spawn
+player_trigger pt_warpgate1
+player_trigger pt_warpgate3and4and5
 vex_warp_gate pf_warp_gate1
 vex_warp_gate pf_warp_gate2
 vex_warp_gate pf_warp_gate3
 vex_warp_gate pf_warp_gate4
 vex_warp_gate pf_warp_gate5
-c_squad_sensor_host sq_warpgate3_support1
-c_squad_sensor_host sq_warpgate3_support2
-c_squad_sensor_host sq_warpgate4_major_anchor1
-c_squad_sensor_host sq_warpgate4_support1
-c_squad_sensor_host sq_warpgate5_support1
-c_squad_sensor_host sq_warpgate5_support2
+squad sq_warpgate3_support1
+squad sq_warpgate3_support2
+squad sq_warpgate4_major_anchor1
+squad sq_warpgate4_support1
+squad sq_warpgate5_support1
+squad sq_warpgate5_support2
 
-startup thread sc_audio_main:
+@startup()
+script sc_audio_main():
     sleep_until(c_player_script_utilities.all_players_are_ready())
     seq_m_intro_s01.start()
     seq_plains_to_bg_s01.start()
     sleep(3)
     seq_d_plains_lz_s01.start()
 
-startup thread sc_battleground:
+@startup()
+script sc_battleground():
     sleep_until(pf_objective_battleground_goto._player_trigger.is_triggered())
     sleep(1)
     seq_plains_to_bg_s01.stop()
@@ -75,7 +77,8 @@ startup thread sc_battleground:
     sleep(1)
     seq_d_bg_obj_s01.start()
 
-startup thread sc_lobby:
+@startup()
+script sc_lobby():
     sleep_until(pf_objective_lobby_goto._player_trigger.is_triggered())
     sleep(3)
     seq_d_lobby_dark_s01.start()
@@ -90,8 +93,9 @@ startup thread sc_lobby:
     seq_d_bg_to_transit_s01.stop()
     seq_d_lobby_to_subway_s01.stop()
 
+@startup()
 # the climax music hits when the gates stand and steps up as they fall
-startup thread sc_subway_music:
+script sc_subway_music():
     sleep_until(gates_alive_count() > 0)
     seq_m_climax_s01.start()
     seq_m_climax_s01.set_switch_mask(1)
@@ -106,7 +110,8 @@ startup thread sc_subway_music:
     seq_m_climax_s01.stop()
     seq_m_climax_s01.set_switch_mask(15)
 
-startup thread sc_subway_lines:
+@startup()
+script sc_subway_lines():
     sleep_until(gates_alive_count() > 0)
     sleep_until(gates_alive_count() <= 3)
     sleep(7)

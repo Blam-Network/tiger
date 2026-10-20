@@ -8,13 +8,13 @@
 
 trigger_volume_objective pf_obj_ultra_trigger
 collect_loot_objective pf_objective_loot bind("0x9737BF52", 1)
-c_sequence_host seq_d_o1_s05
+sequence seq_d_o1_s05
 
-thread init: pass
+script init(): pass
 
-thread complete: pass
+script complete(): pass
 
-thread main:
+script main():
     pf_obj_ultra_trigger.objective_begin()
     sleep_until(pf_obj_ultra_trigger.is_complete())
     pf_obj_ultra_trigger.objective_end_silent()

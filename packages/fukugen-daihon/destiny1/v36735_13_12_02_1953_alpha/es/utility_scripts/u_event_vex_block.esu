@@ -2,23 +2,23 @@ u_event_vex_block_preset pf_event_vex_block_preset
 u_event_globals event_globals
 static_array<u_event_vex_block_point, 8> pf_event_vex_cloud_point
 static_array<u_event_vex_block_wave, 8> pf_event_vex_block_wave
-dynamic_array<c_object_sensor_host> o_vex_cov
-static_array<c_device_host, 10> dev_vex_cov
-c_object_sensor_host o_vex_block
-c_device_host d_vex_block bind(o_vex_block)
-c_objective_sensor_host obj_vex_block_initial  # true name unknown
-c_squad_sensor_host sq_initialize
-c_squad_member_sensor_host sq_initialize__goblin  # true name unknown
-c_squad_sensor_host sq_vex_cloud_init
-c_squad_member_sensor_host sq_vex_cloud_init__pilot  # true name unknown
-c_trigger_volume_slot_host tv_engagement
-c_player_trigger_sensor_host pt_engagement bind(tv_engagement)  # true name unknown
-c_hop_on_sensor_host ho_overshield  # true name unknown
-c_object_filter_sensor_host of_overshield
-c_incident_listener il_block_kills
+dynamic_array<object> o_vex_cov
+static_array<device, 10> dev_vex_cov
+object o_vex_block
+device d_vex_block bind(o_vex_block)
+objective obj_vex_block_initial
+squad sq_initialize
+squad_member sq_initialize__goblin
+squad sq_vex_cloud_init
+squad_member sq_vex_cloud_init__pilot
+trigger_volume tv_engagement
+player_trigger pt_engagement bind(tv_engagement)
+hop_on ho_overshield
+object_filter of_overshield
+incident_listener il_block_kills
 string_hash sacrifice_incident = "vex_block_sacrifice"
 string_hash all_players = "all_players"
-c_kill_incident_listener kil_player_kills  # true name unknown
+kill_incident_listener kil_player_kills
 string_hash event_squad_id = "sq_event_vex_block"
 int i_setup_timer = 90
 int i_event_timer = 210
@@ -26,8 +26,8 @@ int i_current_vex_cloud
 int i_dead_count
 int i_dead_max = 10
 int i_max_reward_tier = 5
-c_hop_on_sensor_host ho_vex_death  # true name unknown
-c_object_filter_sensor_host of_vex_death
+hop_on ho_vex_death
+object_filter of_vex_death
 
 
 
@@ -43,17 +43,17 @@ c_object_filter_sensor_host of_vex_death
 
 
 
-thread init:
+script init():
     print("init vex block")
     sleep(30)
     main.restart()
 
-thread complete:
+script complete():
 
     print("cleanup")
 
 
-thread main:
+script main():
 
 
     func_event_setup(pf_event_vex_block_preset.po_event_vex_block)
@@ -312,13 +312,13 @@ def func_remove_all_squads():
         pf_event_vex_block_wave[i].remove_squads()
 
 
-thread watch_for_block_death: pass
+script watch_for_block_death(): pass
 
 
 
 
 
-thread spawn_pre_engage_waves:
+script spawn_pre_engage_waves():
 
     sq_vex_cloud_init__pilot.abort_command_script()
 
@@ -363,7 +363,7 @@ def run_seize(sq):
     sq.activate_temperament("temper_freeze")
     sleep(2.5)
 
-thread spawn_waves:
+script spawn_waves():
     print("start waves thread")
     while func_event_running():
         print("running")
@@ -404,21 +404,21 @@ thread spawn_waves:
         sleep(1)
     print("waves NOT running")
 
-thread drop_wave_0:
+script drop_wave_0():
     drop_wave_all(0)
-thread drop_wave_1:
+script drop_wave_1():
     drop_wave_all(1)
-thread drop_wave_2:
+script drop_wave_2():
     drop_wave_all(2)
-thread drop_wave_3:
+script drop_wave_3():
     drop_wave_123(3)
-thread drop_wave_4:
+script drop_wave_4():
     drop_wave_123(4)
-thread drop_wave_5:
+script drop_wave_5():
     drop_wave_123(5)
-thread drop_wave_6:
+script drop_wave_6():
     drop_wave_123(6)
-thread drop_wave_7:
+script drop_wave_7():
     drop_wave_123(7)
 
 def drop_wave_all(i):
@@ -436,7 +436,7 @@ def drop_wave_123(i):
 def get_wave_alive_count(index):
     return pf_event_vex_block_wave[index].sg_vex.alive_count()
 
-thread count_block_kills:
+script count_block_kills():
     print("start kill thread")
     il_block_kills.reset()
 
@@ -452,7 +452,7 @@ thread count_block_kills:
 
 
 
-thread sc_seq_vex_block_start:
+script sc_seq_vex_block_start():
 
     pf_event_vex_block_preset.seq_vex_block_start.start()
 
@@ -469,15 +469,15 @@ thread sc_seq_vex_block_start:
 
 
 
-thread sc_seq_vex_block_25:
+script sc_seq_vex_block_25():
     pf_event_vex_block_preset.seq_vex_block_25.start()
 
 
-thread sc_seq_vex_block_50:
+script sc_seq_vex_block_50():
     pf_event_vex_block_preset.seq_vex_block_50.start()
 
 
-thread sc_seq_vex_block_75:
+script sc_seq_vex_block_75():
     pf_event_vex_block_preset.seq_vex_block_75.start()
 
 
@@ -496,15 +496,15 @@ thread sc_seq_vex_block_75:
 
 
 
-thread sc_seq_vex_block_end_gold:
+script sc_seq_vex_block_end_gold():
     pf_event_vex_block_preset.seq_vex_block_end_gold.start()
 
 
-thread sc_seq_vex_block_end_silver:
+script sc_seq_vex_block_end_silver():
     pf_event_vex_block_preset.seq_vex_block_end_silver.start()
 
 
-thread sc_seq_vex_block_end_bronze:
+script sc_seq_vex_block_end_bronze():
     pf_event_vex_block_preset.seq_vex_block_end_bronze.start()
 
 # Decompiled from 36735.13.12.02.1953.alpha script tags

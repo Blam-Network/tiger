@@ -4,19 +4,19 @@
 # objective clears when a player reaches the upper garden's bubble. The
 # Vex in the halls belong to the catacombs encounter.
 
-c_location_sensor_host catacombs
+location catacombs
 trigger_bubble_objective sp_objective_goto bind(catacombs)
-c_sequence_host seq_dialog_catacombs_wander
-c_sequence_host seq_dialog_catacombs_statues
-c_sequence_host seq_dialog_uppergarden_ledge
-c_sequence_host seq_music_garden
-c_sequence_host seq_dialog_uppergarden_kill
+sequence seq_dialog_catacombs_wander
+sequence seq_dialog_catacombs_statues
+sequence seq_dialog_uppergarden_ledge
+sequence seq_music_garden
+sequence seq_dialog_uppergarden_kill
 
-thread init: pass
+script init(): pass
 
-thread complete: pass
+script complete(): pass
 
-thread main:
+script main():
     seq_dialog_catacombs_wander.start()
     seq_dialog_catacombs_statues.start()
     seq_dialog_uppergarden_ledge.start()

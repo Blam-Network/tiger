@@ -10,17 +10,20 @@
 
 @activity_bundle(0xAFC05F47)
 
-c_object_sensor_host thorium_low_traffic
-c_object_sensor_host thorium_med_traffic
-c_object_sensor_host thorium_hi_traffic
+object thorium_low_traffic
+object thorium_med_traffic
+object thorium_hi_traffic
 
-startup thread sc_thorium_low_traffic:
+@startup()
+script sc_thorium_low_traffic():
     spawn_node(thorium_low_traffic)
 
-startup thread sc_thorium_med_traffic:
+@startup()
+script sc_thorium_med_traffic():
     spawn_node(thorium_med_traffic)
 
-startup thread sc_thorium_hi_traffic:
+@startup()
+script sc_thorium_hi_traffic():
     spawn_node(thorium_hi_traffic)
 
 def spawn_node(node):

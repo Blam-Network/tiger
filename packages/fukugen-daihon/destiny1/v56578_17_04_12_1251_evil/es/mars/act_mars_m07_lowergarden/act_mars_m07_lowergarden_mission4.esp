@@ -7,20 +7,20 @@
 
 trigger_volume_objective sp_objective_pit
 generic_objective sp_objective_kill
-c_nav_point_host np_pit
-c_encounter_handle enc_uppergarden_m07
-c_sequence_host seq_dialog_catacombs_wander
-c_sequence_host seq_music_garden
-c_sequence_host seq_music_garden_ambience
-c_sequence_host seq_dialog_uppergarden_kill
-c_sequence_host seq_dialog_uppergarden_kill_complete
-c_sequence_host seq_dialog_lowergarden_arena
+nav_point np_pit
+encounter_handle enc_uppergarden_m07
+sequence seq_dialog_catacombs_wander
+sequence seq_music_garden
+sequence seq_music_garden_ambience
+sequence seq_dialog_uppergarden_kill
+sequence seq_dialog_uppergarden_kill_complete
+sequence seq_dialog_lowergarden_arena
 
-thread init: pass
+script init(): pass
 
-thread complete: pass
+script complete(): pass
 
-thread main:
+script main():
     sp_objective_pit.objective_begin()
     sleep_until(sp_objective_pit.is_complete())
     seq_dialog_catacombs_wander.stop()

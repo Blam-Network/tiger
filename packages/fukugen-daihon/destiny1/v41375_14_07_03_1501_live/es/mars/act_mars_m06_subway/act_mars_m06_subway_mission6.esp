@@ -6,16 +6,16 @@
 # sealing the subway shows up with this phase, shut (device 1); the last
 # phase opens it.
 
-c_object_sensor_host o_m06_subway_vexblock_a
-c_location_sensor_host subway
-c_player_monitor_sensor_host pm_subway_bubble bind(subway)
+object o_m06_subway_vexblock_a
+location subway
+player_monitor pm_subway_bubble bind(subway)
 trigger_volume_objective pf_objective_subway_goto
 
-thread init: pass
+script init(): pass
 
-thread complete: pass
+script complete(): pass
 
-thread main:
+script main():
     o_m06_subway_vexblock_a.create()
     o_m06_subway_vexblock_a.set_device_position(1)
     pf_objective_subway_goto.objective_begin()

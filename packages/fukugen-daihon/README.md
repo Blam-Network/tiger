@@ -57,7 +57,7 @@ So we know we have a player trigger and 4 corresponding squads. It would be a re
 
 ```bungiescript
 # destiny1\v36735_13_12_02_1953_alpha\es\venus\vex_ruins\enc_ruins_strike1.es
-thread sc_ledge_encounter:
+script sc_ledge_encounter():
     sleep_until(pt_ledge.is_triggered())
     sq_ruins_ledge01.place()
     sq_ruins_ledge02.place()
@@ -85,3 +85,7 @@ These decorators carry that data:
 - `@activity("name", ...)` with `@start_slice("region", "phase")`, `@phase("name", "region")`, `@spawn_transition("spawn point")`, `@region_spawn_transition(region, "spawn point")` and `@time_of_day(fraction)` under it, on the encounter that starts those activities: how the activity starts. For the pre-alpha the start slice is the host-only scenario_fah's (initial_bubble, named by its region) and the phases are the strike's; for TU0 (whose packages ship no scenario) the values come from retail captures. A script without them has no start data authored, and its activity cannot start. An activity whose encounters are not written yet has a script of only these decorators. Decorator lines are left out of a chunk's line numbers, so they sit on their own lines under `@activity_bundle` without moving any line of Bungie's code (bullshcript's LANGUAGE.md, Line numbers).
 
 Everything else we need from tags is read from the retail client packages at runtime with gibbon. There are no offline tag dumps. Every fact the host uses comes from a compiled script or a runtime package read.
+
+In addition to the above decorators, the startup decorator exists to mark scripts that autostart. It is inclear how Bungie scripted this behaviour, seemingly it has changed by Destiny 2.
+
+- `@startup()` on a script: the thread starts with its class. Bungie's thread definition carries this flag in a field named `m_startup` (the alpha's compiled scripts flag each thread this way), so the decorator takes its name; how Bungie wrote it in source is not known. It goes directly above the `script` line, takes no arguments and is written once.

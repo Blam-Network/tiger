@@ -1,5 +1,5 @@
-c_player_objective_sensor_host _player_objective
-c_sequence_host _incoming_sequence  # true name unknown
+player_objective _player_objective
+sequence _incoming_sequence
 
 
 

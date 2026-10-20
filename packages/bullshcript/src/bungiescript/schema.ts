@@ -14,7 +14,11 @@ import type {
   BsType,
 } from "./ast.ts";
 import { BsCompileError } from "./lexer.ts";
-import { type BsNativeKind, nativeTypeNamed } from "./native_types.ts";
+import {
+  type BsNativeKind,
+  nativeTypeNamed,
+  nativeTypeSpelled,
+} from "./native_types.ts";
 import { bundleHashOf, scriptStem } from "./parser.ts";
 import {
   DEFAULT_NATIVE_BASE,
@@ -118,7 +122,7 @@ export interface BsSchemaMember {
   readonly side: BsSchemaSide;
   // not Bungie's either: their Objective hosts held these
   readonly tasks?: readonly BsSchemaTask[];
-  // the type as written ("c_squad_sensor_host", "static_array<c_device_host, 10>")
+  // the type as written ("squad", "static_array<device, 10>")
   readonly type: string;
   readonly value?: number;
 }
@@ -319,9 +323,9 @@ export function methodKey(owner: string | undefined, name: string): string {
 // one step of a member path: a name or an [index]
 const PATH_STEP = /[A-Za-z_]\w*|\[\d+\]/g;
 
-const SQUAD_TYPE = "c_squad_sensor_host";
-const SQUAD_GROUP_TYPE = "c_squad_group_sensor_host";
-const OBJECTIVE_TYPE = "c_objective_sensor_host";
+const SQUAD_TYPE = "squad";
+const SQUAD_GROUP_TYPE = "squad_group";
+const OBJECTIVE_TYPE = "objective";
 const ARRAY_TYPES = new Set(["dynamic_array", "static_array", "static_stack"]);
 
 // @member_counts against the member's type: a squad takes a {member: count}
@@ -600,7 +604,7 @@ function fieldMember(
   owner: ProjectDecl
 ): BsSchemaMember {
   const path = owner.file.path;
-  const kind = fieldKind(field.type, project);
+  const kind = fieldKind(field.type, project, path, field.line);
   return {
     default:
       field.default === undefined ? undefined : defaultOf(field.default, kind),
@@ -633,7 +637,7 @@ function fieldMember(
           ),
         }),
     ...(field.placed === undefined ? {} : { placed: squadPlaced(field, path) }),
-    side: fieldSide(field, kind, project),
+    side: fieldSide(field, kind, project, path),
     ...(field.tasks.length === 0
       ? {}
       : { tasks: taskSchemas(field, owner, project, path) }),
@@ -657,7 +661,8 @@ function squadPlaced(field: BsField, file: string): true {
 function fieldSide(
   field: BsField,
   kind: BsSchemaMemberKind,
-  project: Project
+  project: Project,
+  file: string
 ): BsSchemaSide {
   if (field.isStatic) {
     return "definition";
@@ -672,41 +677,66 @@ function fieldSide(
   if (element === undefined) {
     return "instance";
   }
-  const elementKind = fieldKind(
-    { args: [], count: undefined, name: element, text: element },
-    project
-  );
+  const elementKind = nameKind(element, project, file, field.line);
   return elementKind === "object" || elementKind === "class_instance"
     ? "both"
     : "instance";
 }
 
-function fieldKind(type: BsType, project: Project): BsSchemaMemberKind {
-  if (type.count !== undefined) {
-    return "c_array";
+// A type as written names something: a scalar, a container, a script class,
+// struct or enum (the project's or the registry's), or a native spelling, and
+// so do the types inside a container or array.
+function fieldKind(
+  type: BsType,
+  project: Project,
+  file: string,
+  line: number
+): BsSchemaMemberKind {
+  const kind = nameKind(type.name, project, file, line);
+  for (const arg of type.args) {
+    if (typeof arg !== "number") {
+      fieldKind(arg, project, file, line);
+    }
   }
-  const scalar = SCALARS[type.name];
+  return type.count === undefined ? kind : "c_array";
+}
+
+function nameKind(
+  name: string,
+  project: Project,
+  file: string,
+  line: number
+): BsSchemaMemberKind {
+  const scalar = SCALARS[name];
   if (scalar !== undefined) {
     return scalar;
   }
-  const container = CONTAINERS[type.name];
+  const container = CONTAINERS[name];
   if (container !== undefined) {
     return container;
   }
-  // a type the project or the registry knows: a script class, a struct or
-  // an enum; then the native registry; anything else is a native object
-  switch (project.typeNamed(type.name)?.kind) {
+  // the project's and the registry's types, then the native spellings
+  switch (project.typeNamed(name)?.kind) {
     case "class":
       return "class_instance";
     case "schema":
-      return type.name.startsWith("i_") ? "interface" : "struct";
+      return name.startsWith("i_") ? "interface" : "struct";
     case "enum":
       return "enum_field";
     default:
       break;
   }
-  const native = nativeTypeNamed(type.name);
-  return native === undefined ? "object" : NATIVE_KINDS[native.kind];
+  const native = nativeTypeSpelled(name);
+  if (native === undefined) {
+    // an engine class name is no spelling; say the one a script writes
+    const spelling = nativeTypeNamed(name)?.spelling;
+    throw new BsCompileError(
+      `unknown type '${name}'${spelling === undefined ? "" : `; a script writes '${spelling}'`}`,
+      file,
+      line
+    );
+  }
+  return NATIVE_KINDS[native.kind];
 }
 
 function defaultOf(

@@ -5,20 +5,20 @@
 # thread clears it once the entrance is quiet.
 
 countdown_objective pf_vex_block
-c_interactable_incident_listener il_vex_block
+interactable_incident_listener il_vex_block
 generic_objective pf_kill_vex
-c_trigger_volume_slot_host tv_kill_vex
-c_nav_point_host ap_kill_vex
-c_encounter_handle enc_entrance_m01
-c_sequence_host venus_m01_music_cue1
-c_sequence_host md_vn01_020_60
-c_sequence_host md_vn01_020_70
+trigger_volume tv_kill_vex
+nav_point ap_kill_vex
+encounter_handle enc_entrance_m01
+sequence venus_m01_music_cue1
+sequence md_vn01_020_60
+sequence md_vn01_020_70
 
-thread init: pass
+script init(): pass
 
-thread complete: pass
+script complete(): pass
 
-thread main:
+script main():
     pf_vex_block.objective_begin()
     il_vex_block.import_only_bind(pf_vex_block._object.import_identifier())
     sleep_until(il_vex_block.get_count() > 0)
@@ -35,14 +35,14 @@ thread main:
     insertion_point()
     sc_kill_vex_end.wake()
 
-thread sc_kill_vex_end:
+script sc_kill_vex_end():
     sleep_until(enc_entrance_m01.entrance_clear == true)
     pf_kill_vex.objective_end_silent()
 
-thread venus_m01_020_d60:
+script venus_m01_020_d60():
     md_vn01_020_60.start()
     print("md_vn01_020_60")
 
-thread venus_m01_020_d70:
+script venus_m01_020_d70():
     md_vn01_020_70.start()
     print("md_vn01_020_70")

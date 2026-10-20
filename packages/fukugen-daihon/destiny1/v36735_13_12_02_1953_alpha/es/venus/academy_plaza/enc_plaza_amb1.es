@@ -2,8 +2,8 @@
 
 @task("vex", squad: sqg_vex)
 @task("fallen", squad: sqg_fallen)
-c_objective_sensor_host obj_plaza_amb1  # true name unknown
-c_encounter_manager encounters  # true name unknown
+objective obj_plaza_amb1
+encounter_manager encounters
 @member_counts({_squad: [{goblins: 3}, {goblins: 3}]})
 simple_encounter vex_simple_encounter01
 @member_counts({_squad: [{goblins: 3}, {goblins: 3}]})
@@ -19,8 +19,8 @@ simple_encounter fallen_simple_encounter02
 @member_counts({_squad: [{dregs: 3}, {shank: 2, vandal: 1}]})
 @objective({_squad: obj_plaza_amb1})
 simple_encounter fallen_simple_encounter03
-c_squad_group_sensor_host sqg_fallen  # true name unknown
-c_squad_group_sensor_host sqg_vex  # true name unknown
+squad_group sqg_fallen
+squad_group sqg_vex
 loot_plaza loot_venus_plaza_1
 
 
@@ -30,7 +30,8 @@ loot_plaza loot_venus_plaza_1
 
 
 
-startup thread ss_main_thread:
+@startup()
+script ss_main_thread():
 
     sqg_fallen.add_child(fallen_simple_encounter01._squad_group)
     sqg_fallen.add_child(fallen_simple_encounter02._squad_group)
@@ -42,7 +43,8 @@ startup thread ss_main_thread:
     print("ACADEMY PLAZA ENCOUNTER AMBIENT")
     print("---------------------------------------------------------")
 
-startup thread ss_encounter_controller_thread:
+@startup()
+script ss_encounter_controller_thread():
     encounters.actor_budget = 23
     encounters.add_ambient_encounter(vex_simple_encounter01, 6, 100, 20, 300, 0)
     encounters.add_ambient_encounter(vex_simple_encounter02, 6, 100, 20, 300, 0)

@@ -2,59 +2,59 @@
 
 bool debug_underwatch
 @member_counts({guards1: 2})
-c_squad_sensor_host sq_underwatch_titans_guards1
+squad sq_underwatch_titans_guards1
 @member_counts({guards1: 4})
-c_squad_sensor_host sq_underwatch_titans_guards2
+squad sq_underwatch_titans_guards2
 @member_counts({talker1: 0, talker2: 0, listener1: 0})
-c_squad_sensor_host sq_underwatch_titans_talkers1
+squad sq_underwatch_titans_talkers1
 @member_counts({talker1: 0, talker2: 0, listener1: 0})
-c_squad_sensor_host sq_underwatch_titans_talkers2
+squad sq_underwatch_titans_talkers2
 @member_counts({talker1: 0, talker2: 0, listener1: 0})
-c_squad_sensor_host sq_underwatch_titans_talkers3
+squad sq_underwatch_titans_talkers3
 @member_counts({talker1: 0, talker2: 0, listener1: 0})
-c_squad_sensor_host sq_underwatch_titans_talkers4
+squad sq_underwatch_titans_talkers4
 @member_counts({watcher1: 0, watcher2: 0})
-c_squad_sensor_host sq_underwatch_titans_watchers1
+squad sq_underwatch_titans_watchers1
 @member_counts({watcher1: 1, watcher2: 1})
-c_squad_sensor_host sq_underwatch_titans_watchers2
+squad sq_underwatch_titans_watchers2
 @member_counts({wolf1: 0, wolf2: 0})
-c_squad_sensor_host sq_underwatch_wolves1
+squad sq_underwatch_wolves1
 @member_counts({sweeper1: 0, scrubber1: 0})
-c_squad_sensor_host sq_underwatch_droid_cleaners1
-c_squad_member_sensor_host sq_underwatch_titans_talkers1__talker1  # true name unknown
-c_squad_member_sensor_host sq_underwatch_titans_talkers1__talker2  # true name unknown
-c_squad_member_sensor_host sq_underwatch_titans_talkers1__listener1  # true name unknown
-c_squad_member_sensor_host sq_underwatch_titans_talkers2__talker1  # true name unknown
-c_squad_member_sensor_host sq_underwatch_titans_talkers2__talker2  # true name unknown
-c_squad_member_sensor_host sq_underwatch_titans_talkers2__listener1  # true name unknown
-c_squad_member_sensor_host sq_underwatch_titans_talkers3__talker1  # true name unknown
-c_squad_member_sensor_host sq_underwatch_titans_talkers3__talker2  # true name unknown
-c_squad_member_sensor_host sq_underwatch_titans_talkers3__listener1  # true name unknown
-c_squad_member_sensor_host sq_underwatch_titans_talkers4__talker1  # true name unknown
-c_squad_member_sensor_host sq_underwatch_titans_talkers4__talker2  # true name unknown
-c_squad_member_sensor_host sq_underwatch_titans_talkers4__listener1  # true name unknown
-c_squad_member_sensor_host sq_underwatch_titans_watchers1__watcher1  # true name unknown
-c_squad_member_sensor_host sq_underwatch_titans_watchers1__watcher2  # true name unknown
-c_squad_member_sensor_host sq_underwatch_droid_cleaners1__sweeper1  # true name unknown
-c_squad_member_sensor_host sq_underwatch_droid_cleaners1__scrubber1  # true name unknown
-c_squad_member_sensor_host sq_underwatch_wolves1__wolf1  # true name unknown
-c_squad_member_sensor_host sq_underwatch_wolves1__wolf2  # true name unknown
+squad sq_underwatch_droid_cleaners1
+squad_member sq_underwatch_titans_talkers1__talker1
+squad_member sq_underwatch_titans_talkers1__talker2
+squad_member sq_underwatch_titans_talkers1__listener1
+squad_member sq_underwatch_titans_talkers2__talker1
+squad_member sq_underwatch_titans_talkers2__talker2
+squad_member sq_underwatch_titans_talkers2__listener1
+squad_member sq_underwatch_titans_talkers3__talker1
+squad_member sq_underwatch_titans_talkers3__talker2
+squad_member sq_underwatch_titans_talkers3__listener1
+squad_member sq_underwatch_titans_talkers4__talker1
+squad_member sq_underwatch_titans_talkers4__talker2
+squad_member sq_underwatch_titans_talkers4__listener1
+squad_member sq_underwatch_titans_watchers1__watcher1
+squad_member sq_underwatch_titans_watchers1__watcher2
+squad_member sq_underwatch_droid_cleaners1__sweeper1
+squad_member sq_underwatch_droid_cleaners1__scrubber1
+squad_member sq_underwatch_wolves1__wolf1
+squad_member sq_underwatch_wolves1__wolf2
 @member_counts({vendor1: 0})
-c_squad_sensor_host sq_underwatch_vendor_guardian_mentor
+squad sq_underwatch_vendor_guardian_mentor
 @member_counts({vendor1: 0})
-c_squad_sensor_host sq_underwatch_vendor_guardian_outfitter
+squad sq_underwatch_vendor_guardian_outfitter
 @member_counts({vendor1: 0})
-c_squad_sensor_host sq_underwatch_vendor_guardian_quartermaster
-c_squad_member_sensor_host sq_underwatch_vendor_guardian_mentor__vendor1  # true name unknown
-c_squad_member_sensor_host sq_underwatch_vendor_guardian_outfitter__vendor1  # true name unknown
-c_squad_member_sensor_host sq_underwatch_vendor_guardian_quartermaster__vendor1  # true name unknown
-c_control_point_sensor_host ap_guardian_mentor01  # true name unknown
-c_control_point_sensor_host ap_guardian_quartermaster01  # true name unknown
-c_control_point_set_sensor_host cps_guardian_mentor01  # true name unknown
-c_control_point_set_sensor_host cps_guardian_quartermaster01  # true name unknown
-c_control_point_set_sensor_host cps_guardian_quartermaster02  # true name unknown
-c_control_point_set_sensor_host cps_guardian_quartermaster03  # true name unknown
-c_control_point_set_sensor_host cps_guardian_quartermaster04  # true name unknown
+squad sq_underwatch_vendor_guardian_quartermaster
+squad_member sq_underwatch_vendor_guardian_mentor__vendor1
+squad_member sq_underwatch_vendor_guardian_outfitter__vendor1
+squad_member sq_underwatch_vendor_guardian_quartermaster__vendor1
+control_point ap_guardian_mentor01
+control_point ap_guardian_quartermaster01
+control_point_set cps_guardian_mentor01
+control_point_set cps_guardian_quartermaster01
+control_point_set cps_guardian_quartermaster02
+control_point_set cps_guardian_quartermaster03
+control_point_set cps_guardian_quartermaster04
 
 
 
@@ -69,7 +69,8 @@ c_control_point_set_sensor_host cps_guardian_quartermaster04  # true name unknow
 
 
 
-startup thread sc_main_underwatch_thread:
+@startup()
+script sc_main_underwatch_thread():
 
     sc_underwatch_vendor_guardian_mentor.wake()
     sc_underwatch_vendor_guardian_quartermaster.wake()
@@ -84,14 +85,14 @@ startup thread sc_main_underwatch_thread:
 
 
 
-thread sc_underwatch_vendor_guardian_mentor:
+script sc_underwatch_vendor_guardian_mentor():
     if debug_underwatch: print("Guardian Mentor: Spawn")
 
     sq_underwatch_vendor_guardian_mentor.place()
     sq_underwatch_vendor_guardian_mentor.activate_temperament("temper_tower_guard")
 
 
-thread sc_underwatch_vendor_guardian_quartermaster:
+script sc_underwatch_vendor_guardian_quartermaster():
     if debug_underwatch: print("Guardian Quartermaster: Spawn")
 
     sq_underwatch_vendor_guardian_quartermaster.place()
@@ -119,7 +120,7 @@ thread sc_underwatch_vendor_guardian_quartermaster:
 
 
 
-thread sc_underwatch_vendor_guardian_outfitter:
+script sc_underwatch_vendor_guardian_outfitter():
     if debug_underwatch: print("Guardian Outfitter: Spawn")
 
     sq_underwatch_vendor_guardian_outfitter.place()
@@ -128,7 +129,7 @@ thread sc_underwatch_vendor_guardian_outfitter:
 
 
 
-thread sc_underwatch_titans_guards:
+script sc_underwatch_titans_guards():
 
     sq_underwatch_titans_guards1.place()
     sq_underwatch_titans_guards1.activate_temperament("temper_tower_guard")
@@ -138,7 +139,7 @@ thread sc_underwatch_titans_guards:
     sq_underwatch_titans_guards2.activate_temperament("temper_tower_guard")
 
 
-thread sc_underwatch_titans_talkers:
+script sc_underwatch_titans_talkers():
 
     if random_chance(0.5):
 
@@ -192,7 +193,7 @@ thread sc_underwatch_titans_talkers:
                 sq_underwatch_titans_talkers2__listener1.activate_temperament("temper_tower_guard")
 
 
-thread sc_underwatch_titans_watchers:
+script sc_underwatch_titans_watchers():
 
     if random_chance(0.5):
 
@@ -219,7 +220,7 @@ thread sc_underwatch_titans_watchers:
 
 
 
-thread sc_underwatch_wolves:
+script sc_underwatch_wolves():
 
     sq_underwatch_wolves1__wolf1.place()
     sq_underwatch_wolves1__wolf1.activate_temperament("temper_wolf_idle")
@@ -227,7 +228,7 @@ thread sc_underwatch_wolves:
     sq_underwatch_wolves1__wolf2.activate_temperament("temper_wolf_laying")
 
 
-thread sc_underwatch_droid_cleaners:
+script sc_underwatch_droid_cleaners():
 
     if random_chance(1):
 

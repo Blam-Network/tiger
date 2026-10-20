@@ -168,6 +168,7 @@ export interface BsThread extends BsSpan {
   readonly body: readonly BsStmt[];
   readonly kind: "thread";
   readonly name: string;
+  // `@startup()`: the script starts with its class (Bungie's m_startup flag)
   readonly startup: boolean;
 }
 

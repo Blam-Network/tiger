@@ -5,32 +5,33 @@
 
 @activity_bundle("enc_highway_m0")
 
-c_location_sensor_host highway  # true name unknown
-c_player_trigger_sensor_host pt_bubble bind(highway)  # true name unknown
-c_object_sensor_host pigeon_1
-c_object_sensor_host pigeon_2
-c_object_sensor_host pigeon_3
-c_object_sensor_host pigeon_4
-c_object_sensor_host pigeon_5
-c_object_sensor_host pigeon_6
-c_object_sensor_host pigeon_7
-c_object_sensor_host pigeon_8
-c_object_sensor_host pigeon_9
-c_object_sensor_host pigeon_10
-c_object_sensor_host pigeon_11
-c_object_sensor_host pigeon_12
-c_object_sensor_host pigeon_13
-c_object_sensor_host pigeon_14
-c_object_sensor_host pigeon_15
-c_object_sensor_host pigeon_16
-c_object_sensor_host pigeon_17
-c_object_sensor_host pigeon_18
-c_object_sensor_host pigeon_19
-c_object_sensor_host pigeon_20
-c_object_sensor_host pigeon_21
-c_object_sensor_host pigeon_22
+location highway
+player_trigger pt_bubble bind(highway)
+object pigeon_1
+object pigeon_2
+object pigeon_3
+object pigeon_4
+object pigeon_5
+object pigeon_6
+object pigeon_7
+object pigeon_8
+object pigeon_9
+object pigeon_10
+object pigeon_11
+object pigeon_12
+object pigeon_13
+object pigeon_14
+object pigeon_15
+object pigeon_16
+object pigeon_17
+object pigeon_18
+object pigeon_19
+object pigeon_20
+object pigeon_21
+object pigeon_22
 
-startup thread sc_highway_main:
+@startup()
+script sc_highway_main():
     sleep_until(pt_bubble.is_triggered())
     c_lifetime_script_utilities.get_lifetime_sensor().set_state(e_activity_lifetime_state.active)
     sleep_until(c_player_script_utilities.all_players_are_ready())

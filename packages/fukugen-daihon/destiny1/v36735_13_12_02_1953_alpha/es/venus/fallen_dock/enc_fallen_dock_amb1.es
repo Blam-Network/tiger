@@ -9,61 +9,61 @@ u_globals utils
 @task("bridge_snipers", squad: sqg_bridge_snipers)
 @task("bay", squad: sqg_bay)
 @task("sniper", squad: sq_bay02)
-c_objective_sensor_host obj_fallen_dock_amb1  # true name unknown
+objective obj_fallen_dock_amb1
 @member_counts({dregs: 3, vandals: 2})
 @objective(obj_fallen_dock_amb1)
-c_squad_sensor_host sq_den_entrance
+squad sq_den_entrance
 @member_counts({dregs: 3, servitor: 1})
 @objective(obj_fallen_dock_amb1)
-c_squad_sensor_host sq_dock01
+squad sq_dock01
 @member_counts({dregs: 3, vandal: 1})
 @objective(obj_fallen_dock_amb1)
-c_squad_sensor_host sq_dock02
+squad sq_dock02
 @member_counts({dregs: 2, vandal: 2})
 @objective(obj_fallen_dock_amb1)
-c_squad_sensor_host sq_dock03
+squad sq_dock03
 @member_counts({shanks: 4})
 @objective(obj_fallen_dock_amb1)
-c_squad_sensor_host sq_dock04
+squad sq_dock04
 @member_counts({captain: 1, vandal: 2})
 @objective(obj_fallen_dock_amb1)
-c_squad_sensor_host sq_dock_anchor
+squad sq_dock_anchor
 @member_counts({vandal_snipers: 1})
 @objective(obj_fallen_dock_amb1)
-c_squad_sensor_host sq_dock_sniper01
+squad sq_dock_sniper01
 @member_counts({vandal_snipers: 1})
 @objective(obj_fallen_dock_amb1)
-c_squad_sensor_host sq_dock_sniper02
+squad sq_dock_sniper02
 @member_counts({shanks: 4})
 @objective(obj_fallen_dock_amb1)
-c_squad_sensor_host sq_bridge01
+squad sq_bridge01
 @member_counts({dreg: 3, vandal: 1})
 @objective(obj_fallen_dock_amb1)
-c_squad_sensor_host sq_bridge02
+squad sq_bridge02
 @member_counts({vandal_snipers: 1})
 @objective(obj_fallen_dock_amb1)
-c_squad_sensor_host sq_bridge_sniper01
+squad sq_bridge_sniper01
 @member_counts({vandal_snipers: 1})
 @objective(obj_fallen_dock_amb1)
-c_squad_sensor_host sq_bridge_sniper02
+squad sq_bridge_sniper02
 @member_counts({dregs: 4})
 @objective(obj_fallen_dock_amb1)
-c_squad_sensor_host sq_bay01
+squad sq_bay01
 @member_counts({dregs: 2})
 @objective(obj_fallen_dock_amb1)
-c_squad_sensor_host sq_bay02
+squad sq_bay02
 @member_counts({vandal_snipers: 2})
 @objective(obj_fallen_dock_amb1)
-c_squad_sensor_host sq_bay_snipers
-c_squad_group_sensor_host sqg_dock_outdoors  # true name unknown
-c_squad_group_sensor_host sqg_dock_snipers  # true name unknown
-c_squad_group_sensor_host sqg_dock_bridge  # true name unknown
-c_squad_group_sensor_host sqg_bridge_snipers  # true name unknown
-c_squad_group_sensor_host sqg_bay  # true name unknown
-c_trigger_volume_slot_host tv_dock01
-c_trigger_volume_slot_host tv_dock02
-c_player_trigger_sensor_host pt_dock01 bind(tv_dock01)  # true name unknown
-c_player_trigger_sensor_host pt_dock02 bind(tv_dock02)  # true name unknown
+squad sq_bay_snipers
+squad_group sqg_dock_outdoors
+squad_group sqg_dock_snipers
+squad_group sqg_dock_bridge
+squad_group sqg_bridge_snipers
+squad_group sqg_bay
+trigger_volume tv_dock01
+trigger_volume tv_dock02
+player_trigger pt_dock01 bind(tv_dock01)
+player_trigger pt_dock02 bind(tv_dock02)
 loot_fallen_dock loot_venus_fallen_dock
 
 
@@ -73,7 +73,8 @@ loot_fallen_dock loot_venus_fallen_dock
 
 
 
-startup thread sc_main_thread:
+@startup()
+script sc_main_thread():
 
     sleep(3)
     print("---------------------------------------------------------")
@@ -111,7 +112,7 @@ startup thread sc_main_thread:
     sq_bridge_sniper01.respawn()
     sq_bridge_sniper02.respawn()
 
-thread sc_bridge_spawn:
+script sc_bridge_spawn():
 
     sleep_until(pt_dock01.is_triggered() and not pt_dock02.is_triggered() and sq_den_entrance.alive_count() + sq_dock_anchor.alive_count() + sqg_dock_outdoors.alive_count() <= 12)
 

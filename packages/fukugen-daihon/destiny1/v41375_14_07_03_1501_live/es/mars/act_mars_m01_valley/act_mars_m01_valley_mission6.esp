@@ -10,22 +10,22 @@
 # The waits after the monitor are the gaps on the wire.
 
 interactable_objective sp_objective_monitor bind("0xBD366786")
-c_trigger_volume_slot_host tv_overlook_near
-c_player_trigger_sensor_host pt_overlook_near bind(tv_overlook_near)
-c_sequence_host seq_dialog_checkpoint_loot_complete
-c_sequence_host seq_dialog_valley_gate_near
-c_sequence_host seq_dialog_valley_overlook
-c_sequence_host seq_music_valley
-c_sequence_host seq_dialog_valley_monitor_complete
-c_sequence_host seq_music_outro
-c_sequence_host seq_dialog_valley_outro
+trigger_volume tv_overlook_near
+player_trigger pt_overlook_near bind(tv_overlook_near)
+sequence seq_dialog_checkpoint_loot_complete
+sequence seq_dialog_valley_gate_near
+sequence seq_dialog_valley_overlook
+sequence seq_music_valley
+sequence seq_dialog_valley_monitor_complete
+sequence seq_music_outro
+sequence seq_dialog_valley_outro
 
-thread init: pass
+script init(): pass
 
-thread complete:
+script complete():
     c_lifetime_script_utilities.get_lifetime_sensor().end_game(30)
 
-thread main:
+script main():
     insertion_point()
     seq_dialog_checkpoint_loot_complete.start()
     seq_dialog_valley_gate_near.start()
@@ -46,7 +46,7 @@ thread main:
     seq_music_outro.start()
     seq_dialog_valley_outro.start()
 
-thread sc_overlook_music:
+script sc_overlook_music():
     sleep_until(pt_overlook_near.is_triggered())
     seq_music_valley.start()
     seq_music_valley.set_switch_mask(1)

@@ -4,11 +4,12 @@
 # Ported from the alpha's. The gate powers up through its channels, drops
 # a squad on request (drop_begin), and can keep reinforcing while it stands.
 
-c_squad_sensor_host _squad
-c_squad_member_sensor_host _squad__gate  # true name unknown
+squad _squad
+squad_member _squad__gate
 bool drop_cue
 
-startup thread start_up_warpgate:
+@startup()
+script start_up_warpgate():
     print("**** Shield State - 1 -- ON")
 
 def activate():
@@ -40,13 +41,13 @@ def deactivate():
     sleep(5)
     _squad__gate.set_channel_scalar("power_state", 0)
 
-thread main:
+script main():
     if _squad.alive_count() > 0:
         _squad__gate.set_channel_scalar("power_state", 0.2)
         print("**** Power State - 2 -- ON IDLE")
         drop_cue = true
 
-thread init:
+script init():
     if _squad.alive_count() > 0:
         _squad__gate.set_channel_scalar("power_state", 0.1)
         print("**** Power State - 1 -- TURNING ON")

@@ -1,9 +1,9 @@
-c_object_sensor_host _object
+object _object
 real _minimum_time_to_reset = 3
-c_activity_flag _activity_flag  # true name unknown
-c_object_filter_sensor_host _object_filter
-c_interactable_host _interactable bind(_object)  # true name unknown
-c_device_host _device bind(_object)
+activity_flag _activity_flag
+object_filter _object_filter
+interactable _interactable bind(_object)
+device _device bind(_object)
 
 
 
@@ -17,7 +17,8 @@ def import_only_bind(identifier):
     return _object.import_only_bind(identifier) and _activity_flag.import_only_bind(identifier)
 
 
-startup thread main:
+@startup()
+script main():
     _object.create()
     _object_filter.add_players_with_activity_flag(_activity_flag)
     _interactable.set_enabled_player_filter(_object_filter)

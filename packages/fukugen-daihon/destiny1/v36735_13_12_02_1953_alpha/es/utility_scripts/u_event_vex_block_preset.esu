@@ -1,16 +1,16 @@
-c_player_objective_sensor_host po_event_vex_block
-c_sequence_host seq_vex_block_start bind(po_event_vex_block, e_sequence_suppression_behavior.skip)  # true name unknown
-c_sequence_host seq_vex_block_engage1  # true name unknown
-c_sequence_host seq_vex_block_engage2 bind(po_event_vex_block, e_sequence_suppression_behavior.skip)  # true name unknown
-c_sequence_host seq_vex_block_end_gold bind(po_event_vex_block, e_sequence_suppression_behavior.skip)  # true name unknown
-c_sequence_host seq_vex_block_end_silver bind(po_event_vex_block, e_sequence_suppression_behavior.skip)  # true name unknown
-c_sequence_host seq_vex_block_end_bronze bind(po_event_vex_block, e_sequence_suppression_behavior.skip)  # true name unknown
-c_sequence_host seq_vex_block_25 bind(po_event_vex_block, e_sequence_suppression_behavior.skip)  # true name unknown
-c_sequence_host seq_vex_block_50 bind(po_event_vex_block, e_sequence_suppression_behavior.skip)  # true name unknown
-c_sequence_host seq_vex_block_75 bind(po_event_vex_block, e_sequence_suppression_behavior.skip)  # true name unknown
-c_sequence_host seq_vex_block_wave_complete1 bind(po_event_vex_block, e_sequence_suppression_behavior.skip)  # true name unknown
-c_sequence_host seq_vex_block_wave_complete2 bind(po_event_vex_block, e_sequence_suppression_behavior.skip)  # true name unknown
-c_sequence_host seq_vex_block_wave_ready bind(po_event_vex_block, e_sequence_suppression_behavior.skip)  # true name unknown
+player_objective po_event_vex_block
+sequence seq_vex_block_start bind(po_event_vex_block, e_sequence_suppression_behavior.skip)
+sequence seq_vex_block_engage1
+sequence seq_vex_block_engage2 bind(po_event_vex_block, e_sequence_suppression_behavior.skip)
+sequence seq_vex_block_end_gold bind(po_event_vex_block, e_sequence_suppression_behavior.skip)
+sequence seq_vex_block_end_silver bind(po_event_vex_block, e_sequence_suppression_behavior.skip)
+sequence seq_vex_block_end_bronze bind(po_event_vex_block, e_sequence_suppression_behavior.skip)
+sequence seq_vex_block_25 bind(po_event_vex_block, e_sequence_suppression_behavior.skip)
+sequence seq_vex_block_50 bind(po_event_vex_block, e_sequence_suppression_behavior.skip)
+sequence seq_vex_block_75 bind(po_event_vex_block, e_sequence_suppression_behavior.skip)
+sequence seq_vex_block_wave_complete1 bind(po_event_vex_block, e_sequence_suppression_behavior.skip)
+sequence seq_vex_block_wave_complete2 bind(po_event_vex_block, e_sequence_suppression_behavior.skip)
+sequence seq_vex_block_wave_ready bind(po_event_vex_block, e_sequence_suppression_behavior.skip)
 
 # Decompiled from 36735.13.12.02.1953.alpha script tags
 # See tag 821B804F

@@ -1,15 +1,15 @@
 u_event_globals u_event_globals
 u_event_dropship_preset pf_event_dropship_preset
 dynamic_array<u_event_dropship_point_temp> pf_event_dropship_point
-c_squad_sensor_host sq_event_dropship_pilot
-c_squad_member_sensor_host sq_event_dropship_pilot__pilot  # true name unknown
-c_control_point_set_sensor_host cps_dropship_enter  # true name unknown
-c_control_point_set_sensor_host cps_dropship_exit  # true name unknown
-c_control_point_set_sensor_host cps_dropship_hover_path  # true name unknown
+squad sq_event_dropship_pilot
+squad_member sq_event_dropship_pilot__pilot
+control_point_set cps_dropship_enter
+control_point_set cps_dropship_exit
+control_point_set cps_dropship_hover_path
 bool b_dropship_hover
 bool b_drill_deployed
-c_squad_group_sensor_host sg_event_dropship  # true name unknown
-c_squad_group_sensor_host sg_event_dropship_total  # true name unknown
+squad_group sg_event_dropship
+squad_group sg_event_dropship_total
 int g_i_current_wave_count
 int g_i_dropship_location
 
@@ -79,7 +79,7 @@ def roll_dropship_event_timer():
 
 
 
-thread init:
+script init():
     sleep(30)
     main.restart()
 
@@ -91,7 +91,7 @@ thread init:
 
 
 
-thread main:
+script main():
 
 
 
@@ -257,7 +257,7 @@ def func_event_dropship_engaged(i_main_timer):
 
     return successful_waves
 
-thread sc_delete_cover_success:
+script sc_delete_cover_success():
 
     for i in range(len(pf_event_dropship_point[g_i_dropship_location].o_dropship_cov)):
         pf_event_dropship_point[g_i_dropship_location].dev_dropship_cov[i].set_device_position(0.3)
@@ -266,7 +266,7 @@ thread sc_delete_cover_success:
     for i in range(len(pf_event_dropship_point[g_i_dropship_location].o_dropship_cov)):
         pf_event_dropship_point[g_i_dropship_location].o_dropship_cov[i].delete_object()
 
-thread sc_delete_cover_fail:
+script sc_delete_cover_fail():
 
     for i in range(len(pf_event_dropship_point[g_i_dropship_location].o_dropship_cov)):
         pf_event_dropship_point[g_i_dropship_location].dev_dropship_cov[i].set_device_position(0.4)
@@ -281,7 +281,7 @@ thread sc_delete_cover_fail:
 
 
 
-thread func_enemy_navpoint_setup:
+script func_enemy_navpoint_setup():
 
     sq_selected_wave0_a_cell_1, sq_selected_wave0_a_cell_2, sq_selected_wave0_b_cell_1, sq_selected_wave0_b_cell_2, sq_selected_wave0_b_cell_3, sq_selected_wave0_leader_cell_1 = pf_event_dropship_point[g_i_dropship_location].get_cell_data()
 
@@ -470,7 +470,7 @@ def func_dropship_multipoint_drop_squad():
 
     pf_event_dropship_preset.po_event_dropship_multipoint.set_active()
 
-thread sc_spawn_dropship_squads:
+script sc_spawn_dropship_squads():
 
     obj_selected_point, obj_exit_selected_point, o_selected_beacon, o_fiction_object, d_fiction_device, cps_selected_dropship_entry, sq_selected_wave_a, sq_selected_wave_b, pt_selected_trigger, leader = pf_event_dropship_point[g_i_current_wave_count].get_all_data()
 
@@ -551,7 +551,7 @@ def func_combatant_cleanup():
 
 
 
-thread func_dropship_hover:
+script func_dropship_hover():
 
     while b_dropship_hover == true:
         sq_event_dropship_pilot__pilot.execute(cps_dropship_hover_path); sleep_until(sq_event_dropship_pilot__pilot.get_command_script_state() != e_command_script_state.executing)
@@ -562,7 +562,7 @@ thread func_dropship_hover:
 
 
 
-thread complete:
+script complete():
 
     func_event_dropship_remove()
     print("complete cleanup")
@@ -610,62 +610,62 @@ command_script cs_dropship_close_doors():
 
 
 
-thread sc_seq_glimmer_start:
+script sc_seq_glimmer_start():
     pf_event_dropship_preset.seq_glimmer_start.start()
     sleep(1)
     sc_seq_glimmer_music1.restart()
 
 
 
-thread sc_seq_glimmer_engage1:
+script sc_seq_glimmer_engage1():
     sleep_until(pf_event_dropship_preset.pt_drill_pre_engage.is_triggered() or b_drill_deployed == true)
     if b_drill_deployed == false:
         pf_event_dropship_preset.seq_glimmer_engage1.start()
 
 
 
-thread sc_seq_glimmer_engage2:
+script sc_seq_glimmer_engage2():
     pf_event_dropship_preset.seq_glimmer_engage2.start()
 
 
 
-thread sc_seq_glimmer_end_gold:
+script sc_seq_glimmer_end_gold():
     pf_event_dropship_preset.seq_glimmer_end_gold.start()
 
 
 
-thread sc_seq_glimmer_wave_complete1:
+script sc_seq_glimmer_wave_complete1():
     pf_event_dropship_preset.seq_glimmer_wave_complete1.start()
 
 
 
-thread sc_seq_glimmer_wave_complete2:
+script sc_seq_glimmer_wave_complete2():
     sleep(1)
     pf_event_dropship_preset.seq_glimmer_wave_complete2.start()
 
 
 
-thread sc_seq_glimmer_end_bronze:
+script sc_seq_glimmer_end_bronze():
     sleep(1)
     pf_event_dropship_preset.seq_glimmer_end_bronze.start()
 
 
 
-thread sc_seq_glimmer_end_silver:
+script sc_seq_glimmer_end_silver():
     sleep(1)
     pf_event_dropship_preset.seq_glimmer_end_silver.start()
 
 
 
-thread sc_seq_glimmer_music1:
+script sc_seq_glimmer_music1():
     pf_event_dropship_preset.seq_glimmer_music1.start()
 
 
-thread sc_seq_glimmer_stop_music1:
+script sc_seq_glimmer_stop_music1():
     pf_event_dropship_preset.seq_glimmer_music1.stop()
 
 
-thread sc_seq_glimmer_incoming:
+script sc_seq_glimmer_incoming():
     pf_event_dropship_preset.seq_glimmer_incoming.start()
 
 # Decompiled from 36735.13.12.02.1953.alpha script tags

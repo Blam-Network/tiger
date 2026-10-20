@@ -117,6 +117,10 @@ export interface LiftedDecl {
   readonly lastLine: number;
   readonly name: string;
   readonly notes: readonly string[];
+  // decorator lines that sit directly above a chunk line (`@startup()`
+  // above its script); they are not lines of the script, so the renderer
+  // fits them between the chunk's lines
+  readonly standIns: ReadonlyMap<number, string>;
   readonly tags: readonly string[];
   // schema members this source does not declare, with the reason
   readonly unexpressed: readonly string[];
@@ -194,6 +198,14 @@ const SCALAR_IDS: Readonly<Record<number, string>> = {
   2155872551: "vector3d",
 };
 
+// Native enums a struct member (kind 0x21) names by an id native_ids.ts does
+// not list, by decimal id as SCALAR_IDS. The field type id is not the id scripts
+// import the enum by (e_trigger_behavior imports as 808028E1).
+const NATIVE_ENUM_FIELDS: Readonly<Record<number, string>> = {
+  // 0x80802AA8
+  2155883176: "e_trigger_behavior",
+};
+
 // the generated Lua names bsc derived from source names
 const THREAD_BODY = /^(.+)_d_execute_impl$/;
 const DELEGATE_IMPL = /^(.+)_impl$/;
@@ -235,7 +247,7 @@ const TABLE_OWNER = /^.*?_definition_/;
 const SIDE_SUFFIX = /_(definition|instance)$/;
 // a line that ends a block header, or opens one, takes no `;` neighbour
 const HEADER_LINE =
-  /^\s*(def|thread|startup|command_script|if|elif|else|while|for|switch|case|default)\b/;
+  /^\s*(def|script|command_script|if|elif|else|while|for|switch|case|default)\b/;
 const COLON_END = /:$/;
 
 class TypeNamer {
@@ -265,9 +277,16 @@ class TypeNamer {
     if (scalar !== undefined) {
       return { text: scalar, unknown: false };
     }
+    const nativeEnum = NATIVE_ENUM_FIELDS[id];
+    if (nativeEnum !== undefined) {
+      return { text: nativeEnum, unknown: false };
+    }
     const native = nativeTypeById(id);
     if (native !== undefined) {
-      return { text: native.name, unknown: !native.known };
+      return {
+        text: native.spelling,
+        unknown: !native.known && native.spelling === native.name,
+      };
     }
     return { text: `unknown_${formatScriptTag(id)}`, unknown: true };
   }
@@ -399,6 +418,8 @@ interface Node {
   // the source line, or undefined for a line-less separator
   readonly line: number | undefined;
   readonly simple: boolean;
+  // a decorator on the line above this one
+  readonly standIn?: string;
   readonly text: string;
 }
 
@@ -417,6 +438,7 @@ export function liftScript(
 class ScriptLifter {
   private readonly bindings = new Map<string, string>();
   private readonly code = new Map<number, string>();
+  private readonly standIns = new Map<number, string>();
   // every name a body may use bare: declared members, methods, bases
   private readonly knownMembers = new Set<string>();
   private readonly lines: LineMap;
@@ -480,6 +502,7 @@ class ScriptLifter {
       lastLine: lines.length === 0 ? 0 : Math.max(...lines),
       name: this.name,
       notes: this.notes,
+      standIns: this.standIns,
       tags: this.input.tags,
       unexpressed: this.unexpressed,
     };
@@ -854,20 +877,33 @@ class ScriptLifter {
     const header = this.header(fn);
     const nodes = this.block(fn.body, header.commandScript, fn.params);
     this.place(
-      [{ body: nodes, line, simple: false, text: header.text }],
+      [
+        {
+          body: nodes,
+          line,
+          simple: false,
+          standIn: header.standIn,
+          text: header.text,
+        },
+      ],
       0,
       line - 1
     );
   }
 
-  private header(fn: LuaFunction): { commandScript: boolean; text: string } {
+  private header(fn: LuaFunction): {
+    commandScript: boolean;
+    standIn?: string;
+    text: string;
+  } {
     const params = fn.params.join(", ");
     const thread = THREAD_BODY.exec(fn.name);
     if (thread !== null && this.threadFlags.has(thread[1])) {
       const startup = (this.threadFlags.get(thread[1]) ?? 0) & THREAD_AUTOSTART;
       return {
         commandScript: false,
-        text: `${startup ? "startup " : ""}thread ${thread[1]}:`,
+        ...(startup ? { standIn: "@startup()" } : {}),
+        text: `script ${thread[1]}():`,
       };
     }
     if (this.isCommandScript(fn)) {
@@ -1579,6 +1615,9 @@ class ScriptLifter {
       line = cursor + 1;
       this.note(`statement on line ${node.line} moved to ${line} (line taken)`);
     }
+    if (node.standIn !== undefined) {
+      this.standIns.set(line, `${indent}${node.standIn}`);
+    }
     const body = node.body;
     // a continued condition: its tail sits on the next line, indented
     const [head, ...rest] = node.text.split("\n");
@@ -1822,9 +1861,12 @@ interface RenderedFile {
 
 // Each decl's declarations before its first method, structs and enums ahead
 // of the first class, code at its lines, the tag list after the last line.
+// Decorator lines are not lines of the script (the compiler numbers a chunk
+// without them), so they are fitted in above the chunk line they belong to.
 export function renderLiftedFile(file: LiftedFile): RenderedFile {
   const notes: string[] = [];
   const lines = new Map<number, string>();
+  const standIns = new Map<number, string[]>();
   const put = (line: number, text: string) => {
     if (lines.has(line)) {
       notes.push(
@@ -1849,7 +1891,8 @@ export function renderLiftedFile(file: LiftedFile): RenderedFile {
     const indent = decl.implicit ? "" : INDENT;
     // the decorator heads the class, or an es-family file
     if (decl.activityBundle !== undefined) {
-      header.push(`@activity_bundle(${decl.activityBundle})`);
+      standIns.set(regionStart, [`@activity_bundle(${decl.activityBundle})`]);
+      header.push("");
     }
     if (!decl.implicit) {
       const base = decl.baseName === undefined ? "" : ` : ${decl.baseName}`;
@@ -1880,12 +1923,15 @@ export function renderLiftedFile(file: LiftedFile): RenderedFile {
     for (const [at, text] of decl.code) {
       put(at, `${indent}${text}`);
     }
+    for (const [at, text] of decl.standIns) {
+      standIns.set(at, [...(standIns.get(at) ?? []), `${indent}${text}`]);
+    }
     regionStart = Math.max(decl.lastLine, line) + 1;
   }
   const last = Math.max(0, ...lines.keys());
   const out: string[] = [];
   for (let i = 1; i <= last; i++) {
-    out.push(lines.get(i) ?? "");
+    out.push(...(standIns.get(i) ?? []), lines.get(i) ?? "");
   }
   out.push("");
   out.push("# Decompiled from 36735.13.12.02.1953.alpha script tags");

@@ -42,7 +42,7 @@ const ROWS: ActivityBundleRow[] = [
 const hex = (name: string) => `0x${fnv1(name).toString(16).toUpperCase()}`;
 
 function run(declarations: string, body: string) {
-  const source = `@activity_bundle("enc_counts")\n${declarations}\nstartup thread main:\n${body}`;
+  const source = `@activity_bundle("enc_counts")\n${declarations}\n@startup()\nscript main():\n${body}`;
   const compiled = compileBungieScript([
     { path: "es/test/enc_counts.es", source },
   ]);
@@ -85,12 +85,12 @@ function run(declarations: string, body: string) {
 
 const DECLARATIONS = [
   "@member_counts({dreg: 3, vandal: 1})",
-  "c_squad_sensor_host sq_landing",
-  "c_squad_sensor_host sq_plain",
+  "squad sq_landing",
+  "squad sq_plain",
   "@member_counts({dregs_pistol: 5, vandal_shock: 0})",
-  "c_squad_sensor_host sq_captain",
+  "squad sq_captain",
   "@member_counts([{}, {thrall: [2, 3]}])",
-  "static_array<c_squad_sensor_host, 2> sq_wave",
+  "static_array<squad, 2> sq_wave",
 ].join("\n");
 
 describe("@member_counts in the host", () => {
@@ -114,7 +114,7 @@ describe("@member_counts in the host", () => {
   // A named cell's count is the anonymous bodies beside its actor.
   it("serves a named cell's count beside its actor", () => {
     const { last } = run(
-      "c_squad_sensor_host sq_landing\n@member_counts({dregs_pistol: 5, vandal_shock: 1})\nc_squad_sensor_host sq_captain",
+      "squad sq_landing\n@member_counts({dregs_pistol: 5, vandal_shock: 1})\nsquad sq_captain",
       "    sq_captain.place()\n"
     );
     expect(last(2)).toMatchObject({ bodies: 7, roster: [5, 1] });
@@ -143,22 +143,18 @@ describe("@member_counts in the host", () => {
       run(declarations, "    sq_landing.place()\n").log.find((line) =>
         line.includes("did not load")
       );
-    expect(
-      loads("@member_counts({shank: 3})\nc_squad_sensor_host sq_landing")
-    ).toContain(
+    expect(loads("@member_counts({shank: 3})\nsquad sq_landing")).toContain(
       `@member_counts on sq_landing: its squad has no member 'shank' (members: ${hex("dreg")}, ${hex("vandal")})`
     );
     expect(
       loads(
-        "c_squad_sensor_host sq_landing\n@member_counts([{}, {thrall: 2}])\nstatic_array<c_squad_sensor_host, 2> sq_wave"
+        "squad sq_landing\n@member_counts([{}, {thrall: 2}])\nstatic_array<squad, 2> sq_wave"
       )
     ).toContain(
       "2 of its members are named 'thrall', so 'thrall' takes a list of 2 counts"
     );
     expect(
-      loads(
-        "c_squad_sensor_host sq_landing\n@member_counts({dreg: 2})\nc_squad_sensor_host sq_missing"
-      )
+      loads("squad sq_landing\n@member_counts({dreg: 2})\nsquad sq_missing")
     ).toContain("@member_counts on sq_missing: no Squad row has that name");
   });
 });

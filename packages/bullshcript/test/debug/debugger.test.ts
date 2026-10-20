@@ -18,7 +18,8 @@ const TAG = 0x82ff_0001;
 const SOURCE = `# es\\test\\enc_debug_test.es
 int counter = 0
 
-startup thread sc_main:
+@startup()
+script sc_main():
     counter = 1
     sleep(1)
     counter = 2
@@ -29,10 +30,10 @@ def bump(amount):
     total = counter + amount
     counter = total
 `;
-const LINE_COUNTER_2 = 7;
-const LINE_BUMP_CALL = 8;
-const LINE_AFTER_BUMP = 9;
-const LINE_TOTAL = 12;
+const LINE_COUNTER_2 = 8;
+const LINE_BUMP_CALL = 9;
+const LINE_AFTER_BUMP = 10;
+const LINE_TOTAL = 13;
 
 function harness(source = SOURCE) {
   const compiled = compileScriptFiles([{ path: PATH, text: source }]);
@@ -229,7 +230,7 @@ describe("the script debugger", () => {
       activity.threads as { id: number; waitingOn?: string }[]
     ).find((t) => t.id === thread);
     expect(main?.waitingOn).toMatch(/until time/);
-    expect(h.topLine(thread)).toBe(6);
+    expect(h.topLine(thread)).toBe(7);
     h.request("pause");
     h.request("tiger/wake", { threadId: thread });
     expect(h.counter()).toBe(13);

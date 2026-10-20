@@ -6,11 +6,11 @@
 
 cinematic_midmission sp_cinematic_bookend
 
-thread init: pass
+script init(): pass
 
-thread complete: pass
+script complete(): pass
 
-thread main:
+script main():
     sleep(4)
     sp_cinematic_bookend.start()
     sleep_until(sp_cinematic_bookend.is_complete())

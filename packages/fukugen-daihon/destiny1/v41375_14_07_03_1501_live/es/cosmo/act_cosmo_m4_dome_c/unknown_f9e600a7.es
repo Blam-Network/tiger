@@ -7,26 +7,27 @@
 
 @activity_bundle(0xF9E600A7)
 
-c_sequence_host seq_m_intro
-c_sequence_host seq_d_o1_s01
-c_sequence_host seq_d_o1_s02
-c_sequence_host seq_d_o1_s03
-c_sequence_host seq_d_o1_s04
-c_sequence_host seq_d_o2_s023
-c_sequence_host seq_d_o2_s032
-c_sequence_host seq_d_o3_s01
-c_sequence_host seq_d_o3_s08
-c_sequence_host seq_cosmo4_rasputin
-c_squad_sensor_host sq_fallen_upper_front01
-c_squad_sensor_host sq_fallen_upper_back01
-c_squad_sensor_host sq_fallen_upper_sniper01
-c_squad_sensor_host sq_fallen_upper_anchors01
-c_object_sensor_host o_terminal_invis_device
-c_player_monitor_sensor_host pm_outdoor_enc_start
-c_player_monitor_sensor_host pm_trigger_volume
-c_squad_sensor_host sq_ds_hive_assault03
+sequence seq_m_intro
+sequence seq_d_o1_s01
+sequence seq_d_o1_s02
+sequence seq_d_o1_s03
+sequence seq_d_o1_s04
+sequence seq_d_o2_s023
+sequence seq_d_o2_s032
+sequence seq_d_o3_s01
+sequence seq_d_o3_s08
+sequence seq_cosmo4_rasputin
+squad sq_fallen_upper_front01
+squad sq_fallen_upper_back01
+squad sq_fallen_upper_sniper01
+squad sq_fallen_upper_anchors01
+object o_terminal_invis_device
+player_monitor pm_outdoor_enc_start
+player_monitor pm_trigger_volume
+squad sq_ds_hive_assault03
 
-startup thread sc_intro:
+@startup()
+script sc_intro():
     sleep_until(c_player_script_utilities.all_players_are_ready())
     seq_m_intro.start()
     seq_d_o1_s02.start()
@@ -34,29 +35,33 @@ startup thread sc_intro:
     sleep(3)
     seq_d_o1_s01.start()
 
+@startup()
 # dome_a cleared; the Ghost's lines at the Array follow the codes picked up
 # (the mission's obj_m4_o1b)
-startup thread sc_array:
+script sc_array():
     sleep_until(dome_a_fallen_alive_count() > 0)
     sleep_until(dome_a_fallen_alive_count() == 0)
     seq_d_o1_s03.start()
 
+@startup()
 # the console working
-startup thread sc_console:
+script sc_console():
     sleep_until(o_terminal_invis_device.is_alive())
     sleep(3)
     seq_d_o2_s023.start()
 
+@startup()
 # the Hive assault
-startup thread sc_assault:
+script sc_assault():
     sleep_until(o_terminal_invis_device.is_alive())
     sleep_until(pm_outdoor_enc_start.test_any_inside())
     seq_d_o3_s01.start()
     sleep_until(sq_ds_hive_assault03.alive_count() > 0)
     seq_d_o2_s032.start()
 
+@startup()
 # back in the control room once the Hive are dealt with
-startup thread sc_outro:
+script sc_outro():
     sleep_until(o_terminal_invis_device.is_alive())
     sleep_until(not pm_trigger_volume.test_any_inside())
     sleep_until(pm_trigger_volume.test_any_inside())

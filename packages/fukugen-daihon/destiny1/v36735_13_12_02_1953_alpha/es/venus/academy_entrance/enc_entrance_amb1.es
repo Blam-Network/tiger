@@ -1,7 +1,7 @@
 @activity_bundle("enc_entrance_amb1")
 
-c_location_sensor_host entrance  # true name unknown
-c_player_monitor_sensor_host pm_bubble_entrance bind(entrance)  # true name unknown
+location entrance
+player_monitor pm_bubble_entrance bind(entrance)
 @task("encounter_1", condition: b_encounter_1)
 @task(0x03D141F7, squad: sqg_fallen)
 @task(0xC0DE2E1A, squad: sqg_vex)
@@ -9,7 +9,7 @@ c_player_monitor_sensor_host pm_bubble_entrance bind(entrance)  # true name unkn
 @task(0x03D141F4, squad: sqg_fallen)
 @task(0xC0DE2E19, squad: sqg_vex)
 @task("encounter_3", condition: b_encounter_3)
-c_objective_sensor_host obj_entrance_amb1  # true name unknown
+objective obj_entrance_amb1
 @member_counts({_squad: [{goblin: 3, harpy: 1, hybrid: 2}, {harpy: 1, hybrid: 3}], _dropship_squad: {pilot: 0}})
 dropship_encounter vex_dropship_encounter01
 @member_counts({_squad: [{leader: 1, fallen: 3, vandal: 2}]})
@@ -25,8 +25,8 @@ simple_encounter vex_simple_encounter02
 @member_counts({_squad: [{goblin: 6}, {hybrid: 2, goblin: 2}, {minotaur: 1}]})
 simple_encounter vex_simple_encounter03
 wave_encounter entrance_amb_wave_encounter
-c_squad_group_sensor_host sqg_fallen  # true name unknown
-c_squad_group_sensor_host sqg_vex  # true name unknown
+squad_group sqg_fallen
+squad_group sqg_vex
 loot_entrance loot_venus_entrance_1
 bool b_encounter_1
 bool b_encounter_2
@@ -40,13 +40,15 @@ bool b_encounter_3
 
 
 
-startup thread sc_main_thread:
+@startup()
+script sc_main_thread():
 
     print("---------------------------------------------------------")
     print("ACADEMY ENTRANCE ENCOUNTER AMBIENT")
     print("---------------------------------------------------------")
 
-startup thread ss_encounter_controller_thread:
+@startup()
+script ss_encounter_controller_thread():
 
 
 

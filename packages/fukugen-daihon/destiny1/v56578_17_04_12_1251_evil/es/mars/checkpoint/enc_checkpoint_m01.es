@@ -12,59 +12,60 @@
 
 @activity_bundle("enc_checkpoint_m01")
 
-c_trigger_volume_slot_host tv_road
-c_player_trigger_sensor_host pt_road bind(tv_road)
-c_trigger_volume_slot_host tv_front
-c_player_trigger_sensor_host pt_front bind(tv_front)
-c_trigger_volume_slot_host tv_bunker
-c_player_trigger_sensor_host pt_bunker bind(tv_bunker)
-c_objective_sensor_host obj_checkpoint_m01
-c_nav_point_host np_bunker
-c_object_sensor_host o_checkpoint_ghost_cage
+trigger_volume tv_road
+player_trigger pt_road bind(tv_road)
+trigger_volume tv_front
+player_trigger pt_front bind(tv_front)
+trigger_volume tv_bunker
+player_trigger pt_bunker bind(tv_bunker)
+objective obj_checkpoint_m01
+nav_point np_bunker
+object o_checkpoint_ghost_cage
 countdown_placement sp_placement_console bind("0x47DCE9B0")
-c_sequence_host seq_cabal_announce
-c_squad_sensor_host sq_road_front_legionary
-c_squad_member_sensor_host sq_road_front_legionary__legionary_a
-c_squad_member_sensor_host sq_road_front_legionary__legionary_b
-c_squad_member_sensor_host sq_road_front_legionary__legionary_c
+sequence seq_cabal_announce
+squad sq_road_front_legionary
+squad_member sq_road_front_legionary__legionary_a
+squad_member sq_road_front_legionary__legionary_b
+squad_member sq_road_front_legionary__legionary_c
 @member_counts({0x8C5401A9: 1, 0x8C5401AA: 1})
-c_squad_sensor_host sq_road_front_phalanx
+squad sq_road_front_phalanx
 @member_counts({0x01556B5F: 1, 0x01556B5C: 1})
-c_squad_sensor_host sq_road_overlook_legionary
+squad sq_road_overlook_legionary
 @member_counts({phalanx: 2})
-c_squad_sensor_host sq_road_overlook_phalanx
+squad sq_road_overlook_phalanx
 @member_counts({legionary: 2})
-c_squad_sensor_host sq_bunker_legionary_a
+squad sq_bunker_legionary_a
 @member_counts({legionary: 2})
-c_squad_sensor_host sq_bunker_legionary_b
+squad sq_bunker_legionary_b
 @member_counts({legionary: 2})
-c_squad_sensor_host sq_bunker_legionary_c
+squad sq_bunker_legionary_c
 @member_counts({legionary: 2})
-c_squad_sensor_host sq_bunker_legionary_d
+squad sq_bunker_legionary_d
 @member_counts({phalanx: 2})
-c_squad_sensor_host sq_bunker_phalanx
-c_squad_sensor_host sq_dropship_boss
-c_squad_member_sensor_host sq_dropship_boss__pilot
-c_control_point_set_sensor_host cps_dropship_boss_entry
-c_control_point_set_sensor_host cps_dropship_boss_exit
+squad sq_bunker_phalanx
+squad sq_dropship_boss
+squad_member sq_dropship_boss__pilot
+control_point_set cps_dropship_boss_entry
+control_point_set cps_dropship_boss_exit
 @member_counts({phalanx: 1})
-c_squad_sensor_host sq_boss_phalanx_a
+squad sq_boss_phalanx_a
 @member_counts({phalanx: 1})
-c_squad_sensor_host sq_boss_phalanx_b
+squad sq_boss_phalanx_b
 @member_counts({phalanx: 1})
-c_squad_sensor_host sq_boss_phalanx_c
+squad sq_boss_phalanx_c
 @member_counts({0xDFD659AC: 3})
-c_squad_sensor_host sq_boss_psion_a
+squad sq_boss_psion_a
 @member_counts({0xDFD659AC: 3})
-c_squad_sensor_host sq_boss_psion_b
+squad sq_boss_psion_b
 @member_counts({0xDFD659AC: 3})
-c_squad_sensor_host sq_boss_psion_c
-c_squad_sensor_host sq_boss_legionary_a
-c_squad_sensor_host sq_boss_legionary_b
-c_squad_sensor_host sq_boss
-c_squad_member_sensor_host sq_boss__boss
+squad sq_boss_psion_c
+squad sq_boss_legionary_a
+squad sq_boss_legionary_b
+squad sq_boss
+squad_member sq_boss__boss
 
-startup thread sc_checkpoint_main:
+@startup()
+script sc_checkpoint_main():
     sp_placement_console._object.create()
     for sq in [sq_road_front_legionary, sq_road_front_phalanx, sq_road_overlook_legionary, sq_road_overlook_phalanx, sq_bunker_legionary_a, sq_bunker_legionary_b, sq_bunker_legionary_c, sq_bunker_legionary_d, sq_bunker_phalanx, sq_boss_phalanx_a, sq_boss_phalanx_b, sq_boss_phalanx_c, sq_boss_psion_a, sq_boss_psion_b, sq_boss_psion_c, sq_boss_legionary_a, sq_boss_legionary_b, sq_boss]:
         sq.set_objective(obj_checkpoint_m01)
@@ -73,7 +74,7 @@ startup thread sc_checkpoint_main:
     sc_bunker.wake()
     sc_console.wake()
 
-thread sc_road:
+script sc_road():
     sleep_until(pt_road.is_triggered())
     place_on_task(sq_road_front_legionary, "road_phalanx_retreat")
     place_on_task(sq_road_front_phalanx, "road_phalanx")
@@ -82,11 +83,11 @@ thread sc_road:
     place_on_task(sq_bunker_legionary_a, "road_main")
     place_on_task(sq_bunker_legionary_b, "road_overlook_legionary")
 
-thread sc_front:
+script sc_front():
     sleep_until(pt_front.is_triggered())
     sq_road_overlook_phalanx.set_task("road_overlook_phalanx")
 
-thread sc_bunker:
+script sc_bunker():
     sleep_until(pt_bunker.is_triggered())
     place_on_task(sq_bunker_legionary_c, "road_main")
     place_on_task(sq_bunker_legionary_d, "road_main")
@@ -95,7 +96,7 @@ thread sc_bunker:
     place_on_task(sq_bunker_phalanx, "road_main")
 
 # using the console raises the Ghost's cage and calls the boss's ship
-thread sc_console:
+script sc_console():
     sleep(10)
     sleep(1)
     o_checkpoint_ghost_cage.create()
@@ -106,7 +107,7 @@ thread sc_console:
     sleep_until(not o_checkpoint_ghost_cage.is_alive())
     o_checkpoint_ghost_cage.delete_object()
 
-thread sc_dropship_boss:
+script sc_dropship_boss():
     sq_dropship_boss__pilot.place()
     sq_dropship_boss__pilot.execute(cs_dropship_boss_enter(cps_dropship_boss_entry))
     sleep(13)

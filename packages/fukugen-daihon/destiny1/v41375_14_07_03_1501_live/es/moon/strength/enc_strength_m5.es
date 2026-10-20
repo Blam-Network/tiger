@@ -10,26 +10,27 @@
 
 @activity_bundle("enc_strength_m5")
 
-c_objective_sensor_host obj_strength_m5
-c_squad_sensor_host sq_cave_floor
-c_squad_sensor_host sq_cave_ledge
-c_squad_sensor_host sq_hall
-c_squad_sensor_host sq_annex_troopers
-c_squad_sensor_host sq_tower
-c_squad_sensor_host sq_bridge
-c_squad_sensor_host sq_m5_thrall_a
-c_squad_sensor_host sq_m5_thrall_b
-c_squad_sensor_host sq_cutter
-c_squad_member_sensor_host sq_cutter__pilot
+objective obj_strength_m5
+squad sq_cave_floor
+squad sq_cave_ledge
+squad sq_hall
+squad sq_annex_troopers
+squad sq_tower
+squad sq_bridge
+squad sq_m5_thrall_a
+squad sq_m5_thrall_b
+squad sq_cutter
+squad_member sq_cutter__pilot
 c_command_script __cs
-c_control_point_set_sensor_host cps_cutter_1_entry
-c_control_point_set_sensor_host cps_cutter_1_exit
-c_sequence_host seq_wave_announce1
-c_player_trigger_sensor_host pt_bubble
-c_player_trigger_sensor_host pt_thrall_rush
-c_player_trigger_sensor_host pt_thrall_rush_b
+control_point_set cps_cutter_1_entry
+control_point_set cps_cutter_1_exit
+sequence seq_wave_announce1
+player_trigger pt_bubble
+player_trigger pt_thrall_rush
+player_trigger pt_thrall_rush_b
 
-startup thread sc_strength_main:
+@startup()
+script sc_strength_main():
     for sq in [sq_cave_floor, sq_cave_ledge, sq_hall, sq_annex_troopers, sq_tower, sq_bridge, sq_m5_thrall_a, sq_m5_thrall_b]:
         sq.set_objective(obj_strength_m5)
     sleep_until(pt_bubble.is_triggered())
@@ -48,12 +49,14 @@ startup thread sc_strength_main:
     place_on_task(sq_bridge, "0x5DDC569C")
     seq_wave_announce1.start()
 
-startup thread sc_thrall_rush:
+@startup()
+script sc_thrall_rush():
     sleep_until(pt_thrall_rush.is_triggered())
     sleep(1)
     place_on_task(sq_m5_thrall_a, "0x9156048B")
 
-startup thread sc_thrall_rush_b:
+@startup()
+script sc_thrall_rush_b():
     sleep_until(pt_thrall_rush_b.is_triggered())
     sleep(1)
     place_on_task(sq_m5_thrall_b, "0x9156048B")

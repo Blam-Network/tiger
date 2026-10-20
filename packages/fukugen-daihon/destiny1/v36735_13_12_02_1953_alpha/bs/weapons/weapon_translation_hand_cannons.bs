@@ -3,7 +3,7 @@ enum e_hand_cannon_type:
     count
 
 struct s_hand_cannon : s_hand_cannon_constants:
-    unknown_80802AA8 trigger_behavior  # true name unknown
+    e_trigger_behavior trigger_behavior
     real rate_of_fire
     real shots_per_fire
     real rounds_fired_per_second

@@ -5,16 +5,16 @@
 # clears when a player pushes on into the court. One run: the waits at the
 # top are timed from the cinematic's end.
 
-c_trigger_group_host tg_moon_m1_door_so
-c_sequence_host seq_wave_announce
+trigger_group tg_moon_m1_door_so
+sequence seq_wave_announce
 generic_objective pf_gen_obj_kill_all
-c_player_trigger_sensor_host pt_spawn_court_interior
+player_trigger pt_spawn_court_interior
 
-thread init: pass
+script init(): pass
 
-thread complete: pass
+script complete(): pass
 
-thread main:
+script main():
     sleep(4)
     tg_moon_m1_door_so.activate()
     seq_wave_announce.start()

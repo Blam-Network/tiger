@@ -19,12 +19,13 @@ const BUNDLE = 0x12_34_56_78;
 
 // Line numbers matter to scripts/smoke.mjs (it breaks on `heat = ...`).
 const SOURCE = `# es\\mock\\enc_mock_patrol.es
-c_squad_sensor_host sq_guards
+squad sq_guards
 int counter = 0
 int wave = 0
 real heat = 0.5
 
-startup thread sc_main:
+@startup()
+script sc_main():
     sq_guards.place()
     while true:
         counter = counter + 1
@@ -32,13 +33,14 @@ startup thread sc_main:
         event_message("main loop %d heat %f", counter, heat)
         sleep(2)
 
-startup thread sc_waves:
+@startup()
+script sc_waves():
     while true:
         sleep(3)
         wave = wave + 1
         event_message("wave %d", wave)
 
-thread sc_reward:
+script sc_reward():
     event_message("reward woken")
     sleep_until(wave > 100)
 
@@ -91,6 +93,9 @@ const dbg = new ScriptDebugger({
 dbg.attach("mock", "mock patrol", host, {
   bundleInfo: () => ({ bubbles: ["0.0"], world: "private" }),
   meta: { activity: "act_cosmo_m4_dome_c", scenario: "80cb8089" },
+  // the decorator lines are not in the chunk's line numbers
+  standInLines: (path) =>
+    path === PATH ? compiled.compiledDecl(PATH).standInLines : undefined,
 });
 
 // What a server answers itself: its players, and a teleport that only notes.

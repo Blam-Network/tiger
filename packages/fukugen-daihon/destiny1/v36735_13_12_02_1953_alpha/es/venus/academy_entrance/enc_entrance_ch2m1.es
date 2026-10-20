@@ -1,42 +1,42 @@
 @activity_bundle("enc_entrance_ch2m1")
 
 u_globals utils
-c_location_sensor_host entrance  # true name unknown
-c_player_monitor_sensor_host pm_bubble_entrance bind(entrance)  # true name unknown
+location entrance
+player_monitor pm_bubble_entrance bind(entrance)
 @task(0x3CB10C27, squad: sq_fallen_captain)
 @task(0x15E7E700, condition: b_init)
 @task(0x6CED22A4, squad: sq_fallen_minions01)
 @task(0xA66C4401, squad: sq_fallen_minions03)
 @task(0x8138828B, squad: sqg_fallen_sniper)
-c_objective_sensor_host obj_entrance_ch2m1  # true name unknown
+objective obj_entrance_ch2m1
 @member_counts({cell_1: 4})
 @objective(obj_entrance_ch2m1)
-c_squad_sensor_host sq_fallen_minions01
+squad sq_fallen_minions01
 @member_counts({cell_1: 3})
 @objective(obj_entrance_ch2m1)
-c_squad_sensor_host sq_fallen_minions02a
+squad sq_fallen_minions02a
 @member_counts({cell_1: 3})
 @objective(obj_entrance_ch2m1)
-c_squad_sensor_host sq_fallen_minions02b
+squad sq_fallen_minions02b
 @member_counts({cell_1: 3})
 @objective(obj_entrance_ch2m1)
-c_squad_sensor_host sq_fallen_minions03
+squad sq_fallen_minions03
 @member_counts({cell_1: 1})
 @objective(obj_entrance_ch2m1)
-c_squad_sensor_host sq_fallen_minions04
+squad sq_fallen_minions04
 @member_counts({cell_1: 1})
 @objective(obj_entrance_ch2m1)
-c_squad_sensor_host sq_fallen_minions05
+squad sq_fallen_minions05
 @member_counts({ch2m1_captain: 0})
 @objective(obj_entrance_ch2m1)
-c_squad_sensor_host sq_fallen_captain
-c_squad_member_sensor_host sq_fallen_captain__ch2m1_captain  # true name unknown
-c_health_sensor_host captain_health  # true name unknown
-c_trigger_volume_slot_host tv_fallback
-c_trigger_volume_slot_host tv_reinf
-c_player_trigger_sensor_host pt_reinf bind(tv_reinf)  # true name unknown
-c_squad_group_sensor_host sg_fallen  # true name unknown
-c_squad_group_sensor_host sqg_fallen_sniper  # true name unknown
+squad sq_fallen_captain
+squad_member sq_fallen_captain__ch2m1_captain
+health captain_health
+trigger_volume tv_fallback
+trigger_volume tv_reinf
+player_trigger pt_reinf bind(tv_reinf)
+squad_group sg_fallen
+squad_group sqg_fallen_sniper
 bool b_init
 loot_entrance loot_venus_entrance_1
 
@@ -49,7 +49,8 @@ loot_entrance loot_venus_entrance_1
 
 
 
-startup thread ss_entrance_ch2m1:
+@startup()
+script ss_entrance_ch2m1():
     print("script startup")
 
     sg_fallen.add_child(sq_fallen_minions01)
@@ -70,7 +71,7 @@ startup thread ss_entrance_ch2m1:
     sq_fallen_minions02a.place()
     sq_fallen_minions02b.place()
 
-thread ch2m1_objective:
+script ch2m1_objective():
     sq_fallen_captain.place()
     sleep_until(captain_health.is_ready(), 0.5)
     sleep_until(captain_health.get_health_fraction() < 0.75)

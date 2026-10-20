@@ -3,7 +3,7 @@ enum e_laser_blaster_type:
     count
 
 struct s_laser_blaster : s_laser_blaster_constants:
-    unknown_80802AA8 trigger_behavior  # true name unknown
+    e_trigger_behavior trigger_behavior
     real fire_mode
     real charge_time
     real rate_of_fire

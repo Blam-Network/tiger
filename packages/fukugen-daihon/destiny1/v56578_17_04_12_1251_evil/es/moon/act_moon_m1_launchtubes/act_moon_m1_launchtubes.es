@@ -43,6 +43,7 @@ act_moon_m1_launchtubes_mission6 phase_4_launchtubes
 act_moon_m1_launchtubes_mission7 phase_door_launchtubes
 act_moon_m1_launchtubes_mission8 phase_5_launchtubes
 act_moon_m1_launchtubes_mission9 phase_launchtubes_complete
-startup thread ss_moon_m1_launchtubes:
+@startup()
+script ss_moon_m1_launchtubes():
     print("script startup")
     c_lifetime_script_utilities.get_lifetime_sensor().set_state(e_activity_lifetime_state.pregame)

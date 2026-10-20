@@ -1,15 +1,15 @@
 u_globals utils
-c_location_sensor_host headlands  # true name unknown
-c_trigger_volume_slot_host tv_headlands_md01
-c_player_trigger_sensor_host pt_headlands_md01 bind(tv_headlands_md01)  # true name unknown
-c_trigger_volume_slot_host tv_headlands_ch2m2
-c_player_trigger_sensor_host pt_headlands_ch2m2 bind(tv_headlands_ch2m2)  # true name unknown
+location headlands
+trigger_volume tv_headlands_md01
+player_trigger pt_headlands_md01 bind(tv_headlands_md01)
+trigger_volume tv_headlands_ch2m2
+player_trigger pt_headlands_ch2m2 bind(tv_headlands_ch2m2)
 collect_loot_objective ch2m2_collect_loot bind("ch2m2_collect_loot", 10)
 trigger_bubble_objective ch2m2_enter_bubble bind(headlands)
 dialog_trigger md_c2_m2_d010_trigger
 dialog_trigger md_c2_m2_d020_trigger
-c_sequence_host md_c2_m2_d030  # true name unknown
-c_sequence_host md_c2_m2_d040  # true name unknown
+sequence md_c2_m2_d030
+sequence md_c2_m2_d040
 bool text_dialog
 bool debug_mode
 
@@ -18,13 +18,13 @@ bool debug_mode
 
 
 
-thread init: pass
+script init(): pass
 
 
-thread complete: pass
+script complete(): pass
 
 
-thread main:
+script main():
     print("script startup")
     md_c2_m2_d010_trigger.enable()
     ch2m2_enter_bubble.objective_begin()
@@ -46,12 +46,12 @@ def func_spawn(sq, obj):
 
 
 
-thread venus_c2_m02_d30:
+script venus_c2_m02_d30():
     sleep_until(ch2m2_collect_loot.get_count() >= 5)
     md_c2_m2_d030.start()
     print("md_c2_m2_d030")
 
-thread venus_c2_m02_d40:
+script venus_c2_m02_d40():
     md_c2_m2_d040.start()
     print("md_c2_m2_d040")
 

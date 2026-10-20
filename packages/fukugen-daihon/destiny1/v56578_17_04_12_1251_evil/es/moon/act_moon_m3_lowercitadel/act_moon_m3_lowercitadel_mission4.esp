@@ -6,22 +6,22 @@
 # objective clears when its console reports the scan finished. The console
 # itself is placed by the activity root.
 
-c_encounter_handle enc_strength_m3
+encounter_handle enc_strength_m3
 interactable_placement pf_obj_strength_interact_place  # archetype not authored on TU0
 interactable_objective pf_obj_strength_interact bind("0x9D0AD7E7")
 generic_objective pf_obj_strength_defend
-c_nav_point_host ap_defend
-c_trigger_group_host tg_moon_m3_climax_so
-c_sequence_host seq_wave_announce1
-c_sequence_host seq_strength_music
-c_sequence_host seq_d_o2_s03
-c_sequence_host seq_d_o2_s04
+nav_point ap_defend
+trigger_group tg_moon_m3_climax_so
+sequence seq_wave_announce1
+sequence seq_strength_music
+sequence seq_d_o2_s03
+sequence seq_d_o2_s04
 
-thread init: pass
+script init(): pass
 
-thread complete: pass
+script complete(): pass
 
-thread main:
+script main():
     enc = enc_strength_m3
     seq_strength_music.set_switch_mask(15)
     enc.sc_scan.wake()
@@ -44,12 +44,12 @@ thread main:
     pf_obj_strength_interact_place._object.set_device_position(1)
 
 # the first wave is called out once the chamber's spec ops marker is up
-thread sc_wave_announce:
+script sc_wave_announce():
     sleep_until(enc_strength_m3.o_m3_spec_ops.is_alive())
     sleep(1)
     seq_wave_announce1.start()
 
 # the Ghost's line partway through the defence (one run)
-thread sc_ghost_nag:
+script sc_ghost_nag():
     sleep(38)
     seq_d_o2_s04.start()

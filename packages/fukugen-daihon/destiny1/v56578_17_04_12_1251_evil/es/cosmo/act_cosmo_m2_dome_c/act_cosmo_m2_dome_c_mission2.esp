@@ -8,20 +8,20 @@
 
 trigger_volume_objective obj_m2_o2a
 generic_objective obj_m2_o2b
-c_sequence_host seq_d_o1_s02
-c_sequence_host seq_d_o1_s032a
-c_sequence_host seq_d_o1_s032b
-c_sequence_host seq_d_o1_s036a
-c_sequence_host seq_d_o1_s036b
-c_sequence_host seq_d_o1_s04a
-c_sequence_host seq_d_o1_s04b
-c_sequence_host seq_d_o1_s05
+sequence seq_d_o1_s02
+sequence seq_d_o1_s032a
+sequence seq_d_o1_s032b
+sequence seq_d_o1_s036a
+sequence seq_d_o1_s036b
+sequence seq_d_o1_s04a
+sequence seq_d_o1_s04b
+sequence seq_d_o1_s05
 
-thread init: pass
+script init(): pass
 
-thread complete: pass
+script complete(): pass
 
-thread main:
+script main():
     sleep(1.7)
     sc_walk_lines.wake()
     obj_m2_o2a.objective_begin()
@@ -38,7 +38,7 @@ thread main:
 
 # the long line starts as the sea loads and four more join it halfway; two
 # follow it when it ends, which main starts
-thread sc_walk_lines:
+script sc_walk_lines():
     sleep(52.8)
     seq_d_o1_s02.start()
     sleep(39.2)

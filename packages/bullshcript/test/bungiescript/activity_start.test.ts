@@ -22,7 +22,7 @@ import { fnv1 } from "../../src/host/tags/name_hash.ts";
 
 const PATH = "es/venus/strike_1_activity/strike_1_activity.es";
 const BUNDLE = '@activity_bundle("strike_1_activity")\n';
-const BODY = "c_squad_sensor_host sq\n";
+const BODY = "squad sq\n";
 
 const FULL = [
   BUNDLE,
@@ -299,7 +299,7 @@ describe("the compiled start", () => {
     { path: PATH, text: FULL },
     {
       path: "es/city_tower/enc_city_tower_default1.es",
-      text: '@activity_bundle("enc_city_tower_default1")\n@activity("city_tower_default1")\n@start_slice("plaza")\nc_fireteam_sensor_host host\n',
+      text: '@activity_bundle("enc_city_tower_default1")\n@activity("city_tower_default1")\n@start_slice("plaza")\nfireteam host\n',
     },
     {
       path: "bs/activities/common/story_common.bs",
@@ -307,7 +307,7 @@ describe("the compiled start", () => {
     },
     {
       path: "es/venus/strike_1_activity/venus_strike_1_mission1.esp",
-      text: "c_squad_sensor_host sq\n",
+      text: "squad sq\n",
     },
   ];
   const compiled = compileScriptFiles(SOURCES);
@@ -381,7 +381,7 @@ describe("the compiled start", () => {
       readFileSync(join(dir, COMPILED_BS_INDEX), "utf8")
     ) as CompiledBsIndex;
     expect(index.format).toBe(COMPILED_BS_FORMAT);
-    expect(COMPILED_BS_FORMAT).toBe(10);
+    expect(COMPILED_BS_FORMAT).toBe(11);
     expect(
       index.files.find((file) => file.path === PATH)?.activityStart?.startSlice
     ).toBe("plaza");

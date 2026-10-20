@@ -8,47 +8,48 @@
 
 @activity_bundle("enc_lobby_m06")
 
-c_objective_sensor_host obj_lobby_m06_s
-c_objective_sensor_host obj_lobby_m06_n
-c_player_trigger_sensor_host pt_s_cloud_spawn
-c_player_trigger_sensor_host pt_s_mid_spawn
-c_player_trigger_sensor_host pt_s_back_spawn
-c_player_trigger_sensor_host pt_n_plat_spawn
-c_player_trigger_sensor_host pt_n_plat_entered
-c_player_trigger_sensor_host pt_n_pit_approach
-c_player_trigger_sensor_host pt_n_pit_mid
-c_squad_sensor_host sq_s_cloud1
-c_squad_member_sensor_host sq_s_cloud1__vex_cloud
-c_squad_sensor_host sq_s_cloud1_support1
-c_squad_sensor_host sq_s_cloud1_support2
-c_squad_sensor_host sq_s_cloud2
-c_squad_member_sensor_host sq_s_cloud2__vex_cloud
-c_squad_sensor_host sq_s_cloud2_support1
-c_squad_sensor_host sq_s_cloud2_support2
-c_squad_sensor_host sq_s_cloud3
-c_squad_member_sensor_host sq_s_cloud3__vex_cloud
-c_squad_sensor_host sq_s_cloud3_support1
-c_squad_sensor_host sq_s_back_support1
-c_squad_sensor_host sq_s_back_support2
-c_squad_sensor_host sq_s_back_support3
-c_squad_sensor_host sq_n_plat_support1
-c_squad_sensor_host sq_n_mezz_support1
-c_squad_sensor_host sq_n_cloud1
-c_squad_member_sensor_host sq_n_cloud1__vex_cloud
-c_squad_sensor_host sq_n_cloud1_support1
-c_squad_sensor_host sq_n_cloud1_support2
-c_squad_sensor_host sq_n_cloud1_support3
-c_squad_sensor_host sq_n_cloud2
-c_squad_member_sensor_host sq_n_cloud2__vex_cloud
-c_squad_sensor_host sq_n_cloud2_support1
-c_squad_sensor_host sq_n_cloud2_support2
-c_squad_sensor_host sq_n_cloud2_support3
-c_squad_sensor_host sq_n_cloud2_support4
-c_squad_sensor_host sq_n_pit_turret
-c_squad_member_sensor_host sq_n_pit_turret__cyclops
-c_squad_sensor_host sq_n_pit_turret_support1
+objective obj_lobby_m06_s
+objective obj_lobby_m06_n
+player_trigger pt_s_cloud_spawn
+player_trigger pt_s_mid_spawn
+player_trigger pt_s_back_spawn
+player_trigger pt_n_plat_spawn
+player_trigger pt_n_plat_entered
+player_trigger pt_n_pit_approach
+player_trigger pt_n_pit_mid
+squad sq_s_cloud1
+squad_member sq_s_cloud1__vex_cloud
+squad sq_s_cloud1_support1
+squad sq_s_cloud1_support2
+squad sq_s_cloud2
+squad_member sq_s_cloud2__vex_cloud
+squad sq_s_cloud2_support1
+squad sq_s_cloud2_support2
+squad sq_s_cloud3
+squad_member sq_s_cloud3__vex_cloud
+squad sq_s_cloud3_support1
+squad sq_s_back_support1
+squad sq_s_back_support2
+squad sq_s_back_support3
+squad sq_n_plat_support1
+squad sq_n_mezz_support1
+squad sq_n_cloud1
+squad_member sq_n_cloud1__vex_cloud
+squad sq_n_cloud1_support1
+squad sq_n_cloud1_support2
+squad sq_n_cloud1_support3
+squad sq_n_cloud2
+squad_member sq_n_cloud2__vex_cloud
+squad sq_n_cloud2_support1
+squad sq_n_cloud2_support2
+squad sq_n_cloud2_support3
+squad sq_n_cloud2_support4
+squad sq_n_pit_turret
+squad_member sq_n_pit_turret__cyclops
+squad sq_n_pit_turret_support1
 
-startup thread sc_lobby_startup:
+@startup()
+script sc_lobby_startup():
     sq_s_cloud1_support1.set_objective(obj_lobby_m06_s)
     sq_s_cloud1_support2.set_objective(obj_lobby_m06_s)
     sq_s_cloud2_support1.set_objective(obj_lobby_m06_s)
@@ -70,7 +71,8 @@ startup thread sc_lobby_startup:
 
 # South lobby ------------------------------------------------------------
 
-startup thread sc_s_cloud1:
+@startup()
+script sc_s_cloud1():
     sleep_until(pt_s_cloud_spawn.is_triggered())
     sleep(1)
     sq_s_cloud2_support2.set_task("0x7860D8AB")
@@ -78,13 +80,15 @@ startup thread sc_s_cloud1:
     sq_s_cloud1_support1.set_task("0x2257CE64")
     vex_cloud_drop(sq_s_cloud1, sq_s_cloud1__vex_cloud, sq_s_cloud1_support1)
 
-startup thread sc_s_cloud2:
+@startup()
+script sc_s_cloud2():
     sleep_until(pt_s_cloud_spawn.is_triggered())
     sleep(3)
     sq_s_cloud2_support1.set_task("0xBCF82E06")
     vex_cloud_drop(sq_s_cloud2, sq_s_cloud2__vex_cloud, sq_s_cloud2_support1)
 
-startup thread sc_s_push:
+@startup()
+script sc_s_push():
     sleep_until(sq_s_cloud1_support1.alive_count() > 0)
     sleep_until(sq_s_cloud1_support1.alive_count() <= 1)
     sq_s_cloud1_support1.set_task("0xE312E136")
@@ -96,7 +100,8 @@ startup thread sc_s_push:
     sleep_until(pt_s_mid_spawn.is_triggered())
     sq_s_cloud2_support2.set_task("0xB357694F")
 
-startup thread sc_s_back:
+@startup()
+script sc_s_back():
     sleep_until(pt_s_back_spawn.is_triggered())
     sleep(1)
     sq_s_back_support1.set_task("0xD1A64DC8")
@@ -109,7 +114,8 @@ startup thread sc_s_back:
 
 # North lobby ------------------------------------------------------------
 
-startup thread sc_n_plat:
+@startup()
+script sc_n_plat():
     sleep_until(pt_n_plat_spawn.is_triggered())
     sleep(2)
     sq_n_plat_support1.set_task("0xED68DC31")
@@ -121,7 +127,8 @@ startup thread sc_n_plat:
     sq_n_plat_support1.set_task("0x2305F0E6")
     sq_n_mezz_support1.set_task("0x2305F0E6")
 
-startup thread sc_n_cloud1:
+@startup()
+script sc_n_cloud1():
     sleep_until(pt_n_pit_approach.is_triggered())
     sleep(1)
     sq_n_cloud1_support1.set_task("0x473E6AE2")
@@ -135,7 +142,8 @@ startup thread sc_n_cloud1:
     sq_n_cloud1__vex_cloud.drop_squad(sq_n_cloud1_support1); sleep_until(not sq_n_cloud1__vex_cloud.is_dropping())
     sq_n_cloud1.remove()
 
-startup thread sc_n_cloud2:
+@startup()
+script sc_n_cloud2():
     sleep_until(pt_n_pit_approach.is_triggered())
     sleep(6)
     sq_n_cloud2_support3.set_task("0x63D77DA2")
@@ -147,7 +155,8 @@ startup thread sc_n_cloud2:
     sq_n_cloud2__vex_cloud.drop_squad(sq_n_cloud2_support4); sleep_until(not sq_n_cloud2__vex_cloud.is_dropping())
     sq_n_cloud2.remove()
 
-startup thread sc_n_push:
+@startup()
+script sc_n_push():
     sleep_until(sq_n_cloud2.alive_count() > 0)
     sleep_until(sq_n_cloud2.alive_count() == 0)
     sleep(2)

@@ -15,7 +15,8 @@ venus_strike_1_mission4_temp end_phase
 
 
 
-startup thread ss_venus_strike1:
+@startup()
+script ss_venus_strike1():
     print("script startup")
 
 # Decompiled from 36735.13.12.02.1953.alpha script tags

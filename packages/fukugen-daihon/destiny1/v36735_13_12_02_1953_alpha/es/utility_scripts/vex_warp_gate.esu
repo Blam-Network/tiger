@@ -2,15 +2,16 @@
 # (unknown54, true name unknown) that made the host's table stand the gate
 # from the first apply; nothing in the script places it.
 @placed()
-c_squad_sensor_host _squad
-c_squad_member_sensor_host _squad__gate  # true name unknown
+squad _squad
+squad_member _squad__gate
 bool drop_cue
 
 
 
 
 
-startup thread start_up_warpgate:
+@startup()
+script start_up_warpgate():
 
     print("**** Shield State - 1 -- ON")
 
@@ -46,7 +47,7 @@ def deactivate():
     sleep(5)
     _squad__gate.set_channel_scalar("power_state", 0)
 
-thread main:
+script main():
 
     if _squad.alive_count() > 0:
         _squad__gate.set_channel_scalar("power_state", 0.2)
@@ -57,7 +58,7 @@ thread main:
 
 
 
-thread init:
+script init():
     if _squad.alive_count() > 0:
         _squad__gate.set_channel_scalar("power_state", 0.1)
         print("**** Power State - 1 -- TURNING ON")

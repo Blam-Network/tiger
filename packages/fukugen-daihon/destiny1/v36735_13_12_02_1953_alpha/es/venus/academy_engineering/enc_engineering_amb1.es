@@ -3,8 +3,8 @@
 @task(0x2BFB640C, squad: small_encounter_5._squad_group)
 @task(0x7E4F1728, squad: large_encounter_2._squad_group)
 @task(0x2F3868BC, squad: top_encounter_4._squad_group)
-c_objective_sensor_host obj_engineering_amb1  # true name unknown
-c_encounter_manager encounters  # true name unknown
+objective obj_engineering_amb1
+encounter_manager encounters
 @member_counts({_squad: [{cell: 3, cell_1: 2}]})
 simple_encounter corner_encounter_1
 @member_counts({_squad: [{cell: 3, cell_1: 1}, {cell: 3, cell_1: 1}]})
@@ -21,13 +21,15 @@ loot_engineering loot_venus_engineering_1
 
 
 
-startup thread ss_main_thread:
+@startup()
+script ss_main_thread():
 
     print("---------------------------------------------------------")
     print("ENGINEERING ENCOUNTER AMBIENT")
     print("---------------------------------------------------------")
 
-startup thread ss_encounter_controller_thread:
+@startup()
+script ss_encounter_controller_thread():
     encounters.actor_budget = 25
     encounters.add_ambient_encounter(corner_encounter_1, 8, 80, 20, 120, 0)
     encounters.add_ambient_encounter(large_encounter_2, 8, 80, 20, 120, 0)

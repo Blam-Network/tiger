@@ -7,14 +7,14 @@
 # player (one run for the spacing).
 
 generic_objective sp_objective_kill
-c_encounter_handle enc_lowergarden_m07
-c_sequence_host seq_music_lowergarden
+encounter_handle enc_lowergarden_m07
+sequence seq_music_lowergarden
 
-thread init: pass
+script init(): pass
 
-thread complete: pass
+script complete(): pass
 
-thread main:
+script main():
     sleep_until(c_player_script_utilities.all_players_are_ready())
     enc = enc_lowergarden_m07
     seq_music_lowergarden.start()

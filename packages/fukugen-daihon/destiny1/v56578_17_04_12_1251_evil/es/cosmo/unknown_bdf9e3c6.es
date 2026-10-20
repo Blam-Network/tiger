@@ -10,21 +10,25 @@
 
 @activity_bundle(0xBDF9E3C6)
 
-c_object_sensor_host thorium_south_planes
-c_object_sensor_host thorium_north_planes
-c_object_sensor_host thorium_dome
-c_object_sensor_host thorium_road
+object thorium_south_planes
+object thorium_north_planes
+object thorium_dome
+object thorium_road
 
-startup thread sc_thorium_south_planes:
+@startup()
+script sc_thorium_south_planes():
     spawn_node(thorium_south_planes)
 
-startup thread sc_thorium_north_planes:
+@startup()
+script sc_thorium_north_planes():
     spawn_node(thorium_north_planes)
 
-startup thread sc_thorium_dome:
+@startup()
+script sc_thorium_dome():
     spawn_node(thorium_dome)
 
-startup thread sc_thorium_road:
+@startup()
+script sc_thorium_road():
     spawn_node(thorium_road)
 
 def spawn_node(node):

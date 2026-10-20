@@ -6,18 +6,18 @@
 
 countdown_objective pf_sensor01
 countdown_objective pf_sensor02
-c_nav_point_host ap_shattered
-c_sequence_host md_vn01_010_60
-c_player_trigger_sensor_host pt_vn01_010_70
-c_sequence_host md_vn01_010_70
-c_sequence_host md_vn01_010_80
-c_sequence_host md_vn01_010_90
+nav_point ap_shattered
+sequence md_vn01_010_60
+player_trigger pt_vn01_010_70
+sequence md_vn01_010_70
+sequence md_vn01_010_80
+sequence md_vn01_010_90
 
-thread init: pass
+script init(): pass
 
-thread complete: pass
+script complete(): pass
 
-thread main:
+script main():
     sleep_until(c_player_script_utilities.all_players_are_ready())
     sleep(1)
     pf_sensor01.objective_begin()
@@ -37,21 +37,21 @@ thread main:
     venus_m01_010_d90.wake()
     sleep_until(md_vn01_010_90.is_done())
 
-thread venus_m01_010_d60:
+script venus_m01_010_d60():
     md_vn01_010_60.start()
     print("md_vn01_010_60")
 
 # the nag on the way to the second sensor
-thread venus_m01_010_d70:
+script venus_m01_010_d70():
     pt_vn01_010_70.enable()
     sleep_until_timeout(pt_vn01_010_70.is_triggered(), 20)
     md_vn01_010_70.start()
     print("md_vn01_010_70")
 
-thread venus_m01_010_d80:
+script venus_m01_010_d80():
     md_vn01_010_80.start()
     print("md_vn01_010_80")
 
-thread venus_m01_010_d90:
+script venus_m01_010_d90():
     md_vn01_010_90.start()
     print("md_vn01_010_90")

@@ -11,37 +11,45 @@
 
 @activity_bundle(0x00B02852)
 
-c_object_sensor_host chest_mc_north
-c_object_sensor_host chest_mc_south
-c_object_sensor_host chest_dome
-c_object_sensor_host chest_plane_sw
-c_object_sensor_host chest_plane_nw
-c_object_sensor_host chest_plane_se
-c_object_sensor_host chest_plane_ne
-c_object_sensor_host chest_edges
+object chest_mc_north
+object chest_mc_south
+object chest_dome
+object chest_plane_sw
+object chest_plane_nw
+object chest_plane_se
+object chest_plane_ne
+object chest_edges
 
-startup thread sc_chest_mc_north:
+@startup()
+script sc_chest_mc_north():
     spawn_chest(chest_mc_north)
 
-startup thread sc_chest_mc_south:
+@startup()
+script sc_chest_mc_south():
     spawn_chest(chest_mc_south)
 
-startup thread sc_chest_dome:
+@startup()
+script sc_chest_dome():
     spawn_chest(chest_dome)
 
-startup thread sc_chest_plane_sw:
+@startup()
+script sc_chest_plane_sw():
     spawn_chest(chest_plane_sw)
 
-startup thread sc_chest_plane_nw:
+@startup()
+script sc_chest_plane_nw():
     spawn_chest(chest_plane_nw)
 
-startup thread sc_chest_plane_se:
+@startup()
+script sc_chest_plane_se():
     spawn_chest(chest_plane_se)
 
-startup thread sc_chest_plane_ne:
+@startup()
+script sc_chest_plane_ne():
     spawn_chest(chest_plane_ne)
 
-startup thread sc_chest_edges:
+@startup()
+script sc_chest_edges():
     spawn_chest(chest_edges)
 
 def spawn_chest(chest):

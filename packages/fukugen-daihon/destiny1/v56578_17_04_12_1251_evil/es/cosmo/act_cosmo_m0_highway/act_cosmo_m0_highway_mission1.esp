@@ -4,15 +4,15 @@
 # The player doesn't spawn until the highway encounter lets them. The
 # skeleton the Ghost finds is removed when the phase ends.
 
-c_object_sensor_host skeleton_static_1
+object skeleton_static_1
 cinematic_midmission pf_104_res
 cinematic_midmission pf_104_res_fp
 
-thread init: pass
+script init(): pass
 
-thread complete: pass
+script complete(): pass
 
-thread main:
+script main():
     sleep(1)
     skeleton_static_1.create()
     pf_104_res.start()

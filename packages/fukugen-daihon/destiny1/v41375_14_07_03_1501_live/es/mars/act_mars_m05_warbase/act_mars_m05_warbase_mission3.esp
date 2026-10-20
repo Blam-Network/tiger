@@ -7,16 +7,16 @@
 # cracked).
 
 interactable_objective pf_objective_button bind("0x481977E3")
-c_sequence_host seq_d_o1_s06
-c_sequence_host seq_d_o1_s07
-c_sequence_host seq_d_o1_s08
-c_sequence_host seq_alarm_mesa
+sequence seq_d_o1_s06
+sequence seq_d_o1_s07
+sequence seq_d_o1_s08
+sequence seq_alarm_mesa
 
-thread init: pass
+script init(): pass
 
-thread complete: pass
+script complete(): pass
 
-thread main:
+script main():
     pf_objective_button.objective_begin()
     seq_d_o1_s06.start()
     seq_d_o1_s07.start()

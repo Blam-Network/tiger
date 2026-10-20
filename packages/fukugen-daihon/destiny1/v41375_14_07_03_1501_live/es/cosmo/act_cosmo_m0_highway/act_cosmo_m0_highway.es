@@ -52,6 +52,7 @@ act_cosmo_m0_highway_mission5 cosmo_m0_phase02_graveyard
 act_cosmo_m0_highway_mission6 cosmo_m0_phase03_hangar
 act_cosmo_m0_highway_mission7 cosmo_m0_phase04_outro
 
-startup thread ss_cosmo_m0_highway:
+@startup()
+script ss_cosmo_m0_highway():
     print("script startup")
     c_lifetime_script_utilities.get_lifetime_sensor().set_state(e_activity_lifetime_state.pregame)

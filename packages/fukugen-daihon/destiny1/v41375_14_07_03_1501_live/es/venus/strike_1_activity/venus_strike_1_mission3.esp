@@ -5,11 +5,11 @@
 
 trigger_volume_objective trigger_volume_dig_site
 
-thread init: pass
+script init(): pass
 
-thread complete: pass
+script complete(): pass
 
-thread main:
+script main():
     trigger_volume_dig_site.objective_begin_immediate()
     sleep_until(trigger_volume_dig_site.is_complete())
     trigger_volume_dig_site.objective_end_silent()

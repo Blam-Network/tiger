@@ -1,4 +1,4 @@
-c_kill_incident_listener kill_listener  # true name unknown
+kill_incident_listener kill_listener
 string_hash _participant_fireteam_hash = "participant_fireteam"
 
 

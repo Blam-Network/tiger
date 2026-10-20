@@ -45,6 +45,7 @@ cosmo_portal1_activity_mission6 phase05
 cosmo_portal1_activity_mission7 phase06
 cosmo_portal1_activity_mission8 phase07
 
-startup thread ss_cosmo_portal1:
+@startup()
+script ss_cosmo_portal1():
     print("script startup")
     c_lifetime_script_utilities.get_lifetime_sensor().set_state(e_activity_lifetime_state.pregame)

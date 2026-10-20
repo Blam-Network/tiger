@@ -19,7 +19,8 @@
 
 static_array<u_event_countdown, 2> pf_event_countdown_dropship_only
 
-startup thread sc_public_events:
+@startup()
+script sc_public_events():
     while true:
         sleep(mathlib.random_int_inclusive(600, 900))
         i_selected_variation = mathlib.random_int_never_highest_value(0, len(pf_event_countdown_dropship_only))

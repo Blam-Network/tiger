@@ -22,7 +22,7 @@ function compileOne(source: string, path = "es/utility_scripts/t.esu") {
 describe("the BungieScript code generator", () => {
   it("emits the module prologue, methods in order, import and provider", () => {
     const { decl } = compileOne(
-      "c_squad_sensor_host sq\n\n\nthread main:\n    sq.place()\n"
+      "squad sq\n\n\nscript main():\n    sq.place()\n"
     );
     expect(decl.lua).toBe(
       [
@@ -108,7 +108,7 @@ describe("the BungieScript code generator", () => {
   it("lowers sleeps with the condition's raw text and a yield", () => {
     const { decl } = compileOne(
       [
-        "c_squad_sensor_host sq",
+        "squad sq",
         "def f():",
         "    sleep(2)",
         "    sleep_until(sq.alive_count() <= 0 and not sq.is_active())",
@@ -140,7 +140,7 @@ describe("the BungieScript code generator", () => {
   it("lowers loops, switch, locals, tuple assignment and operators", () => {
     const { decl } = compileOne(
       [
-        "dynamic_array<c_squad_sensor_host> squads",
+        "dynamic_array<squad> squads",
         "def f(n):",
         "    for i in range(n):",
         "        for j in range(1, n + 1):",
@@ -234,9 +234,9 @@ describe("the BungieScript code generator", () => {
   it("generates the bind chain and user_import in import()", () => {
     const { decl } = compileOne(
       [
-        'kill_squad_objective po_kill bind("_squad", 0)',
-        "c_player_monitor_sensor_host pm_x bind(entrance)",
-        "c_trigger_volume_slot_host entrance",
+        'player_objective po_kill bind("_squad", 0)',
+        "player_monitor pm_x bind(entrance)",
+        "trigger_volume entrance",
         "def user_import():",
         "    pass",
         "",
@@ -261,9 +261,7 @@ describe("the BungieScript code generator", () => {
   });
 
   it("compiles a chunk whose lines map back to the source", () => {
-    const { decl } = compileOne(
-      "c_squad_sensor_host sq\n\ndef f():\n\n    sq.place()\n"
-    );
+    const { decl } = compileOne("squad sq\n\ndef f():\n\n    sq.place()\n");
     const chunk = readBytecode(decl.chunk as Uint8Array, "T");
     expect([chunk.root.lineDefined, chunk.root.lastLineDefined]).toEqual([
       3, 3,
@@ -283,11 +281,12 @@ describe("the BungieScript code generator", () => {
         "int count = -1",
         "bool b",
         "e_damage_scalar scalar = e_damage_scalar.base",
-        "c_squad_sensor_host sq",
-        "static_array<c_device_host, 10> dev",
-        "c_squad_sensor_host arr[7]",
-        "startup thread ss_main: pass",
-        "thread sc_x: pass",
+        "squad sq",
+        "static_array<device, 10> dev",
+        "squad arr[7]",
+        "@startup()",
+        "script ss_main(): pass",
+        "script sc_x(): pass",
         "delegate d_x(a)",
         "def d_x(a): pass",
         "static def lib(): pass",
@@ -367,10 +366,7 @@ describe("encounter classes", () => {
     );
 
   it("names a .es file's class c_encounter__<stem> on c_encounter", () => {
-    const { decl } = compileOne(
-      "c_squad_sensor_host sq\n",
-      "es/venus/x/enc_x_amb1.es"
-    );
+    const { decl } = compileOne("squad sq\n", "es/venus/x/enc_x_amb1.es");
     expect([decl.name, decl.schema.parent]).toEqual([
       "c_encounter__enc_x_amb1",
       "c_encounter",
@@ -490,9 +486,9 @@ describe("encounter classes", () => {
 
 describe("list literals", () => {
   const source = [
-    "c_squad_sensor_host sq_a",
-    "c_squad_sensor_host sq_b",
-    "c_squad_sensor_host sq_c[2]",
+    "squad sq_a",
+    "squad sq_b",
+    "squad sq_c[2]",
     "def go():",
     "    for sq in [sq_a, sq_b, sq_c[0]]:",
     "        sq.set_objective(1)",
@@ -526,9 +522,9 @@ describe("list literals", () => {
   it("calls a native on each element in order", () => {
     const { decl } = compileOne(
       [
-        "c_squad_sensor_host sq_a",
-        "c_squad_sensor_host sq_b",
-        "c_squad_sensor_host sq_c[2]",
+        "squad sq_a",
+        "squad sq_b",
+        "squad sq_c[2]",
         "def go():",
         "    for sq in [sq_a, sq_b, sq_c[1]]:",
         "        sq.set_objective(7)",

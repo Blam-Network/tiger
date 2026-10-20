@@ -43,7 +43,7 @@ export const s_scenario_client = c.struct({
   // The activity bundles' +0x04 in most.
   unknown18: c.u32(),
   unknown1c: c.u32(),
-  // A string list tag (8080035A), sometimes -1.
+  // A localized strings tag (8080035A), sometimes -1.
   unknown20: c.u32(),
   unknown24: c.u32(),
   // Also every slice descriptor's +0x08.

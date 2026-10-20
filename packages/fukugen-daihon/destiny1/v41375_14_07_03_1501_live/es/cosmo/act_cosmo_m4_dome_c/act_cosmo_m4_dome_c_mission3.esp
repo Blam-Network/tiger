@@ -4,20 +4,20 @@
 # for it. The objective clears once the last wave dies; enc_dome_c_m4 runs
 # the waves.
 
-c_object_sensor_host o_terminal_invis_device
-c_sequence_host seq_m_cue1
-c_sequence_host seq_d_o3_s03
+object o_terminal_invis_device
+sequence seq_m_cue1
+sequence seq_d_o3_s03
 generic_objective obj_m4_o3a
-c_squad_sensor_host sq_hive_assault_trooper03a
-c_squad_sensor_host sq_hive_assault_trooper03b
-c_squad_sensor_host sq_hive_assault_trooper03c
-c_squad_sensor_host sq_hive_assault_heavy03a
+squad sq_hive_assault_trooper03a
+squad sq_hive_assault_trooper03b
+squad sq_hive_assault_trooper03c
+squad sq_hive_assault_heavy03a
 
-thread init: pass
+script init(): pass
 
-thread complete: pass
+script complete(): pass
 
-thread main:
+script main():
     o_terminal_invis_device.create()
     sleep(5)
     obj_m4_o3a.objective_begin_immediate(nil)

@@ -19,7 +19,7 @@ class c_pvp_game_type : c_activity_script:  # true name unknown
     delegate d_init()
     delegate d_start()
     delegate d_tick(timer)
-    c_player_objective_sensor_host player_objective
+    player_objective player_objective
 
 
 

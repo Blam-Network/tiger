@@ -2,27 +2,28 @@
 
 @task(0x6CA06FA2, squad: sq_vex_btm01)
 @task("goblins", squad: sq_vex_btm02)
-c_objective_sensor_host obj_lower_tower_amb  # true name unknown
+objective obj_lower_tower_amb
 @member_counts({goblins: 3, harpies: 2})
 @objective(obj_lower_tower_amb)
-c_squad_sensor_host sq_vex_btm01
+squad sq_vex_btm01
 @member_counts({goblins: 5})
 @objective(obj_lower_tower_amb)
-c_squad_sensor_host sq_vex_btm02
+squad sq_vex_btm02
 @member_counts({minotaur: 1, goblins: 2})
 @objective(obj_lower_tower_amb)
-c_squad_sensor_host sq_vex_btm03
+squad sq_vex_btm03
 @member_counts({goblins: 2, minotaur: 1})
 @objective(obj_lower_tower_amb)
-c_squad_sensor_host sq_vex_btm04
-c_squad_group_sensor_host sqg_vex_btm  # true name unknown
+squad sq_vex_btm04
+squad_group sqg_vex_btm
 loot_lower_tower loot_venus_lower_tower_1
 
 
 
 
 
-startup thread sc_main_thread:
+@startup()
+script sc_main_thread():
 
     print("---------------------------------------------------------")
     print("TOWER ENCOUNTER CH4M4")
@@ -33,7 +34,7 @@ startup thread sc_main_thread:
 
     sc_tower_btm.wake()
 
-thread sc_tower_btm:
+script sc_tower_btm():
 
     sq_vex_btm01.respawn()
     sq_vex_btm02.respawn()

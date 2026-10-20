@@ -7,29 +7,30 @@
 
 @activity_bundle("enc_hangar_m0_5")
 
-c_object_sensor_host o_ultra_audio
-c_objective_sensor_host obj_hangar_m0_5_fallen  # true name unknown
-c_squad_sensor_host sq_amb_fallen_ultra
-c_squad_sensor_host sq_amb_fallen_vandal_1
-c_squad_sensor_host sq_amb_fallen_vandal_2
-c_squad_sensor_host sq_amb_fallen_vandal_3
-c_squad_sensor_host sq_amb_fallen_vandal_4
-c_squad_sensor_host sq_amb_fallen_vandal_5
-c_squad_sensor_host sq_amb_fallen_vandal_6
-c_squad_sensor_host sq_amb_fallen_vandal_7
-c_squad_sensor_host sq_amb_fallen_ultra_gang_1
-c_squad_sensor_host sq_amb_fallen_ultra_gang_2
-c_squad_sensor_host sq_amb_fallen_1
-c_squad_sensor_host sq_amb_shank
-c_squad_sensor_host sq_amb_fallen_ship_2
-c_squad_sensor_host sq_amb_fallen_north_1
+object o_ultra_audio
+objective obj_hangar_m0_5_fallen
+squad sq_amb_fallen_ultra
+squad sq_amb_fallen_vandal_1
+squad sq_amb_fallen_vandal_2
+squad sq_amb_fallen_vandal_3
+squad sq_amb_fallen_vandal_4
+squad sq_amb_fallen_vandal_5
+squad sq_amb_fallen_vandal_6
+squad sq_amb_fallen_vandal_7
+squad sq_amb_fallen_ultra_gang_1
+squad sq_amb_fallen_ultra_gang_2
+squad sq_amb_fallen_1
+squad sq_amb_shank
+squad sq_amb_fallen_ship_2
+squad sq_amb_fallen_north_1
 @member_counts({dregs: 3, shanks: 2})
-c_squad_sensor_host sq_amb_fallen_north_2
+squad sq_amb_fallen_north_2
 @member_counts({vandal: 2, shanks: 2})
-c_squad_sensor_host sq_amb_fallen_south_1
-c_squad_sensor_host sq_amb_fallen_south_2
+squad sq_amb_fallen_south_1
+squad sq_amb_fallen_south_2
 
-startup thread sc_hangar_m0_5:
+@startup()
+script sc_hangar_m0_5():
     sq_amb_fallen_ultra.set_objective(obj_hangar_m0_5_fallen)
     sq_amb_fallen_ultra_gang_1.set_objective(obj_hangar_m0_5_fallen)
     sq_amb_fallen_ultra_gang_2.set_objective(obj_hangar_m0_5_fallen)

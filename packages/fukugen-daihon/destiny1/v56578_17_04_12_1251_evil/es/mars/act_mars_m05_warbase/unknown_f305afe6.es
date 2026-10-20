@@ -17,46 +17,47 @@
 
 @activity_bundle(0xF305AFE6)
 
-c_objective_sensor_host obj_warbase_ch3
-c_squad_sensor_host sq_bridge_a_a
-c_squad_sensor_host sq_bridge_a_b
+objective obj_warbase_ch3
+squad sq_bridge_a_a
+squad sq_bridge_a_b
 @member_counts({0x3C775323: 3})
-c_squad_sensor_host sq_bridge_b_a
+squad sq_bridge_b_a
 @member_counts({0x3C775323: 3})
-c_squad_sensor_host sq_bridge_b_b
+squad sq_bridge_b_b
 @member_counts({0x3C775323: 1, 0xAFD60E03: 1, 0x43775E2E: 1, 0xEA33395E: 1})
-c_squad_sensor_host sq_bridge_b_c
+squad sq_bridge_b_c
 @member_counts({0xDFD659AC: 2, 0x43775E2E: 2})
-c_squad_sensor_host sq_lastline
+squad sq_lastline
 @member_counts({0x31D24833: 1})
-c_squad_sensor_host sq_lastline_top_a
+squad sq_lastline_top_a
 @member_counts({0x3C775323: 3})
-c_squad_sensor_host sq_preboss1
+squad sq_preboss1
 @member_counts({0x43775E2E: 1, 0xDDAD9C63: 1, 0x2681BE63: 2})
-c_squad_sensor_host sq_preboss2
-c_squad_sensor_host sq_boss
+squad sq_preboss2
+squad sq_boss
 @member_counts({0x3C775323: 2, legionary: 2})
-c_squad_sensor_host sq_boss_intro
-c_squad_sensor_host sq_dropship
-c_squad_member_sensor_host sq_dropship__pilot
-c_squad_sensor_host sq_dropship_c1
-c_squad_member_sensor_host sq_dropship_c1__pilot
-c_squad_sensor_host sq_dropship_c2
-c_squad_member_sensor_host sq_dropship_c2__pilot
-c_control_point_set_sensor_host cps_colossus_enter
-c_control_point_set_sensor_host cps_colossus_exit
-c_control_point_set_sensor_host cps_boss_a_enter
-c_control_point_set_sensor_host cps_boss_b_enter
-c_player_trigger_sensor_host pt_bridge_spawn_close
-c_player_trigger_sensor_host pt_preboss
-c_sequence_host seq_wave_announce1
-c_sequence_host seq_ogreroar_close
-c_object_filter_sensor_host of_ultra
-c_hop_on_sensor_host ho_ultra_invuln
-c_encounter_handle specops_warbase_key
-c_object_sensor_host o_minoeye_cage
+squad sq_boss_intro
+squad sq_dropship
+squad_member sq_dropship__pilot
+squad sq_dropship_c1
+squad_member sq_dropship_c1__pilot
+squad sq_dropship_c2
+squad_member sq_dropship_c2__pilot
+control_point_set cps_colossus_enter
+control_point_set cps_colossus_exit
+control_point_set cps_boss_a_enter
+control_point_set cps_boss_b_enter
+player_trigger pt_bridge_spawn_close
+player_trigger pt_preboss
+sequence seq_wave_announce1
+sequence seq_ogreroar_close
+object_filter of_ultra
+hop_on ho_ultra_invuln
+encounter_handle specops_warbase_key
+object o_minoeye_cage
 
-startup thread sc_warbase:
+@startup()
+script sc_warbase():
     specops_warbase_key.o_cable.create()
     specops_warbase_key.o_cable.set_device_position(1)
     for sq in [sq_bridge_a_a, sq_bridge_a_b, sq_bridge_b_a, sq_bridge_b_b, sq_bridge_b_c, sq_lastline, sq_lastline_top_a, sq_preboss1, sq_preboss2, sq_boss, sq_boss_intro, sq_dropship, sq_dropship_c1, sq_dropship_c2]:
@@ -66,7 +67,7 @@ startup thread sc_warbase:
     sc_key.wake()
 
 # the bridge
-thread sc_bridge:
+script sc_bridge():
     sleep_until(pt_bridge_spawn_close.is_triggered())
     sleep(1)
     place_on_task(sq_bridge_a_a, "0xAA177D62")
@@ -87,7 +88,7 @@ thread sc_bridge:
     sleep(3)
     ship.execute(cs_dropship_exit(cps_colossus_exit))
 
-thread sc_bridge_b:
+script sc_bridge_b():
     sleep(2)
     sleep_until(sq_bridge_b_a.alive_count() == 0)
     place_on_task(sq_bridge_b_b, "0xAA177D61")
@@ -96,14 +97,14 @@ thread sc_bridge_b:
     sleep(1)
     place_on_task(sq_bridge_b_c, "0xAA177D61")
 
-thread sc_preboss:
+script sc_preboss():
     sleep_until(pt_preboss.is_triggered())
     sleep(1.4)
     place_on_task(sq_preboss1, "0x9AFB7BE3")
     place_on_task(sq_preboss2, "0x9AFB7BE3")
 
 # the key: the Minotaur eye, the laser, the Vex pillar and the Garden key
-thread sc_key:
+script sc_key():
     key = specops_warbase_key
     sleep_until(o_minoeye_cage.is_alive())
     sleep(4.5)

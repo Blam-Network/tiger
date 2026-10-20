@@ -5,17 +5,17 @@
 # gatehouse plays while the objective is up and stops at the gatehouse
 # (mission 5 stops it). Clears as a player enters the gatehouse's bubble.
 
-c_location_sensor_host gatehouse
+location gatehouse
 trigger_bubble_objective pf_objective_goto bind(gatehouse)
-c_sequence_host seq_d_o1_s09
-c_sequence_host seq_d_o2_s01
-c_sequence_host seq_alarm_mesa
+sequence seq_d_o1_s09
+sequence seq_d_o2_s01
+sequence seq_alarm_mesa
 
-thread init: pass
+script init(): pass
 
-thread complete: pass
+script complete(): pass
 
-thread main:
+script main():
     seq_d_o1_s09.start()
     pf_objective_goto.objective_begin()
     seq_d_o2_s01.start()

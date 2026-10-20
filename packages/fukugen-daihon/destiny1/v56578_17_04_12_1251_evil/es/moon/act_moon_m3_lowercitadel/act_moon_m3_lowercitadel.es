@@ -36,7 +36,8 @@ act_moon_m3_lowercitadel_mission4 phase_strength_b
 act_moon_m3_lowercitadel_mission5 phase_strength_complete
 interactable_placement pf_obj_strength_interact_place  # archetype not authored on TU0
 
-startup thread ss_moon_m3_lowercitadel:
+@startup()
+script ss_moon_m3_lowercitadel():
     print("script startup")
     c_lifetime_script_utilities.get_lifetime_sensor().set_state(e_activity_lifetime_state.pregame)
     console = pf_obj_strength_interact_place._object

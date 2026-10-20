@@ -8,27 +8,27 @@
 # wire (a host incident we cannot name sits in the middle of it).
 
 generic_objective sp_objective_kill
-c_nav_point_host np_base
-c_sequence_host seq_music_cabal_intro
-c_sequence_host seq_dialog_plains_tunnel
-c_sequence_host seq_dialog_plains_base_alert
-c_sequence_host seq_dialog_plains_base_arrive
-c_squad_sensor_host sq_base_phalanx
-c_squad_sensor_host sq_base_legionary_a
-c_squad_sensor_host sq_base_legionary_b
-c_squad_sensor_host sq_base_legionary_c
-c_squad_sensor_host sq_backup_legionary_a
-c_squad_sensor_host sq_backup_legionary_b
-c_squad_sensor_host sq_sand_legionary_a
-c_squad_sensor_host sq_sand_legionary_b
-c_squad_sensor_host sq_sand_legionary_c
-c_squad_sensor_host sq_anchor_centurion
+nav_point np_base
+sequence seq_music_cabal_intro
+sequence seq_dialog_plains_tunnel
+sequence seq_dialog_plains_base_alert
+sequence seq_dialog_plains_base_arrive
+squad sq_base_phalanx
+squad sq_base_legionary_a
+squad sq_base_legionary_b
+squad sq_base_legionary_c
+squad sq_backup_legionary_a
+squad sq_backup_legionary_b
+squad sq_sand_legionary_a
+squad sq_sand_legionary_b
+squad sq_sand_legionary_c
+squad sq_anchor_centurion
 
-thread init: pass
+script init(): pass
 
-thread complete: pass
+script complete(): pass
 
-thread main:
+script main():
     insertion_point()
     seq_dialog_plains_tunnel.stop()
     seq_dialog_plains_base_alert.start()
@@ -42,7 +42,7 @@ thread main:
     sleep(6)
 
 # the Ghost on the base's first casualty (one run: the phalanx died first)
-thread sc_base_arrive:
+script sc_base_arrive():
     sleep_until(sq_base_phalanx.alive_count() > 0)
     sleep_until(sq_base_phalanx.alive_count() == 0)
     seq_dialog_plains_base_arrive.start()

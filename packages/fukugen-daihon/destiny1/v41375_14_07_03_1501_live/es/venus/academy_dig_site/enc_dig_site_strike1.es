@@ -4,28 +4,29 @@
 
 @activity_bundle("enc_dig_site_strike1")
 
-c_squad_group_sensor_host sg_fallen  # true name unknown
-c_squad_sensor_host sq_strike09
-c_squad_sensor_host sq_strike10
-c_squad_group_sensor_host sqg_strike05  # true name unknown
-c_squad_sensor_host sq_strike05a
-c_squad_sensor_host sq_strike05b
-c_squad_sensor_host sq_strike05c
-c_squad_sensor_host sq_strike01
-c_squad_sensor_host sq_strike02
-c_squad_sensor_host sq_strike03
-c_squad_sensor_host sq_strike04
-c_squad_sensor_host sq_strike06
-c_squad_sensor_host sq_strike08
-c_location_sensor_host dig_site  # true name unknown
-c_player_monitor_sensor_host pm_bubble_dig_site bind(dig_site)  # true name unknown
-c_trigger_volume_slot_host tv_dig_site_suicide
-c_player_trigger_sensor_host pt_dig_site_suicide bind(tv_dig_site_suicide)  # true name unknown
-c_squad_sensor_host sq_strike07
-c_trigger_volume_slot_host tv_dig_site_hydra
-c_player_trigger_sensor_host pt_dig_site_hydra bind(tv_dig_site_hydra)  # true name unknown
+squad_group sg_fallen
+squad sq_strike09
+squad sq_strike10
+squad_group sqg_strike05
+squad sq_strike05a
+squad sq_strike05b
+squad sq_strike05c
+squad sq_strike01
+squad sq_strike02
+squad sq_strike03
+squad sq_strike04
+squad sq_strike06
+squad sq_strike08
+location dig_site
+player_monitor pm_bubble_dig_site bind(dig_site)
+trigger_volume tv_dig_site_suicide
+player_trigger pt_dig_site_suicide bind(tv_dig_site_suicide)
+squad sq_strike07
+trigger_volume tv_dig_site_hydra
+player_trigger pt_dig_site_hydra bind(tv_dig_site_hydra)
 
-startup thread sc_main_thread:
+@startup()
+script sc_main_thread():
     sg_fallen.add_child(sq_strike09)
     sg_fallen.add_child(sq_strike10)
     sqg_strike05.add_child(sq_strike05a)

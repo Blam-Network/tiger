@@ -28,7 +28,7 @@ describe("the decompiler on compiled chunks", () => {
     const result = compileBungieScript([
       {
         path: "es/utility_scripts/t.esu",
-        source: "c_squad_sensor_host sq\n\ndef f():\n\n    sq.place()\n",
+        source: "squad sq\n\ndef f():\n\n    sq.place()\n",
       },
     ]);
     const chunk = readBytecode(result.decls[0].chunk as Uint8Array, "T");

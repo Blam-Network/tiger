@@ -8,19 +8,19 @@
 
 trigger_volume_objective sp_objective_goto
 generic_objective sp_objective_kill
-c_trigger_volume_slot_host tv_gate
-c_player_trigger_sensor_host pt_gate bind(tv_gate)
-c_nav_point_host np_gate
+trigger_volume tv_gate
+player_trigger pt_gate bind(tv_gate)
+nav_point np_gate
 trigger_volume_objective sp_objective_gate
-c_sequence_host seq_music_garden
-c_sequence_host seq_dialog_valley_gate
-c_sequence_host seq_dialog_valley_teleport
+sequence seq_music_garden
+sequence seq_dialog_valley_gate
+sequence seq_dialog_valley_teleport
 
-thread init: pass
+script init(): pass
 
-thread complete: pass
+script complete(): pass
 
-thread main:
+script main():
     sp_objective_goto.objective_begin()
     sleep_until(sp_objective_goto.is_complete())
     sp_objective_goto.objective_end_silent()

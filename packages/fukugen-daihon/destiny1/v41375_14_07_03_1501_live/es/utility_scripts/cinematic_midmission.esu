@@ -3,7 +3,7 @@
 # A cinematic a phase plays. Complete once the cinematic has finished.
 
 bool _complete
-c_cinematic_sensor_host _cinematic
+cinematic _cinematic
 
 def is_complete():
     return _complete
@@ -11,7 +11,7 @@ def is_complete():
 def start():
     play.restart()
 
-thread play:
+script play():
     _cinematic.start()
     sleep_until(_cinematic.is_done())
     _complete = true

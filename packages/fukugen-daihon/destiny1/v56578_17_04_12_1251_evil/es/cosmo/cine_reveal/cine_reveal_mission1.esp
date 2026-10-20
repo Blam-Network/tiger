@@ -5,11 +5,11 @@
 
 cinematic_midmission cine_106_trv
 
-thread init: pass
+script init(): pass
 
-thread complete: pass
+script complete(): pass
 
-thread main:
+script main():
     cine_106_trv.start()
     sleep_until(cine_106_trv.is_complete())
     sleep(2)

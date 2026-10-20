@@ -5,11 +5,11 @@
 
 cinematic_midmission pf_112_vnr
 
-thread init: pass
+script init(): pass
 
-thread complete: pass
+script complete(): pass
 
-thread main:
+script main():
     # the capture starts it ten seconds after the script; what it waits for
     # is not on the wire
     sleep(10)

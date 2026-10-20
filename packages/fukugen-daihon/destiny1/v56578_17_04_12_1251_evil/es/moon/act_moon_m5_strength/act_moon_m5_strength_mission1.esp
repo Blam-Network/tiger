@@ -13,13 +13,13 @@
 # obj_m5_multi_interact has no archetype in the TU0 table (TU0's utility
 # scripts have no multi-object interact), so the phase drives its rows itself.
 
-c_encounter_handle obj_m5_multi_interact
+encounter_handle obj_m5_multi_interact
 
-thread init: pass
+script init(): pass
 
-thread complete: pass
+script complete(): pass
 
-thread main:
+script main():
     sleep_until(c_player_script_utilities.all_players_are_ready())
     c_lifetime_script_utilities.get_lifetime_sensor().set_state(e_activity_lifetime_state.active)
     sleep(1)

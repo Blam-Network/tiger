@@ -1,6 +1,6 @@
-dynamic_array<c_object_sensor_host> lootbox
-static_array<c_object_sensor_host, 5> lootbox_vex
-static_array<c_object_sensor_host, 10> dynamic_object_candy
+dynamic_array<object> lootbox
+static_array<object, 5> lootbox_vex
+static_array<object, 10> dynamic_object_candy
 
 # Decompiled from 36735.13.12.02.1953.alpha script tags
 # See tag 821B8032

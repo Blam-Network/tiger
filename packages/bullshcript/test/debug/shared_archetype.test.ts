@@ -23,7 +23,8 @@ const DOOR = {
 int activations = 0
 int ticks = 0
 
-startup thread sc_door:
+@startup()
+script sc_door():
     while true:
         ticks = ticks + 1
         sleep(1)
@@ -37,7 +38,8 @@ const OWNER = {
   text: `# es\\test\\enc_owner.es
 test_door door
 
-startup thread sc_owner:
+@startup()
+script sc_owner():
     sleep(1)
 `,
 };
@@ -46,7 +48,8 @@ const OTHER = {
   text: `# es\\test\\enc_other.es
 test_door door
 
-startup thread sc_other:
+@startup()
+script sc_other():
     sleep(1)
 `,
 };

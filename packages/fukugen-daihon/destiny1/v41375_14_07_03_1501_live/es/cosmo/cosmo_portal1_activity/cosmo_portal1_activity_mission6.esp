@@ -3,19 +3,19 @@
 # Mission 6, the ship: reach the hangar door, then kill the guards. The
 # objective clears a few seconds after the last guard dies.
 
-c_object_sensor_host o_cosmo_strike01_hangar_door01
-c_encounter_handle enc_ship_portal1  # true name unknown
+object o_cosmo_strike01_hangar_door01
+encounter_handle enc_ship_portal1
 trigger_volume_objective obj_s1_phase05_m1
 generic_objective obj_s1_phase05_m2
-c_nav_point_host ap_kill_guards01  # true name unknown
+nav_point ap_kill_guards01
 
-thread init:
+script init():
     o_cosmo_strike01_hangar_door01.create()
     o_cosmo_strike01_hangar_door01.set_device_position(0)
 
-thread complete: pass
+script complete(): pass
 
-thread main:
+script main():
     enc = enc_ship_portal1
     obj_s1_phase05_m1.objective_begin()
     sleep_until(obj_s1_phase05_m1.is_complete())

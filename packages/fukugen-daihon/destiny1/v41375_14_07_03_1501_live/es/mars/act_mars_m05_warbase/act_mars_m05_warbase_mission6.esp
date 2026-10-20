@@ -4,15 +4,15 @@
 # warbase. The Ghost's line plays while the objective is up. Clears as a
 # player enters the warbase's bubble.
 
-c_location_sensor_host warbase
+location warbase
 trigger_bubble_objective pf_objective_goto bind(warbase)
-c_sequence_host seq_d_o3_s01
+sequence seq_d_o3_s01
 
-thread init: pass
+script init(): pass
 
-thread complete: pass
+script complete(): pass
 
-thread main:
+script main():
     pf_objective_goto.objective_begin()
     seq_d_o3_s01.start()
     sleep_until(pf_objective_goto.is_complete())

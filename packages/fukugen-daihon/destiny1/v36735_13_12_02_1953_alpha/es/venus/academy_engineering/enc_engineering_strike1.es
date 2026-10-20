@@ -1,25 +1,25 @@
 @activity_bundle("enc_engineering_strike1")
 
 u_globals utils
-c_location_sensor_host engineering  # true name unknown
-c_player_monitor_sensor_host pm_bubble_engineering bind(engineering)  # true name unknown
+location engineering
+player_monitor pm_bubble_engineering bind(engineering)
 @member_counts({vandals: 3})
 @objective(obj_engineering_strike)
-c_squad_sensor_host sq_floor2_fallen01
+squad sq_floor2_fallen01
 @member_counts({vandal: 3})
 @objective(obj_engineering_strike)
-c_squad_sensor_host sq_floor2_fallen02
+squad sq_floor2_fallen02
 @member_counts({shank: 1})
 @objective(obj_engineering_strike)
-c_squad_sensor_host sq_floor2_fallen03
+squad sq_floor2_fallen03
 @member_counts({shank: 1})
 @objective(obj_engineering_strike)
-c_squad_sensor_host sq_floor2_fallen04
-c_squad_group_sensor_host gr_top_floor  # true name unknown
+squad sq_floor2_fallen04
+squad_group gr_top_floor
 loot_engineering loot_venus_engineering_1
 @task("floor2", squad: gr_top_floor)
 @task("captain", squad: sq_floor2_fallen01)
-c_objective_sensor_host obj_engineering_strike  # true name unknown
+objective obj_engineering_strike
 
 
 
@@ -27,7 +27,8 @@ c_objective_sensor_host obj_engineering_strike  # true name unknown
 
 
 
-startup thread sc_main_thread:
+@startup()
+script sc_main_thread():
 
     gr_top_floor.add_child(sq_floor2_fallen01)
     gr_top_floor.add_child(sq_floor2_fallen02)
@@ -37,7 +38,7 @@ startup thread sc_main_thread:
 
 
 
-thread sc_engineering_trash:
+script sc_engineering_trash():
     respawn(sq_floor2_fallen01, obj_engineering_strike)
     respawn(sq_floor2_fallen02, obj_engineering_strike)
     respawn(sq_floor2_fallen03, obj_engineering_strike)

@@ -1,6 +1,6 @@
-static_array<c_object_sensor_host, 10> lootboxes
-c_object_sensor_host golden_age_caches
-static_array<c_object_sensor_host, 10> dynamic_object_candy
+static_array<object, 10> lootboxes
+object golden_age_caches
+static_array<object, 10> dynamic_object_candy
 
 # Decompiled from 36735.13.12.02.1953.alpha script tags
 # See tag 821B8037

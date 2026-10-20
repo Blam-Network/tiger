@@ -1,9 +1,9 @@
-c_player_objective_sensor_host _player_objective
-c_sequence_host _incoming_sequence  # true name unknown
-c_sequence_host _completion_sequence  # true name unknown
-c_trigger_volume_slot_host _trigger_volume
-c_nav_point_host _nav_point  # true name unknown
-c_player_trigger_sensor_host _player_trigger bind(_trigger_volume)  # true name unknown
+player_objective _player_objective
+sequence _incoming_sequence
+sequence _completion_sequence
+trigger_volume _trigger_volume
+nav_point _nav_point
+player_trigger _player_trigger bind(_trigger_volume)
 
 
 

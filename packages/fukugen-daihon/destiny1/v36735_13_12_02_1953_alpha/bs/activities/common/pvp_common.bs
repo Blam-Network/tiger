@@ -1,12 +1,12 @@
 @activity_bundle("pvp_common")
 
 class c_encounter__pvp_common : c_encounter:
-    c_scoreboard_host scoreboard  # true name unknown
-    c_timer_sensor_host lifetime_timer  # true name unknown
-    c_lifetime_sensor_host lifetime  # true name unknown
-    c_team_picker_host team_picker  # true name unknown
-    static_array<c_activity_player_sensor_host, 12> players
-    static_array<c_fireteam_sensor_host, 12> fireteams
+    scoreboard scoreboard
+    timer lifetime_timer
+    lifetime lifetime
+    team_picker team_picker
+    static_array<activity_player, 12> players
+    static_array<fireteam, 12> fireteams
 
 
     def import():

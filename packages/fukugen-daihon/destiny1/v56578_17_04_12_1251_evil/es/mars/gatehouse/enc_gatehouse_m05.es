@@ -13,36 +13,37 @@
 
 @activity_bundle("enc_gatehouse_m05")
 
-c_objective_sensor_host obj_gatehouse_m05
-static_array<c_object_sensor_host, 20> dynamics
-c_object_sensor_host mc_door_left
-c_object_sensor_host mc_door_right
-c_object_sensor_host mc_door_a
-c_object_sensor_host mc_door_b
-c_object_sensor_host ambush_door
-c_object_sensor_host o_device_invis_ambush
-c_squad_sensor_host sq_wave_1_a
+objective obj_gatehouse_m05
+static_array<object, 20> dynamics
+object mc_door_left
+object mc_door_right
+object mc_door_a
+object mc_door_b
+object ambush_door
+object o_device_invis_ambush
+squad sq_wave_1_a
 @member_counts({0xDFD659AC: 1, 0x2681BE63: 1, 0x07FE7F30: 1, 0x7BB7C1C3: 1})
-c_squad_sensor_host sq_wave_1_b
+squad sq_wave_1_b
 @member_counts({0x2681BE63: 2, 0xDFD659AC: 2})
-c_squad_sensor_host sq_wave_2_a
+squad sq_wave_2_a
 @member_counts({centurion: 1, 0xDFD659AC: 3})
-c_squad_sensor_host sq_wave_2_b
+squad sq_wave_2_b
 @member_counts({0x43775E2E: 2, 0x2681BE63: 2})
-c_squad_sensor_host sq_wave_3_a
+squad sq_wave_3_a
 @member_counts({centurion: 1, 0x2681BE63: 1, 0xDFD659AC: 2})
-c_squad_sensor_host sq_wave_3_b
+squad sq_wave_3_b
 @member_counts({miniboss: 1})
-c_squad_sensor_host sq_miniboss
+squad sq_miniboss
 @member_counts({backup: 1, 0xEAC226FF: 1})
-c_squad_sensor_host sq_miniboss_backup
-c_sequence_host seq_alarm
-c_sequence_host seq_wave_announce1
-c_sequence_host seq_wave_announce2
-c_sequence_host seq_wave_announce3
+squad sq_miniboss_backup
+sequence seq_alarm
+sequence seq_wave_announce1
+sequence seq_wave_announce2
+sequence seq_wave_announce3
 bool ambush_complete = false
 
-startup thread sc_gatehouse:
+@startup()
+script sc_gatehouse():
     for dynamic in dynamics:
         dynamic.create()
     sleep(1)
@@ -53,7 +54,7 @@ startup thread sc_gatehouse:
         sq.set_objective(obj_gatehouse_m05)
 
 # the ambush: woken by mission 5 at the wall
-thread sc_waves:
+script sc_waves():
     place_on_task(sq_wave_1_a, "0xD15FEA85")
     place_on_task(sq_wave_1_b, "0xD15FEA85")
     mc_door_left.set_device_position(1)
@@ -95,7 +96,7 @@ thread sc_waves:
     ambush_complete = true
 
 # the miniboss: woken by mission 5 once the door button has been used
-thread sc_miniboss:
+script sc_miniboss():
     sleep(0.7)
     place_on_task(sq_miniboss, "0xFD3EEAFF")
     place_on_task(sq_miniboss_backup, "0xFD3EEAFF")

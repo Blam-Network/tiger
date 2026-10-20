@@ -4,11 +4,11 @@
 
 trigger_volume_objective pf_tv_wormway_entrance
 
-thread init: pass
+script init(): pass
 
-thread complete: pass
+script complete(): pass
 
-thread main:
+script main():
     pf_tv_wormway_entrance.objective_begin()
     sleep_until(pf_tv_wormway_entrance.is_complete())
     pf_tv_wormway_entrance.objective_end_silent()

@@ -1,16 +1,22 @@
 # @blamnetwork/bullshcript
 
-BullShcript is a best-effort reimplementation of BungieScript (and EncounterScript) for Destiny 1. It includes a compiler, decompiler, syntax highlighting and a runtime / VM. It can be used to compile Destiny 1 mission scripts and run them on a server.
+BullShcript is a best-effort reimplementation of BungieScript (and EncounterScript) for Destiny 1 & 2. It includes a compiler, decompiler, syntax highlighting and a runtime / VM. It can be used to compile Destiny mission scripts and run them on a server.
 
 Its name originates from the fact that we have to my knowledge never seen real BungieScript, so this is an estimation, and kind of BS.
 
 ## What is BungieScript
 
-BungieScript seemingly has evolved through the years, BullShcript focuses on its earlier iterations. BungieScript is a proprietary language created by Bungie used to write mission scripts for Destiny. In Destiny 1, this language is seemingly based on Python 2.
+BungieScript seemingly has evolved through the years, it is a proprietary language created by Bungie and based on Python 2. It is used to write mission scripts for Destiny.
 
+### What we know about BungieScript / EncounterScript
 On June 21, 2023 Gamecheat13 located a `release_internal` Alpha build of Destiny 1 (ver `36735.13.12.02.1953.alpha`) on Production Xbox LIVE (ProdNet). This is the earliest known build of Destiny and the only `release_internal` build that has leaked. This build of Destiny 1 is unique in that it includes compiled BungieScript files. These compiled scripts include snippets of source code and other information that have helped us understand how the language works. Notably, these scripts are compiled to Havok Script (hks) bytecode: Lua 5.1 underneath, but with its own opcodes and value types, which is why BullShcript has its own decompiler and VM rather than using stock Lua's. It can be assumed that they were then run in the Havok Script VM (formerly Kore VM).
 
+>NOTE: It has previously been shared that Bungie moved away from HavokScript before Destiny released, however their GDC talks have shown destiny DLC activity tags described as "Havok Binary Content", which suggests their host only packages do in fact still contain compiled HavokScript.
+
 Beyond the Havok Script influence, it is also worth noting that these scripts have their HaloScript roots as well.
+
+In March 2024, Peter Kugler and Cameron Konner presented "Destiny 2: Weaving Music between
+Activities and the Open World" at the Game Developers Conference. During this talk they shared a single, simple EncounterScript file. This is the only real EncounterScript we have seen. From the compiled alpha scripts we have, we can tell that EncounterScript has changed in the last 10 years, but seemingly not too much! This also tells us that BungieScript and EncounterScript are still used in modern Destiny 2.![](gdc.png) 
 
 For more information about the language, see [LANGUAGE.md](./LANGUAGE.md).
 
@@ -23,10 +29,12 @@ For more information about the language, see [LANGUAGE.md](./LANGUAGE.md).
 |.esp|EncounterScript Phase|One mission phase per file, beside its mission's `.es` (`<mission>_mission1.esp`, `_mission2`, ...), run in order.|
 |.esu|EncounterScript Utilities|Reusable encounter pieces (kill objectives, dropship events, ...) that rows spawn as child scripts.|
 
+> NOTE: Modern day EncounterScript seemingly doesn't use the .esp extension anymore, and probably not .esu either.
+
 ### Script Execution
 
 BungieScript is executed on the Destiny Activity Host server and **NOT ON THE GAME CLIENT**.
-The game sends up incidents when the player does something (like killing mobs, picking up loot, activating triggers) and the server sends down bundle information which can be used to control scriptable objects in the slice, such as spawning a boss. The lifecycle of these scripts comes from the Havok Script VM. I recommend studying Call of Duty Ghosts to learn more about that.
+The game sends up incidents when the player does something (like killing mobs, picking up loot, activating triggers) and the server sends down bundle information which can be used to control scriptable objects in the slice, such as spawning a boss. The lifecycle of these scripts comes from the Havok Script VM. I recommend studying Call of Duty Ghosts to learn more about that. BungieScript is still used in modern Destiny 2, however instead of the Activity Host sending controls to the host player, the scripts are probably interracting with a sort of dedicated server.
 
 ## Tools
 
@@ -38,8 +46,8 @@ The game sends up incidents when the player does something (like killing mobs, p
 
 | Import | Build |
 |---|---|
-| `@blamnetwork/bullshcript/destiny1/v36735_13_12_02_1953_alpha` | 36735.13.12.02.1953.alpha, 2013-12-02 (Xbox 360) |
-| `@blamnetwork/bullshcript/destiny1/v41375_14_07_03_1501_live` | 41375.14.07.03.1501.live, 2014-07-03 (Xbox 360) |
+| `@blamnetwork/bullshcript/destiny1/v36735_13_12_02_1953_alpha` | Destiny 1 36735.13.12.02.1953.alpha |
+| `@blamnetwork/bullshcript/destiny1/v41375_14_07_03_1501_live` | Destiny 1 41375.14.07.03.1501.live |
 
 For the most part the language is the same across versions but some game versions have different native functions and structures they use, so the core compiler and VM is shared with natives being overridden for your version.
 

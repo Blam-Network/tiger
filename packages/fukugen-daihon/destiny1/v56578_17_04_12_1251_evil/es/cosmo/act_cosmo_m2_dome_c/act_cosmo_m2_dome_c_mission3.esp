@@ -5,15 +5,15 @@
 # The Fallen on the way are enc_dome_c_m2's.
 
 interactable_objective obj_m2_o3 bind("0x9DF3A02E")
-c_sequence_host seq_d_o2_s005
-c_sequence_host seq_d_o2_s01
-c_sequence_host seq_m_cue2
+sequence seq_d_o2_s005
+sequence seq_d_o2_s01
+sequence seq_m_cue2
 
-thread init: pass
+script init(): pass
 
-thread complete: pass
+script complete(): pass
 
-thread main:
+script main():
     sleep(0.9)
     seq_d_o2_s005.start()
     sc_music.wake()
@@ -25,7 +25,7 @@ thread main:
     # the phase holds a while longer before the waves (this run's wait)
     sleep(6.2)
 
-thread sc_music:
+script sc_music():
     sleep(88)
     seq_m_cue2.start()
     seq_m_cue2.set_switch_mask(1)

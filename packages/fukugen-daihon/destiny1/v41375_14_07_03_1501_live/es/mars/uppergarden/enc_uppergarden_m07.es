@@ -10,43 +10,44 @@
 
 @activity_bundle("enc_uppergarden_m07")
 
-c_object_sensor_host o_door_lowergarden
-c_objective_sensor_host obj_uppergarden_m07
-c_squad_sensor_host sq_overlook_hobgoblin
-c_squad_sensor_host sq_overlook_goblin
-c_squad_sensor_host sq_landing_harpy_a
-c_squad_sensor_host sq_landing_harpy_b
-c_squad_sensor_host sq_landing_harpy_c
-c_squad_sensor_host sq_gulch_cyclops
-c_squad_sensor_host sq_gulch_minotaur
-c_squad_sensor_host sq_gulch_goblin_a_a
-c_squad_sensor_host sq_gulch_goblin_a_b
-c_squad_sensor_host sq_gulch_goblin_b_a
-c_squad_sensor_host sq_pit_hobgoblin_a
-c_squad_sensor_host sq_pit_hobgoblin_b
-c_squad_sensor_host sq_boss
-c_squad_sensor_host sq_pit_goblin_a
-c_squad_sensor_host sq_pit_goblin_b
-c_squad_sensor_host sq_pit_goblin_c
-c_squad_sensor_host sq_stair_goblin
-c_squad_sensor_host sq_stair_hobgoblin_a
-c_squad_sensor_host sq_stair_hobgoblin_b
-c_squad_sensor_host sq_bottom_minotaur
-c_squad_sensor_host sq_bottom_harpy_a
-c_squad_sensor_host sq_bottom_harpy_b
-c_squad_sensor_host sq_cloud_boss
-c_squad_member_sensor_host sq_cloud_boss__pilot
-c_squad_sensor_host sq_cloud_gulch
-c_squad_member_sensor_host sq_cloud_gulch__pilot
-c_squad_sensor_host sq_cloud_gulch_cyclops
-c_squad_member_sensor_host sq_cloud_gulch_cyclops__pilot
-c_sequence_host seq_vex_announce
-c_player_trigger_sensor_host pt_gulch
-c_player_trigger_sensor_host pt_pit
-c_player_trigger_sensor_host pt_stair
-c_player_trigger_sensor_host pt_bottom
+object o_door_lowergarden
+objective obj_uppergarden_m07
+squad sq_overlook_hobgoblin
+squad sq_overlook_goblin
+squad sq_landing_harpy_a
+squad sq_landing_harpy_b
+squad sq_landing_harpy_c
+squad sq_gulch_cyclops
+squad sq_gulch_minotaur
+squad sq_gulch_goblin_a_a
+squad sq_gulch_goblin_a_b
+squad sq_gulch_goblin_b_a
+squad sq_pit_hobgoblin_a
+squad sq_pit_hobgoblin_b
+squad sq_boss
+squad sq_pit_goblin_a
+squad sq_pit_goblin_b
+squad sq_pit_goblin_c
+squad sq_stair_goblin
+squad sq_stair_hobgoblin_a
+squad sq_stair_hobgoblin_b
+squad sq_bottom_minotaur
+squad sq_bottom_harpy_a
+squad sq_bottom_harpy_b
+squad sq_cloud_boss
+squad_member sq_cloud_boss__pilot
+squad sq_cloud_gulch
+squad_member sq_cloud_gulch__pilot
+squad sq_cloud_gulch_cyclops
+squad_member sq_cloud_gulch_cyclops__pilot
+sequence seq_vex_announce
+player_trigger pt_gulch
+player_trigger pt_pit
+player_trigger pt_stair
+player_trigger pt_bottom
 
-startup thread sc_uppergarden:
+@startup()
+script sc_uppergarden():
     o_door_lowergarden.create()
     for sq in [sq_overlook_hobgoblin, sq_overlook_goblin, sq_landing_harpy_a, sq_landing_harpy_b, sq_landing_harpy_c, sq_gulch_cyclops, sq_gulch_minotaur, sq_gulch_goblin_a_a, sq_gulch_goblin_a_b, sq_gulch_goblin_b_a, sq_pit_hobgoblin_a, sq_pit_hobgoblin_b, sq_boss, sq_pit_goblin_a, sq_pit_goblin_b, sq_pit_goblin_c, sq_stair_goblin, sq_stair_hobgoblin_a, sq_stair_hobgoblin_b, sq_bottom_minotaur, sq_bottom_harpy_a, sq_bottom_harpy_b]:
         sq.set_objective(obj_uppergarden_m07)
@@ -61,14 +62,14 @@ startup thread sc_uppergarden:
     sc_bottom.wake()
 
 # the overlook hobgoblins fall back once one of them is down
-thread sc_overlook:
+script sc_overlook():
     sleep_until(sq_overlook_hobgoblin.alive_count() > 0)
     sleep_until(sq_overlook_hobgoblin.alive_count() <= 1)
     sleep(1)
     sq_overlook_hobgoblin.set_task("0x2F9FD614")
 
 # the gulch: the cyclops first, then the goblins once it is down
-thread sc_gulch:
+script sc_gulch():
     sleep_until(pt_gulch.is_triggered())
     sleep(1)
     cloud_drop(sq_cloud_gulch_cyclops, sq_cloud_gulch_cyclops__pilot, [sq_gulch_cyclops])
@@ -91,7 +92,7 @@ thread sc_gulch:
     sq_gulch_goblin_b_a.set_task("0x4FE0C811")
 
 # the pit: its goblins, then the hydra, which holds the door
-thread sc_pit:
+script sc_pit():
     sleep_until(pt_pit.is_triggered())
     sleep(1)
     place_on_task(sq_pit_goblin_a, "boss")
@@ -106,14 +107,14 @@ thread sc_pit:
     sleep(1)
     o_door_lowergarden.set_device_position(1)
 
-thread sc_stair:
+script sc_stair():
     sleep_until(pt_stair.is_triggered())
     sleep(1)
     place_on_task(sq_stair_goblin, "0x42775CC8")
     place_on_task(sq_stair_hobgoblin_a, "0x3576FE3E")
     place_on_task(sq_stair_hobgoblin_b, "0x3576FE3E")
 
-thread sc_bottom:
+script sc_bottom():
     sleep_until(pt_bottom.is_triggered())
     sleep(1)
     place_on_task(sq_bottom_minotaur, "0x4566D60C")

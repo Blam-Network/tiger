@@ -1,16 +1,16 @@
 @activity_bundle("enc_south_tides_amb1")
 
 @task(0x2365A607, squad: fallen_simple_encounter._squad[1])
-c_objective_sensor_host obj_south_tides_amb_fallen  # true name unknown
-c_objective_sensor_host obj_south_tides_amb_south  # true name unknown
+objective obj_south_tides_amb_fallen
+objective obj_south_tides_amb_south
 @task(0x7DB16DB9, squad: sqg_wall_snipers)
-c_objective_sensor_host obj_south_tides_amb_mid  # true name unknown
+objective obj_south_tides_amb_mid
 @task(0x98098F14, squad: sqg_wall_solo)
-c_objective_sensor_host obj_south_tides_amb_north  # true name unknown
-c_squad_group_sensor_host sqg_wall_snipers  # true name unknown
-c_squad_group_sensor_host sqg_wall_solo  # true name unknown
+objective obj_south_tides_amb_north
+squad_group sqg_wall_snipers
+squad_group sqg_wall_solo
 loot_south_tides loot_venus_south_tides_1
-c_encounter_manager encounters  # true name unknown
+encounter_manager encounters
 @member_counts({_squad: [{goblins_4: 4}]})
 ambush_encounter vex_ambush_encounter
 @member_counts({_squad: [{harpy_2: 2, minotaur_1: 1}]})
@@ -68,13 +68,15 @@ vex_warp_gate vex_warp_gate03
 
 
 
-startup thread sc_main_thread:
+@startup()
+script sc_main_thread():
     print("---------------------------------------------------------")
     print("SOUTHERN TIDES ENCOUNTER AMBIENT")
     print("---------------------------------------------------------")
 
 
-startup thread ss_encounter_controller_thread:
+@startup()
+script ss_encounter_controller_thread():
 
     sqg_wall_snipers.add_child(vex_ambush_encounter_3._squad_group)
     sqg_wall_snipers.add_child(vex_simple_encounter_3._squad_group)

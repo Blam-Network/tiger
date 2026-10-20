@@ -12,18 +12,19 @@ string_hash slayer_hash = "slayer"
 string_hash slayer_ffa_hash = "slayer_ffa"
 string_hash dominion_hash = "dominion"
 string_hash salvage_hash = "salvage"
-static_array<c_object_sensor_host, 4> pikes
-c_object_sensor_host interceptors
-static_array<c_object_sensor_host, 3> turrets
-static_array<c_object_sensor_host, 2> heavy_ammo
-static_array<c_object_sensor_host, 3> special_ammo
+static_array<object, 4> pikes
+object interceptors
+static_array<object, 3> turrets
+static_array<object, 2> heavy_ammo
+static_array<object, 3> special_ammo
 
 
 
 
 
 
-startup thread main:
+@startup()
+script main():
     pvp_controller.register_game_type(slayer, slayer_hash)
     pvp_controller.register_game_type(dominion, dominion_hash)
     pvp_controller.register_game_type(slayer_ffa, slayer_ffa_hash)

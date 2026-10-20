@@ -5,11 +5,11 @@
 
 cinematic_midmission pf_cine_110_mst
 
-thread init: pass
+script init(): pass
 
-thread complete: pass
+script complete(): pass
 
-thread main:
+script main():
     pf_cine_110_mst.start()
     sleep_until(pf_cine_110_mst.is_complete())
     c_lifetime_script_utilities.get_lifetime_sensor().set_state(e_activity_lifetime_state.active)

@@ -10,12 +10,12 @@
   "surroundingPairs": [["(", ")"], ["[", "]"], ["\"", "\""], ["'", "'"]],
   "onEnterRules": [
     {
-      "beforeText": "^\\s*(?:def|static def|thread|startup thread|command_script|class|struct|enum|if|elif|else|while|for|switch|case|default)\\b.*:\\s*(#.*)?$",
+      "beforeText": "^\\s*(?:def|static def|script|command_script|class|struct|enum|if|elif|else|while|for|switch|case|default)\\b.*:\\s*(#.*)?$",
       "action": { "indent": "indent" }
     }
   ],
   "indentationRules": {
-    "increaseIndentPattern": "^\\s*(?:def|static def|thread|startup thread|command_script|class|struct|enum|if|elif|else|while|for|switch|case|default)\\b.*:\\s*(#.*)?$",
+    "increaseIndentPattern": "^\\s*(?:def|static def|script|command_script|class|struct|enum|if|elif|else|while|for|switch|case|default)\\b.*:\\s*(#.*)?$",
     "decreaseIndentPattern": "^\\s*(?:elif|else|case|default)\\b.*:\\s*$"
   }
 }

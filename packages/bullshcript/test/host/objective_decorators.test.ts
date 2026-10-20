@@ -18,21 +18,22 @@ import { ActivityBundleItemType } from "../../src/versions/destiny1/v41375_14_07
 
 const ARCHETYPE = {
   path: "es/test/test_arch.esu",
-  text: "dynamic_array<c_squad_sensor_host> _squad\nc_objective_sensor_host _objective\n",
+  text: "dynamic_array<squad> _squad\nobjective _objective\n",
 };
 const OWNER = (decorated: boolean) => ({
   path: "es/test/enc_owner.es",
   text: `bool lane_open = true
-${decorated ? "@objective(obj_a)\n" : ""}c_squad_sensor_host sq_direct
-${decorated ? "@objective(obj_a)\n" : ""}c_squad_sensor_host sq_other
-c_squad_sensor_host sq_plain
-${decorated ? "@objective(arch._objective)\n" : ""}c_squad_sensor_host sq_extra
-${decorated ? "@objective(arch._objective)\n" : ""}c_squad_sensor_host sq_extra2
+${decorated ? "@objective(obj_a)\n" : ""}squad sq_direct
+${decorated ? "@objective(obj_a)\n" : ""}squad sq_other
+squad sq_plain
+${decorated ? "@objective(arch._objective)\n" : ""}squad sq_extra
+${decorated ? "@objective(arch._objective)\n" : ""}squad sq_extra2
 ${decorated ? '@objective({_squad: obj_b})\n@task("pick", objective: _objective, squad: sq_extra)\n@task("rest", objective: _objective)\n' : ""}test_arch arch
-${decorated ? '@task("lane", squad: sq_direct, condition: lane_open)\n@task("open")\n' : ""}c_objective_sensor_host obj_a
-c_objective_sensor_host obj_b
+${decorated ? '@task("lane", squad: sq_direct, condition: lane_open)\n@task("open")\n' : ""}objective obj_a
+objective obj_b
 
-startup thread sc_owner:
+@startup()
+script sc_owner():
     sleep(2)
     lane_open = false
 `,

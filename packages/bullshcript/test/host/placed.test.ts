@@ -15,8 +15,8 @@ import { ActivityBundleItemType } from "../../src/versions/destiny1/v41375_14_07
 
 const ARCHETYPE = (
   marked: boolean
-) => `${marked ? "@placed()\n" : ""}c_squad_sensor_host _squad
-c_squad_member_sensor_host _squad__gate
+) => `${marked ? "@placed()\n" : ""}squad _squad
+squad_member _squad__gate
 
 def standing():
     return _squad.alive_count() > 0
@@ -28,7 +28,8 @@ const OWNER = {
   text: `test_gate gate
 test_plain plain
 
-startup thread sc_owner:
+@startup()
+script sc_owner():
     sleep(1)
 `,
 };

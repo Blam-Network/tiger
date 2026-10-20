@@ -5,20 +5,20 @@
 # the locks as they fall and completes when the scan does; the hall encounter
 # runs the waves, the locks and the scan. The exit opens with the objective.
 
-c_encounter_handle enc_uppercitadel_portal2
-c_player_objective_sensor_host po_kill_reinforcements
-c_nav_point_host ap_waveannounce_1
-c_nav_point_host ap_waveannounce_2
-c_nav_point_host ap_waveannounce_3
-c_sequence_host moon_portal2_wave_announce1
-c_sequence_host moon_portal2_wave_announce2
-c_sequence_host moon_portal2_wave_announce3
+encounter_handle enc_uppercitadel_portal2
+player_objective po_kill_reinforcements
+nav_point ap_waveannounce_1
+nav_point ap_waveannounce_2
+nav_point ap_waveannounce_3
+sequence moon_portal2_wave_announce1
+sequence moon_portal2_wave_announce2
+sequence moon_portal2_wave_announce3
 
-thread init: pass
+script init(): pass
 
-thread complete: pass
+script complete(): pass
 
-thread main:
+script main():
     enc = enc_uppercitadel_portal2
     enc.sc_hack.wake()
     sleep(3)

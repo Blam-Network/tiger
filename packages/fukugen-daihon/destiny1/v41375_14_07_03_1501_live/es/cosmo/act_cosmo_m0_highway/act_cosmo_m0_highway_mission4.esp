@@ -5,11 +5,11 @@
 
 trigger_volume_objective obj_goto_graveyard
 
-thread init: pass
+script init(): pass
 
-thread complete: pass
+script complete(): pass
 
-thread main:
+script main():
     obj_goto_graveyard.objective_begin()
     sleep_until(obj_goto_graveyard.is_complete())
     obj_goto_graveyard.objective_end_silent()

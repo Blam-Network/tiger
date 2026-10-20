@@ -1,5 +1,5 @@
 struct s_pvp_game_type:
-    c_common_reference script
+    common_reference script
     string_hash name
 
 class c_pvp_controller : c_activity_script:  # true name unknown
@@ -34,9 +34,9 @@ class c_pvp_controller : c_activity_script:  # true name unknown
     int time_limit
     int sudden_death_time_limit
     bool sudden_death
-    c_sequence_host pvp_music_sequence  # true name unknown
-    static_array<c_cinematic_sensor_host, 2> landing_cinematic
-    static_array<c_object_filter_sensor_host, 2> team_filters
+    sequence pvp_music_sequence
+    static_array<cinematic, 2> landing_cinematic
+    static_array<object_filter, 2> team_filters
 
 
 
@@ -56,7 +56,7 @@ class c_pvp_controller : c_activity_script:  # true name unknown
 
 
 
-    thread game_thread:
+    script game_thread():
         timer = c_lifetime_script_utilities.get_lifetime_timer()
         time_limit = get_outer().get_activity_option_integer(time_limit_hash)
         sudden_death_time_limit = get_outer().get_activity_option_integer(sudden_death_time_limit_hash)

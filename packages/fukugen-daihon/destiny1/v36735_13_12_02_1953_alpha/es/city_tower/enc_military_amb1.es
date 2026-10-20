@@ -2,89 +2,89 @@
 
 bool debug_military
 @member_counts({guard1: 1})
-c_squad_sensor_host sq_military_droid_flight
+squad sq_military_droid_flight
 @member_counts({0x74F6E782: 1, 0x74F6E781: 1, 0x74F6E780: 1})
-c_squad_sensor_host sq_military_droid_floor1
+squad sq_military_droid_floor1
 @member_counts({cleaner1: 1})
-c_squad_sensor_host sq_military_droid_floor2
+squad sq_military_droid_floor2
 @member_counts({0xCEBF1595: 1})
-c_squad_sensor_host sq_military_droid_floor3
+squad sq_military_droid_floor3
 @member_counts({0xCEBF1595: 1, 0xCEBF1596: 1})
-c_squad_sensor_host sq_military_droid_floor4
+squad sq_military_droid_floor4
 @member_counts({guard01: 1})
-c_squad_sensor_host sq_military_droid_guard1
+squad sq_military_droid_guard1
 @member_counts({patrol1: 0})
-c_squad_sensor_host sq_military_droid_guard2
+squad sq_military_droid_guard2
 @member_counts({talker1: 1, talker2: 1, talker3: 0})
-c_squad_sensor_host sq_military_civ_talkers1
+squad sq_military_civ_talkers1
 @member_counts({talker1: 1, talker2: 1})
-c_squad_sensor_host sq_military_civ_talkers2
+squad sq_military_civ_talkers2
 @member_counts({talker1: 1, talker2: 1, talker3: 0})
-c_squad_sensor_host sq_military_civ_talkers3
+squad sq_military_civ_talkers3
 @member_counts({leaner1: 0, sitter1: 0})
-c_squad_sensor_host sq_military_civ_do1
+squad sq_military_civ_do1
 @member_counts({leaner1: 0, sitter1: 0})
-c_squad_sensor_host sq_military_civ_do2
+squad sq_military_civ_do2
 @member_counts({talker1: 1, talker2: 1, talker3: 0})
-c_squad_sensor_host sq_military_civ_fwc1
+squad sq_military_civ_fwc1
 @member_counts({leaner1: 0})
-c_squad_sensor_host sq_military_civ_fwc2
+squad sq_military_civ_fwc2
 @member_counts({talker1: 1, talker2: 1, sitter1: 0})
-c_squad_sensor_host sq_military_hunter_talkers1
+squad sq_military_hunter_talkers1
 @member_counts({talker1: 1, talker2: 1, sitter1: 0})
-c_squad_sensor_host sq_military_hunter_talkers2
+squad sq_military_hunter_talkers2
 @member_counts({talker1: 0, sitter1: 0})
-c_squad_sensor_host sq_military_hunter_talkers3
+squad sq_military_hunter_talkers3
 @member_counts({watcher1: 0, watcher2: 0})
-c_squad_sensor_host sq_military_hunter_talkers4
+squad sq_military_hunter_talkers4
 @member_counts({ship: 1})
-c_squad_sensor_host sq_military_vendor_ships
+squad sq_military_vendor_ships
 @member_counts({city_weapon: 1})
-c_squad_sensor_host sq_military_vendor_weapons
+squad sq_military_vendor_weapons
 @member_counts({hunter: 1})
-c_squad_sensor_host sq_military_vendor_hunter_mentor
+squad sq_military_vendor_hunter_mentor
 @member_counts({0x7733A5EE: 1})
-c_squad_sensor_host sq_military_vendor_hunter_quartermaster
+squad sq_military_vendor_hunter_quartermaster
 @member_counts({0x9D200C0C: 1})
-c_squad_sensor_host sq_military_vendor_hunter_outfitter
+squad sq_military_vendor_hunter_outfitter
 @member_counts({dead_orbit: 1})
-c_squad_sensor_host sq_military_vendor_do
+squad sq_military_vendor_do
 @member_counts({fwc: 1})
-c_squad_sensor_host sq_military_vendor_fwc
-c_squad_member_sensor_host sq_military_civ_do1__leaner1  # true name unknown
-c_squad_member_sensor_host sq_military_civ_do1__sitter1  # true name unknown
-c_squad_member_sensor_host sq_military_civ_do2__leaner1  # true name unknown
-c_squad_member_sensor_host sq_military_civ_do2__sitter1  # true name unknown
-c_squad_member_sensor_host sq_military_civ_fwc1__talker1  # true name unknown
-c_squad_member_sensor_host sq_military_civ_fwc1__talker2  # true name unknown
-c_squad_member_sensor_host sq_military_civ_fwc1__talker3  # true name unknown
-c_squad_member_sensor_host sq_military_civ_fwc2__leaner1  # true name unknown
-c_squad_member_sensor_host sq_military_civ_talkers1__talker1  # true name unknown
-c_squad_member_sensor_host sq_military_civ_talkers1__talker2  # true name unknown
-c_squad_member_sensor_host sq_military_civ_talkers1__talker3  # true name unknown
-c_squad_member_sensor_host sq_military_civ_talkers2__talker1  # true name unknown
-c_squad_member_sensor_host sq_military_civ_talkers2__talker2  # true name unknown
-c_squad_member_sensor_host sq_military_civ_talkers3__talker1  # true name unknown
-c_squad_member_sensor_host sq_military_civ_talkers3__talker2  # true name unknown
-c_squad_member_sensor_host sq_military_civ_talkers3__talker3  # true name unknown
-c_squad_member_sensor_host sq_military_droid_guard2__patrol1  # true name unknown
-c_squad_member_sensor_host sq_military_hunter_talkers1__talker1  # true name unknown
-c_squad_member_sensor_host sq_military_hunter_talkers1__talker2  # true name unknown
-c_squad_member_sensor_host sq_military_hunter_talkers1__sitter1  # true name unknown
-c_squad_member_sensor_host sq_military_hunter_talkers2__talker1  # true name unknown
-c_squad_member_sensor_host sq_military_hunter_talkers2__talker2  # true name unknown
-c_squad_member_sensor_host sq_military_hunter_talkers2__sitter1  # true name unknown
-c_squad_member_sensor_host sq_military_hunter_talkers3__talker1  # true name unknown
-c_squad_member_sensor_host sq_military_hunter_talkers3__sitter1  # true name unknown
-c_squad_member_sensor_host sq_military_hunter_talkers4__watcher1  # true name unknown
-c_squad_member_sensor_host sq_military_hunter_talkers4__watcher2  # true name unknown
-c_control_point_set_sensor_host cps_military_droid_guard2_patrol  # true name unknown
+squad sq_military_vendor_fwc
+squad_member sq_military_civ_do1__leaner1
+squad_member sq_military_civ_do1__sitter1
+squad_member sq_military_civ_do2__leaner1
+squad_member sq_military_civ_do2__sitter1
+squad_member sq_military_civ_fwc1__talker1
+squad_member sq_military_civ_fwc1__talker2
+squad_member sq_military_civ_fwc1__talker3
+squad_member sq_military_civ_fwc2__leaner1
+squad_member sq_military_civ_talkers1__talker1
+squad_member sq_military_civ_talkers1__talker2
+squad_member sq_military_civ_talkers1__talker3
+squad_member sq_military_civ_talkers2__talker1
+squad_member sq_military_civ_talkers2__talker2
+squad_member sq_military_civ_talkers3__talker1
+squad_member sq_military_civ_talkers3__talker2
+squad_member sq_military_civ_talkers3__talker3
+squad_member sq_military_droid_guard2__patrol1
+squad_member sq_military_hunter_talkers1__talker1
+squad_member sq_military_hunter_talkers1__talker2
+squad_member sq_military_hunter_talkers1__sitter1
+squad_member sq_military_hunter_talkers2__talker1
+squad_member sq_military_hunter_talkers2__talker2
+squad_member sq_military_hunter_talkers2__sitter1
+squad_member sq_military_hunter_talkers3__talker1
+squad_member sq_military_hunter_talkers3__sitter1
+squad_member sq_military_hunter_talkers4__watcher1
+squad_member sq_military_hunter_talkers4__watcher2
+control_point_set cps_military_droid_guard2_patrol
 string_hash sh_player_joined = "player_joined"
 string_hash sh_player_left = "player_left"
 string_hash sh_all_players = "all_players"
-c_incident_listener il_player_joined
-c_incident_listener il_player_left
-c_incident_player_iterator player_iterator  # true name unknown
+incident_listener il_player_joined
+incident_listener il_player_left
+incident_player_iterator player_iterator
 
 
 
@@ -99,7 +99,8 @@ c_incident_player_iterator player_iterator  # true name unknown
 
 
 
-startup thread sc_main_military_thread:
+@startup()
+script sc_main_military_thread():
 
 
     sc_military_npcs_flight.wake()
@@ -130,7 +131,7 @@ startup thread sc_main_military_thread:
 
 
 
-thread sc_military_npcs_flight:
+script sc_military_npcs_flight():
     if debug_military:
         print("sc_military_npcs_flight")
 
@@ -139,7 +140,7 @@ thread sc_military_npcs_flight:
     sq_military_droid_flight.activate_temperament("temper_tower_guard")
 
 
-thread sc_military_npcs_guards:
+script sc_military_npcs_guards():
     if debug_military:
         print("sc_military_npcs_guards")
 
@@ -156,7 +157,7 @@ thread sc_military_npcs_guards:
         sq_military_droid_guard2__patrol1.execute(cps_military_droid_guard2_patrol); sleep_until(sq_military_droid_guard2__patrol1.get_command_script_state() != e_command_script_state.executing)
 
 
-thread sc_military_npcs_hangar_floor:
+script sc_military_npcs_hangar_floor():
     if debug_military:
         print("sc_military_npcs_floor")
 
@@ -178,7 +179,7 @@ thread sc_military_npcs_hangar_floor:
     sq_military_droid_floor4.activate_temperament("temper_tower_weld_standing")
 
 
-thread sc_military_npcs_civ_talkers:
+script sc_military_npcs_civ_talkers():
     if debug_military:
         print("sc_military_npcs_civ_talkers")
 
@@ -218,7 +219,7 @@ thread sc_military_npcs_civ_talkers:
             sq_military_civ_talkers3__talker3.activate_temperament("temper_tower_guard")
 
 
-thread sc_military_npcs_hunter_talkers:
+script sc_military_npcs_hunter_talkers():
     if debug_military:
         print("sc_military_npcs_hunter_talkers")
 
@@ -270,7 +271,7 @@ thread sc_military_npcs_hunter_talkers:
             sq_military_hunter_talkers4__watcher2.activate_temperament("temper_tower_guard")
 
 
-thread sc_military_npcs_do:
+script sc_military_npcs_do():
     if debug_military:
         print("sc_military_npcs_do")
 
@@ -285,7 +286,7 @@ thread sc_military_npcs_do:
     sq_military_civ_do2__leaner1.activate_temperament("temper_tower_civ_raillean")
 
 
-thread sc_military_npcs_fwc:
+script sc_military_npcs_fwc():
     if debug_military:
         print("sc_military_npcs_fwc")
 
@@ -331,31 +332,31 @@ thread sc_military_npcs_fwc:
 
 
 
-thread sc_military_vendors_hunter_mentor:
+script sc_military_vendors_hunter_mentor():
     sq_military_vendor_hunter_mentor.place()
     sq_military_vendor_hunter_mentor.activate_temperament("temper_tower_guard")
 
-thread sc_military_vendors_hunter_outfitter:
+script sc_military_vendors_hunter_outfitter():
     sq_military_vendor_hunter_outfitter.place()
     sq_military_vendor_hunter_outfitter.activate_temperament("temper_tower_guard")
 
-thread sc_military_vendors_hunter_quartermaster:
+script sc_military_vendors_hunter_quartermaster():
     sq_military_vendor_hunter_quartermaster.place()
     sq_military_vendor_hunter_quartermaster.activate_temperament("temper_tower_vendor")
 
-thread sc_military_vendors_ships:
+script sc_military_vendors_ships():
     sq_military_vendor_ships.place()
     sq_military_vendor_ships.activate_temperament("temper_tower_vendor")
 
-thread sc_military_vendors_weapons:
+script sc_military_vendors_weapons():
     sq_military_vendor_weapons.place()
     sq_military_vendor_weapons.activate_temperament("temper_tower_vendor")
 
-thread sc_military_vendors_fwc:
+script sc_military_vendors_fwc():
     sq_military_vendor_fwc.place()
     sq_military_vendor_fwc.activate_temperament("temper_tower_guard")
 
-thread sc_military_vendors_do:
+script sc_military_vendors_do():
     sq_military_vendor_do.place()
     sq_military_vendor_do.activate_temperament("temper_tower_guard")
 

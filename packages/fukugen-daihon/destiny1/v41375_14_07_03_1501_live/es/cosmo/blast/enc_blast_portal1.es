@@ -6,41 +6,42 @@
 
 @activity_bundle("enc_blast_portal1")
 
-c_squad_sensor_host sq_fallen_left01
-c_objective_sensor_host obj_ground  # true name unknown
-c_squad_sensor_host sq_fallen_left02
-c_squad_sensor_host sq_fallen_right01
-c_squad_sensor_host sq_fallen_right02
+squad sq_fallen_left01
+objective obj_ground
+squad sq_fallen_left02
+squad sq_fallen_right01
+squad sq_fallen_right02
 @member_counts({captain: 1, dreg: 2, vandal: 1})
-c_squad_sensor_host sq_fallen_rear01
+squad sq_fallen_rear01
 @member_counts({dreg: 2, vandal: 2})
-c_squad_sensor_host sq_fallen_door01
+squad sq_fallen_door01
 @member_counts({shank: 2})
-c_squad_sensor_host sq_fallen_shanks01
-c_objective_sensor_host obj_shanks  # true name unknown
+squad sq_fallen_shanks01
+objective obj_shanks
 @member_counts({shank: 2})
-c_squad_sensor_host sq_fallen_shanks02
+squad sq_fallen_shanks02
 @member_counts({captain: 1, dreg: 2, vandal: 1})
-c_squad_sensor_host sq_fallen_mid01
+squad sq_fallen_mid01
 @member_counts({dreg: 2, vandal: 2})
-c_squad_sensor_host sq_fallen_mid02
+squad sq_fallen_mid02
 @member_counts({dreg: 1, vandal: 2})
-c_squad_sensor_host sq_fallen_mid03
+squad sq_fallen_mid03
 @member_counts({dreg: 1, vandal: 1})
-c_squad_sensor_host sq_fallen_mid04
+squad sq_fallen_mid04
 @member_counts({vandal: 1})
-c_squad_sensor_host sq_fallen_mid05
-c_player_trigger_sensor_host pt_play_s01_x100_s01_x110  # true name unknown
-c_squad_sensor_host sq_tank
-c_objective_sensor_host obj_tank  # true name unknown
-c_squad_member_sensor_host sq_tank__tank  # true name unknown
+squad sq_fallen_mid05
+player_trigger pt_play_s01_x100_s01_x110
+squad sq_tank
+objective obj_tank
+squad_member sq_tank__tank
 c_command_script __cs  # true name unknown
-c_control_point_set_sensor_host dropship_entry_path  # true name unknown
-c_squad_sensor_host sq_dropship_tank
-c_squad_member_sensor_host sq_dropship_tank__dropship  # true name unknown
-c_control_point_set_sensor_host dropship_exit_path  # true name unknown
+control_point_set dropship_entry_path
+squad sq_dropship_tank
+squad_member sq_dropship_tank__dropship
+control_point_set dropship_exit_path
 
-startup thread sc_blast_main:
+@startup()
+script sc_blast_main():
     sq_fallen_left01.set_objective(obj_ground)
     sq_fallen_left02.set_objective(obj_ground)
     sq_fallen_right01.set_objective(obj_ground)
@@ -56,7 +57,7 @@ startup thread sc_blast_main:
     hold_ground(sq_fallen_mid05, "mid03")
     sc_walker.wake()
 
-thread sc_walker:
+script sc_walker():
     sleep_until(pt_play_s01_x100_s01_x110.is_triggered())
     sleep(1)
     sq_tank.set_objective(obj_tank)
@@ -72,13 +73,13 @@ thread sc_walker:
     sleep(3)
     place_on_task(sq_fallen_door01, "task")
 
-thread sc_reinforcements:
+script sc_reinforcements():
     sleep(42)
     place_on_task(sq_fallen_rear01, "mid04")
     sleep(27)
     sq_fallen_mid01.set_task("mid_pit")
 
-thread sc_shanks:
+script sc_shanks():
     sleep(45)
     while sq_tank.alive_count() > 0:
         sq_fallen_shanks01.set_task("ammo")

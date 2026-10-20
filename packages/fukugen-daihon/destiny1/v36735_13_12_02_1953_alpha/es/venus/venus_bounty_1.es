@@ -5,39 +5,39 @@
 string_hash sh_first_play = "first_play"
 u_globals u_globals
 string_hash invalid
-c_nav_point_host ap_goto_headlands  # true name unknown
-c_nav_point_host ap_goto_shattered_coast  # true name unknown
-c_nav_point_host ap_goto_fallen_caldera  # true name unknown
-c_nav_point_host ap_goto_complex  # true name unknown
-c_nav_point_host ap_goto_warp_ruins  # true name unknown
-c_location_sensor_host headlands  # true name unknown
-c_location_sensor_host shattered_coast  # true name unknown
-c_location_sensor_host fallen_caldera  # true name unknown
-c_location_sensor_host complex  # true name unknown
-c_location_sensor_host warp_ruins  # true name unknown
+nav_point ap_goto_headlands
+nav_point ap_goto_shattered_coast
+nav_point ap_goto_fallen_caldera
+nav_point ap_goto_complex
+nav_point ap_goto_warp_ruins
+location headlands
+location shattered_coast
+location fallen_caldera
+location complex
+location warp_ruins
 string_hash sh_headlands = "headlands"
 string_hash sh_shattered_coast = "shattered_coast"
 string_hash sh_fallen_caldera = "fallen_caldera"
 string_hash sh_complex = "complex"
 string_hash sh_warp_ruins = "warp_ruins"
-static_array<c_player_objective_sensor_host, 1> po_bounty_headlands
-static_array<c_player_objective_sensor_host, 1> po_bounty_shattered_coast
-static_array<c_player_objective_sensor_host, 2> po_bounty_fallen_caldera
-static_array<c_player_objective_sensor_host, 2> po_bounty_complex
-static_array<c_player_objective_sensor_host, 2> po_bounty_warp_ruins
-c_player_objective_sensor_host po_bounty_goto_headlands
-c_player_objective_sensor_host po_bounty_goto_shattered_coast
-c_player_objective_sensor_host po_bounty_goto_fallen_caldera
-c_player_objective_sensor_host po_bounty_goto_complex
-c_player_objective_sensor_host po_bounty_goto_warp_ruins
-c_player_trigger_sensor_host pt_headlands bind(headlands)  # true name unknown
-c_player_trigger_sensor_host pt_shattered_coast bind(shattered_coast)  # true name unknown
-c_player_trigger_sensor_host pt_fallen_caldera bind(fallen_caldera)  # true name unknown
-c_player_trigger_sensor_host pt_complex bind(complex)  # true name unknown
-c_player_trigger_sensor_host pt_warp_ruins bind(warp_ruins)  # true name unknown
-c_loot_host loot_quest_item_fallen_caldera1  # true name unknown
-c_loot_host loot_quest_item_complex1  # true name unknown
-c_loot_host loot_quest_item_warp_ruins1  # true name unknown
+static_array<player_objective, 1> po_bounty_headlands
+static_array<player_objective, 1> po_bounty_shattered_coast
+static_array<player_objective, 2> po_bounty_fallen_caldera
+static_array<player_objective, 2> po_bounty_complex
+static_array<player_objective, 2> po_bounty_warp_ruins
+player_objective po_bounty_goto_headlands
+player_objective po_bounty_goto_shattered_coast
+player_objective po_bounty_goto_fallen_caldera
+player_objective po_bounty_goto_complex
+player_objective po_bounty_goto_warp_ruins
+player_trigger pt_headlands bind(headlands)
+player_trigger pt_shattered_coast bind(shattered_coast)
+player_trigger pt_fallen_caldera bind(fallen_caldera)
+player_trigger pt_complex bind(complex)
+player_trigger pt_warp_ruins bind(warp_ruins)
+loot loot_quest_item_fallen_caldera1
+loot loot_quest_item_complex1
+loot loot_quest_item_warp_ruins1
 int g_active_public_bounty_bubbles = 5
 int g_i_bounty_streak_accumulator
 
@@ -85,7 +85,8 @@ int g_i_bounty_streak_accumulator
 
 
 
-startup thread main:
+@startup()
+script main():
     print("venus Bounty 1 script startup")
     g_i_bounty_streak_accumulator = 0
 

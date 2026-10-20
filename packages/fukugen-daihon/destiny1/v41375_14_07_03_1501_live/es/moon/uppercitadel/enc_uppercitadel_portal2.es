@@ -13,41 +13,42 @@
 
 @activity_bundle("enc_uppercitadel_portal2")
 
-c_objective_sensor_host obj_uppercitadel_trash
-c_objective_sensor_host obj_uppercitadel_objective
-c_squad_sensor_host sq_overlook_hive01a
-c_squad_sensor_host sq_overlook_hive01b
-c_squad_sensor_host sq_overlook_hive02
+objective obj_uppercitadel_trash
+objective obj_uppercitadel_objective
+squad sq_overlook_hive01a
+squad sq_overlook_hive01b
+squad sq_overlook_hive02
 interactable_placement pf_i_door_placement bind("0x80296306")
-c_object_sensor_host o_scan_sphere_1
-c_squad_sensor_host sq_wave_left01
-c_squad_sensor_host sq_wave_left02
-c_squad_sensor_host sq_wave_left03
-c_squad_sensor_host sq_wave_left_sustain01
-c_squad_sensor_host sq_wave_left_sustain02
-c_object_sensor_host o_gate_lock01
-c_squad_sensor_host sq_wave_right01
-c_squad_sensor_host sq_wave_right02
-c_squad_sensor_host sq_wave_right03
-c_squad_sensor_host sq_wave_right_sustain01
-c_squad_sensor_host sq_wave_right_sustain02
-c_object_sensor_host o_gate_lock02
-c_squad_sensor_host sq_wave_rear01
-c_squad_sensor_host sq_wave_rear02
-c_squad_sensor_host sq_wave_rear03
-c_squad_sensor_host sq_wave_rear04
-c_squad_sensor_host sq_wave_boss
-c_object_sensor_host o_gate_lock03
-c_object_sensor_host o_door_dummy
-c_object_sensor_host o_strike2_norender_scan
-c_player_trigger_sensor_host pt_room_b_spawn
-c_squad_sensor_host sq_lowerhall_bouncer01
-c_squad_sensor_host sq_lowerhall_hive01
-c_squad_sensor_host sq_lowerhall_hive03
-c_player_trigger_sensor_host pt_ogreroar01
-c_player_trigger_sensor_host pt_ogreroar02
+object o_scan_sphere_1
+squad sq_wave_left01
+squad sq_wave_left02
+squad sq_wave_left03
+squad sq_wave_left_sustain01
+squad sq_wave_left_sustain02
+object o_gate_lock01
+squad sq_wave_right01
+squad sq_wave_right02
+squad sq_wave_right03
+squad sq_wave_right_sustain01
+squad sq_wave_right_sustain02
+object o_gate_lock02
+squad sq_wave_rear01
+squad sq_wave_rear02
+squad sq_wave_rear03
+squad sq_wave_rear04
+squad sq_wave_boss
+object o_gate_lock03
+object o_door_dummy
+object o_strike2_norender_scan
+player_trigger pt_room_b_spawn
+squad sq_lowerhall_bouncer01
+squad sq_lowerhall_hive01
+squad sq_lowerhall_hive03
+player_trigger pt_ogreroar01
+player_trigger pt_ogreroar02
 
-startup thread sc_uppercitadel_main:
+@startup()
+script sc_uppercitadel_main():
     for gate in [o_gate_lock01, o_gate_lock02, o_gate_lock03, o_door_dummy]:
         gate.create()
         gate.set_device_position(0)
@@ -63,18 +64,18 @@ startup thread sc_uppercitadel_main:
     sc_lowerhall.wake()
 
 # the overlook's rear squad falls back once it has been wiped
-thread sc_overlook:
+script sc_overlook():
     sleep_until_wiped(sq_overlook_hive02)
     sq_overlook_hive02.set_task("0xF1F81839")
 
-thread sc_lowerhall:
+script sc_lowerhall():
     sleep_until(pt_room_b_spawn.is_triggered())
     place_on_task(sq_lowerhall_bouncer01, "0x34C7A11F")
     place_on_task(sq_lowerhall_hive01, "0xE63235BD")
     place_on_task(sq_lowerhall_hive03, "0x24C4E903")
 
 # the Ghost's scan of the door, and the waves that come at it
-thread sc_hack:
+script sc_hack():
     o_scan_sphere_1.create()
     sc_regroup.wake()
     sleep(5)
@@ -121,7 +122,7 @@ thread sc_hack:
 
 # a wave squad that has been in the fight and is wiped regroups on the hall
 # task, once
-thread sc_regroup:
+script sc_regroup():
     squads = [sq_wave_left01, sq_wave_left02, sq_wave_left03, sq_wave_left_sustain01, sq_wave_left_sustain02, sq_wave_right01, sq_wave_right02, sq_wave_right03, sq_wave_right_sustain01, sq_wave_right_sustain02, sq_wave_rear01, sq_wave_rear02, sq_wave_rear03, sq_wave_rear04, sq_wave_boss]
     # 0 not in yet, 1 in the fight, 2 regrouped
     state = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]

@@ -14,64 +14,64 @@
 @task("advance", condition: can_advance)
 @task("mid", squad: sq_throne_mid)
 @task("right_hall", squad: sq_right_hall)
-c_objective_sensor_host obj_ketch_bay_amb1  # true name unknown
+objective obj_ketch_bay_amb1
 @member_counts({shank: 2, vandal: 1})
 @objective(obj_ketch_bay_amb1)
-c_squad_sensor_host sq_equipment01
+squad sq_equipment01
 @member_counts({dreg: 2, vandal: 1})
 @objective(obj_ketch_bay_amb1)
-c_squad_sensor_host sq_equipment02
+squad sq_equipment02
 @member_counts({dreg: 3})
 @objective(obj_ketch_bay_amb1)
-c_squad_sensor_host sq_equipment03
+squad sq_equipment03
 @member_counts({dreg: 2, vandal: 2})
 @objective(obj_ketch_bay_amb1)
-c_squad_sensor_host sq_right_hall
+squad sq_right_hall
 @member_counts({captain: 1})
 @objective(obj_ketch_bay_amb1)
-c_squad_sensor_host sq_control_anchor
+squad sq_control_anchor
 @member_counts({dreg: 2, shank: 2})
 @objective(obj_ketch_bay_amb1)
-c_squad_sensor_host sq_control01
+squad sq_control01
 @member_counts({shanks: 2, vandals: 2})
 @objective(obj_ketch_bay_amb1)
-c_squad_sensor_host sq_control02
+squad sq_control02
 @member_counts({dregs: 3, servitor: 1})
 @objective(obj_ketch_bay_amb1)
-c_squad_sensor_host sq_control03
+squad sq_control03
 @member_counts({dregs: 2, vandals: 1})
 @objective(obj_ketch_bay_amb1)
-c_squad_sensor_host sq_control_right_mc
+squad sq_control_right_mc
 @member_counts({shanks: 2, vandals: 1})
 @objective(obj_ketch_bay_amb1)
-c_squad_sensor_host sq_control_left_mc
+squad sq_control_left_mc
 @member_counts({dregs: 4})
 @objective(obj_ketch_bay_amb1)
-c_squad_sensor_host sq_throne_front
+squad sq_throne_front
 @member_counts({vandals: 2})
 @objective(obj_ketch_bay_amb1)
-c_squad_sensor_host sq_throne_mid
+squad sq_throne_mid
 @member_counts({vandals: 2})
 @objective(obj_ketch_bay_amb1)
-c_squad_sensor_host sq_throne_back
+squad sq_throne_back
 @member_counts({captain: 1})
 @objective(obj_ketch_bay_amb1)
-c_squad_sensor_host sq_throne_captain
-c_squad_group_sensor_host sqg_equipment  # true name unknown
-c_squad_group_sensor_host sqg_control  # true name unknown
-c_squad_group_sensor_host sqg_throne  # true name unknown
-c_trigger_volume_slot_host tv_spawn01
-c_trigger_volume_slot_host tv_spawn02
-c_trigger_volume_slot_host tv_anchor
-c_trigger_volume_slot_host tv_right_mc
-c_trigger_volume_slot_host tv_left_mc
-c_trigger_volume_slot_host tv_throne
-c_player_trigger_sensor_host pt_spawn01 bind(tv_spawn01)  # true name unknown
-c_player_trigger_sensor_host pt_spawn02 bind(tv_spawn02)  # true name unknown
-c_player_trigger_sensor_host pt_right_mc bind(tv_right_mc)  # true name unknown
-c_player_trigger_sensor_host pt_left_mc bind(tv_left_mc)  # true name unknown
-c_player_trigger_sensor_host pt_throne bind(tv_throne)  # true name unknown
-c_player_monitor_sensor_host pm_anchor bind(tv_anchor)  # true name unknown
+squad sq_throne_captain
+squad_group sqg_equipment
+squad_group sqg_control
+squad_group sqg_throne
+trigger_volume tv_spawn01
+trigger_volume tv_spawn02
+trigger_volume tv_anchor
+trigger_volume tv_right_mc
+trigger_volume tv_left_mc
+trigger_volume tv_throne
+player_trigger pt_spawn01 bind(tv_spawn01)
+player_trigger pt_spawn02 bind(tv_spawn02)
+player_trigger pt_right_mc bind(tv_right_mc)
+player_trigger pt_left_mc bind(tv_left_mc)
+player_trigger pt_throne bind(tv_throne)
+player_monitor pm_anchor bind(tv_anchor)
 bool is_body_count_reached
 bool can_advance
 bool is_player_in_pm_anchor
@@ -97,7 +97,8 @@ loot_ketch loot_venus_ketch_1
 
 
 
-startup thread ss_main_thread:
+@startup()
+script ss_main_thread():
 
     sleep(3)
     print("---------------------------------------------------------")
@@ -126,7 +127,7 @@ startup thread ss_main_thread:
     sc_throne.wake()
 
 
-thread sc_equipment_room:
+script sc_equipment_room():
 
     sq_equipment01.respawn()
     sleep_until(pt_spawn01.is_triggered())
@@ -135,7 +136,7 @@ thread sc_equipment_room:
     sleep_until(sqg_equipment.alive_count() <= 3)
     sq_equipment03.respawn()
 
-thread sc_control_room:
+script sc_control_room():
 
     sq_control_anchor.respawn()
     sq_control01.respawn()
@@ -157,7 +158,7 @@ thread sc_control_room:
             is_left_mc_active = false
             mc_count = mc_count + 1
 
-thread sc_control_anchor:
+script sc_control_anchor():
 
     while true:
         sleep(1)
@@ -166,7 +167,7 @@ thread sc_control_anchor:
         else:
             is_player_in_pm_anchor = false
 
-thread sc_throne:
+script sc_throne():
 
     sq_throne_captain.respawn()
     sleep_until(pt_spawn02.is_triggered())

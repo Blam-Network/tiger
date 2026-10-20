@@ -5,15 +5,16 @@
 # belongs to the players' enemy so it can be shot; it comes back a while after
 # it dies. TU0's row is the object; the flag and faction are the script's own.
 
-c_object_sensor_host _object
+object _object
 real _minimum_time_to_respawn = 10
-c_activity_flag _activity_flag
-c_faction_host _object_faction bind(_object)
+activity_flag _activity_flag
+faction _object_faction bind(_object)
 
 def import_only_bind(identifier):
     return _object.import_only_bind(identifier) and _activity_flag.import_only_bind(identifier)
 
-startup thread main:
+@startup()
+script main():
     _object.create()
 
     while true:

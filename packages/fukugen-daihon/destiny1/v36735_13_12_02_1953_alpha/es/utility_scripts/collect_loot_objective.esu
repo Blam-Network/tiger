@@ -1,10 +1,10 @@
-c_player_objective_sensor_host _player_objective
-c_sequence_host _incoming_sequence  # true name unknown
-c_sequence_host _completion_sequence  # true name unknown
-c_nav_point_host _nav_point  # true name unknown
-c_loot_host _loot  # true name unknown
-c_encounter_binding_host _squad  # true name unknown
-c_activity_flag _activity_flag  # true name unknown
+player_objective _player_objective
+sequence _incoming_sequence
+sequence _completion_sequence
+nav_point _nav_point
+loot _loot
+encounter_binding _squad
+activity_flag _activity_flag
 string_hash _identifier
 int _count
 
@@ -46,7 +46,7 @@ def objective_begin_silent():
     _loot.enable()
     _activity_flag.activate()
 
-thread update_progress:
+script update_progress():
     while _player_objective.is_active() and not _player_objective.progress_is_complete():
         _player_objective.progress_update(_loot.get_count())
         sleep(1)

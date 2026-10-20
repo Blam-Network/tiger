@@ -29,6 +29,7 @@ venus_strike_1_mission3 dig_site_phase
 venus_strike_1_mission4 ruins_phase
 venus_strike_1_mission5 end_phase
 
-startup thread ss_venus_strike1:
+@startup()
+script ss_venus_strike1():
     print("script startup")
     c_lifetime_script_utilities.get_lifetime_sensor().set_state(e_activity_lifetime_state.pregame)

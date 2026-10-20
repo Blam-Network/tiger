@@ -4,21 +4,21 @@
 # picks up a weapon from the chest. The phase ends a moment after the pickup.
 # The gates ahead open when the phase ends.
 
-c_object_sensor_host o_weapon
-c_incident_listener il_weapon_pickup
+object o_weapon
+incident_listener il_weapon_pickup
 trigger_volume_objective obj_investigate_wall
-c_player_trigger_sensor_host pt_nux_ghost_light_up_start  # true name unknown
-c_trigger_group_host tg_m0_gating  # true name unknown
-c_performance_host nux_ghost  # true name unknown
+player_trigger pt_nux_ghost_light_up_start
+trigger_group tg_m0_gating
+performance nux_ghost
 trigger_volume_objective obj_get_weapon
 
-thread init:
+script init():
     o_weapon.create()
     il_weapon_pickup.bind_incident_name_hash("inventory_item_added")
 
-thread complete: pass
+script complete(): pass
 
-thread main:
+script main():
     sleep(3)
     obj_investigate_wall.objective_begin()
     sleep_until(pt_nux_ghost_light_up_start.is_triggered())

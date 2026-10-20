@@ -5,11 +5,11 @@
 
 trigger_volume_objective pf_obj_ritual_trigger
 
-thread init: pass
+script init(): pass
 
-thread complete: pass
+script complete(): pass
 
-thread main:
+script main():
     pf_obj_ritual_trigger.objective_begin()
     sleep_until(pf_obj_ritual_trigger.is_complete())
     pf_obj_ritual_trigger.objective_end_silent()

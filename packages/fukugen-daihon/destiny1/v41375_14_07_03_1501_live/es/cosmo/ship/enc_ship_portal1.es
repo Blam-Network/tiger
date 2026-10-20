@@ -6,50 +6,51 @@
 
 @activity_bundle("enc_ship_portal1")
 
-c_squad_sensor_host sq_bossbattle_boss01
-c_objective_sensor_host obj_bossbattle_fallen  # true name unknown
+squad sq_bossbattle_boss01
+objective obj_bossbattle_fallen
 @member_counts({dregs: 2, vandal: 1})
-c_squad_sensor_host sq_bossbattle_reinf01
+squad sq_bossbattle_reinf01
 @member_counts({dregs: 2, vandal: 1})
-c_squad_sensor_host sq_bossbattle_reinf02
-c_squad_sensor_host sq_bossbattle_dropsquad01
-c_squad_sensor_host sq_bossbattle_dropsquad02
-c_squad_sensor_host sq_bossbattle_sweeper01
+squad sq_bossbattle_reinf02
+squad sq_bossbattle_dropsquad01
+squad sq_bossbattle_dropsquad02
+squad sq_bossbattle_sweeper01
 @member_counts({shanks_a: 2})
-c_squad_sensor_host sq_bossbattle_shanks01
+squad sq_bossbattle_shanks01
 @member_counts({shanks_a: 2})
-c_squad_sensor_host sq_bossbattle_shanks02
+squad sq_bossbattle_shanks02
 @member_counts({shanks_a: 2})
-c_squad_sensor_host sq_bossbattle_shanks03
+squad sq_bossbattle_shanks03
 @member_counts({shanks_a: 2})
-c_squad_sensor_host sq_bossbattle_shanks04
-c_squad_sensor_host sq_bossbattle_anticheese01
-c_squad_sensor_host sq_bossbattle_anticheese02
+squad sq_bossbattle_shanks04
+squad sq_bossbattle_anticheese01
+squad sq_bossbattle_anticheese02
 @member_counts({dreg01: 1, dreg02: 1, vandal01: 1})
-c_squad_sensor_host sq_bossbattle_fallen01
+squad sq_bossbattle_fallen01
 @member_counts({dreg01: 1, dreg02: 1, vandal01: 1})
-c_squad_sensor_host sq_bossbattle_fallen02
+squad sq_bossbattle_fallen02
 @member_counts({dreg01: 1, dreg02: 1})
-c_squad_sensor_host sq_bossbattle_fallen03
+squad sq_bossbattle_fallen03
 @member_counts({dreg01: 1, dreg02: 1})
-c_squad_sensor_host sq_bossbattle_fallen04
-c_player_trigger_sensor_host pt_play_s01_x120  # true name unknown
-c_sequence_host seq_soulfx_a  # true name unknown
-c_sequence_host seq_soulfx_b  # true name unknown
-c_sequence_host seq_soulfx_c  # true name unknown
-c_sequence_host seq_soulfx_d  # true name unknown
-c_sequence_host seq_soulfx_e  # true name unknown
-c_sequence_host seq_soulfx_f  # true name unknown
-c_sequence_host seq_soulfx_g  # true name unknown
-c_sequence_host seq_soulfx_h  # true name unknown
-c_object_filter_sensor_host of_ultra_servitor
-c_hop_on_sensor_host ho_servitor_performance_shield01  # true name unknown
-c_trigger_volume_slot_host tv_arenaentry01
-c_player_trigger_sensor_host pt_arenaentry01 bind(tv_arenaentry01)  # true name unknown
-c_object_sensor_host o_sepix_stim
-c_objective_sensor_host obj_ship_trash  # true name unknown
+squad sq_bossbattle_fallen04
+player_trigger pt_play_s01_x120
+sequence seq_soulfx_a
+sequence seq_soulfx_b
+sequence seq_soulfx_c
+sequence seq_soulfx_d
+sequence seq_soulfx_e
+sequence seq_soulfx_f
+sequence seq_soulfx_g
+sequence seq_soulfx_h
+object_filter of_ultra_servitor
+hop_on ho_servitor_performance_shield01
+trigger_volume tv_arenaentry01
+player_trigger pt_arenaentry01 bind(tv_arenaentry01)
+object o_sepix_stim
+objective obj_ship_trash
 
-startup thread sc_ship_main:
+@startup()
+script sc_ship_main():
     sq_bossbattle_boss01.set_objective(obj_bossbattle_fallen)
     sq_bossbattle_reinf01.set_objective(obj_bossbattle_fallen)
     sq_bossbattle_reinf02.set_objective(obj_bossbattle_fallen)
@@ -70,7 +71,7 @@ startup thread sc_ship_main:
     sc_arena.wake()
     sc_guards.wake()
 
-thread sc_boss_entrance:
+script sc_boss_entrance():
     sleep_until(pt_play_s01_x120.is_triggered())
     seq_soulfx_a.start()
     seq_soulfx_b.start()
@@ -85,12 +86,12 @@ thread sc_boss_entrance:
     sleep(1)
     ho_servitor_performance_shield01.set_filter(of_ultra_servitor)
 
-thread sc_arena:
+script sc_arena():
     sleep_until(pt_arenaentry01.is_triggered())
     sleep(13)
     o_sepix_stim.create()
 
-thread sc_guards:
+script sc_guards():
     sleep_until(guards_alive_count() > 0)
     sleep_until(guards_alive_count() == 0)
     sleep(10)
@@ -105,7 +106,7 @@ thread sc_guards:
     seq_soulfx_g.stop()
     seq_soulfx_h.stop()
 
-thread sc_boss_fight:
+script sc_boss_fight():
     sleep(9)
     sq_bossbattle_boss01.set_task("boss")
     place_on_task(sq_bossbattle_shanks01, "dropsquad01")

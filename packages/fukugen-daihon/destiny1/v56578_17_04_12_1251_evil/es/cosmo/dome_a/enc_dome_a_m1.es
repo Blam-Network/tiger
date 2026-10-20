@@ -11,40 +11,41 @@
 
 @activity_bundle("enc_dome_a_m1")
 
-c_objective_sensor_host obj_hive_dome_a01
-c_object_sensor_host o_door01
-c_player_monitor_sensor_host pm_basement_cleanup
-c_player_trigger_sensor_host pt_spawn_hive_intro01
-c_player_trigger_sensor_host pt_spawn_hive_intro02
-c_player_trigger_sensor_host pt_spawn_hive_intro02_force
-c_player_trigger_sensor_host pt_thrall_unfreeze
-c_sequence_host seq_hive_wave_announce
+objective obj_hive_dome_a01
+object o_door01
+player_monitor pm_basement_cleanup
+player_trigger pt_spawn_hive_intro01
+player_trigger pt_spawn_hive_intro02
+player_trigger pt_spawn_hive_intro02_force
+player_trigger pt_thrall_unfreeze
+sequence seq_hive_wave_announce
 interactable_placement obj_placement_m1_o1b bind("0x3EA60D3D")
-c_squad_sensor_host sq_hive_scare02a
-c_squad_sensor_host sq_hive_scare02b
-c_squad_sensor_host sq_hive_scare02c
-c_squad_sensor_host sq_hive_scare02d
-c_squad_sensor_host sq_hive_basement_thrall01
-c_squad_sensor_host sq_hive_basement_troopers01
+squad sq_hive_scare02a
+squad sq_hive_scare02b
+squad sq_hive_scare02c
+squad sq_hive_scare02d
+squad sq_hive_basement_thrall01
+squad sq_hive_basement_troopers01
 @member_counts({trooper: 2})
-c_squad_sensor_host sq_hive_basement_troopers02
+squad sq_hive_basement_troopers02
 @member_counts({thrall: 1, thrall_1: 1, thrall_2: 1})
-c_squad_sensor_host sq_hive_upper_front01
+squad sq_hive_upper_front01
 @member_counts({trooper: 3})
-c_squad_sensor_host sq_hive_upper_front02
+squad sq_hive_upper_front02
 @member_counts({trooper: 4})
-c_squad_sensor_host sq_hive_upper_front03
+squad sq_hive_upper_front03
 @member_counts({trooper: 4})
-c_squad_sensor_host sq_hive_upper_back01
+squad sq_hive_upper_back01
 @member_counts({trooper: 2})
-c_squad_sensor_host sq_hive_upper_back02
-c_squad_sensor_host sq_hive_upper_wizard01
+squad sq_hive_upper_back02
+squad sq_hive_upper_wizard01
 @member_counts({thrall: 2, thrall_1: 2})
-c_squad_sensor_host sq_hive_upper_rush01
+squad sq_hive_upper_rush01
 @member_counts({thrall: 2, thrall_1: 2})
-c_squad_sensor_host sq_hive_upper_rush02
+squad sq_hive_upper_rush02
 
-startup thread sc_dome_a:
+@startup()
+script sc_dome_a():
     for sq in [sq_hive_scare02a, sq_hive_scare02b, sq_hive_scare02c, sq_hive_scare02d, sq_hive_basement_thrall01, sq_hive_basement_troopers01, sq_hive_basement_troopers02, sq_hive_upper_front01, sq_hive_upper_front02, sq_hive_upper_front03, sq_hive_upper_back01, sq_hive_upper_back02, sq_hive_upper_wizard01, sq_hive_upper_rush01, sq_hive_upper_rush02]:
         sq.set_objective(obj_hive_dome_a01)
     o_door01.create()
@@ -56,7 +57,7 @@ startup thread sc_dome_a:
 
 # the door scan: the device runs while the Ghost works, then the basement
 # is loosed (frozen until the player goes down)
-thread sc_scan:
+script sc_scan():
     console = obj_placement_m1_o1b._object
     sleep_until(console.is_active())
     console.set_device_position(0.4)
@@ -78,16 +79,16 @@ thread sc_scan:
     sleep(0.5)
     sq_hive_scare02d.place()
 
-thread sc_intro01:
+script sc_intro01():
     sleep_until(pt_spawn_hive_intro01.is_triggered())
     sq_hive_basement_thrall01.set_task("0xC0A49850")
     seq_hive_wave_announce.start()
 
-thread sc_intro02:
+script sc_intro02():
     sleep_until(pt_spawn_hive_intro02.is_triggered())
     sq_hive_basement_troopers01.set_task("task_3")
 
-thread sc_intro02_force:
+script sc_intro02_force():
     sleep_until(pt_spawn_hive_intro02_force.is_triggered())
     sq_hive_basement_troopers02.set_task("0x8F0587DE")
     sleep(3.4)
@@ -95,7 +96,7 @@ thread sc_intro02_force:
 
 # the upper floor wakes when a player reaches the top; the wizard's death
 # releases the rush
-thread sc_upper:
+script sc_upper():
     sleep_until(pt_thrall_unfreeze.is_triggered())
     sq_hive_upper_front03.set_task("0x355B0386")
     sq_hive_upper_back01.set_task("0x8E05866A")

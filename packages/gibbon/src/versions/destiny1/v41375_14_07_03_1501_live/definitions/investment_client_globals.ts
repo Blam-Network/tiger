@@ -31,7 +31,7 @@ export const e_investment_client_global = {
   investment_globals: 0,
   destinations: 5,
   item_displays: 26,
-  string_lists: 45,
+  localized_strings: 45,
 } as const;
 
 const client_globals_cache = new WeakMap<

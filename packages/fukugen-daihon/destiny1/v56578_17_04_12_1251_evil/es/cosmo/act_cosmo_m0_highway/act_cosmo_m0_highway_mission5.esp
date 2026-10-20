@@ -3,22 +3,22 @@
 # Mission 5, "Fight Through the Fallen". Clears once the graveyard's Fallen
 # are dead, or when the player runs on past them.
 
-c_player_trigger_sensor_host pt_ketch  # true name unknown
+player_trigger pt_ketch
 generic_objective obj_m0_m04
-c_trigger_volume_slot_host tv_obj_backup_adv
-c_player_trigger_sensor_host pt_obj_backup_adv bind(tv_obj_backup_adv)  # true name unknown
-c_squad_sensor_host sq_fallen_m0_upgrade
-c_squad_sensor_host sq_fallen_m0_drop_1
-c_squad_sensor_host sq_fallen_m0_drop_2
-c_squad_sensor_host sq_fallen_m0_drop_2_b
-c_squad_sensor_host sq_fallen_m0_sniper
-c_squad_sensor_host sq_fallen_m0_exit_shanks
+trigger_volume tv_obj_backup_adv
+player_trigger pt_obj_backup_adv bind(tv_obj_backup_adv)
+squad sq_fallen_m0_upgrade
+squad sq_fallen_m0_drop_1
+squad sq_fallen_m0_drop_2
+squad sq_fallen_m0_drop_2_b
+squad sq_fallen_m0_sniper
+squad sq_fallen_m0_exit_shanks
 
-thread init: pass
+script init(): pass
 
-thread complete: pass
+script complete(): pass
 
-thread main:
+script main():
     sleep_until(pt_ketch.is_triggered())
     sleep(12)
     obj_m0_m04.objective_begin(obj_m0_m04._nav_point)

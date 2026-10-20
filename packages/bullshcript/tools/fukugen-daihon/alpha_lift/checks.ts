@@ -59,7 +59,7 @@ const EMPTY_HASH = 0x811c9dc5;
 const COMMAND_SCRIPT_BUILDER = "__cs";
 
 // what the real schema's member kind must come back as
-const REAL_KINDS: Readonly<Record<number, readonly string[]>> = {
+export const REAL_KINDS: Readonly<Record<number, readonly string[]>> = {
   1: ["int"],
   2: ["short"],
   4: ["typed_pointer"],

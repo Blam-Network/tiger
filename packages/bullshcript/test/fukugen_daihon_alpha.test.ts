@@ -9,7 +9,10 @@ import {
   readBytecode,
 } from "@blamnetwork/bullshcript/destiny1/v41375_14_07_03_1501_live";
 import { describe, expect, it } from "vitest";
-import { runGates } from "../tools/fukugen-daihon/alpha_lift/checks.ts";
+import {
+  REAL_KINDS,
+  runGates,
+} from "../tools/fukugen-daihon/alpha_lift/checks.ts";
 import { diffChunks } from "../tools/fukugen-daihon/alpha_lift/chunk_diff.ts";
 import { readAlphaSchemas } from "../tools/fukugen-daihon/alpha_lift/schemas.ts";
 import {
@@ -145,7 +148,7 @@ describe("alpha script sources", () => {
         .map((file) => file.path.slice(file.path.lastIndexOf("/") + 1, -3))
     );
     const handles = result.decls.flatMap((decl) =>
-      decl.schema.members.filter((m) => m.type === "c_encounter_handle")
+      decl.schema.members.filter((m) => m.type === "encounter_handle")
     );
     expect(handles.map((m) => m.name).sort()).toEqual([
       "enc_dig_site_strike1",
@@ -251,6 +254,39 @@ describe.skipIf(!(chunksDir && packagesDir))(
       // every native base is complete (native_types.ts), so no member is left
       // between base and script
       expect(report.undecidable).toEqual([]);
+    });
+
+    // The gate above reads classes; the structs are checked here, down to the
+    // weapons' trigger_behavior (a native enum, e_trigger_behavior).
+    it("gives every struct member the kind of its schema", () => {
+      const schemas = readAlphaSchemas(packagesDir ?? "");
+      const byModule = new Map(result.decls.map((d) => [d.modulePath, d]));
+      const misses: string[] = [];
+      let compared = 0;
+      for (const type of schemas.packageTypes.values()) {
+        const decl = type.kind === 0x19 ? byModule.get(type.name) : undefined;
+        for (const real of decl ? type.members : []) {
+          const member = decl?.schema.members.find((m) => m.name === real.name);
+          // a member the struct inherits is its parent's
+          if (member === undefined) {
+            continue;
+          }
+          compared++;
+          if (!(REAL_KINDS[real.kind] ?? []).includes(member.kind)) {
+            misses.push(
+              `${type.name}.${real.name}: kind ${member.kind}, real 0x${real.kind.toString(16)}`
+            );
+          }
+        }
+      }
+      expect(misses).toEqual([]);
+      expect(compared).toBe(647);
+      const rifle = byModule.get(
+        "weapons.weapon_translation_assault_rifles.s_assault_rifle"
+      );
+      expect(
+        rifle?.schema.members.find((m) => m.name === "trigger_behavior")
+      ).toMatchObject({ kind: "enum_field", type: "e_trigger_behavior" });
     });
   }
 );

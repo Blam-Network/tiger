@@ -15,11 +15,11 @@ const MISSIONS = [1, 2, 3].map((n) => `es/test/act_t/act_t_mission${n}.esp`);
 const ROOT_TAG = 0x82ff_0010;
 
 const mission = (n: number) => `# es\\test\\act_t\\act_t_mission${n}.esp
-thread init: pass
+script init(): pass
 
-thread complete: pass
+script complete(): pass
 
-thread main:
+script main():
     print("mission ${n} main")
     sleep(1000)
 `;

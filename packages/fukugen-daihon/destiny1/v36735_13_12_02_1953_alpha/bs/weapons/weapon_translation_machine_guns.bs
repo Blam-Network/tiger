@@ -3,7 +3,7 @@ enum e_machine_gun_type:
     count
 
 struct s_machine_gun : s_machine_gun_constants:
-    unknown_80802AA8 trigger_behavior  # true name unknown
+    e_trigger_behavior trigger_behavior
     real rate_of_fire
     real shots_per_fire
     real rounds_fired_per_second

@@ -1,12 +1,12 @@
 @activity_bundle("story_common")
 
 class c_encounter__story_common : c_encounter:
-    c_scoreboard_host scoreboard  # true name unknown
-    c_hard_wipe_globals_host hard_wipe_globals  # true name unknown
-    c_timer_sensor_host lifetime_timer  # true name unknown
-    c_lifetime_sensor_host lifetime  # true name unknown
-    c_fireteam_sensor_host fireteam
-    static_array<c_activity_player_sensor_host, 16> players
+    scoreboard scoreboard
+    hard_wipe_globals hard_wipe_globals
+    timer lifetime_timer
+    lifetime lifetime
+    fireteam fireteam
+    static_array<activity_player, 16> players
 
 
     def import():

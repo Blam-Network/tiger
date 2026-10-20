@@ -8,23 +8,23 @@
 # up again as the key is taken, and the mission is complete. The second
 # climax trigger group is up for the phase.
 
-c_trigger_group_host tg_mars_m5_climax_2_so
+trigger_group tg_mars_m5_climax_2_so
 interactable_objective pf_objective_button_b bind("0x0882B95D")
 interactable_placement pf_placement_button_b bind("0x0882B95D")
-c_object_sensor_host o_minoeye_cage
+object o_minoeye_cage
 kill_squad_objective pf_kill_boss bind("0xF6457E44", 1)
-c_squad_sensor_host sq_boss
+squad sq_boss
 interactable_objective pf_objective_button_c bind("0x0882B95C")
 interactable_placement pf_placement_button_c bind("0x0882B95C")
-c_sequence_host seq_music_warbase
-c_sequence_host seq_d_o3_s07
-c_sequence_host seq_d_o3_s08
+sequence seq_music_warbase
+sequence seq_d_o3_s07
+sequence seq_d_o3_s08
 
-thread init: pass
+script init(): pass
 
-thread complete: pass
+script complete(): pass
 
-thread main:
+script main():
     tg_mars_m5_climax_2_so.activate()
     seq_music_warbase.start()
     seq_music_warbase.set_switch_mask(1)

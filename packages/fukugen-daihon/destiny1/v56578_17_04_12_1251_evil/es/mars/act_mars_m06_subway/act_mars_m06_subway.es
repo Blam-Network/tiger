@@ -39,6 +39,7 @@ act_mars_m06_subway_mission5 phase_m06_lobby_n
 act_mars_m06_subway_mission6 phase_m06_subway_goto
 act_mars_m06_subway_mission7 phase_m06_subway
 act_mars_m06_subway_mission8 phase_m06_subway_close
-startup thread ss_mars_m06_subway:
+@startup()
+script ss_mars_m06_subway():
     print("script startup")
     c_lifetime_script_utilities.get_lifetime_sensor().set_state(e_activity_lifetime_state.pregame)

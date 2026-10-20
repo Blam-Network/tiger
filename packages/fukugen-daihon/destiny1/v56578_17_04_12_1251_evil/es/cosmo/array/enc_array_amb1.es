@@ -11,7 +11,7 @@
 
 @activity_bundle("enc_array_amb1")
 
-c_encounter_manager encounters
+encounter_manager encounters
 @member_counts({_squad: [{dreg: 2}, {vandal: 2}]})
 simple_encounter amb_smpl_fallen_domec01
 @member_counts({_squad: [{vandal: 2, 0x50A81B6F: 2}, {dreg: 2}]})
@@ -29,7 +29,8 @@ simple_encounter amb_smpl_hive_domec01
 ambush_encounter amb_ambush_underpad
 wave_encounter amb_wave_hive_basement
 
-startup thread ss_encounter_controller_thread:
+@startup()
+script ss_encounter_controller_thread():
     encounters.actor_budget = 48
     for enc in [amb_smpl_fallen_domec01, amb_smpl_fallen_helipad01, amb_smpl_fallen_valley01, amb_smpl_hive_frontdoor01, amb_smpl_hive_basement02, amb_smpl_hive_helipad01, amb_smpl_hive_domec01]:
         encounters.add_ambient_encounter(enc, 6, 100, 20, 30, 0)

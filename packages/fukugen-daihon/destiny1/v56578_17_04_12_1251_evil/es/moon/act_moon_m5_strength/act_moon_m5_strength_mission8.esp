@@ -6,20 +6,20 @@
 # down once the objective clears, and the activity completes 22 seconds
 # after it.
 
-c_encounter_handle unknown_d53aaa20
+encounter_handle unknown_d53aaa20
 interactable_objective pf_objective_button_a bind("0x0AA54CC0")
 interactable_placement pf_placement_button_a bind("0x0AA54CC0")
-c_sequence_host seq_strength_music
-c_sequence_host seq_d_o2_s06
-c_sequence_host seq_d_o2_s07
-c_sequence_host seq_music_ascent
+sequence seq_strength_music
+sequence seq_d_o2_s06
+sequence seq_d_o2_s07
+sequence seq_music_ascent
 
-thread init: pass
+script init(): pass
 
-thread complete:
+script complete():
     c_lifetime_script_utilities.get_lifetime_sensor().end_game(30)
 
-thread main:
+script main():
     enc = unknown_d53aaa20
     pf_objective_button_a.objective_begin()
     sleep_until(pf_objective_button_a.is_complete())

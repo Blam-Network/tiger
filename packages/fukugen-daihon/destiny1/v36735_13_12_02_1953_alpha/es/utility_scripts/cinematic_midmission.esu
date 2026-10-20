@@ -1,4 +1,4 @@
-c_cinematic_sensor_host _cinematic
+cinematic _cinematic
 bool _start
 bool _complete
 
@@ -10,7 +10,7 @@ def start():
 
     play.restart()
 
-thread play:
+script play():
 
     _cinematic.start()
     sleep_until(_cinematic.is_done())

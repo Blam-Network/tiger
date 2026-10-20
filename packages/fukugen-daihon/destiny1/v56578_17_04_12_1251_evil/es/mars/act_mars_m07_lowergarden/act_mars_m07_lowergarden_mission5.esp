@@ -9,21 +9,21 @@
 # the door open twenty-six seconds after the key appears, all one run's.
 
 trigger_volume_objective sp_objective_goto
-c_encounter_handle sp_objective_glyphs
-c_activity_flag af_glyph_a
-c_activity_flag af_glyph_b
+encounter_handle sp_objective_glyphs
+activity_flag af_glyph_a
+activity_flag af_glyph_b
 countdown_objective sp_objective_kiosk bind("0xE2E80144")
 trigger_volume_objective sp_objective_heart_goto
-c_encounter_handle enc_lowergarden_m07
-c_sequence_host seq_dialog_lowergarden_door_open
-c_sequence_host seq_sound_lowergarden_darkness
-c_sequence_host seq_music_garden_ambience
+encounter_handle enc_lowergarden_m07
+sequence seq_dialog_lowergarden_door_open
+sequence seq_sound_lowergarden_darkness
+sequence seq_music_garden_ambience
 
-thread init: pass
+script init(): pass
 
-thread complete: pass
+script complete(): pass
 
-thread main:
+script main():
     enc = enc_lowergarden_m07
     sp_objective_goto.objective_begin()
     sleep_until(sp_objective_goto.is_complete())

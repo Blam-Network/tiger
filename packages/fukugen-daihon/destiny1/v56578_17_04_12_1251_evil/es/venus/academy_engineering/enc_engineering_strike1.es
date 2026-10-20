@@ -5,24 +5,25 @@
 
 @activity_bundle("enc_engineering_strike1")
 
-c_squad_group_sensor_host gr_top_floor  # true name unknown
-@member_counts({vandals: 3}) c_squad_sensor_host sq_floor2_fallen01
-@member_counts({vandal: 3}) c_squad_sensor_host sq_floor2_fallen02
-c_squad_sensor_host sq_floor2_fallen03
-c_squad_sensor_host sq_floor2_fallen04
-@member_counts({vandal: 3}) c_squad_sensor_host sq_floor2_fallen05
-c_objective_sensor_host obj_engineering_strike  # true name unknown
-c_location_sensor_host engineering  # true name unknown
-c_player_monitor_sensor_host pm_bubble_engineering bind(engineering)  # true name unknown
+squad_group gr_top_floor
+@member_counts({vandals: 3}) squad sq_floor2_fallen01
+@member_counts({vandal: 3}) squad sq_floor2_fallen02
+squad sq_floor2_fallen03
+squad sq_floor2_fallen04
+@member_counts({vandal: 3}) squad sq_floor2_fallen05
+objective obj_engineering_strike
+location engineering
+player_monitor pm_bubble_engineering bind(engineering)
 
-startup thread sc_main_thread:
+@startup()
+script sc_main_thread():
     gr_top_floor.add_child(sq_floor2_fallen01)
     gr_top_floor.add_child(sq_floor2_fallen02)
     gr_top_floor.add_child(sq_floor2_fallen03)
     gr_top_floor.add_child(sq_floor2_fallen04)
     gr_top_floor.add_child(sq_floor2_fallen05)
 
-thread sc_engineering_trash:
+script sc_engineering_trash():
     respawn(sq_floor2_fallen01, obj_engineering_strike)
     respawn(sq_floor2_fallen02, obj_engineering_strike)
     respawn(sq_floor2_fallen03, obj_engineering_strike)

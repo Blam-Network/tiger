@@ -1,6 +1,6 @@
-static_array<c_trigger_volume_slot_host, 1> _trigger_volume
-c_sequence_host _dialog_sequence  # true name unknown
-c_player_trigger_sensor_host _player_trigger  # true name unknown
+static_array<trigger_volume, 1> _trigger_volume
+sequence _dialog_sequence
+player_trigger _player_trigger
 
 
 
@@ -16,7 +16,7 @@ def user_import():
         _player_trigger.import_only_bind(volume)
     return true
 
-thread main:
+script main():
     _player_trigger.reset()
     sleep_until(_player_trigger.is_triggered(), 0.5)
     _dialog_sequence.start()

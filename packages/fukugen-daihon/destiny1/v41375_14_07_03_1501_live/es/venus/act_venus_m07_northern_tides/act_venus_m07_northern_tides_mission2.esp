@@ -5,15 +5,15 @@
 # objective is up and stops when it clears at the far trigger.
 
 trigger_volume_objective pf_goto_northern_tides
-c_location_sensor_host southern_tides
-c_player_trigger_sensor_host pt_southern_tides bind(southern_tides)
-c_sequence_host md_vn07_020_10
+location southern_tides
+player_trigger pt_southern_tides bind(southern_tides)
+sequence md_vn07_020_10
 
-thread init: pass
+script init(): pass
 
-thread complete: pass
+script complete(): pass
 
-thread main:
+script main():
     md_vn07_020_10.start()
     pf_goto_northern_tides.objective_begin()
     sleep_until(pf_goto_northern_tides.is_complete())

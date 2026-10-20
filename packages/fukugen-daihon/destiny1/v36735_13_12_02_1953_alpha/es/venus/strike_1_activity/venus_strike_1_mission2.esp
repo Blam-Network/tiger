@@ -1,5 +1,5 @@
 u_globals utils
-c_encounter_handle enc_dig_site_strike1  # true name unknown
+encounter_handle enc_dig_site_strike1
 trigger_volume_objective trigger_volume_dig_site
 dialog_trigger md_s1_m2_d010_trigger
 dialog_trigger md_s1_m2_d020_trigger
@@ -7,13 +7,13 @@ dialog_trigger md_s1_m2_d020_trigger
 
 
 
-thread init: pass
+script init(): pass
 
 
-thread complete: pass
+script complete(): pass
 
 
-thread main:
+script main():
     trigger_volume_dig_site.objective_begin_immediate()
     md_s1_m2_d010_trigger.enable()
     md_s1_m2_d020_trigger.enable()

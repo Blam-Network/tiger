@@ -46,7 +46,7 @@ describe("the BungieScript lexer", () => {
   });
 
   it("closes open blocks at the end of input", () => {
-    expect(kinds("thread t:\n    x()").slice(-4)).toEqual([
+    expect(kinds("script t():\n    x()").slice(-4)).toEqual([
       ")",
       "newline",
       "dedent",

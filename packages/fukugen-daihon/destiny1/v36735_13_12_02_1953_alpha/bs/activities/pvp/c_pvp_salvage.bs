@@ -25,15 +25,15 @@ class c_pvp_salvage : c_pvp_slayer:
     int captured_team = -1
     int locked_team = -1
     int relic_count = 7
-    c_incident_listener capture_incident_listener
-    c_object_sensor_host capture_zone
-    c_capturable_host capture_zone_capturable
-    c_object_sensor_host probe
-    c_faction_host probe_faction  # true name unknown
-    c_objective_timer_host probe_timer  # true name unknown
-    c_interactable_host probe_interactable  # true name unknown
-    c_object_filter_sensor_host probe_interaction_filter
-    dynamic_array<c_object_sensor_host> relics
+    incident_listener capture_incident_listener
+    object capture_zone
+    capturable capture_zone_capturable
+    object probe
+    faction probe_faction
+    objective_timer probe_timer
+    interactable probe_interactable
+    object_filter probe_interaction_filter
+    dynamic_array<object> relics
 
 
 
@@ -46,7 +46,7 @@ class c_pvp_salvage : c_pvp_slayer:
 
 
 
-    thread game_loop:
+    script game_loop():
         for relic in relics:
             relic.create()
 

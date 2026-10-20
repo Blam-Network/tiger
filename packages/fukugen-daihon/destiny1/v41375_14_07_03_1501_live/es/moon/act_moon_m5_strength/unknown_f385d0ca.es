@@ -11,27 +11,28 @@
 
 @activity_bundle(0xF385D0CA)
 
-c_sequence_host seq_music_intro
-c_sequence_host seq_d_o1_s02
-c_sequence_host seq_d_o1_s04
-c_sequence_host seq_d_o1_s01
-c_sequence_host seq_d_o1_s075
-c_sequence_host seq_d_o1_s078
-c_sequence_host seq_d_o1_s08
-c_sequence_host seq_d_o2_s01
-c_sequence_host seq_d_o2_s012
-c_sequence_host seq_d_o2_s014
+sequence seq_music_intro
+sequence seq_d_o1_s02
+sequence seq_d_o1_s04
+sequence seq_d_o1_s01
+sequence seq_d_o1_s075
+sequence seq_d_o1_s078
+sequence seq_d_o1_s08
+sequence seq_d_o2_s01
+sequence seq_d_o2_s012
+sequence seq_d_o2_s014
 trigger_volume_objective pf_obj_cine_trigger
 cinematic_midmission pf_cine_110a_mrt
-c_sequence_host seq_d_o2_s03
-c_location_sensor_host strength
-c_player_trigger_sensor_host pt_gate
-c_sequence_host seq_strength_music
-c_sequence_host seq_d_o2_s05
-c_squad_sensor_host sq_dark_ritual
-c_encounter_handle specops_moon_anomaly
+sequence seq_d_o2_s03
+location strength
+player_trigger pt_gate
+sequence seq_strength_music
+sequence seq_d_o2_s05
+squad sq_dark_ritual
+encounter_handle specops_moon_anomaly
 
-startup thread sc_audio_main:
+@startup()
+script sc_audio_main():
     sleep_until(c_player_script_utilities.all_players_are_ready())
     seq_music_intro.start()
     seq_d_o1_s02.start()
@@ -57,7 +58,8 @@ startup thread sc_audio_main:
     sleep_until(strength.is_triggered())
     seq_d_o2_s03.stop()
 
-startup thread sc_strength_music:
+@startup()
+script sc_strength_music():
     sleep_until(pt_gate.is_triggered())
     sleep(1)
     seq_strength_music.start()

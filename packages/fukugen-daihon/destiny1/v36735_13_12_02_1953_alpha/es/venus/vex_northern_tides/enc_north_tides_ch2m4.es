@@ -1,7 +1,7 @@
 @activity_bundle("enc_north_tides_ch2m4")
 
-c_location_sensor_host northern_tides  # true name unknown
-c_player_monitor_sensor_host pm_bubble_northern_tides bind(northern_tides)  # true name unknown
+location northern_tides
+player_monitor pm_bubble_northern_tides bind(northern_tides)
 @task(0x73B0C464, squad: sg_bottom, condition: mid_obj_enc_c2m4)
 @task(0x8C09B1D0, squad: sq_hill_btm02)
 @task(0x8C09B1D3, squad: sq_hill_btm01)
@@ -9,33 +9,33 @@ c_player_monitor_sensor_host pm_bubble_northern_tides bind(northern_tides)  # tr
 @task(0xD85A22BB, condition: end_obj_enc_c2m4)
 @task(0xCFB51993, squad: sq_hill_mid04)
 @task(0x1B1F51C9, squad: sq_hill_mid01)
-c_objective_sensor_host obj_north_tides_ch2m4  # true name unknown
+objective obj_north_tides_ch2m4
 @member_counts({goblins: 3})
 @objective(obj_north_tides_ch2m4)
-c_squad_sensor_host sq_hill_btm01
+squad sq_hill_btm01
 @member_counts({goblins: 3})
 @objective(obj_north_tides_ch2m4)
-c_squad_sensor_host sq_hill_btm02
+squad sq_hill_btm02
 @member_counts({hobgoblin: 2})
 @objective(obj_north_tides_ch2m4)
-c_squad_sensor_host sq_hill_btm03
+squad sq_hill_btm03
 @member_counts({hobgoblins: 2})
 @objective(obj_north_tides_ch2m4)
-c_squad_sensor_host sq_hill_mid01
+squad sq_hill_mid01
 @member_counts({goblins: 3})
 @objective(obj_north_tides_ch2m4)
-c_squad_sensor_host sq_hill_mid02
+squad sq_hill_mid02
 @member_counts({goblins: 3})
 @objective(obj_north_tides_ch2m4)
-c_squad_sensor_host sq_hill_mid03
+squad sq_hill_mid03
 @member_counts({goblins: 1})
 @objective(obj_north_tides_ch2m4)
-c_squad_sensor_host sq_hill_mid04
-c_squad_group_sensor_host sg_bottom  # true name unknown
-c_trigger_volume_slot_host tv_mid_level_fall
-c_player_trigger_sensor_host pt_mid_level_fall bind(tv_mid_level_fall)  # true name unknown
-c_trigger_volume_slot_host tv_end_level_fall
-c_player_trigger_sensor_host pt_end_level_fall bind(tv_end_level_fall)  # true name unknown
+squad sq_hill_mid04
+squad_group sg_bottom
+trigger_volume tv_mid_level_fall
+player_trigger pt_mid_level_fall bind(tv_mid_level_fall)
+trigger_volume tv_end_level_fall
+player_trigger pt_end_level_fall bind(tv_end_level_fall)
 bool mid_obj_enc_c2m4 = true
 bool end_obj_enc_c2m4 = true
 loot_north_tides loot_venus_north_tides_1
@@ -47,7 +47,8 @@ loot_north_tides loot_venus_north_tides_1
 
 
 
-startup thread ss_north_tides_ch2m4:
+@startup()
+script ss_north_tides_ch2m4():
     print("script startup")
 
     sg_bottom.add_child(sq_hill_btm01)
@@ -60,15 +61,15 @@ startup thread ss_north_tides_ch2m4:
 
 
 
-thread sc_obj_enc_c2m4a:
+script sc_obj_enc_c2m4a():
     sleep_until(pt_mid_level_fall.is_triggered())
     mid_obj_enc_c2m4 = false
 
-thread sc_obj_enc_c2m4b:
+script sc_obj_enc_c2m4b():
     sleep_until(pt_end_level_fall.is_triggered())
     end_obj_enc_c2m4 = false
 
-thread sc_spawn_guards:
+script sc_spawn_guards():
 
     sq_hill_btm01.place()
     sq_hill_btm02.place()

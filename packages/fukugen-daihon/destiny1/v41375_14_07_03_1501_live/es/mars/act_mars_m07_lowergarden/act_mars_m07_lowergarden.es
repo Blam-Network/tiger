@@ -49,6 +49,7 @@ act_mars_m07_lowergarden_mission8 phase_lowergarden_darkness
 act_mars_m07_lowergarden_mission9 phase_lowergarden_climax
 act_mars_m07_lowergarden_mission10 phase_lowergarden_final
 
-startup thread ss_mars_m07_lowergarden:
+@startup()
+script ss_mars_m07_lowergarden():
     print("script startup")
     c_lifetime_script_utilities.get_lifetime_sensor().set_state(e_activity_lifetime_state.pregame)

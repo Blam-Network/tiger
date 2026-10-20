@@ -27,6 +27,7 @@ act_cosmo_m4_dome_c_mission2 cosmo_m4_phase01_dome_c
 act_cosmo_m4_dome_c_mission3 cosmo_m4_phase02_dome_c
 act_cosmo_m4_dome_c_mission4 cosmo_m4_phase_end
 
-startup thread ss_cosmo_m4_dome_c:
+@startup()
+script ss_cosmo_m4_dome_c():
     print("script startup")
     c_lifetime_script_utilities.get_lifetime_sensor().set_state(e_activity_lifetime_state.pregame)

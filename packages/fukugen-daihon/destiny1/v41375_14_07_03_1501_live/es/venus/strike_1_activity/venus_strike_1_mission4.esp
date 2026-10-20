@@ -22,55 +22,55 @@
 # mission 1), and the boss kill count has the same unresolved identifier
 # ("strike_kill_boss"), so these waits are only checked against the run by eye.
 
-c_objective_sensor_host obj_ruins_strike
-c_squad_group_sensor_host sgq_strike_minions
-c_squad_sensor_host sq_strike01_4
-c_squad_sensor_host sq_strike01_6
-c_squad_sensor_host sq_strike01_8
-c_squad_sensor_host sq_strike02_4
-c_squad_sensor_host sq_strike02_6
-c_squad_sensor_host sq_strike02_8
-c_squad_sensor_host sq_strike03_4
-c_squad_sensor_host sq_strike03_6
-c_squad_sensor_host sq_strike03_8
-c_squad_group_sensor_host sgq_strike_guards
-c_squad_sensor_host sq_boss_guard01
-c_squad_sensor_host sq_boss_guard02
-c_squad_sensor_host sq_boss_guard03
-c_squad_sensor_host sq_boss_guard04
-c_squad_sensor_host sq_boss_guard05
-c_squad_sensor_host sq_boss_guard06
-c_squad_sensor_host sq_boss
-c_squad_member_sensor_host sq_boss__ultra_hydra
-c_squad_sensor_host sq_boss_enforcer
-c_object_filter_sensor_host of_boss
-c_hop_on_sensor_host ho_invincible
-c_squad_sensor_host warpstorm01
-c_squad_member_sensor_host warpstorm01__storm
-c_squad_sensor_host warpstorm02
-c_squad_member_sensor_host warpstorm02__storm
-c_squad_sensor_host warpstorm03
-c_squad_member_sensor_host warpstorm03__storm
-c_trigger_volume_slot_host tv_1_vol
-c_player_monitor_sensor_host pm_1_vol bind(tv_1_vol)
-c_trigger_volume_slot_host tv_2_vol
-c_player_monitor_sensor_host pm_2_vol bind(tv_2_vol)
-c_trigger_volume_slot_host tv_3_vol
-c_player_monitor_sensor_host pm_3_vol bind(tv_3_vol)
-c_trigger_volume_slot_host tv_enforcer
-c_player_monitor_sensor_host pm_enforcer bind(tv_enforcer)
-c_sequence_host music01
+objective obj_ruins_strike
+squad_group sgq_strike_minions
+squad sq_strike01_4
+squad sq_strike01_6
+squad sq_strike01_8
+squad sq_strike02_4
+squad sq_strike02_6
+squad sq_strike02_8
+squad sq_strike03_4
+squad sq_strike03_6
+squad sq_strike03_8
+squad_group sgq_strike_guards
+squad sq_boss_guard01
+squad sq_boss_guard02
+squad sq_boss_guard03
+squad sq_boss_guard04
+squad sq_boss_guard05
+squad sq_boss_guard06
+squad sq_boss
+squad_member sq_boss__ultra_hydra
+squad sq_boss_enforcer
+object_filter of_boss
+hop_on ho_invincible
+squad warpstorm01
+squad_member warpstorm01__storm
+squad warpstorm02
+squad_member warpstorm02__storm
+squad warpstorm03
+squad_member warpstorm03__storm
+trigger_volume tv_1_vol
+player_monitor pm_1_vol bind(tv_1_vol)
+trigger_volume tv_2_vol
+player_monitor pm_2_vol bind(tv_2_vol)
+trigger_volume tv_3_vol
+player_monitor pm_3_vol bind(tv_3_vol)
+trigger_volume tv_enforcer
+player_monitor pm_enforcer bind(tv_enforcer)
+sequence music01
 dialog_trigger md_s1_m3_d010_trigger
 trigger_volume_objective trigger_volume_ruins
 kill_squad_objective kill_squad_ruins bind("strike_kill_boss", 1)
 int g_spawn_direction
 int g_wave_num
 
-thread init: pass
+script init(): pass
 
-thread complete: pass
+script complete(): pass
 
-thread main:
+script main():
     sgq_strike_minions.add_child(sq_strike01_4)
     sgq_strike_minions.add_child(sq_strike01_6)
     sgq_strike_minions.add_child(sq_strike01_8)
@@ -109,7 +109,7 @@ thread main:
     kill_squad_ruins.objective_end()
     sleep(3)
 
-thread sc_mission_logic:
+script sc_mission_logic():
     sleep_until(sgq_strike_guards.alive_count() > 5)
     sleep_until(sgq_strike_guards.alive_count() < 5)
     guards_fall_back()

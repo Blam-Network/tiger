@@ -1,6 +1,6 @@
-c_object_sensor_host lootbox_goldenage
-static_array<c_object_sensor_host, 3> lootbox_fallen
-static_array<c_object_sensor_host, 10> dynamic_object_candy
+object lootbox_goldenage
+static_array<object, 3> lootbox_fallen
+static_array<object, 10> dynamic_object_candy
 
 # Decompiled from 36735.13.12.02.1953.alpha script tags
 # See tag 821B8036

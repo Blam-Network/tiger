@@ -7,24 +7,24 @@
 # gatehouse encounter send its miniboss out behind the player. The climax
 # trigger group is up from the wall objective to the door.
 
-c_object_sensor_host o_m05_ghost
+object o_m05_ghost
 trigger_volume_objective pf_trigger_wall
-c_trigger_group_host tg_mars_m5_gatehouse_climax_so
+trigger_group tg_mars_m5_gatehouse_climax_so
 generic_objective pf_gen_obj_ambush
-c_nav_point_host ap_gatehouse_wall
+nav_point ap_gatehouse_wall
 interactable_objective pf_objective_button_door bind("0x5B54C09C")
 interactable_placement pf_placement_button_door bind("0x5B54C09C")
-c_encounter_handle enc_gatehouse_m05
-c_sequence_host seq_d_o2_s01
-c_sequence_host seq_d_o2_s02
-c_sequence_host seq_d_o2_s065
-c_sequence_host seq_d_o2_s07
+encounter_handle enc_gatehouse_m05
+sequence seq_d_o2_s01
+sequence seq_d_o2_s02
+sequence seq_d_o2_s065
+sequence seq_d_o2_s07
 
-thread init: pass
+script init(): pass
 
-thread complete: pass
+script complete(): pass
 
-thread main:
+script main():
     enc = enc_gatehouse_m05
     o_m05_ghost.create()
     sleep(1)

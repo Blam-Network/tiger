@@ -3,38 +3,38 @@
 @start_slice("action_mock")
 
 u_globals globals
-static_array<c_object_sensor_host, 3> candy1
-c_object_sensor_host candy
+static_array<object, 3> candy1
+object candy
 int interactable_index
 int travel_index
 int destructible_index
 int time_between_spawns = 7
 int spawn_timer
-c_objective_sensor_host obj_action_mock  # true name unknown
+objective obj_action_mock
 @member_counts({cell_1: 1})
-c_squad_sensor_host sq_action_mock_ultra
+squad sq_action_mock_ultra
 @member_counts({cell: 5})
 @objective(obj_action_mock)
-c_squad_sensor_host sq_action_mock0
+squad sq_action_mock0
 @member_counts({cell: 5})
 @objective(obj_action_mock)
-c_squad_sensor_host sq_action_mock1
+squad sq_action_mock1
 @member_counts({cell: 5})
 @objective(obj_action_mock)
-c_squad_sensor_host sq_action_mock2
+squad sq_action_mock2
 @member_counts({cell: 5})
 @objective(obj_action_mock)
-c_squad_sensor_host sq_action_mock3
+squad sq_action_mock3
 static_array<int, 16> type_list
 static_array<int, 16> parameter_list
-static_array<c_common_reference, 8> obj_list
-static_array<c_common_reference, 4> squad_list
-static_array<c_common_reference, 3> interactable_list  # true name unknown
-static_array<c_common_reference, 3> travel_list  # true name unknown
-static_array<c_common_reference, 3> destructible_list  # true name unknown
+static_array<common_reference, 8> obj_list
+static_array<common_reference, 4> squad_list
+static_array<common_reference, 3> interactable_list
+static_array<common_reference, 3> travel_list
+static_array<common_reference, 3> destructible_list
 static_array<string_hash, 3> incident_list
-c_player_objective_sensor_host po_action_mock_begin
-c_player_objective_sensor_host po_action_mock_end
+player_objective po_action_mock_begin
+player_objective po_action_mock_end
 kill_squad_objective po_kill_obj bind("_squad", 0)
 kill_squad_objective po_kill_boss_obj bind("_boss", 1)
 interactable_placement ob_interact_plc0 bind("_interactable0")
@@ -60,7 +60,7 @@ string_hash incident_hash1
 string_hash incident_hash2
 string_hash type_hash_objective = "action_mock_objective_type"
 string_hash parameter_hash_objective = "action_mock_objective_parameter"
-c_common_reference current_objective
+common_reference current_objective
 
 
 
@@ -74,7 +74,8 @@ c_common_reference current_objective
 
 
 
-startup thread test_encounter:
+@startup()
+script test_encounter():
 
     i = 0
     for i in range(15):
@@ -112,7 +113,7 @@ def user_import():
     incident_list[2] = incident_hash2
     return true
 
-thread action_mock_objectives:
+script action_mock_objectives():
     for index in range(len(type_list)):
         if index == 0:
             po_action_mock_begin.activate()

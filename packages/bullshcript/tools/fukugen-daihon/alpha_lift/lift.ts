@@ -1,7 +1,8 @@
 // npm run lift:alpha -- [--chunks <dir>] [--packages <dir>] [--check]
-//   [--no-search] [--dump <decl>] [--linediff <decl>]
+//   [--out <dir>] [--no-search] [--dump <decl>] [--linediff <decl>]
 // Regenerates Fukugen Daihon's alpha folder from the dumped script tags and
-// the alpha packages, then checks it compiles back to the same code, bytes and schemas; --check writes nothing.
+// the alpha packages, then checks it compiles back to the same code, bytes and schemas; --check writes nothing,
+// --out writes to another directory.
 import { mkdirSync, rmSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import {
@@ -44,7 +45,7 @@ const chunksDir = option("--chunks") ?? process.env.TIGER_LUA_CHUNKS;
 if (chunksDir === undefined) {
   console.error(
     "usage: npm run lift:alpha -- [--chunks <lua-chunks dir>] [--packages <dir>]\n" +
-      "  [--check] [--no-search] [--dump <decl>] [--linediff <decl>]"
+      "  [--check] [--out <dir>] [--no-search] [--dump <decl>] [--linediff <decl>]"
   );
   process.exit(1);
 }
@@ -447,7 +448,7 @@ if (lineDiff !== undefined) {
 }
 
 if (!checkOnly) {
-  const root = fukugenDaihonBuildDir(ALPHA_BUILD);
+  const root = option("--out") ?? fukugenDaihonBuildDir(ALPHA_BUILD);
   for (const tree of ["bs", "es"]) {
     rmSync(join(root, tree), { force: true, recursive: true });
   }

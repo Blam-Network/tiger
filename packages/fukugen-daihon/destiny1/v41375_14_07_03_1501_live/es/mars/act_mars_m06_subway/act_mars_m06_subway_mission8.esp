@@ -6,18 +6,18 @@
 # From one retail capture: the beat before the objective and the ten
 # seconds after it are that run's.
 
-c_object_sensor_host m06_subway_ghost_pulse
+object m06_subway_ghost_pulse
 interactable_objective pf_objective_subway_interact bind("0xB0327A81")
 interactable_placement pf_placement_subway_interact bind("0xB0327A81")
-c_object_sensor_host o_m06_subway_vexblock_a
+object o_m06_subway_vexblock_a
 
-thread init: pass
+script init(): pass
 
-thread complete:
+script complete():
     o_m06_subway_vexblock_a.set_device_position(0)
     c_lifetime_script_utilities.get_lifetime_sensor().end_game(30)
 
-thread main:
+script main():
     sleep(5)
     m06_subway_ghost_pulse.create()
     pf_objective_subway_interact.objective_begin()

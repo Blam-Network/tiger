@@ -10,19 +10,19 @@
 # the wire, nothing more. Retail showed the vent objective in a state TU0
 # has no verb for (wire 1) from the spawn until the dunes.
 
-c_trigger_volume_slot_host tv_dunes
-c_player_trigger_sensor_host pt_dunes bind(tv_dunes)
+trigger_volume tv_dunes
+player_trigger pt_dunes bind(tv_dunes)
 interactable_objective sp_objective_vent bind("0x5F62CC37")
 interactable_objective sp_objective_control bind("0x8ED9F019")
-c_sequence_host seq_music_cabal_intro
-c_sequence_host seq_dialog_plains_vent_complete
-c_sequence_host seq_dialog_plains_control_complete
+sequence seq_music_cabal_intro
+sequence seq_dialog_plains_vent_complete
+sequence seq_dialog_plains_control_complete
 
-thread init: pass
+script init(): pass
 
-thread complete: pass
+script complete(): pass
 
-thread main:
+script main():
     insertion_point()
     sleep_until(c_player_script_utilities.all_players_are_ready())
     sleep_until(pt_dunes.is_triggered())

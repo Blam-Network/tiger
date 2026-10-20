@@ -14,33 +14,34 @@
 
 @activity_bundle(0xD53AAA20)
 
-c_object_sensor_host o_gate_intro
-c_object_sensor_host o_gate_swords
-c_object_sensor_host o_gate_selection
-c_object_sensor_host o_gate_rush
-c_player_trigger_sensor_host pt_gate
-c_player_trigger_sensor_host pt_gate_rush
-c_objective_sensor_host obj_strength_ch1
-c_squad_sensor_host sq_dark_ritual
-c_encounter_handle specops_moon_anomaly
-c_squad_sensor_host sq_thrall_exploders_a1
-c_squad_sensor_host sq_knights_a
-c_squad_sensor_host sq_troopers_a
-c_squad_sensor_host sq_thrall_exploders_b1
-c_squad_sensor_host sq_thrall_exploders_b2
-c_squad_sensor_host sq_knights_b
-c_squad_sensor_host sq_troopers_b
-c_squad_sensor_host sq_minibosses
-c_squad_sensor_host sq_thrall_miniboss
-c_squad_sensor_host sq_troopers_c
-c_sequence_host seq_wave_announce1
-c_sequence_host seq_wave_announce3
-c_sequence_host seq_ogreroar_close
-c_hop_on_sensor_host ho_void_t01
-c_sequence_host seq_strength_music
+object o_gate_intro
+object o_gate_swords
+object o_gate_selection
+object o_gate_rush
+player_trigger pt_gate
+player_trigger pt_gate_rush
+objective obj_strength_ch1
+squad sq_dark_ritual
+encounter_handle specops_moon_anomaly
+squad sq_thrall_exploders_a1
+squad sq_knights_a
+squad sq_troopers_a
+squad sq_thrall_exploders_b1
+squad sq_thrall_exploders_b2
+squad sq_knights_b
+squad sq_troopers_b
+squad sq_minibosses
+squad sq_thrall_miniboss
+squad sq_troopers_c
+sequence seq_wave_announce1
+sequence seq_wave_announce3
+sequence seq_ogreroar_close
+hop_on ho_void_t01
+sequence seq_strength_music
 bool waves_complete = false
 
-startup thread sc_chamber_main:
+@startup()
+script sc_chamber_main():
     o_gate_intro.create()
     o_gate_swords.create()
     o_gate_selection.create()
@@ -50,7 +51,7 @@ startup thread sc_chamber_main:
     sleep(1)
     o_gate_rush.set_device_position(1)
 
-thread sc_ritual:
+script sc_ritual():
     sleep(6)
     sq_dark_ritual.set_task("0xE3CC09AD")
     sq_dark_ritual.place()
@@ -67,7 +68,7 @@ thread sc_ritual:
     set_anomaly(0.5)
     specops_moon_anomaly.ofi_anomaly_wizard_cast.clear()
 
-thread sc_waves:
+script sc_waves():
     o_gate_intro.set_device_position(0)
     pt_gate.reset()
     sleep(7)
@@ -112,7 +113,7 @@ thread sc_waves:
     seq_strength_music.set_switch_mask(127)
     waves_complete = true
 
-thread sc_shard:
+script sc_shard():
     sleep(1)
     set_anomaly(1)
     sleep(5)

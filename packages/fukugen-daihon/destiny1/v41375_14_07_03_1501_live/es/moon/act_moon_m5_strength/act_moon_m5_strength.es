@@ -44,6 +44,7 @@ act_moon_m5_strength_mission6 phase_strength_start
 act_moon_m5_strength_mission7 phase_4_strength
 act_moon_m5_strength_mission8 phase_strength_complete
 
-startup thread ss_moon_m5_strength:
+@startup()
+script ss_moon_m5_strength():
     print("script startup")
     c_lifetime_script_utilities.get_lifetime_sensor().set_state(e_activity_lifetime_state.pregame)

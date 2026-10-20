@@ -3,7 +3,7 @@ enum e_submachine_gun_type:
     count
 
 struct s_submachine_gun : s_submachine_gun_constants:
-    unknown_80802AA8 trigger_behavior  # true name unknown
+    e_trigger_behavior trigger_behavior
     real fire_mode
     real minimum_respawn_rounds
     real rate_of_fire

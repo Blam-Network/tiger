@@ -9,16 +9,16 @@
 # took 62 s there, so a nag for a slow player may exist that we never saw.
 
 countdown_objective pf_vex_node01
-c_sequence_host md_vn07_010_25
-c_sequence_host md_vn07_010_30
-c_sequence_host md_vn07_010_40
-c_sequence_host md_vn07_010_50
+sequence md_vn07_010_25
+sequence md_vn07_010_30
+sequence md_vn07_010_40
+sequence md_vn07_010_50
 
-thread init: pass
+script init(): pass
 
-thread complete: pass
+script complete(): pass
 
-thread main:
+script main():
     sleep_until(c_player_script_utilities.all_players_are_ready())
     c_lifetime_script_utilities.get_lifetime_sensor().set_state(e_activity_lifetime_state.active)
     sleep(2)

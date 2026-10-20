@@ -3,23 +3,23 @@
 # Mission 6, the hangar: "Find the Ship", then "Clear Out the Fallen".
 # The objective clears a few seconds after the last Fallen dies.
 
-c_sequence_host seq_d_o5_10  # true name unknown
+sequence seq_d_o5_10
 trigger_volume_objective obj_m0_m04a
 generic_objective obj_m0_m04b
-c_nav_point_host ap_obj_m0_m04b  # true name unknown
-c_player_trigger_sensor_host pt_fallen_backup  # true name unknown
-c_squad_sensor_host sq_m0_fallen_gating
-c_squad_sensor_host sq_ch1_fallen_on_playership_1
-c_squad_sensor_host sq_ch1_fallen_on_playership_2
-c_squad_sensor_host sq_ch1_fallen_on_playership_3
-c_squad_sensor_host sq_m0_fallen_1
-c_squad_sensor_host sq_m0_fallen_2
+nav_point ap_obj_m0_m04b
+player_trigger pt_fallen_backup
+squad sq_m0_fallen_gating
+squad sq_ch1_fallen_on_playership_1
+squad sq_ch1_fallen_on_playership_2
+squad sq_ch1_fallen_on_playership_3
+squad sq_m0_fallen_1
+squad sq_m0_fallen_2
 
-thread init: pass
+script init(): pass
 
-thread complete: pass
+script complete(): pass
 
-thread main:
+script main():
     seq_d_o5_10.start()
     sleep(3)
     obj_m0_m04a.objective_begin()

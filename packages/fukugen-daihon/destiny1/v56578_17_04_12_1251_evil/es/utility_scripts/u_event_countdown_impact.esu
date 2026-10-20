@@ -4,11 +4,11 @@
 # sequences, played together from the moment the satellite lands until the
 # event's timer starts. Not in the alpha, whose countdown has no impact.
 
-c_sequence_host seq_warsat_invis_impact1
-c_sequence_host seq_warsat_invis_impact2
-c_sequence_host seq_warsat_invis_impact3
-c_sequence_host seq_warsat_invis_impact4
-c_sequence_host seq_warsat_invis_impact5
+sequence seq_warsat_invis_impact1
+sequence seq_warsat_invis_impact2
+sequence seq_warsat_invis_impact3
+sequence seq_warsat_invis_impact4
+sequence seq_warsat_invis_impact5
 
 def impacts():
     return [seq_warsat_invis_impact1, seq_warsat_invis_impact2, seq_warsat_invis_impact3, seq_warsat_invis_impact4, seq_warsat_invis_impact5]

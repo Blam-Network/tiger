@@ -8,9 +8,10 @@
 @activity("city_tower_default1", "city_tower_iron_banner", "city_tower_queen")
 @start_slice("plaza")
 
-c_fireteam_sensor_host host
+fireteam host
 
-startup thread sc_main_thread:
+@startup()
+script sc_main_thread():
     while not host.t30_hack_bind_host():
         print("waiting for a fireteam to join")
         sleep(1)

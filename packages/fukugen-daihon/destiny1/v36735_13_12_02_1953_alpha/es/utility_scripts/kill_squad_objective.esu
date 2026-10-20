@@ -1,10 +1,10 @@
-c_player_objective_sensor_host _player_objective
-c_sequence_host _incoming_sequence  # true name unknown
-c_sequence_host _completion_sequence  # true name unknown
-c_nav_point_host _nav_point  # true name unknown
-c_encounter_binding_host _squad  # true name unknown
-c_activity_flag _activity_flag  # true name unknown
-c_kill_incident_listener _incident_listener  # true name unknown
+player_objective _player_objective
+sequence _incoming_sequence
+sequence _completion_sequence
+nav_point _nav_point
+encounter_binding _squad
+activity_flag _activity_flag
+kill_incident_listener _incident_listener
 string_hash _identifier
 string_hash _any_kill_hash = "any_kill"
 int _count
@@ -47,7 +47,7 @@ def objective_begin_silent():
     _incident_listener.bind_incident_name_hash(_any_kill_hash)
     _activity_flag.activate()
 
-thread progress_watcher:
+script progress_watcher():
     while _player_objective.is_active() and not _player_objective.progress_is_complete():
         _player_objective.progress_update(_incident_listener.get_count())
         sleep(1)

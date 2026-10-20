@@ -4,13 +4,13 @@
 # The activity flag it raises is what lets the player use the console, so
 # don't drop it.
 
-c_encounter_binding_host _object  # true name unknown
+encounter_binding _object
 bool _complete
-c_player_objective_sensor_host _player_objective
-c_sequence_host _incoming_sequence  # true name unknown
-c_nav_point_host _nav_point  # true name unknown
-c_activity_flag _activity_flag  # true name unknown
-c_sequence_host _completion_sequence  # true name unknown
+player_objective _player_objective
+sequence _incoming_sequence
+nav_point _nav_point
+activity_flag _activity_flag
+sequence _completion_sequence
 
 def import_only_bind(identifier):
     return _object.import_only_bind_object(identifier)

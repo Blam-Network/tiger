@@ -46,7 +46,7 @@ describe("stand-in lines", () => {
       "int a", // 3
       "", // 4
       "@member_counts({dreg: 2})", // 5
-      "c_squad_sensor_host sq", // 6
+      "squad sq", // 6
     ].join("\n");
     expect(standInLines(source)).toEqual([1, 2, 5]);
   });
@@ -54,7 +54,7 @@ describe("stand-in lines", () => {
   it("leave a line that shares a decorator with code in the count", () => {
     const source = [
       '@activity_bundle("enc_x")', // 1
-      "@member_counts({dreg: 2}) c_squad_sensor_host sq", // 2
+      "@member_counts({dreg: 2}) squad sq", // 2
       "int a", // 3
     ].join("\n");
     expect(standInLines(source)).toEqual([1]);
@@ -67,7 +67,7 @@ describe("stand-in lines", () => {
       "    dreg: 2,", // 3
       "    vandal: 1,", // 4
       "})", // 5
-      "c_squad_sensor_host sq", // 6
+      "squad sq", // 6
     ].join("\n");
     expect(standInLines(source)).toEqual([1, 2, 3, 4, 5]);
   });
@@ -82,14 +82,14 @@ describe("stand-in lines", () => {
       "# about the squad", // 6
       "# (two lines)", // 7
       "@member_counts({dreg: 2})", // 8
-      "c_squad_sensor_host sq", // 9
+      "squad sq", // 9
       "# about b", // 10
       "int b", // 11
       "", // 12
       "# not the decorator's", // 13
       "", // 14
       "@member_counts({dreg: 1})", // 15
-      "c_squad_sensor_host sq2", // 16
+      "squad sq2", // 16
     ].join("\n");
     expect(standInLines(source)).toEqual([3, 4, 6, 7, 8, 15]);
   });
@@ -114,7 +114,7 @@ describe("stand-in lines", () => {
 });
 
 describe("a chunk's lines without them", () => {
-  const BODY = "int a\n\nthread main:\n    a = 1\n    a = 2\n";
+  const BODY = "int a\n\nscript main():\n    a = 1\n    a = 2\n";
 
   it("do not move when decorators come or go", () => {
     const plain = lineInfo(BODY);
@@ -155,6 +155,28 @@ ${BODY}`)
     ).toEqual(
       lineInfo(`
 ${BODY}`)
+    );
+  });
+
+  it("do not move when a script starts with @startup()", () => {
+    const plain = lineInfo(BODY);
+    const startup = ["int a", "", "@startup()", "script main():", "    a = 1"];
+    expect(standInLines(startup.join("\n"))).toEqual([3]);
+    expect(lineInfo(`${startup.join("\n")}\n    a = 2\n`)).toEqual(plain);
+    // the schema keeps the file's line, and the flag
+    const member = compileOne(`${startup.join("\n")}\n`).schema.members.find(
+      (m) => m.name === "main"
+    );
+    expect(member).toMatchObject({ autostart: true, line: 4 });
+    // a comment directly above the decorator goes with it; one between the
+    // decorator and its script stays the script's
+    expect(
+      standInLines("int a\n\n# why\n@startup()\nscript main():\n    a = 1\n")
+    ).toEqual([3, 4]);
+    const between = "int a\n\n@startup()\n# why\nscript main():\n    a = 1\n";
+    expect(standInLines(between)).toEqual([3]);
+    expect(lineInfo(between)).toEqual(
+      lineInfo("int a\n\n# why\nscript main():\n    a = 1\n")
     );
   });
 

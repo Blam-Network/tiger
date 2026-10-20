@@ -1,11 +1,11 @@
-c_player_objective_sensor_host _player_objective
-c_sequence_host _incoming_sequence  # true name unknown
-c_sequence_host _completion_sequence  # true name unknown
-c_nav_point_host _nav_point  # true name unknown
+player_objective _player_objective
+sequence _incoming_sequence
+sequence _completion_sequence
+nav_point _nav_point
 bool _complete
-c_encounter_binding_host _object  # true name unknown
-c_activity_flag _activity_flag  # true name unknown
-c_capturable_incident_listener _incident_listener  # true name unknown
+encounter_binding _object
+activity_flag _activity_flag
+capturable_incident_listener _incident_listener
 
 
 

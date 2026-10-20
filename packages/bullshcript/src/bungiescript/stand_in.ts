@@ -1,7 +1,8 @@
 // Stand-in lines. A decorator (@activity_bundle, @member_counts, @activity and
-// the rest) writes down host-only data Bungie's source never held, so the line
-// it sits on is not a line of Bungie's script: the lines of a compiled chunk
-// are numbered as if the stand-in lines were absent (LANGUAGE.md, "Line
+// the rest) writes down host-only data Bungie's source never held, or, for
+// @startup, a flag whose spelling in Bungie's source we do not know, so the
+// line it sits on is not a line of Bungie's script: the lines of a compiled
+// chunk are numbered as if the stand-in lines were absent (LANGUAGE.md, "Line
 // numbers"). Source positions, diagnostics included, stay the file's real
 // lines.
 
@@ -21,7 +22,7 @@ const NOT_CODE = new Set<BsTokenKind>(["dedent", "eof", "indent", "newline"]);
 // above such a line, which are the decorator's own. A blank line, or a
 // comment with a blank line between it and the decorator, is the script's
 // and counts. A decorator sharing its line with code (`@member_counts(...)
-// c_squad_sensor_host sq`) leaves the line, which holds code, in the count.
+// squad sq`) leaves the line, which holds code, in the count.
 export function standInLinesOf(
   source: string,
   tokens: readonly BsToken[],

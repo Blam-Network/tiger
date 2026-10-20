@@ -4,16 +4,16 @@
 # twice on the way, off the hall encounter's triggers; in the capture the
 # objective cleared at the second roar, not at its own volume.
 
-c_encounter_handle enc_uppercitadel_portal2
+encounter_handle enc_uppercitadel_portal2
 trigger_volume_objective pf_tv_lowercitadel_entrance
-c_sequence_host moon_portal2_ogreroar01
-c_sequence_host moon_portal2_ogreroar02
+sequence moon_portal2_ogreroar01
+sequence moon_portal2_ogreroar02
 
-thread init: pass
+script init(): pass
 
-thread complete: pass
+script complete(): pass
 
-thread main:
+script main():
     enc = enc_uppercitadel_portal2
     pf_tv_lowercitadel_entrance.objective_begin()
     sleep_until(enc.pt_ogreroar01.is_triggered())

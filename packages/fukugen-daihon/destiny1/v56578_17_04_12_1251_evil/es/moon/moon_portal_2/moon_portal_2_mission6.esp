@@ -3,11 +3,11 @@
 # Mission 6, the end of the strike: a beat after Phogoth dies the strike
 # completes, the results show, then the activity ends.
 
-thread init: pass
+script init(): pass
 
-thread complete:
+script complete():
     c_lifetime_script_utilities.get_lifetime_sensor().end_game(30)
 
-thread main:
+script main():
     sleep(9)
     set_activity_complete()

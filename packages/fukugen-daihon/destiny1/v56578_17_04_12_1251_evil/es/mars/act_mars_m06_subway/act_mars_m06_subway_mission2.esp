@@ -9,11 +9,11 @@
 interactable_objective pf_objective_battleground_interact bind("0x1A58BFCD")
 interactable_placement pf_placement_m06_interact bind("0x1A58BFCD")
 
-thread init: pass
+script init(): pass
 
-thread complete: pass
+script complete(): pass
 
-thread main:
+script main():
     pf_objective_battleground_interact.objective_begin()
     sleep_until(pf_objective_battleground_interact.is_complete())
     pf_objective_battleground_interact.objective_end_silent()

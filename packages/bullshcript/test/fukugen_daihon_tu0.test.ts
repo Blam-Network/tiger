@@ -138,7 +138,7 @@ describe("TU0 BungieScript sources", () => {
       },
       {
         path: "es/x/x.es",
-        text: '@activity_bundle("x")\nstartup thread main:\n    pass\n',
+        text: '@activity_bundle("x")\n@startup()\nscript main():\n    pass\n',
       },
     ];
     const result = compileScriptFiles(files);

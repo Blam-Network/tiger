@@ -1,9 +1,9 @@
 @activity_bundle("enc_vex_complex_amb1")
 
 u_globals utils
-c_objective_sensor_host obj_complex_amb1  # true name unknown
+objective obj_complex_amb1
 u_event_world_controller event_controller
-c_encounter_manager encounters  # true name unknown
+encounter_manager encounters
 @member_counts({_squad: [{minotaur: 1, goblins: 2}, {goblins: 3}]})
 simple_encounter simple_south
 @member_counts({_squad: [{minotaur: 2}, {goblins: 3}, {goblins: 3}]})
@@ -16,11 +16,11 @@ simple_encounter simple_bridge
 interactable_placement pf_crows_beacon bind("crows_beacon")
 @member_counts({minotaur_major: 1})
 @objective(obj_complex_amb1)
-c_squad_sensor_host sq_bridge_guardian01
+squad sq_bridge_guardian01
 @member_counts({minotaur_major: 1})
 @objective(obj_complex_amb1)
-c_squad_sensor_host sq_bridge_guardian02
-c_squad_group_sensor_host sqg_bridge_guardians  # true name unknown
+squad sq_bridge_guardian02
+squad_group sqg_bridge_guardians
 loot_complex loot_venus_complex_1
 
 
@@ -34,7 +34,8 @@ loot_complex loot_venus_complex_1
 
 
 
-startup thread sc_main_thread:
+@startup()
+script sc_main_thread():
 
     sleep(3)
     print("---------------------------------------------------------")
@@ -46,7 +47,8 @@ startup thread sc_main_thread:
 
     sc_bridge_guardians.wake()
 
-startup thread ss_encounter_controller_thread:
+@startup()
+script ss_encounter_controller_thread():
 
     encounters.actor_budget = 25
 
@@ -60,7 +62,8 @@ startup thread ss_encounter_controller_thread:
 
 
 
-startup thread ss_event_thread:
+@startup()
+script ss_event_thread():
 
     sleep(mathlib.random_int_inclusive(40, 90))
 
@@ -69,7 +72,7 @@ startup thread ss_event_thread:
 
 
 
-thread sc_bridge_guardians:
+script sc_bridge_guardians():
 
     sq_bridge_guardian01.place()
     sq_bridge_guardian02.place()

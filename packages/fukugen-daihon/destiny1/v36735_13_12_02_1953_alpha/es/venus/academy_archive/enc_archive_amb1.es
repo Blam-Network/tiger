@@ -2,34 +2,34 @@
 
 @member_counts({shanks: 5})
 @objective(obj_archive_amb1)
-c_squad_sensor_host sq_downstairs_shanks
+squad sq_downstairs_shanks
 @member_counts({dregs: 4})
 @objective(obj_archive_amb1)
-c_squad_sensor_host sq_downstairs_melee
+squad sq_downstairs_melee
 @member_counts({dregs: 3, vandal: 1})
 @objective(obj_archive_amb1)
-c_squad_sensor_host sq_downstairs01
+squad sq_downstairs01
 @member_counts({dregs: 3, vandal: 1})
 @objective(obj_archive_amb1)
-c_squad_sensor_host sq_downstairs02
+squad sq_downstairs02
 @member_counts({dregs: 4})
 @objective(obj_archive_amb1)
-c_squad_sensor_host sq_back_mc
+squad sq_back_mc
 @member_counts({captain: 1})
 @objective(obj_archive_amb1)
-c_squad_sensor_host sq_anchor_vault01
+squad sq_anchor_vault01
 @member_counts({captain: 1})
 @objective(obj_archive_amb1)
-c_squad_sensor_host sq_anchor_vault02
+squad sq_anchor_vault02
 @member_counts({sniper: 1})
 @objective(obj_archive_amb1)
-c_squad_sensor_host sq_upper_sniper
+squad sq_upper_sniper
 @member_counts({sniper: 1})
 @objective(obj_archive_amb1)
-c_squad_sensor_host sq_sniper03
-c_squad_group_sensor_host sqg_downstairs  # true name unknown
-c_squad_group_sensor_host sqg_upstairs  # true name unknown
-c_squad_group_sensor_host sqg_anchor_vault  # true name unknown
+squad sq_sniper03
+squad_group sqg_downstairs
+squad_group sqg_upstairs
+squad_group sqg_anchor_vault
 @task("sniper01", squad: sq_upper_sniper)
 @task("downstairs_shanks", squad: sq_downstairs_shanks)
 @task(0xC20573BC, condition: can_advance)
@@ -39,13 +39,13 @@ c_squad_group_sensor_host sqg_anchor_vault  # true name unknown
 @task("anchor_vault", squad: sqg_anchor_vault)
 @task("back_mc", squad: sq_back_mc)
 @task("downstairs", squad: sqg_downstairs)
-c_objective_sensor_host obj_archive_amb1  # true name unknown
-c_trigger_volume_slot_host tv_archive01
-c_trigger_volume_slot_host tv_back_mc01
-c_trigger_volume_slot_host tv_back_mc02
-c_player_trigger_sensor_host pt_archive01 bind(tv_archive01)  # true name unknown
-c_player_trigger_sensor_host pt_back_mc01 bind(tv_back_mc01)  # true name unknown
-c_player_trigger_sensor_host pt_back_mc02 bind(tv_back_mc02)  # true name unknown
+objective obj_archive_amb1
+trigger_volume tv_archive01
+trigger_volume tv_back_mc01
+trigger_volume tv_back_mc02
+player_trigger pt_archive01 bind(tv_archive01)
+player_trigger pt_back_mc01 bind(tv_back_mc01)
+player_trigger pt_back_mc02 bind(tv_back_mc02)
 bool can_advance
 loot_archive loot_venus_archive
 
@@ -58,7 +58,8 @@ loot_archive loot_venus_archive
 
 
 
-startup thread ss_main_thread:
+@startup()
+script ss_main_thread():
 
     print("---------------------------------------------------------")
     print("ACADEMY ARCHIVE ENCOUNTER AMBIENT")
@@ -75,7 +76,7 @@ startup thread ss_main_thread:
     sc_init_squads.wake()
     sc_back_mc.wake()
 
-thread sc_init_squads:
+script sc_init_squads():
 
     sqg_anchor_vault.respawn()
     sq_upper_sniper.respawn()
@@ -86,7 +87,7 @@ thread sc_init_squads:
     sq_downstairs01.respawn()
     sq_downstairs02.respawn()
 
-thread sc_back_mc:
+script sc_back_mc():
 
     sleep_until(pt_back_mc01.is_triggered() or pt_back_mc02.is_triggered())
     sq_back_mc.respawn()

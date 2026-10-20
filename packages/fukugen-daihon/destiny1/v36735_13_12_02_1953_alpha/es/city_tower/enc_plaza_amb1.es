@@ -2,101 +2,101 @@
 
 bool debug_plaza
 @member_counts({vendor1: 1, vendor2: 1})
-c_squad_sensor_host sq_plaza_vendor_postmaster
+squad sq_plaza_vendor_postmaster
 @member_counts({vendor1: 1})
-c_squad_sensor_host sq_plaza_vendor_crm
+squad sq_plaza_vendor_crm
 @member_counts({vendor1: 1})
-c_squad_sensor_host sq_plaza_vendor_pvp
+squad sq_plaza_vendor_pvp
 @member_counts({vendor1: 1})
-c_squad_sensor_host sq_plaza_vendor_pve
+squad sq_plaza_vendor_pve
 @member_counts({vendor1: 1})
-c_squad_sensor_host sq_plaza_vendor_cryptarch
+squad sq_plaza_vendor_cryptarch
 @member_counts({vendor1: 1})
-c_squad_sensor_host sq_plaza_vendor_tournament
+squad sq_plaza_vendor_tournament
 @member_counts({vendor1: 1})
-c_squad_sensor_host sq_plaza_vendor_vanguard
+squad sq_plaza_vendor_vanguard
 @member_counts({guard1: 1, guard2: 1})
-c_squad_sensor_host sq_plaza_droid_guard1
+squad sq_plaza_droid_guard1
 @member_counts({guard1: 1, guard2: 1})
-c_squad_sensor_host sq_plaza_droid_guard2
+squad sq_plaza_droid_guard2
 @member_counts({guard1: 1, guard2: 1})
-c_squad_sensor_host sq_plaza_droid_guard3
+squad sq_plaza_droid_guard3
 @member_counts({guard1: 1, guard2: 1})
-c_squad_sensor_host sq_plaza_droid_guard4
+squad sq_plaza_droid_guard4
 @member_counts({guard1: 1})
-c_squad_sensor_host sq_plaza_droid_guard5
+squad sq_plaza_droid_guard5
 @member_counts({guard1: 0, guard2: 0, guard3: 0, guard4: 0})
-c_squad_sensor_host sq_plaza_droid_patrol1
+squad sq_plaza_droid_patrol1
 @member_counts({guard1: 0, guard2: 0, guard3: 0})
-c_squad_sensor_host sq_plaza_droid_patrol2
+squad sq_plaza_droid_patrol2
 @member_counts({guard1: 0, guard2: 0, guard3: 0, guard4: 0, guard5: 0, guard6: 0})
-c_squad_sensor_host sq_plaza_droid_patrol3
+squad sq_plaza_droid_patrol3
 @member_counts({sweeper1: 0, scrubber1: 0})
-c_squad_sensor_host sq_plaza_droid_cleaners1
+squad sq_plaza_droid_cleaners1
 @member_counts({talker1: 0, talker2: 0, listener1: 0})
-c_squad_sensor_host sq_plaza_civ_talkers1
+squad sq_plaza_civ_talkers1
 @member_counts({talker1: 0, talker2: 0, listener1: 0})
-c_squad_sensor_host sq_plaza_civ_talkers2
+squad sq_plaza_civ_talkers2
 @member_counts({talker1: 0, talker2: 0})
-c_squad_sensor_host sq_plaza_civ_talkers3
+squad sq_plaza_civ_talkers3
 @member_counts({talker1: 0, talker2: 0})
-c_squad_sensor_host sq_plaza_civ_talkers4
+squad sq_plaza_civ_talkers4
 @member_counts({talker1: 0, talker2: 0})
-c_squad_sensor_host sq_plaza_civ_talkers5
+squad sq_plaza_civ_talkers5
 @member_counts({talker1: 0, talker2: 0, listener1: 0})
-c_squad_sensor_host sq_plaza_civ_talkers6
+squad sq_plaza_civ_talkers6
 @member_counts({sitter1: 1})
-c_squad_sensor_host sq_plaza_civ_sitters1
-c_squad_member_sensor_host sq_plaza_droid_cleaners1__sweeper1  # true name unknown
-c_squad_member_sensor_host sq_plaza_droid_cleaners1__scrubber1  # true name unknown
-c_squad_member_sensor_host sq_plaza_droid_patrol1__guard1  # true name unknown
-c_squad_member_sensor_host sq_plaza_droid_patrol1__guard2  # true name unknown
-c_squad_member_sensor_host sq_plaza_droid_patrol1__guard3  # true name unknown
-c_squad_member_sensor_host sq_plaza_droid_patrol1__guard4  # true name unknown
-c_squad_member_sensor_host sq_plaza_droid_patrol2__guard1  # true name unknown
-c_squad_member_sensor_host sq_plaza_droid_patrol2__guard2  # true name unknown
-c_squad_member_sensor_host sq_plaza_droid_patrol2__guard3  # true name unknown
-c_squad_member_sensor_host sq_plaza_droid_patrol3__guard1  # true name unknown
-c_squad_member_sensor_host sq_plaza_droid_patrol3__guard2  # true name unknown
-c_squad_member_sensor_host sq_plaza_droid_patrol3__guard3  # true name unknown
-c_squad_member_sensor_host sq_plaza_droid_patrol3__guard4  # true name unknown
-c_squad_member_sensor_host sq_plaza_droid_patrol3__guard5  # true name unknown
-c_squad_member_sensor_host sq_plaza_droid_patrol3__guard6  # true name unknown
-c_squad_member_sensor_host sq_plaza_civ_talkers1__talker1  # true name unknown
-c_squad_member_sensor_host sq_plaza_civ_talkers1__talker2  # true name unknown
-c_squad_member_sensor_host sq_plaza_civ_talkers1__listener1  # true name unknown
-c_squad_member_sensor_host sq_plaza_civ_talkers2__talker1  # true name unknown
-c_squad_member_sensor_host sq_plaza_civ_talkers2__talker2  # true name unknown
-c_squad_member_sensor_host sq_plaza_civ_talkers2__listener1  # true name unknown
-c_squad_member_sensor_host sq_plaza_civ_talkers3__talker1  # true name unknown
-c_squad_member_sensor_host sq_plaza_civ_talkers3__talker2  # true name unknown
-c_squad_member_sensor_host sq_plaza_civ_talkers4__talker1  # true name unknown
-c_squad_member_sensor_host sq_plaza_civ_talkers4__talker2  # true name unknown
-c_squad_member_sensor_host sq_plaza_civ_talkers5__talker1  # true name unknown
-c_squad_member_sensor_host sq_plaza_civ_talkers5__talker2  # true name unknown
-c_squad_member_sensor_host sq_plaza_civ_talkers6__talker1  # true name unknown
-c_squad_member_sensor_host sq_plaza_civ_talkers6__talker2  # true name unknown
-c_squad_member_sensor_host sq_plaza_civ_talkers6__listener1  # true name unknown
-c_control_point_set_sensor_host cps_plaza_droid_patrol1_guard1  # true name unknown
-c_control_point_set_sensor_host cps_plaza_droid_patrol1_guard2  # true name unknown
-c_control_point_set_sensor_host cps_plaza_droid_patrol1_guard3  # true name unknown
-c_control_point_set_sensor_host cps_plaza_droid_patrol1_guard4  # true name unknown
-c_control_point_set_sensor_host cps_plaza_droid_patrol2_guard1  # true name unknown
-c_control_point_set_sensor_host cps_plaza_droid_patrol2_guard2  # true name unknown
-c_control_point_set_sensor_host cps_plaza_droid_patrol2_guard3  # true name unknown
-c_control_point_set_sensor_host cps_plaza_droid_patrol3_guard1  # true name unknown
-c_control_point_set_sensor_host cps_plaza_droid_patrol3_guard2  # true name unknown
-c_control_point_set_sensor_host cps_plaza_droid_patrol3_guard3  # true name unknown
-c_control_point_set_sensor_host cps_plaza_droid_patrol3_guard4  # true name unknown
-c_control_point_set_sensor_host cps_plaza_droid_patrol3_guard5  # true name unknown
-c_control_point_set_sensor_host cps_plaza_droid_patrol3_guard6  # true name unknown
-c_object_sensor_host object_ball0
-c_object_sensor_host object_balloon0
-c_trigger_volume_slot_host tv_ball_safe_zone
-c_safe_zone_sensor_host om_ball_safe_zone bind(tv_ball_safe_zone)  # true name unknown
-c_safe_zone_sensor_host om_balloon_safe_zone bind(tv_ball_safe_zone)  # true name unknown
-c_object_filter_sensor_host ball_filter
-c_object_filter_sensor_host balloon_filter
+squad sq_plaza_civ_sitters1
+squad_member sq_plaza_droid_cleaners1__sweeper1
+squad_member sq_plaza_droid_cleaners1__scrubber1
+squad_member sq_plaza_droid_patrol1__guard1
+squad_member sq_plaza_droid_patrol1__guard2
+squad_member sq_plaza_droid_patrol1__guard3
+squad_member sq_plaza_droid_patrol1__guard4
+squad_member sq_plaza_droid_patrol2__guard1
+squad_member sq_plaza_droid_patrol2__guard2
+squad_member sq_plaza_droid_patrol2__guard3
+squad_member sq_plaza_droid_patrol3__guard1
+squad_member sq_plaza_droid_patrol3__guard2
+squad_member sq_plaza_droid_patrol3__guard3
+squad_member sq_plaza_droid_patrol3__guard4
+squad_member sq_plaza_droid_patrol3__guard5
+squad_member sq_plaza_droid_patrol3__guard6
+squad_member sq_plaza_civ_talkers1__talker1
+squad_member sq_plaza_civ_talkers1__talker2
+squad_member sq_plaza_civ_talkers1__listener1
+squad_member sq_plaza_civ_talkers2__talker1
+squad_member sq_plaza_civ_talkers2__talker2
+squad_member sq_plaza_civ_talkers2__listener1
+squad_member sq_plaza_civ_talkers3__talker1
+squad_member sq_plaza_civ_talkers3__talker2
+squad_member sq_plaza_civ_talkers4__talker1
+squad_member sq_plaza_civ_talkers4__talker2
+squad_member sq_plaza_civ_talkers5__talker1
+squad_member sq_plaza_civ_talkers5__talker2
+squad_member sq_plaza_civ_talkers6__talker1
+squad_member sq_plaza_civ_talkers6__talker2
+squad_member sq_plaza_civ_talkers6__listener1
+control_point_set cps_plaza_droid_patrol1_guard1
+control_point_set cps_plaza_droid_patrol1_guard2
+control_point_set cps_plaza_droid_patrol1_guard3
+control_point_set cps_plaza_droid_patrol1_guard4
+control_point_set cps_plaza_droid_patrol2_guard1
+control_point_set cps_plaza_droid_patrol2_guard2
+control_point_set cps_plaza_droid_patrol2_guard3
+control_point_set cps_plaza_droid_patrol3_guard1
+control_point_set cps_plaza_droid_patrol3_guard2
+control_point_set cps_plaza_droid_patrol3_guard3
+control_point_set cps_plaza_droid_patrol3_guard4
+control_point_set cps_plaza_droid_patrol3_guard5
+control_point_set cps_plaza_droid_patrol3_guard6
+object object_ball0
+object object_balloon0
+trigger_volume tv_ball_safe_zone
+safe_zone om_ball_safe_zone bind(tv_ball_safe_zone)
+safe_zone om_balloon_safe_zone bind(tv_ball_safe_zone)
+object_filter ball_filter
+object_filter balloon_filter
 
 
 
@@ -115,7 +115,8 @@ c_object_filter_sensor_host balloon_filter
 
 
 
-startup thread sc_main_plaza_thread:
+@startup()
+script sc_main_plaza_thread():
 
 
     sc_plaza_vendor_postmasters.wake()
@@ -139,49 +140,49 @@ startup thread sc_main_plaza_thread:
 
 
 
-thread sc_plaza_vendor_postmasters:
+script sc_plaza_vendor_postmasters():
     if debug_plaza: print("sc_plaza_vendor_postmasters")
 
     sq_plaza_vendor_postmaster.place()
     sq_plaza_vendor_postmaster.activate_temperament("temper_tower_vendor")
 
 
-thread sc_plaza_vendor_crm:
+script sc_plaza_vendor_crm():
     if debug_plaza: print("sc_plaza_vendor_crm")
 
     sq_plaza_vendor_crm.place()
     sq_plaza_vendor_crm.activate_temperament("temper_tower_guard")
 
 
-thread sc_plaza_vendor_cryptarch:
+script sc_plaza_vendor_cryptarch():
     if debug_plaza: print("sc_plaza_vendor_cryptarch")
 
     sq_plaza_vendor_cryptarch.place()
     sq_plaza_vendor_cryptarch.activate_temperament("temper_tower_guard")
 
 
-thread sc_plaza_vendor_pve:
+script sc_plaza_vendor_pve():
     if debug_plaza: print("sc_plaza_vendor_pve")
 
     sq_plaza_vendor_pve.place()
     sq_plaza_vendor_pve.activate_temperament("temper_tower_vendor")
 
 
-thread sc_plaza_vendor_pvp:
+script sc_plaza_vendor_pvp():
     if debug_plaza: print("sc_plaza_vendor_pvp")
 
     sq_plaza_vendor_pvp.place()
     sq_plaza_vendor_pvp.activate_temperament("temper_tower_vendor")
 
 
-thread sc_plaza_vendor_tournament:
+script sc_plaza_vendor_tournament():
     if debug_plaza: print("sc_plaza_vendor_tournament")
 
     sq_plaza_vendor_tournament.place()
     sq_plaza_vendor_tournament.activate_temperament("temper_tower_vendor")
 
 
-thread sc_plaza_vendor_vanguard:
+script sc_plaza_vendor_vanguard():
     if debug_plaza: print("sc_plaza_vendor_vanguard")
 
     sq_plaza_vendor_vanguard.place()
@@ -190,7 +191,7 @@ thread sc_plaza_vendor_vanguard:
 
 
 
-thread sc_plaza_droid_cleaners:
+script sc_plaza_droid_cleaners():
     if debug_plaza:
         print("sc_plaza_droid_cleaners")
 
@@ -200,7 +201,7 @@ thread sc_plaza_droid_cleaners:
     sq_plaza_droid_cleaners1__scrubber1.activate_temperament("temper_tower_scrubbrush")
 
 
-thread sc_plaza_droid_guards:
+script sc_plaza_droid_guards():
     if debug_plaza:
         print("sc_plaza_droid_guards")
 
@@ -217,7 +218,7 @@ thread sc_plaza_droid_guards:
     sq_plaza_droid_guard5.activate_temperament("temper_tower_guard")
 
 
-thread sc_plaza_droid_patrols:
+script sc_plaza_droid_patrols():
 
     sc_plaza_droid_patrol1_guard1.wake()
     sc_plaza_droid_patrol1_guard2.wake()
@@ -238,7 +239,7 @@ thread sc_plaza_droid_patrols:
     sc_plaza_droid_patrol3_guard6.wake()
 
 
-thread sc_plaza_droid_patrol1_guard1:
+script sc_plaza_droid_patrol1_guard1():
     if debug_plaza:
         print("sc_plaza_droid_patrol1_guard1")
 
@@ -250,7 +251,7 @@ thread sc_plaza_droid_patrol1_guard1:
         sq_plaza_droid_patrol1__guard1.execute(cps_plaza_droid_patrol1_guard1); sleep_until(sq_plaza_droid_patrol1__guard1.get_command_script_state() != e_command_script_state.executing)
 
 
-thread sc_plaza_droid_patrol1_guard2:
+script sc_plaza_droid_patrol1_guard2():
     if debug_plaza:
         print("sc_plaza_droid_patrol1_guard2")
 
@@ -267,7 +268,7 @@ thread sc_plaza_droid_patrol1_guard2:
 
 
 
-thread sc_plaza_droid_patrol1_guard3:
+script sc_plaza_droid_patrol1_guard3():
     if debug_plaza:
         print("sc_plaza_droid_patrol1_guard3")
 
@@ -284,7 +285,7 @@ thread sc_plaza_droid_patrol1_guard3:
 
 
 
-thread sc_plaza_droid_patrol1_guard4:
+script sc_plaza_droid_patrol1_guard4():
     if debug_plaza:
         print("sc_plaza_droid_patrol1_guard4")
 
@@ -296,7 +297,7 @@ thread sc_plaza_droid_patrol1_guard4:
         sq_plaza_droid_patrol1__guard4.execute(cps_plaza_droid_patrol1_guard4); sleep_until(sq_plaza_droid_patrol1__guard4.get_command_script_state() != e_command_script_state.executing)
 
 
-thread sc_plaza_droid_patrol2_guard1:
+script sc_plaza_droid_patrol2_guard1():
     if debug_plaza:
         print("sc_plaza_droid_patrol2_guard1")
 
@@ -313,7 +314,7 @@ thread sc_plaza_droid_patrol2_guard1:
 
 
 
-thread sc_plaza_droid_patrol2_guard2:
+script sc_plaza_droid_patrol2_guard2():
     if debug_plaza:
         print("sc_plaza_droid_patrol2_guard2")
 
@@ -330,7 +331,7 @@ thread sc_plaza_droid_patrol2_guard2:
 
 
 
-thread sc_plaza_droid_patrol2_guard3:
+script sc_plaza_droid_patrol2_guard3():
     if debug_plaza:
         print("sc_plaza_droid_patrol2_guard3")
 
@@ -342,7 +343,7 @@ thread sc_plaza_droid_patrol2_guard3:
         sq_plaza_droid_patrol2__guard3.execute(cps_plaza_droid_patrol2_guard3); sleep_until(sq_plaza_droid_patrol2__guard3.get_command_script_state() != e_command_script_state.executing)
 
 
-thread sc_plaza_droid_patrol3_guard1:
+script sc_plaza_droid_patrol3_guard1():
     if debug_plaza:
         print("sc_plaza_droid_patrol3_guard1")
 
@@ -359,7 +360,7 @@ thread sc_plaza_droid_patrol3_guard1:
 
 
 
-thread sc_plaza_droid_patrol3_guard2:
+script sc_plaza_droid_patrol3_guard2():
     if debug_plaza:
         print("sc_plaza_droid_patrol3_guard2")
 
@@ -371,7 +372,7 @@ thread sc_plaza_droid_patrol3_guard2:
         sq_plaza_droid_patrol3__guard2.execute(cps_plaza_droid_patrol3_guard2); sleep_until(sq_plaza_droid_patrol3__guard2.get_command_script_state() != e_command_script_state.executing)
 
 
-thread sc_plaza_droid_patrol3_guard3:
+script sc_plaza_droid_patrol3_guard3():
     if debug_plaza:
         print("sc_plaza_droid_patrol3_guard3")
 
@@ -383,7 +384,7 @@ thread sc_plaza_droid_patrol3_guard3:
         sq_plaza_droid_patrol3__guard3.execute(cps_plaza_droid_patrol3_guard3); sleep_until(sq_plaza_droid_patrol3__guard3.get_command_script_state() != e_command_script_state.executing)
 
 
-thread sc_plaza_droid_patrol3_guard4:
+script sc_plaza_droid_patrol3_guard4():
     if debug_plaza:
         print("sc_plaza_droid_patrol3_guard4")
 
@@ -400,7 +401,7 @@ thread sc_plaza_droid_patrol3_guard4:
 
 
 
-thread sc_plaza_droid_patrol3_guard5:
+script sc_plaza_droid_patrol3_guard5():
     if debug_plaza:
         print("sc_plaza_droid_patrol3_guard5")
 
@@ -417,7 +418,7 @@ thread sc_plaza_droid_patrol3_guard5:
 
 
 
-thread sc_plaza_droid_patrol3_guard6:
+script sc_plaza_droid_patrol3_guard6():
     if debug_plaza:
         print("sc_plaza_droid_patrol3_guard6")
 
@@ -429,7 +430,7 @@ thread sc_plaza_droid_patrol3_guard6:
         sq_plaza_droid_patrol3__guard6.execute(cps_plaza_droid_patrol3_guard6); sleep_until(sq_plaza_droid_patrol3__guard6.get_command_script_state() != e_command_script_state.executing)
 
 
-thread sc_plaza_civ_talkers:
+script sc_plaza_civ_talkers():
     if debug_plaza:
         print("sc_plaza_civ_talkers")
 
@@ -505,7 +506,7 @@ thread sc_plaza_civ_talkers:
 
 
 
-thread sc_ball_spawner:
+script sc_ball_spawner():
 
 
     ball_manager(object_ball0)
@@ -525,7 +526,7 @@ def ball_manager(ball):
     print("ball no longer inside monitor")
 
 
-thread sc_balloon_spawner:
+script sc_balloon_spawner():
 
 
     balloon_manager(object_balloon0)

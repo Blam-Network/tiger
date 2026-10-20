@@ -6,27 +6,27 @@
 # first climax trigger group is up for the phase.
 
 trigger_volume_objective pf_trigger_ascend
-c_trigger_group_host tg_mars_m5_climax_1_so
+trigger_group tg_mars_m5_climax_1_so
 generic_objective pf_gen_obj_clear
-c_nav_point_host ap_clear_obj
-c_sequence_host seq_d_o3_s03
-c_sequence_host seq_d_o3_s04
-c_sequence_host seq_d_o3_s06
-c_squad_sensor_host sq_bridge_a_a
-c_squad_sensor_host sq_bridge_a_b
-c_squad_sensor_host sq_bridge_b_a
-c_squad_sensor_host sq_bridge_b_b
-c_squad_sensor_host sq_bridge_b_c
-c_squad_sensor_host sq_lastline
-c_squad_sensor_host sq_lastline_top_a
-c_squad_sensor_host sq_preboss1
-c_squad_sensor_host sq_preboss2
+nav_point ap_clear_obj
+sequence seq_d_o3_s03
+sequence seq_d_o3_s04
+sequence seq_d_o3_s06
+squad sq_bridge_a_a
+squad sq_bridge_a_b
+squad sq_bridge_b_a
+squad sq_bridge_b_b
+squad sq_bridge_b_c
+squad sq_lastline
+squad sq_lastline_top_a
+squad sq_preboss1
+squad sq_preboss2
 
-thread init: pass
+script init(): pass
 
-thread complete: pass
+script complete(): pass
 
-thread main:
+script main():
     seq_d_o3_s03.start()
     seq_d_o3_s04.start()
     pf_trigger_ascend.objective_begin()

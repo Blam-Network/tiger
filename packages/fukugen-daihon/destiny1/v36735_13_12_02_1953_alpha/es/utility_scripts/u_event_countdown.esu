@@ -1,21 +1,21 @@
 u_event_globals event_globals
 u_event_countdown_preset pf_event_countdown_preset
-c_objective_sensor_host obj_event_enemy_enter  # true name unknown
-c_objective_sensor_host obj_event_enemy_exit  # true name unknown
-dynamic_array<c_squad_sensor_host> sq_event_countdown_wave
-c_object_sensor_host o_event_countdown_beacon
-c_object_sensor_host o_event_countdown_object_spawner
-c_object_sensor_host o_event_countdown_ghost_scan
-c_trigger_volume_slot_host tv_engagement_volume
-dynamic_array<c_object_sensor_host> o_warsat_cover
-static_array<c_device_host, 10> dev_warsat_cover
-c_capturable_host cz_event_countdown bind(o_event_countdown_object_spawner)
-c_player_monitor_sensor_host pm_event_countdown_sudden_death bind(o_event_countdown_object_spawner)  # true name unknown
-c_device_host dev_event_countdown_object bind(o_event_countdown_object_spawner)
-c_interactable_host int_event_countdown_object bind(o_event_countdown_object_spawner)  # true name unknown
-c_player_trigger_sensor_host pt_engagement_volume bind(tv_engagement_volume)  # true name unknown
-c_device_host dev_event_countdown_ghost bind(o_event_countdown_ghost_scan)
-c_squad_group_sensor_host sg_countdown_total  # true name unknown
+objective obj_event_enemy_enter
+objective obj_event_enemy_exit
+dynamic_array<squad> sq_event_countdown_wave
+object o_event_countdown_beacon
+object o_event_countdown_object_spawner
+object o_event_countdown_ghost_scan
+trigger_volume tv_engagement_volume
+dynamic_array<object> o_warsat_cover
+static_array<device, 10> dev_warsat_cover
+capturable cz_event_countdown bind(o_event_countdown_object_spawner)
+player_monitor pm_event_countdown_sudden_death bind(o_event_countdown_object_spawner)
+device dev_event_countdown_object bind(o_event_countdown_object_spawner)
+interactable int_event_countdown_object bind(o_event_countdown_object_spawner)
+player_trigger pt_engagement_volume bind(tv_engagement_volume)
+device dev_event_countdown_ghost bind(o_event_countdown_ghost_scan)
+squad_group sg_countdown_total
 bool b_event_initiated
 bool b_zone_enemy_timeout
 bool b_zone_enemy_max_timeout
@@ -66,7 +66,7 @@ def roll_countdown_event_timer():
 
 
 
-thread init:
+script init():
     sleep(30)
     main.restart()
 
@@ -79,7 +79,7 @@ thread init:
 
 
 
-thread main:
+script main():
     sq_current_countdown_wave_iterator = sq_event_countdown_wave[0]
 
 
@@ -219,7 +219,7 @@ def func_countdown_event_start(i_setup_timer):
 
     sc_seq_warsat_engage1.restart()
 
-thread sc_cover_creation:
+script sc_cover_creation():
     for i in range(len(o_warsat_cover)):
         o_warsat_cover[i].create()
         dev_warsat_cover[i].set_device_position(0)
@@ -329,7 +329,7 @@ def func_countdown_enemy_waves():
                 print("wave resetting to 1")
     return sq_current_countdown_wave_iterator
 
-thread sc_zone_enemy_timeout:
+script sc_zone_enemy_timeout():
     i_enemy_timeout = 30
 
     if g_i_wave_iterator == 1 or g_i_wave_iterator == 2:
@@ -342,13 +342,13 @@ thread sc_zone_enemy_timeout:
     sleep_until_timeout(1 == 0, i_enemy_timeout)
     b_zone_enemy_timeout = true
 
-thread sc_zone_enemy_max_timeout:
+script sc_zone_enemy_max_timeout():
     print("########## BOSS WAVE TIMEOUT")
     sleep_until_timeout(1 == 0, 90)
     b_zone_enemy_max_timeout = true
     print("########## BOSS WAVE HIT")
 
-thread pm_working:
+script pm_working():
     while true:
         print("pm working: ", func_in_zone())
         sleep(1)
@@ -399,7 +399,7 @@ def func_countdown_cleanup():
 
 
 
-thread complete:
+script complete():
 
     func_countdown_cleanup()
 
@@ -408,7 +408,7 @@ thread complete:
 
 
 
-thread sc_ghost_scan_start:
+script sc_ghost_scan_start():
     o_event_countdown_ghost_scan.create()
     dev_event_countdown_ghost.set_device_position(1)
     sleep(5)
@@ -419,7 +419,7 @@ thread sc_ghost_scan_start:
 
 
 
-thread sc_capture_dialogue:
+script sc_capture_dialogue():
     sleep_until(cz_event_countdown.get_capture_progress() >= 0.25 or pf_event_countdown_preset.po_event_countdown.timer_is_complete())
     if cz_event_countdown.get_capture_progress() >= 0.25:
         print("play 25% dialogue")
@@ -441,68 +441,68 @@ thread sc_capture_dialogue:
     else:
         print("timer ran out, bypassing 75% dialogue")
 
-thread sc_seq_warsat_start:
+script sc_seq_warsat_start():
     sleep_until(pf_event_countdown_preset.seq_warsat_engage1.is_done())
     sc_seq_warsat_music1.restart()
     sleep(1)
     pf_event_countdown_preset.seq_warsat_start.start()
 
 
-thread sc_seq_warsat_engage1:
+script sc_seq_warsat_engage1():
     sleep_until(pf_event_countdown_preset.pt_warsat_pre_engage.is_triggered() or b_event_initiated == true)
     if b_event_initiated == false:
         pf_event_countdown_preset.seq_warsat_engage1.start()
 
 
-thread sc_seq_warsat_engage2:
+script sc_seq_warsat_engage2():
     pf_event_countdown_preset.seq_warsat_engage2.start()
 
 
-thread sc_seq_warsat_25_progress:
+script sc_seq_warsat_25_progress():
     pf_event_countdown_preset.seq_warsat_25_progress.start()
 
 
-thread sc_seq_warsat_50_progress:
+script sc_seq_warsat_50_progress():
     pf_event_countdown_preset.seq_warsat_50_progress.start()
 
 
-thread sc_seq_warsat_75_progress:
+script sc_seq_warsat_75_progress():
     pf_event_countdown_preset.seq_warsat_75_progress.start()
 
 
-thread sc_seq_warsat_75_timeleft:
+script sc_seq_warsat_75_timeleft():
     pf_event_countdown_preset.seq_warsat_75_timeleft.start()
 
 
-thread sc_seq_warsat_50_timeleft:
+script sc_seq_warsat_50_timeleft():
     pf_event_countdown_preset.seq_warsat_50_timeleft.start()
 
 
-thread sc_seq_warsat_25_timeleft:
+script sc_seq_warsat_25_timeleft():
     pf_event_countdown_preset.seq_warsat_25_timeleft.start()
 
 
-thread sc_seq_warsat_end_gold:
+script sc_seq_warsat_end_gold():
     pf_event_countdown_preset.seq_warsat_end_gold.start()
 
 
-thread sc_seq_warsat_end_silver:
+script sc_seq_warsat_end_silver():
     pf_event_countdown_preset.seq_warsat_end_silver.start()
 
 
-thread sc_seq_warsat_end_bronze:
+script sc_seq_warsat_end_bronze():
     pf_event_countdown_preset.seq_warsat_end_bronze.start()
 
 
-thread sc_seq_warsat_music1:
+script sc_seq_warsat_music1():
     pf_event_countdown_preset.seq_warsat_music1.start()
 
 
-thread sc_seq_warsat_stop_music1:
+script sc_seq_warsat_stop_music1():
     pf_event_countdown_preset.seq_warsat_music1.stop()
 
 
-thread sc_seq_warsat_incoming:
+script sc_seq_warsat_incoming():
     pf_event_countdown_preset.seq_warsat_incoming.start()
 
 # Decompiled from 36735.13.12.02.1953.alpha script tags

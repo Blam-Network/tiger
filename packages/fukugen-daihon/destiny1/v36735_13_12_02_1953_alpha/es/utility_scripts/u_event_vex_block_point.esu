@@ -1,7 +1,7 @@
-c_squad_sensor_host sq_vex_cloud
-c_squad_member_sensor_host sq_vex_cloud__pilot  # true name unknown
+squad sq_vex_cloud
+squad_member sq_vex_cloud__pilot
 bool in_use
-c_objective_sensor_host obj_vex_target  # true name unknown
+objective obj_vex_target
 
 
 

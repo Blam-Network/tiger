@@ -6,17 +6,17 @@
 # clears.
 
 generic_objective pf_ascend_steps
-c_nav_point_host ap_northern_tides
-c_trigger_volume_slot_host tv_top_stairs
-c_player_trigger_sensor_host pt_top_stairs bind(tv_top_stairs)
-c_sequence_host venus_m07_music_cue2
-c_sequence_host md_vn07_020_100
+nav_point ap_northern_tides
+trigger_volume tv_top_stairs
+player_trigger pt_top_stairs bind(tv_top_stairs)
+sequence venus_m07_music_cue2
+sequence md_vn07_020_100
 
-thread init: pass
+script init(): pass
 
-thread complete: pass
+script complete(): pass
 
-thread main:
+script main():
     venus_m07_music_cue2.start()
     venus_m07_music_cue2.set_switch_mask(1)
     pf_ascend_steps.objective_begin(ap_northern_tides)

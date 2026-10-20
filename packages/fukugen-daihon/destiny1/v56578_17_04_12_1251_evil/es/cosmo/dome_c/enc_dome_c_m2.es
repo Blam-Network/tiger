@@ -10,52 +10,53 @@
 
 @activity_bundle("enc_dome_c_m2")
 
-c_objective_sensor_host obj_fallen_dome_c_m2_piperoom
-c_objective_sensor_host obj_fallen_dome_c_m2_guards
-c_object_sensor_host o_basement_door01
-c_player_trigger_sensor_host pt_fallen_guards_spawn01
-c_player_trigger_sensor_host pt_fallen_guards_spawn02
-c_sequence_host seq_fallen_wave_announce
+objective obj_fallen_dome_c_m2_piperoom
+objective obj_fallen_dome_c_m2_guards
+object o_basement_door01
+player_trigger pt_fallen_guards_spawn01
+player_trigger pt_fallen_guards_spawn02
+sequence seq_fallen_wave_announce
 interactable_placement obj_placement_m2_o3a bind("0x9DF3A02E")
 destructible_placement obj_placement_m2_o4b
 @member_counts({dreg: 2})
-c_squad_sensor_host sq_fallen_piperoom01a
+squad sq_fallen_piperoom01a
 @member_counts({dreg: 1})
-c_squad_sensor_host sq_fallen_piperoom01b
+squad sq_fallen_piperoom01b
 @member_counts({vandal: 1, vandal_1: 1})
-c_squad_sensor_host sq_fallen_piperoom02a
+squad sq_fallen_piperoom02a
 @member_counts({dreg: 2})
-c_squad_sensor_host sq_fallen_piperoom02b
+squad sq_fallen_piperoom02b
 @member_counts({dreg: 3, captain: 1})
-c_squad_sensor_host sq_fallen_piperoom_reinf01
+squad sq_fallen_piperoom_reinf01
 @member_counts({captain: 1, dreg: 2})
-c_squad_sensor_host sq_fallen_guards01
-c_squad_sensor_host sq_fallen_guards02a
-c_squad_sensor_host sq_fallen_guards02b
-c_squad_sensor_host sq_fallen_guards02c
-c_squad_sensor_host sq_fallen_guards02d
+squad sq_fallen_guards01
+squad sq_fallen_guards02a
+squad sq_fallen_guards02b
+squad sq_fallen_guards02c
+squad sq_fallen_guards02d
 @member_counts({dreg: 4})
-c_squad_sensor_host sq_fallen_wave01a
+squad sq_fallen_wave01a
 @member_counts({vandal: 2})
-c_squad_sensor_host sq_fallen_wave01b
+squad sq_fallen_wave01b
 @member_counts({dreg: 3, 0xFD2174CD: 1})
-c_squad_sensor_host sq_fallen_wave01c
+squad sq_fallen_wave01c
 @member_counts({dreg: 4, captain: 1})
-c_squad_sensor_host sq_fallen_wave02a
+squad sq_fallen_wave02a
 @member_counts({dreg: 4, captain: 1})
-c_squad_sensor_host sq_fallen_wave02b
+squad sq_fallen_wave02b
 @member_counts({shank: 2})
-c_squad_sensor_host sq_fallen_wave02c
+squad sq_fallen_wave02c
 @member_counts({shank: 2})
-c_squad_sensor_host sq_fallen_wave02d
+squad sq_fallen_wave02d
 @member_counts({shank: 2})
-c_squad_sensor_host sq_fallen_wave02e
+squad sq_fallen_wave02e
 @member_counts({dreg: 3})
-c_squad_sensor_host sq_fallen_wave03a
+squad sq_fallen_wave03a
 @member_counts({dreg: 3})
-c_squad_sensor_host sq_fallen_wave03b
+squad sq_fallen_wave03b
 
-startup thread sc_dome_c_m2:
+@startup()
+script sc_dome_c_m2():
     for sq in [sq_fallen_piperoom01a, sq_fallen_piperoom01b, sq_fallen_piperoom02a, sq_fallen_piperoom02b, sq_fallen_piperoom_reinf01]:
         sq.set_objective(obj_fallen_dome_c_m2_piperoom)
     for sq in [sq_fallen_guards01, sq_fallen_guards02a, sq_fallen_guards02b, sq_fallen_guards02c, sq_fallen_guards02d, sq_fallen_wave01a, sq_fallen_wave01b, sq_fallen_wave01c, sq_fallen_wave02a, sq_fallen_wave02b, sq_fallen_wave02c, sq_fallen_wave02d, sq_fallen_wave02e, sq_fallen_wave03a, sq_fallen_wave03b]:
@@ -69,7 +70,7 @@ startup thread sc_dome_c_m2:
 # the pipe room: the first two squads are already in it; once they are dead
 # they are tasked again, the door below opens, then the second pair and the
 # reinforcements come
-thread sc_piperoom:
+script sc_piperoom():
     sleep_until_dead(sq_fallen_piperoom01b)
     sq_fallen_piperoom01a.set_task("0x2B7C851E")
     sq_fallen_piperoom01b.set_task("0x2B7C851E")
@@ -84,11 +85,11 @@ thread sc_piperoom:
     sq_fallen_piperoom_reinf01.set_task("0x2B7C851D")
 
 # the guards' hall wakes as the player reaches each trigger
-thread sc_guards_trigger01:
+script sc_guards_trigger01():
     sleep_until(pt_fallen_guards_spawn01.is_triggered())
     sq_fallen_guards01.set_task("0x2B7C8518")
 
-thread sc_guards_trigger02:
+script sc_guards_trigger02():
     sleep_until(pt_fallen_guards_spawn02.is_triggered())
     place_on_task(sq_fallen_guards02a, "0x8F0587DD")
     place_on_task(sq_fallen_guards02b, "0x8F0587DD")
@@ -99,7 +100,7 @@ thread sc_guards_trigger02:
 
 # the first group charges once the last of the hall is in; the hall's second
 # squad respawns once, and its end brings the first wave
-thread sc_guards:
+script sc_guards():
     sleep_until(sq_fallen_guards02d.alive_count() > 0)
     sleep(1)
     sq_fallen_guards01.set_task("0x92058C9E")
@@ -112,7 +113,7 @@ thread sc_guards:
 # servitors and drops in as the second dies. When the third's first squad is
 # dead everything is sent at the player, and the console's device settles
 # a while after the last one falls.
-thread sc_waves:
+script sc_waves():
     sleep_until_dead(sq_fallen_wave01a)
     sleep(0.7)
     for sq in [sq_fallen_wave01a, sq_fallen_wave01b, sq_fallen_wave01c]:

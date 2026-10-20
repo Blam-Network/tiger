@@ -11,11 +11,12 @@ string_hash slayer_hash = "slayer"
 string_hash dominion_hash = "dominion"
 string_hash salvage_hash = "salvage"
 string_hash slayer_ffa_hash = "slayer_ffa"
-c_object_sensor_host heavy_ammo
-static_array<c_object_sensor_host, 2> special_ammo
+object heavy_ammo
+static_array<object, 2> special_ammo
 
 
-startup thread main:
+@startup()
+script main():
     pvp_controller.register_game_type(slayer, slayer_hash)
     pvp_controller.register_game_type(dominion, dominion_hash)
     pvp_controller.register_game_type(salvage, salvage_hash)

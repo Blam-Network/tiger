@@ -4,14 +4,14 @@
 # is watching, and come back once they have been out of combat for
 # respawn_time. Ported from the alpha's.
 
-c_trigger_volume_slot_host _trigger_volume
-dynamic_array<c_squad_sensor_host> _squad
-c_squad_group_sensor_host _squad_group
-c_objective_sensor_host _objective
-c_common_reference _objective_reference
+trigger_volume _trigger_volume
+dynamic_array<squad> _squad
+squad_group _squad_group
+objective _objective
+common_reference _objective_reference
 int respawn_time = 30
-c_timer_sensor_host _respawn_timer
-c_player_monitor_sensor_host _player_monitor bind(_trigger_volume)
+timer _respawn_timer
+player_monitor _player_monitor bind(_trigger_volume)
 bool bInitialPlacement = true
 
 def import_only_bind(identifier):
@@ -29,15 +29,16 @@ def deactivate():
     main.kill()
     complete.restart()
 
-startup thread ss_initial_placement:
+@startup()
+script ss_initial_placement():
     sleep(5)
     bInitialPlacement = false
 
-thread init:
+script init():
     if not _player_monitor.test_any_inside():
         main.restart()
 
-thread main:
+script main():
     for s in _squad:
         _squad_group.add_child(s)
 
@@ -68,7 +69,7 @@ thread main:
 
         sleep(1)
 
-thread complete:
+script complete():
     if _squad_group.alive_count() > 0:
         _squad_group.activate_temperament("temper_despawn")
         sleep(4)

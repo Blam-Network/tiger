@@ -18,7 +18,7 @@ export interface ProjectDecl {
   // the delegates this decl declares; a `def` of the same name answers one
   readonly delegates: ReadonlySet<string>;
   readonly file: BsFile;
-  // by name; a field, thread or delegate wins over a def of the same name
+  // by name; a field, script or delegate wins over a def of the same name
   readonly members: ReadonlyMap<string, BsMember>;
   // "_es.utility_scripts.kill_squad_objective.kill_squad_objective"
   readonly modulePath: string;

@@ -39,19 +39,19 @@ const SOURCES = [
   },
   {
     path: "es/utility_scripts/kill_squad_objective.esu",
-    text: "c_squad_sensor_host sq\n\nthread main:\n    sq.place()\n",
+    text: "squad sq\n\nscript main():\n    sq.place()\n",
   },
   {
     path: "es/venus/strike_1_activity/strike_1_activity.es",
-    text: '@activity_bundle("venus_portal_1")\nvenus_strike_1_mission2 dig_site_phase\nvenus_strike_1_mission10 end_phase\nc_squad_sensor_host sq\n\nthread main:\n    sq.place()\n',
+    text: '@activity_bundle("venus_portal_1")\nvenus_strike_1_mission2 dig_site_phase\nvenus_strike_1_mission10 end_phase\nsquad sq\n\nscript main():\n    sq.place()\n',
   },
   {
     path: "es/venus/strike_1_activity/venus_strike_1_mission2.esp",
-    text: "c_squad_sensor_host sq\n\nthread init:\n    sq.place()\n",
+    text: "squad sq\n\nscript init():\n    sq.place()\n",
   },
   {
     path: "es/venus/strike_1_activity/venus_strike_1_mission10.esp",
-    text: "c_squad_sensor_host sq\n\nthread init:\n    sq.place()\n",
+    text: "squad sq\n\nscript init():\n    sq.place()\n",
   },
 ];
 
@@ -207,11 +207,7 @@ describe("the compiled_bs tree", () => {
     expect(
       set.files.find((f) => f.path.endsWith("strike_1_activity.es"))
         ?.memberTypes
-    ).toEqual([
-      "venus_strike_1_mission2",
-      "venus_strike_1_mission10",
-      "c_squad_sensor_host",
-    ]);
+    ).toEqual(["venus_strike_1_mission2", "venus_strike_1_mission10", "squad"]);
     expect(
       set.scriptByBundle(bundleHashOf("venus_portal_1"), "venus")?.path
     ).toBe("es/venus/strike_1_activity/strike_1_activity.es");

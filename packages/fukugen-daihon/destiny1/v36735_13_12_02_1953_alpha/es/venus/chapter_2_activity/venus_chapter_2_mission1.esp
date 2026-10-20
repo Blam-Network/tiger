@@ -1,13 +1,13 @@
 u_globals utils
-c_encounter_handle enc_entrance_ch2m1  # true name unknown
-c_location_sensor_host entrance  # true name unknown
-c_player_monitor_sensor_host pm_bubble_entrance bind(entrance)  # true name unknown
-c_trigger_volume_slot_host tv_entrance_md01
-c_player_trigger_sensor_host pt_entrance_md01 bind(tv_entrance_md01)  # true name unknown
+encounter_handle enc_entrance_ch2m1
+location entrance
+player_monitor pm_bubble_entrance bind(entrance)
+trigger_volume tv_entrance_md01
+player_trigger pt_entrance_md01 bind(tv_entrance_md01)
 collect_loot_objective ch2m1_collect_loot bind("ch2m1_collect_loot", 1)
 dialog_trigger md_c2_m1_d020_trigger
-c_sequence_host md_c2_m1_d010  # true name unknown
-c_sequence_host md_c2_m1_d030  # true name unknown
+sequence md_c2_m1_d010
+sequence md_c2_m1_d030
 bool text_dialog = true
 
 
@@ -17,13 +17,13 @@ bool text_dialog = true
 
 
 
-thread init: pass
+script init(): pass
 
 
-thread complete: pass
+script complete(): pass
 
 
-thread main:
+script main():
     print("phase_script startup")
     venus_c2_m01_d10.wake()
     sleep_until(md_c2_m1_d010.is_done())
@@ -37,11 +37,11 @@ thread main:
 
 
 
-thread venus_c2_m01_d10:
+script venus_c2_m01_d10():
     md_c2_m1_d010.start()
     print("md_c2_m1_d010")
 
-thread venus_c2_m01_d30:
+script venus_c2_m01_d30():
     md_c2_m1_d030.start()
     print("md_c2_m1_d030")
 

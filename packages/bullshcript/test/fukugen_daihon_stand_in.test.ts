@@ -94,11 +94,13 @@ function withoutDecorators(text: string, path: string): string {
 }
 
 // what stripping the decorators cannot keep: the start data, the bundle, the
-// squad counts, the squads that start placed, the squads' Objectives, the
-// tasks' gates, and the source lines schemas carry for diagnostics
+// squad counts, the squads that start placed, the scripts that start with
+// their class, the squads' Objectives, the tasks' gates, and the source lines
+// schemas carry for diagnostics
 const DECORATOR_DATA = new Set([
   "activityBundleName",
   "activityStart",
+  "autostart",
   "line",
   "memberCounts",
   "objective",

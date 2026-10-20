@@ -4,14 +4,14 @@
 # clears when they reach the battleground bubble, the first public bubble
 # past the landing zone.
 
-c_location_sensor_host battleground
+location battleground
 trigger_bubble_objective pf_objective_battleground_goto bind(battleground)
 
-thread init: pass
+script init(): pass
 
-thread complete: pass
+script complete(): pass
 
-thread main:
+script main():
     sleep_until(c_player_script_utilities.all_players_are_ready())
     c_lifetime_script_utilities.get_lifetime_sensor().set_state(e_activity_lifetime_state.active)
     pf_objective_battleground_goto.objective_begin()

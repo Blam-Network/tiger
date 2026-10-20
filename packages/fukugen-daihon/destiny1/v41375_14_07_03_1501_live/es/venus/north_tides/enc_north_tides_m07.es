@@ -13,47 +13,48 @@
 
 @activity_bundle("enc_north_tides_m07")
 
-c_objective_sensor_host obj_north_tides_m07
-c_squad_sensor_host sq_boss
-c_squad_member_sensor_host sq_boss__ultra_minotaur
-c_squad_sensor_host sq_boss_goblins01
-c_squad_sensor_host sq_boss_goblins02
-c_squad_sensor_host sq_boss_goblins03
-c_squad_sensor_host sq_boss_hobgoblin_left
-c_squad_sensor_host sq_boss_hobgoblin_right01
-c_squad_sensor_host sq_boss_hobgoblin_right02
-c_squad_sensor_host sq_cloud_left_hobgoblin
-c_squad_sensor_host sq_cloud_right_hobgoblin01
-c_squad_sensor_host sq_cloud_right_hobgoblin02
-c_squad_sensor_host sq_cloud_adds
-c_squad_sensor_host sq_cloud_mid_hill
-c_squad_sensor_host sq_cloud_top_hill
-c_squad_sensor_host sq_transition_front
-c_squad_sensor_host sq_transition_back
-c_squad_sensor_host sq_btm_hill
-c_squad_sensor_host sq_mid_hill01
-c_squad_sensor_host sq_mid_hill02
-c_squad_sensor_host sq_mid_hill_snipers
-c_squad_sensor_host sq_top_hill01
-c_squad_sensor_host sq_top_hill02
-c_squad_sensor_host sq_top_hill_snipers
-c_hop_on_sensor_host ho_invincible
-c_object_filter_sensor_host of_boss
-c_object_filter_sensor_host of_clear
+objective obj_north_tides_m07
+squad sq_boss
+squad_member sq_boss__ultra_minotaur
+squad sq_boss_goblins01
+squad sq_boss_goblins02
+squad sq_boss_goblins03
+squad sq_boss_hobgoblin_left
+squad sq_boss_hobgoblin_right01
+squad sq_boss_hobgoblin_right02
+squad sq_cloud_left_hobgoblin
+squad sq_cloud_right_hobgoblin01
+squad sq_cloud_right_hobgoblin02
+squad sq_cloud_adds
+squad sq_cloud_mid_hill
+squad sq_cloud_top_hill
+squad sq_transition_front
+squad sq_transition_back
+squad sq_btm_hill
+squad sq_mid_hill01
+squad sq_mid_hill02
+squad sq_mid_hill_snipers
+squad sq_top_hill01
+squad sq_top_hill02
+squad sq_top_hill_snipers
+hop_on ho_invincible
+object_filter of_boss
+object_filter of_clear
 # the big warpgate's rows live under the vex_mega_warpgate encounter
-c_squad_sensor_host sq_vex_warpgate_large
-c_squad_member_sensor_host sq_vex_warpgate_large__gate
-c_object_sensor_host warpgate_large_animated
-c_trigger_volume_slot_host tv_transition
-c_player_trigger_sensor_host pt_transition bind(tv_transition)
-c_trigger_volume_slot_host tv_btm_stairs
-c_player_trigger_sensor_host pt_btm_stairs bind(tv_btm_stairs)
-c_trigger_volume_slot_host tv_mid_stairs
-c_player_trigger_sensor_host pt_mid_stairs bind(tv_mid_stairs)
-c_trigger_volume_slot_host tv_top_hill
-c_player_trigger_sensor_host pt_top_hill bind(tv_top_hill)
+squad sq_vex_warpgate_large
+squad_member sq_vex_warpgate_large__gate
+object warpgate_large_animated
+trigger_volume tv_transition
+player_trigger pt_transition bind(tv_transition)
+trigger_volume tv_btm_stairs
+player_trigger pt_btm_stairs bind(tv_btm_stairs)
+trigger_volume tv_mid_stairs
+player_trigger pt_mid_stairs bind(tv_mid_stairs)
+trigger_volume tv_top_hill
+player_trigger pt_top_hill bind(tv_top_hill)
 
-startup thread ss_north_tides_m07:
+@startup()
+script ss_north_tides_m07():
     for sq in [sq_boss, sq_cloud_left_hobgoblin, sq_cloud_right_hobgoblin01, sq_cloud_right_hobgoblin02, sq_cloud_adds, sq_cloud_mid_hill, sq_cloud_top_hill, sq_boss_goblins01, sq_boss_goblins02, sq_boss_goblins03, sq_boss_hobgoblin_left, sq_boss_hobgoblin_right01, sq_boss_hobgoblin_right02, sq_transition_front, sq_transition_back, sq_btm_hill, sq_mid_hill01, sq_mid_hill02, sq_mid_hill_snipers, sq_top_hill01, sq_top_hill02, sq_top_hill_snipers]:
         sq.set_objective(obj_north_tides_m07)
     of_boss.add(sq_boss__ultra_minotaur)
@@ -67,19 +68,22 @@ startup thread ss_north_tides_m07:
     place_on_task(sq_mid_hill_snipers, "0xBCB44F96")
     place_on_task(sq_top_hill_snipers, "0x4A80488D")
 
-startup thread sc_transition:
+@startup()
+script sc_transition():
     sleep_until(pt_transition.is_triggered())
     sq_transition_front.set_task("0x2B6F7E13")
 
-startup thread sc_mid_hill:
+@startup()
+script sc_mid_hill():
     sleep_until(pt_btm_stairs.is_triggered())
     place_on_task(sq_mid_hill01, "0x8B7E8CA0")
     place_on_task(sq_mid_hill02, "0x7665576E")
     vex_cloud(sq_cloud_mid_hill)
 
+@startup()
 # the top hill; what is left of it falls back to the mid hill once it is
 # down to one
-startup thread sc_top_hill:
+script sc_top_hill():
     sleep_until(pt_mid_stairs.is_triggered())
     place_on_task(sq_top_hill01, "0xA048BB8A")
     place_on_task(sq_top_hill02, "0xA048BB8A")
@@ -89,7 +93,7 @@ startup thread sc_top_hill:
     sq_top_hill02.set_task("mid_hill")
 
 # the Gatelord, woken by mission 4
-thread sc_gatelord:
+script sc_gatelord():
     sq_boss.set_task("0xADF8425E")
     sq_vex_warpgate_large__gate.drop_squad(sq_boss)
     sleep(10)

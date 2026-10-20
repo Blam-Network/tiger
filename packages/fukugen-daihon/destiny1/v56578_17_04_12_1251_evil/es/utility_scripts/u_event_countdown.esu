@@ -18,23 +18,23 @@
 u_event_globals event_globals
 u_event_countdown_preset pf_preset
 u_event_countdown_impact pf_impact
-c_objective_sensor_host obj_event_enemy_enter
-c_objective_sensor_host obj_event_enemy_exit
-dynamic_array<c_squad_sensor_host> sq_event_countdown_wave
-c_squad_group_sensor_host sg_countdown_total
-c_object_sensor_host o_event_countdown_beacon
-c_object_sensor_host o_event_countdown_object_spawner
-c_object_sensor_host o_event_countdown_ghost
-dynamic_array<c_object_sensor_host> o_warsat_cover
-static_array<c_device_host, 10> dev_warsat_cover
-c_device_host dev_event_countdown_beacon bind(o_event_countdown_beacon)
-c_device_host dev_event_countdown_object bind(o_event_countdown_object_spawner)
-c_capturable_host cz_event_countdown bind(o_event_countdown_object_spawner)
-c_interactable_host int_event_countdown_object bind(o_event_countdown_object_spawner)
-c_player_monitor_sensor_host pm_event_countdown_sudden_death bind(o_event_countdown_object_spawner)
-c_object_filter_sensor_host _object_filter
-c_trigger_volume_slot_host tv_engagement_volume
-c_player_trigger_sensor_host pt_engagement_volume bind(tv_engagement_volume)
+objective obj_event_enemy_enter
+objective obj_event_enemy_exit
+dynamic_array<squad> sq_event_countdown_wave
+squad_group sg_countdown_total
+object o_event_countdown_beacon
+object o_event_countdown_object_spawner
+object o_event_countdown_ghost
+dynamic_array<object> o_warsat_cover
+static_array<device, 10> dev_warsat_cover
+device dev_event_countdown_beacon bind(o_event_countdown_beacon)
+device dev_event_countdown_object bind(o_event_countdown_object_spawner)
+capturable cz_event_countdown bind(o_event_countdown_object_spawner)
+interactable int_event_countdown_object bind(o_event_countdown_object_spawner)
+player_monitor pm_event_countdown_sudden_death bind(o_event_countdown_object_spawner)
+object_filter _object_filter
+trigger_volume tv_engagement_volume
+player_trigger pt_engagement_volume bind(tv_engagement_volume)
 bool b_event_initiated
 bool b_zone_enemy_timeout
 bool b_zone_enemy_max_timeout
@@ -54,7 +54,7 @@ def roll_countdown_event_timer():
         return x
     return 0
 
-thread main:
+script main():
     b_event_initiated = false
     i_setup_timer, i_main_timer = func_countdown_setup()
 
@@ -105,7 +105,7 @@ thread main:
 
     func_countdown_cleanup()
 
-thread complete:
+script complete():
     func_countdown_cleanup()
 
 def func_countdown_setup():
@@ -150,7 +150,7 @@ def func_countdown_event_start(i_setup_timer):
     pf_preset.seq_warsat_start.start()
     o_event_countdown_ghost.create()
 
-thread sc_cover_creation:
+script sc_cover_creation():
     for i in range(len(o_warsat_cover)):
         o_warsat_cover[i].create()
         dev_warsat_cover[i].set_device_position(0)
@@ -214,7 +214,7 @@ def func_countdown_enemy_waves():
             else:
                 i = 1
 
-thread sc_zone_enemy_timeout:
+script sc_zone_enemy_timeout():
     i_enemy_timeout = 30
     if g_i_wave_iterator == 3:
         i_enemy_timeout = 35
@@ -223,7 +223,7 @@ thread sc_zone_enemy_timeout:
     sleep(i_enemy_timeout)
     b_zone_enemy_timeout = true
 
-thread sc_zone_enemy_max_timeout:
+script sc_zone_enemy_max_timeout():
     sleep(90)
     b_zone_enemy_max_timeout = true
 
@@ -260,7 +260,7 @@ def func_countdown_cleanup():
         sq.deactivate_temperament("temper_despawn")
         sq.remove()
 
-thread sc_capture_dialogue:
+script sc_capture_dialogue():
     for step in [0.25, 0.5, 0.75]:
         sleep_until(cz_event_countdown.get_capture_progress() >= step or pf_preset.po_event_countdown.timer_is_complete())
         if cz_event_countdown.get_capture_progress() >= step:

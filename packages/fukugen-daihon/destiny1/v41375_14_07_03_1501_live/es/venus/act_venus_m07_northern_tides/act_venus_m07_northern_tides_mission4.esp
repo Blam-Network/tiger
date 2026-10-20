@@ -12,25 +12,26 @@
 generic_objective pf_summon_gatekeeper
 generic_objective pf_kill_gatekeeper
 venus_raid_pillar_switch pf_boss_pillar bind(7)
-c_nav_point_host ap_boss
-c_trigger_group_host tg_boss_fight_respawn
-c_location_sensor_host northern_tides
-c_player_monitor_sensor_host pm_bubble_northern_tides bind(northern_tides)
-c_encounter_handle enc_north_tides_m07
-c_squad_sensor_host sq_boss
-c_squad_member_sensor_host sq_boss__ultra_minotaur
-c_sequence_host venus_m07_music_cue2
-c_sequence_host md_vn07_020_80
+nav_point ap_boss
+trigger_group tg_boss_fight_respawn
+location northern_tides
+player_monitor pm_bubble_northern_tides bind(northern_tides)
+encounter_handle enc_north_tides_m07
+squad sq_boss
+squad_member sq_boss__ultra_minotaur
+sequence venus_m07_music_cue2
+sequence md_vn07_020_80
 
+@startup()
 # the altar stands from the start, like the alpha's warpgate device
-startup thread ss_boss_pillar:
+script ss_boss_pillar():
     pf_boss_pillar.create()
 
-thread init: pass
+script init(): pass
 
-thread complete: pass
+script complete(): pass
 
-thread main:
+script main():
     pf_summon_gatekeeper.objective_begin(ap_boss)
     pf_boss_pillar.activate()
     sleep_until(pf_boss_pillar.succeed)

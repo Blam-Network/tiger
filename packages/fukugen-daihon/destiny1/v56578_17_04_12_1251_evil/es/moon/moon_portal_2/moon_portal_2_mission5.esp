@@ -5,18 +5,18 @@
 # the reinforcements. The ogre's death can read as a short 0 in the squad
 # sense, so it has to hold for a moment before this clears.
 
-c_encounter_handle enc_wormway_portal2
+encounter_handle enc_wormway_portal2
 generic_objective pf_go_ogre
-c_nav_point_host ap_go_ogre
-c_trigger_volume_slot_host tv_ogreroar03
-c_player_trigger_sensor_host pt_ogreroar03 bind(tv_ogreroar03)
-c_sequence_host moon_portal2_ogreroar03
+nav_point ap_go_ogre
+trigger_volume tv_ogreroar03
+player_trigger pt_ogreroar03 bind(tv_ogreroar03)
+sequence moon_portal2_ogreroar03
 
-thread init: pass
+script init(): pass
 
-thread complete: pass
+script complete(): pass
 
-thread main:
+script main():
     enc = enc_wormway_portal2
     pf_go_ogre.objective_begin(ap_go_ogre)
     sleep_until(pt_ogreroar03.is_triggered())

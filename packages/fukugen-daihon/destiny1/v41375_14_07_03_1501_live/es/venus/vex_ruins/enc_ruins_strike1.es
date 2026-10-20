@@ -5,17 +5,18 @@
 
 @activity_bundle("enc_ruins_strike1")
 
-c_trigger_volume_slot_host tv_ledge
-c_player_trigger_sensor_host pt_ledge bind(tv_ledge)  # true name unknown
-c_squad_sensor_host sq_ruins_ledge01
-c_squad_sensor_host sq_ruins_ledge02
-c_squad_sensor_host sq_ruins_ledge03
-c_squad_sensor_host sq_ruins_ledge04
+trigger_volume tv_ledge
+player_trigger pt_ledge bind(tv_ledge)
+squad sq_ruins_ledge01
+squad sq_ruins_ledge02
+squad sq_ruins_ledge03
+squad sq_ruins_ledge04
 
-startup thread sc_main_thread:
+@startup()
+script sc_main_thread():
     sc_ledge_encounter.wake()
 
-thread sc_ledge_encounter:
+script sc_ledge_encounter():
     sleep_until(pt_ledge.is_triggered())
     sq_ruins_ledge01.place()
     sq_ruins_ledge02.place()

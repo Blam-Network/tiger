@@ -36,10 +36,11 @@ act_venus_m01_engineering_mission3 phase_entrance_goto
 act_venus_m01_engineering_mission4 phase_entrance_vex_conflux
 act_venus_m01_engineering_mission5 phase_entrance_resist_vex
 act_venus_m01_engineering_mission6 phase_engineering_outro
-c_location_sensor_host baby_shat
-c_player_trigger_sensor_host pt_in_baby_shat bind(baby_shat)
+location baby_shat
+player_trigger pt_in_baby_shat bind(baby_shat)
 
-startup thread ss_venus_m01:
+@startup()
+script ss_venus_m01():
     print("script startup")
     c_lifetime_script_utilities.get_lifetime_sensor().set_state(e_activity_lifetime_state.pregame)
     sleep_until(pt_in_baby_shat.is_triggered())

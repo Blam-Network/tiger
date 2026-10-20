@@ -4,9 +4,9 @@
 # kills and damage to its player objective, so a player who fights the
 # event's squads is engaged in it. Ported from the alpha's.
 
-c_kill_incident_listener kil_squad
-c_kill_incident_listener kil_object
-c_engagement_incident_listener eil_damage
+kill_incident_listener kil_squad
+kill_incident_listener kil_object
+engagement_incident_listener eil_damage
 
 def bind_squad_engagement(sq_tracking, po_public_event):
     kil_squad.bind_squad(sq_tracking)

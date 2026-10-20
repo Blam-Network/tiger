@@ -4,11 +4,11 @@
 
 trigger_volume_objective obj_s1_phase03_m1
 
-thread init: pass
+script init(): pass
 
-thread complete: pass
+script complete(): pass
 
-thread main:
+script main():
     obj_s1_phase03_m1.objective_begin()
     sleep_until(obj_s1_phase03_m1.is_complete())
     obj_s1_phase03_m1.objective_end_silent()

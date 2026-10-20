@@ -4,9 +4,9 @@
 # decides when it is done and where the waypoint points. True name unknown.
 
 bool _complete
-c_player_objective_sensor_host _player_objective
-c_sequence_host _incoming_sequence  # true name unknown
-c_sequence_host _completion_sequence  # true name unknown
+player_objective _player_objective
+sequence _incoming_sequence
+sequence _completion_sequence
 
 def is_complete():
     return _complete == true

@@ -1,9 +1,9 @@
-c_object_sensor_host _zone
-c_object_sensor_host _pillar
-c_objective_sensor_host _ai_objective  # true name unknown
-c_trigger_volume_slot_host _volume
-c_objective_timer_host pillar_timer bind(_pillar)  # true name unknown
-c_player_monitor_sensor_host pm_volume bind(_volume)  # true name unknown
+object _zone
+object _pillar
+objective _ai_objective
+trigger_volume _volume
+objective_timer pillar_timer bind(_pillar)
+player_monitor pm_volume bind(_volume)
 int total_time
 bool succeed
 bool fail
@@ -48,7 +48,7 @@ def de_activate():
     bypass = true
 
 
-thread main:
+script main():
     print("MAIN")
     fail = false
     succeed = false

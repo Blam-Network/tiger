@@ -7,40 +7,40 @@
 # From one retail capture: the three seconds after the last kill are that
 # run's.
 
-c_trigger_volume_slot_host tv_warpgate_destroy
-c_trigger_volume_slot_host tv_vex_clear
-c_nav_point_host ap_subway_conflux
+trigger_volume tv_warpgate_destroy
+trigger_volume tv_vex_clear
+nav_point ap_subway_conflux
 kill_squad_objective pf_objective_kill_warp_gates bind("0xF93FFC2A", 5)
 generic_objective pf_objective_generic_clear
-c_squad_sensor_host sq_plat_wide_support1
-c_squad_sensor_host sq_plat_wide_support2
-c_squad_sensor_host sq_plat_wide_support3
-c_squad_sensor_host sq_plat_wide_support4
-c_squad_sensor_host sq_plat_thin_support1
-c_squad_sensor_host sq_plat_thin_support2
-c_squad_sensor_host sq_warpgate1_support1
-c_squad_sensor_host sq_warpgate1_support2
-c_squad_sensor_host sq_warpgate1_support3
-c_squad_sensor_host sq_warpgate1_support4
-c_squad_sensor_host sq_warpgate2_support1
-c_squad_sensor_host sq_warpgate2_support2
-c_squad_sensor_host sq_warpgate2_support3
-c_squad_sensor_host sq_warpgate2_support4
-c_squad_sensor_host sq_warpgate3_anchor1
-c_squad_sensor_host sq_warpgate3_support1
-c_squad_sensor_host sq_warpgate3_support2
-c_squad_sensor_host sq_warpgate4_major_anchor1
-c_squad_sensor_host sq_warpgate4_support1
-c_squad_sensor_host sq_warpgate4_support2
-c_squad_sensor_host sq_warpgate5_anchor1
-c_squad_sensor_host sq_warpgate5_support1
-c_squad_sensor_host sq_warpgate5_support2
+squad sq_plat_wide_support1
+squad sq_plat_wide_support2
+squad sq_plat_wide_support3
+squad sq_plat_wide_support4
+squad sq_plat_thin_support1
+squad sq_plat_thin_support2
+squad sq_warpgate1_support1
+squad sq_warpgate1_support2
+squad sq_warpgate1_support3
+squad sq_warpgate1_support4
+squad sq_warpgate2_support1
+squad sq_warpgate2_support2
+squad sq_warpgate2_support3
+squad sq_warpgate2_support4
+squad sq_warpgate3_anchor1
+squad sq_warpgate3_support1
+squad sq_warpgate3_support2
+squad sq_warpgate4_major_anchor1
+squad sq_warpgate4_support1
+squad sq_warpgate4_support2
+squad sq_warpgate5_anchor1
+squad sq_warpgate5_support1
+squad sq_warpgate5_support2
 
-thread init: pass
+script init(): pass
 
-thread complete: pass
+script complete(): pass
 
-thread main:
+script main():
     pf_objective_kill_warp_gates.objective_begin()
     sleep_until(pf_objective_kill_warp_gates.is_complete())
     pf_objective_kill_warp_gates.objective_end_silent()

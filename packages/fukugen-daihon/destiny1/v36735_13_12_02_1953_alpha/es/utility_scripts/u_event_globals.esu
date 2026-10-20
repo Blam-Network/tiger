@@ -1,6 +1,6 @@
-c_kill_incident_listener kil_squad  # true name unknown
-c_kill_incident_listener kil_object  # true name unknown
-c_engagement_incident_listener eil_damage  # true name unknown
+kill_incident_listener kil_squad
+kill_incident_listener kil_object
+engagement_incident_listener eil_damage
 
 
 

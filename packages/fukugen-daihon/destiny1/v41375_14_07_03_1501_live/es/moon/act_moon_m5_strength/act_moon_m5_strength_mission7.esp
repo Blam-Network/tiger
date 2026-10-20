@@ -5,17 +5,17 @@
 # ritual and the waves; this phase runs the objectives and the climax's
 # trigger group around them.
 
-c_encounter_handle unknown_d53aaa20
+encounter_handle unknown_d53aaa20
 kill_squad_objective pf_objective_kill bind("0x27C686D5", 3)
-c_trigger_group_host tg_moon_m5_climax_so
+trigger_group tg_moon_m5_climax_so
 generic_objective pf_gen_obj_jammer
-c_nav_point_host ap_obj_4_damage
+nav_point ap_obj_4_damage
 
-thread init: pass
+script init(): pass
 
-thread complete: pass
+script complete(): pass
 
-thread main:
+script main():
     enc = unknown_d53aaa20
     enc.sc_ritual.wake()
     pf_objective_kill.objective_begin()

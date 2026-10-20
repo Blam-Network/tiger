@@ -4,48 +4,48 @@
 @task(0x8D84AB1C, squad: sq_caldera_ent01)
 @task(0x61755B85, squad: sqg_snipers)
 @task("ledge", squad: sqg_den_ledge)
-c_objective_sensor_host obj_thieves_den_amb1  # true name unknown
+objective obj_thieves_den_amb1
 @member_counts({dregs: 3, vandal: 1})
 @objective(obj_thieves_den_amb1)
-c_squad_sensor_host sq_caldera_ent01
+squad sq_caldera_ent01
 @member_counts({dregs: 2, shanks: 2})
 @objective(obj_thieves_den_amb1)
-c_squad_sensor_host sq_den_bottom01
+squad sq_den_bottom01
 @member_counts({dregs: 4})
 @objective(obj_thieves_den_amb1)
-c_squad_sensor_host sq_den_bottom02
+squad sq_den_bottom02
 @member_counts({vandals: 2, captain: 1})
 @objective(obj_thieves_den_amb1)
-c_squad_sensor_host sq_den_bottom03
+squad sq_den_bottom03
 @member_counts({dregs: 3})
 @objective(obj_thieves_den_amb1)
-c_squad_sensor_host sq_den_ledge01
+squad sq_den_ledge01
 @member_counts({dregs: 3})
 @objective(obj_thieves_den_amb1)
-c_squad_sensor_host sq_den_ledge02
+squad sq_den_ledge02
 @member_counts({shanks: 2, captain: 1})
 @objective(obj_thieves_den_amb1)
-c_squad_sensor_host sq_den_ledge03
+squad sq_den_ledge03
 @member_counts({dregs: 3})
 @objective(obj_thieves_den_amb1)
-c_squad_sensor_host sq_den_ledge04
+squad sq_den_ledge04
 @member_counts({vandal: 1})
 @objective(obj_thieves_den_amb1)
-c_squad_sensor_host sq_ledge_sniper01
+squad sq_ledge_sniper01
 @member_counts({vandal: 1})
 @objective(obj_thieves_den_amb1)
-c_squad_sensor_host sq_ledge_sniper02
+squad sq_ledge_sniper02
 @member_counts({dregs: 3})
 @objective(obj_thieves_den_amb1)
-c_squad_sensor_host sq_den_top01
-c_squad_group_sensor_host sqg_den_bottom  # true name unknown
-c_squad_group_sensor_host sqg_den_ledge  # true name unknown
-c_squad_group_sensor_host sqg_den_top  # true name unknown
-c_squad_group_sensor_host sqg_snipers  # true name unknown
-c_trigger_volume_slot_host tv_bottom
-c_trigger_volume_slot_host tv_top
-c_player_trigger_sensor_host pt_bottom bind(tv_bottom)  # true name unknown
-c_player_trigger_sensor_host pt_top bind(tv_top)  # true name unknown
+squad sq_den_top01
+squad_group sqg_den_bottom
+squad_group sqg_den_ledge
+squad_group sqg_den_top
+squad_group sqg_snipers
+trigger_volume tv_bottom
+trigger_volume tv_top
+player_trigger pt_bottom bind(tv_bottom)
+player_trigger pt_top bind(tv_top)
 loot_fallen_thieves_den loot_venus_fallen_thieves_den
 
 
@@ -53,7 +53,8 @@ loot_fallen_thieves_den loot_venus_fallen_thieves_den
 
 
 
-startup thread sc_main_thread:
+@startup()
+script sc_main_thread():
     thieves_den_high = false
     print("---------------------------------------------------------")
     print("THIEVES DEN ENCOUNTER AMBIENT ALL")
@@ -80,14 +81,14 @@ startup thread sc_main_thread:
     sc_top.wake()
 
 
-thread sc_bottom:
+script sc_bottom():
 
     sq_den_bottom01.respawn()
     sq_den_bottom02.respawn()
     sleep_until(sqg_den_bottom.alive_count() <= 6 and pt_bottom.is_triggered())
     sq_den_bottom03.respawn()
 
-thread sc_ledge:
+script sc_ledge():
 
     sq_den_ledge01.respawn()
     sq_den_ledge02.respawn()
@@ -95,7 +96,7 @@ thread sc_ledge:
     sq_den_ledge03.respawn()
     sq_den_ledge04.respawn()
 
-thread sc_top:
+script sc_top():
 
     sleep_until(pt_top.is_triggered())
     sq_den_top01.respawn()

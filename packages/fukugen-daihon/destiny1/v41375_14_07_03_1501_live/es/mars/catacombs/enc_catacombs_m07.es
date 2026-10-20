@@ -10,29 +10,30 @@
 
 @activity_bundle("enc_catacombs_m07")
 
-c_objective_sensor_host obj_catacombs_m07
-c_squad_sensor_host sq_hall_goblin_a
-c_squad_sensor_host sq_hall_goblin_b
-c_squad_sensor_host sq_hall_goblin_c
-c_squad_sensor_host sq_hall_anchor_minotaur
-c_squad_sensor_host sq_hall_anchor_harpy
-c_squad_sensor_host sq_pit_cloud
-c_squad_member_sensor_host sq_pit_cloud__pilot
-c_squad_sensor_host sq_pit_minotaur_a
-c_squad_sensor_host sq_pit_harpy_a
-c_squad_sensor_host sq_pit_harpy_b
-c_squad_sensor_host sq_pit_harpy_c
-c_squad_sensor_host sq_foyer_hobgoblin
-c_squad_sensor_host sq_foyer_minotaur_a
-c_squad_sensor_host sq_foyer_goblin_a
-c_squad_sensor_host sq_foyer_goblin_b
-c_sequence_host seq_vex_announce
-c_player_trigger_sensor_host pt_hall
-c_player_trigger_sensor_host pt_pit
-c_player_trigger_sensor_host pt_foyer
-c_player_trigger_sensor_host pt_foyer_rear
+objective obj_catacombs_m07
+squad sq_hall_goblin_a
+squad sq_hall_goblin_b
+squad sq_hall_goblin_c
+squad sq_hall_anchor_minotaur
+squad sq_hall_anchor_harpy
+squad sq_pit_cloud
+squad_member sq_pit_cloud__pilot
+squad sq_pit_minotaur_a
+squad sq_pit_harpy_a
+squad sq_pit_harpy_b
+squad sq_pit_harpy_c
+squad sq_foyer_hobgoblin
+squad sq_foyer_minotaur_a
+squad sq_foyer_goblin_a
+squad sq_foyer_goblin_b
+sequence seq_vex_announce
+player_trigger pt_hall
+player_trigger pt_pit
+player_trigger pt_foyer
+player_trigger pt_foyer_rear
 
-startup thread sc_catacombs:
+@startup()
+script sc_catacombs():
     for sq in [sq_hall_goblin_a, sq_hall_goblin_b, sq_hall_goblin_c, sq_hall_anchor_minotaur, sq_hall_anchor_harpy, sq_pit_minotaur_a, sq_pit_harpy_a, sq_pit_harpy_b, sq_pit_harpy_c, sq_foyer_hobgoblin, sq_foyer_minotaur_a, sq_foyer_goblin_a, sq_foyer_goblin_b]:
         sq.set_objective(obj_catacombs_m07)
     place_on_task(sq_hall_goblin_a, "0xBFDF7B20")
@@ -44,7 +45,7 @@ startup thread sc_catacombs:
     sc_pit.wake()
     sc_foyer.wake()
 
-thread sc_hall:
+script sc_hall():
     sleep_until(pt_hall.is_triggered())
     sleep(1)
     place_on_task(sq_hall_anchor_harpy, "0xD8918A7C")
@@ -53,7 +54,7 @@ thread sc_hall:
     sq_hall_anchor_harpy.set_task("0xBFDF7B20")
     sq_hall_anchor_minotaur.set_task("0xBFDF7B20")
 
-thread sc_pit:
+script sc_pit():
     sleep_until(pt_pit.is_triggered())
     sleep(1)
     sq_pit_harpy_a.set_task("0x60DAD4A7")
@@ -65,7 +66,7 @@ thread sc_pit:
     sleep_until(not sq_pit_cloud__pilot.is_dropping())
     sq_pit_cloud.remove()
 
-thread sc_foyer:
+script sc_foyer():
     sleep_until(pt_foyer.is_triggered())
     sleep(1)
     sq_foyer_goblin_b.set_task("0xA595C500")

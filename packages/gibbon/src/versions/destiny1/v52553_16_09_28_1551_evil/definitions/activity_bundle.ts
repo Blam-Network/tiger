@@ -61,7 +61,7 @@ export const s_activity_bundle = c.struct({
   slotted_row_count: c.u16(),
   unknown12: c.u16({ padAfter: 4 }),
   rows: tag_block(s_activity_bundle_row, k_activity_bundle_row_class),
-  // A string list tag (8080035A).
+  // A localized strings tag (8080035A).
   unknown28: c.u32({ padAfter: 4 }),
   lookup_groups: tag_block(
     s_activity_bundle_lookup_group,

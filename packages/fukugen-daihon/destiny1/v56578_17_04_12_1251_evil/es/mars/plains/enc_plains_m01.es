@@ -14,54 +14,55 @@
 
 @activity_bundle("enc_plains_m01")
 
-c_location_sensor_host plains
-c_player_trigger_sensor_host pt_plains bind(plains)
-c_trigger_volume_slot_host tv_base_mid
-c_player_trigger_sensor_host pt_base_mid bind(tv_base_mid)
-c_trigger_volume_slot_host tv_door
-c_player_trigger_sensor_host pt_door bind(tv_door)
-c_objective_sensor_host obj_plains_m01
-c_object_sensor_host o_door
-c_object_sensor_host o_lights
-c_object_sensor_host o_sparrow_terminal_cage
-c_object_sensor_host o_garage_holo_control
+location plains
+player_trigger pt_plains bind(plains)
+trigger_volume tv_base_mid
+player_trigger pt_base_mid bind(tv_base_mid)
+trigger_volume tv_door
+player_trigger pt_door bind(tv_door)
+objective obj_plains_m01
+object o_door
+object o_lights
+object o_sparrow_terminal_cage
+object o_garage_holo_control
 countdown_placement sp_placement_vent bind("0x5F62CC37")
 countdown_placement sp_placement_control bind("0x8ED9F019")
-c_sequence_host seq_alarm
-c_sequence_host seq_ambience_a
-c_sequence_host seq_ambience_b
-c_sequence_host seq_ambience_c
-c_squad_sensor_host sq_dropship_base
-c_squad_member_sensor_host sq_dropship_base__pilot
-c_control_point_set_sensor_host cps_dropship_base_entry
-c_control_point_set_sensor_host cps_dropship_base_exit
-c_squad_sensor_host sq_dropship_sand
-c_squad_member_sensor_host sq_dropship_sand__pilot
-c_control_point_set_sensor_host cps_dropship_sand_entry
-c_control_point_set_sensor_host cps_dropship_sand_exit
+sequence seq_alarm
+sequence seq_ambience_a
+sequence seq_ambience_b
+sequence seq_ambience_c
+squad sq_dropship_base
+squad_member sq_dropship_base__pilot
+control_point_set cps_dropship_base_entry
+control_point_set cps_dropship_base_exit
+squad sq_dropship_sand
+squad_member sq_dropship_sand__pilot
+control_point_set cps_dropship_sand_entry
+control_point_set cps_dropship_sand_exit
 @member_counts({phalanx: 2})
-c_squad_sensor_host sq_base_phalanx
+squad sq_base_phalanx
 @member_counts({legionary: 1})
-c_squad_sensor_host sq_base_legionary_a
+squad sq_base_legionary_a
 @member_counts({legionary: 1})
-c_squad_sensor_host sq_base_legionary_b
+squad sq_base_legionary_b
 @member_counts({legionary: 1})
-c_squad_sensor_host sq_base_legionary_c
+squad sq_base_legionary_c
 @member_counts({legionary: 3})
-c_squad_sensor_host sq_backup_legionary_a
+squad sq_backup_legionary_a
 @member_counts({legionary: 3})
-c_squad_sensor_host sq_backup_legionary_b
+squad sq_backup_legionary_b
 @member_counts({legionary: 3})
-c_squad_sensor_host sq_sand_legionary_a
+squad sq_sand_legionary_a
 @member_counts({legionary: 3})
-c_squad_sensor_host sq_sand_legionary_b
+squad sq_sand_legionary_b
 @member_counts({legionary: 3})
-c_squad_sensor_host sq_sand_legionary_c
-c_squad_sensor_host sq_anchor_phalanx
+squad sq_sand_legionary_c
+squad sq_anchor_phalanx
 @member_counts({centurion: 1})
-c_squad_sensor_host sq_anchor_centurion
+squad sq_anchor_centurion
 
-startup thread sc_plains_main:
+@startup()
+script sc_plains_main():
     o_door.create()
     o_lights.create()
     sp_placement_vent._object.create()
@@ -74,14 +75,14 @@ startup thread sc_plains_main:
     sleep_until(pt_plains.is_triggered())
     c_lifetime_script_utilities.get_lifetime_sensor().set_state(e_activity_lifetime_state.active)
 
-thread sc_ambience:
+script sc_ambience():
     sleep(5)
     seq_ambience_b.start()
     sleep(8)
     seq_ambience_c.start()
 
 # the vent, then the garage control; the base wakes when the control is used
-thread sc_garage:
+script sc_garage():
     sleep(33)
     sleep(6)
     o_garage_holo_control.create()
@@ -107,7 +108,7 @@ thread sc_garage:
     seq_alarm.stop()
 
 # the first ship lands in the garage and leaves once its troops are dead
-thread sc_dropship_base:
+script sc_dropship_base():
     dropship_enter(sq_dropship_base__pilot, cs_dropship_land(cps_dropship_base_entry))
     sleep(5)
     for sq in [sq_base_legionary_a, sq_base_legionary_b, sq_base_legionary_c]:
@@ -122,7 +123,7 @@ thread sc_dropship_base:
 
 # the second ship hovers over the sand: the centurion first, then his
 # legionaries, who go on the attack when he falls
-thread sc_dropship_sand:
+script sc_dropship_sand():
     dropship_enter(sq_dropship_sand__pilot, cs_dropship_hover(cps_dropship_sand_entry))
     sleep(7)
     drop_on_task(sq_dropship_sand__pilot, sq_anchor_centurion, "anchor")
@@ -133,7 +134,7 @@ thread sc_dropship_sand:
     sleep(14)
     dropship_leave(sq_dropship_sand, sq_dropship_sand__pilot, cps_dropship_sand_exit)
 
-thread sc_sand_attack:
+script sc_sand_attack():
     sleep_until(sq_anchor_centurion.alive_count() == 0)
     for sq in [sq_sand_legionary_a, sq_sand_legionary_b, sq_sand_legionary_c]:
         sq.set_task("0x034BA9A5")

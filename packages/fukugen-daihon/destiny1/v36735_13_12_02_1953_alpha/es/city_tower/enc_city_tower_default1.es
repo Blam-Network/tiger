@@ -2,10 +2,10 @@
 @activity("city_tower_default1")
 @start_slice("plaza")
 
-c_fireteam_sensor_host host
-c_player_objective_sensor_host po_mission01
-c_player_objective_sensor_host po_mission02
-c_new_mission_sensor_host pm_new_mission  # true name unknown
+fireteam host
+player_objective po_mission01
+player_objective po_mission02
+new_mission pm_new_mission
 
 
 
@@ -21,7 +21,8 @@ c_new_mission_sensor_host pm_new_mission  # true name unknown
 
 
 
-startup thread sc_main_thread:
+@startup()
+script sc_main_thread():
 
 
     while not host.t30_hack_bind_host():
@@ -38,7 +39,7 @@ startup thread sc_main_thread:
 
 
 
-thread mission01:
+script mission01():
 
     sleep(5)
     host.nav_point_clear_all()

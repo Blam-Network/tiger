@@ -5,17 +5,17 @@
 
 interactable_objective pf_objective_button_ghost bind("0x67FB6149")
 interactable_placement pf_placement_button_ghost bind("0x67FB6149")
-c_sequence_host seq_music_ascent
-c_sequence_host seq_d_o2_s11
+sequence seq_music_ascent
+sequence seq_d_o2_s11
 
-thread init: pass
+script init(): pass
 
-thread complete:
+script complete():
     c_lifetime_script_utilities.get_lifetime_sensor().end_game(30)
     sleep(3)
     seq_d_o2_s11.start()
 
-thread main:
+script main():
     pf_objective_button_ghost.objective_begin()
     sleep_until(pf_objective_button_ghost.is_complete())
     seq_music_ascent.start()

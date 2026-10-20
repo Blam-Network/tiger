@@ -18,52 +18,52 @@
 # and the servitor kills never reach three. Every later phase (and its
 # audio) then goes missing. The waits are the run's, left as they are.
 
-c_objective_sensor_host obj_engineering_strike_phase
-c_object_sensor_host o_portal_end_door
-c_squad_group_sensor_host gr_floor1
-c_squad_sensor_host sq_floor1_fallen01
-c_squad_sensor_host sq_floor1_fallen02
-c_squad_group_sensor_host gr_floor2
-c_squad_sensor_host sq_floor1_fallen03
-c_squad_sensor_host sq_floor1_fallen04
-c_squad_group_sensor_host gr_floor3
-c_squad_sensor_host sq_floor1_fallen05
-c_squad_sensor_host sq_floor1_fallen06
-c_squad_group_sensor_host gr_floor4
-c_squad_sensor_host sq_floor1_fallen07
-c_squad_sensor_host sq_floor1_fallen08
-c_squad_group_sensor_host gr_obj2
-c_squad_sensor_host sq_floor1_fallen04a
-c_squad_group_sensor_host gr_obj3
-c_squad_sensor_host sq_floor1_fallen06a
-c_squad_group_sensor_host gr_obj4
-c_squad_sensor_host sq_floor1_fallen08a
-c_squad_group_sensor_host gr_obj1
-c_squad_sensor_host sq_objective01
-c_squad_sensor_host sq_objective02
-c_squad_sensor_host sq_objective03
-c_squad_sensor_host sq_objective04
-c_squad_sensor_host sq_objective05
-c_squad_sensor_host sq_objective06
-c_squad_sensor_host sq_objective07
-c_squad_sensor_host sq_objective08
-c_squad_group_sensor_host gr_objective
-c_squad_group_sensor_host gr_all
-c_location_sensor_host engineering
-c_trigger_volume_slot_host tv_engineering_entrance01
-c_player_trigger_sensor_host pt_engineering_entrance01 bind(tv_engineering_entrance01)
-c_encounter_handle enc_engineering_strike1
+objective obj_engineering_strike_phase
+object o_portal_end_door
+squad_group gr_floor1
+squad sq_floor1_fallen01
+squad sq_floor1_fallen02
+squad_group gr_floor2
+squad sq_floor1_fallen03
+squad sq_floor1_fallen04
+squad_group gr_floor3
+squad sq_floor1_fallen05
+squad sq_floor1_fallen06
+squad_group gr_floor4
+squad sq_floor1_fallen07
+squad sq_floor1_fallen08
+squad_group gr_obj2
+squad sq_floor1_fallen04a
+squad_group gr_obj3
+squad sq_floor1_fallen06a
+squad_group gr_obj4
+squad sq_floor1_fallen08a
+squad_group gr_obj1
+squad sq_objective01
+squad sq_objective02
+squad sq_objective03
+squad sq_objective04
+squad sq_objective05
+squad sq_objective06
+squad sq_objective07
+squad sq_objective08
+squad_group gr_objective
+squad_group gr_all
+location engineering
+trigger_volume tv_engineering_entrance01
+player_trigger pt_engineering_entrance01 bind(tv_engineering_entrance01)
+encounter_handle enc_engineering_strike1
 bool objective_complete
 trigger_bubble_objective engineering_bubble_objective bind(engineering)
 kill_squad_objective kill_squad_engineering bind("strike_kill_servitors", 3)
 
-thread init:
+script init():
     o_portal_end_door.create()
     o_portal_end_door.set_device_position(0)
 
-thread complete: pass
+script complete(): pass
 
-thread main:
+script main():
     gr_floor1.add_child(sq_floor1_fallen01)
     gr_floor1.add_child(sq_floor1_fallen02)
     gr_floor2.add_child(sq_floor1_fallen03)
@@ -107,7 +107,7 @@ thread main:
     o_portal_end_door.set_device_position(1)
     enc_engineering_strike1.sc_engineering_trash.wake()
 
-thread sc_encounter_engineering:
+script sc_encounter_engineering():
     floor_encounter()
     formation(3)
     formation(2)

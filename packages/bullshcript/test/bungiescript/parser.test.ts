@@ -62,13 +62,14 @@ describe("the BungieScript parser", () => {
     const file = parseBungieScript(
       [
         'static string_hash h = "x"',
-        "static_array<c_device_host, 10> dev",
-        "c_squad_sensor_host sq[7]",
+        "static_array<device, 10> dev",
+        "squad sq[7]",
         "table<e_k, s_v> t",
         'simple_encounter enc bind("id", 2)',
-        "startup thread ss_main:",
+        "@startup()",
+        "script ss_main():",
         "    go()",
-        "thread sc_dormant: pass",
+        "script sc_dormant(): pass",
         "def f(a, b):",
         "    return a",
         "static def g(): pass",
@@ -102,7 +103,7 @@ describe("the BungieScript parser", () => {
     expect(h.isStatic).toBe(true);
     expect(dev.type).toMatchObject({
       name: "static_array",
-      text: "static_array<c_device_host, 10>",
+      text: "static_array<device, 10>",
     });
     expect(dev.type.args[1]).toBe(10);
     expect(sq.type.count).toBe(7);
@@ -197,6 +198,75 @@ describe("the BungieScript parser", () => {
         },
       ],
     });
+  });
+
+  it("writes a script's empty parentheses, and has no thread", () => {
+    const parse = (text: string) => parseBungieScript(text, "es/t.esu");
+    expect(parse("script main(): pass\n").decls[0].members).toMatchObject([
+      { kind: "thread", name: "main", startup: false },
+    ]);
+    expect(() => parse("script main:\n    pass\n")).toThrow(
+      /t\.esu:1: '\(' expected/
+    );
+    expect(() => parse("script main(a):\n    pass\n")).toThrow(
+      /t\.esu:1: '\)' expected/
+    );
+    expect(() => parse("thread main:\n    pass\n")).toThrow(BsCompileError);
+  });
+
+  it("starts a script with @startup(), and has no startup keyword", () => {
+    const parse = (text: string) => parseBungieScript(text, "es/t.esu");
+    const members = (text: string) => parse(text).decls[0].members;
+    expect(members("@startup()\nscript main():\n    pass\n")).toMatchObject([
+      { kind: "thread", line: 2, name: "main", startup: true },
+    ]);
+    // beside its script, or with lines between
+    expect(members("@startup() script main(): pass\n")).toMatchObject([
+      { kind: "thread", startup: true },
+    ]);
+    expect(
+      members("@startup()\n# why\n\nscript main():\n    pass\n")
+    ).toMatchObject([{ kind: "thread", line: 4, startup: true }]);
+    // the keyword is gone
+    expect(() => parse("startup script main():\n    pass\n")).toThrow(
+      /t\.esu:1: newline expected/
+    );
+    expect(() => parse("startup thread main():\n    pass\n")).toThrow(
+      BsCompileError
+    );
+  });
+
+  it("takes @startup() on a script only, once, with no arguments", () => {
+    const parse = (text: string, path = "es/t.esu") =>
+      parseBungieScript(text, path);
+    expect(() => parse("@startup()\nint a\n")).toThrow(
+      /t\.esu:2: @startup decorates a script/
+    );
+    expect(() => parse("@startup()\ndef f():\n    pass\n")).toThrow(
+      /t\.esu:2: @startup decorates a script/
+    );
+    expect(() => parse("@startup()\n")).toThrow(/@startup decorates a member/);
+    expect(() =>
+      parse("@startup()\nclass c_a:\n    pass\n", "bs/t.bs")
+    ).toThrow(/@startup decorates a member/);
+    expect(() =>
+      parse("@startup()\n@startup()\nscript main(): pass\n")
+    ).toThrow(/t\.esu:3: a script takes one @startup/);
+    expect(() => parse("@startup(1)\nscript main(): pass\n")).toThrow(
+      /t\.esu:1: '\)' expected/
+    );
+    expect(() => parse("@startup\nscript main(): pass\n")).toThrow(
+      /t\.esu:1: '\(' expected/
+    );
+    // the field decorators are not a script's
+    expect(() => parse("@placed()\nscript main(): pass\n")).toThrow(
+      /@placed decorates a member/
+    );
+    // inside a .bs class too
+    expect(
+      parse("class c_a:\n    @startup()\n    script main(): pass\n", "bs/t.bs")
+        .decls[0].members
+    ).toMatchObject([{ kind: "thread", startup: true }]);
   });
 
   it("reports syntax errors with the file and line", () => {

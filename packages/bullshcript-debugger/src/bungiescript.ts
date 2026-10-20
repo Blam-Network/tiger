@@ -6,7 +6,7 @@ import type * as Monaco from "monaco-editor";
 export const LANGUAGE_ID = "bungiescript";
 
 const BLOCK_START =
-  /^\s*(?:def|static def|thread|startup thread|command_script|class|struct|enum|if|elif|else|while|for|switch|case|default)\b.*:\s*(#.*)?$/;
+  /^\s*(?:def|static def|script|command_script|class|struct|enum|if|elif|else|while|for|switch|case|default)\b.*:\s*(#.*)?$/;
 
 export const configuration: Monaco.languages.LanguageConfiguration = {
   comments: { lineComment: "#" },
@@ -100,9 +100,8 @@ export const tokens: Monaco.languages.IMonarchLanguage = {
         /^(\s*)(def)(\s+)([A-Za-z_][\w.]*)/,
         ["", "keyword.type", "", "function"],
       ],
-      [/^(\s*)(startup)(\s+)(?=thread\b)/, ["", "keyword.modifier", ""]],
       [
-        /^(\s*)(thread)(\s+)([A-Za-z_]\w*)/,
+        /^(\s*)(script)(\s+)([A-Za-z_]\w*)/,
         ["", "keyword.type", "", "function"],
       ],
       [

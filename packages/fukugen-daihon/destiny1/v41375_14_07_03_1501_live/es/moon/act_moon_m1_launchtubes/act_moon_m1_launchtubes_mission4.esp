@@ -3,16 +3,16 @@
 # Mission 4, "Go to the Launch Tubes". Clears when a player enters the launch
 # tubes bubble.
 
-c_location_sensor_host launchtubes
+location launchtubes
 trigger_bubble_objective pf_objective_goto bind(launchtubes)
-c_sequence_host seq_d_o2_s06
-c_sequence_host seq_d_o2_s07
+sequence seq_d_o2_s06
+sequence seq_d_o2_s07
 
-thread init: pass
+script init(): pass
 
-thread complete: pass
+script complete(): pass
 
-thread main:
+script main():
     pf_objective_goto.objective_begin()
     seq_d_o2_s06.start()
     seq_d_o2_s07.start()

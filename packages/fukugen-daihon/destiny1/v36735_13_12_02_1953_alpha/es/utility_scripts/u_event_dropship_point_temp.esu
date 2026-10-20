@@ -1,24 +1,24 @@
-c_control_point_set_sensor_host cps_event_dropship_to_pt  # true name unknown
-c_objective_sensor_host obj_event_dropship_pt  # true name unknown
-c_objective_sensor_host obj_event_enemy_exit  # true name unknown
-c_object_sensor_host o_event_dropship_beacon_pt
-c_object_sensor_host o_event_fiction_device_temp
-c_device_host d_event_fiction_device bind(o_event_fiction_device_temp)
-dynamic_array<c_object_sensor_host> o_dropship_cov
-static_array<c_device_host, 10> dev_dropship_cov
-c_control_point_set_sensor_host cps_dropship_point_enter  # true name unknown
-c_control_point_set_sensor_host cps_dropship_point_exit  # true name unknown
-c_squad_sensor_host sq_event_dropship_wave0a
-c_squad_member_sensor_host sq_event_dropship_wave0a__cell_1  # true name unknown
-c_squad_member_sensor_host sq_event_dropship_wave0a__cell_2  # true name unknown
-c_squad_sensor_host sq_event_dropship_wave0b
-c_squad_member_sensor_host sq_event_dropship_wave0b__cell_1  # true name unknown
-c_squad_member_sensor_host sq_event_dropship_wave0b__cell_2  # true name unknown
-c_squad_member_sensor_host sq_event_dropship_wave0b__cell_3  # true name unknown
-c_squad_sensor_host sq_event_dropship_wave0_leader
-c_squad_member_sensor_host sq_event_dropship_wave0_leader__cell_1  # true name unknown
-c_trigger_volume_slot_host cv_event_dropship_pt
-c_player_trigger_sensor_host pt_event_dropship bind(cv_event_dropship_pt)  # true name unknown
+control_point_set cps_event_dropship_to_pt
+objective obj_event_dropship_pt
+objective obj_event_enemy_exit
+object o_event_dropship_beacon_pt
+object o_event_fiction_device_temp
+device d_event_fiction_device bind(o_event_fiction_device_temp)
+dynamic_array<object> o_dropship_cov
+static_array<device, 10> dev_dropship_cov
+control_point_set cps_dropship_point_enter
+control_point_set cps_dropship_point_exit
+squad sq_event_dropship_wave0a
+squad_member sq_event_dropship_wave0a__cell_1
+squad_member sq_event_dropship_wave0a__cell_2
+squad sq_event_dropship_wave0b
+squad_member sq_event_dropship_wave0b__cell_1
+squad_member sq_event_dropship_wave0b__cell_2
+squad_member sq_event_dropship_wave0b__cell_3
+squad sq_event_dropship_wave0_leader
+squad_member sq_event_dropship_wave0_leader__cell_1
+trigger_volume cv_event_dropship_pt
+player_trigger pt_event_dropship bind(cv_event_dropship_pt)
 
 
 

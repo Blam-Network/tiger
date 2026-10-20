@@ -3,14 +3,14 @@
 # Mission 2, phase_3_mesa_goto: through the Rubicon to the mesa. Clears as a
 # player enters the mesa's bubble (public; enc_mesa_amb1's Cabal).
 
-c_location_sensor_host mesa
+location mesa
 trigger_bubble_objective pf_objective_goto bind(mesa)
 
-thread init: pass
+script init(): pass
 
-thread complete: pass
+script complete(): pass
 
-thread main:
+script main():
     pf_objective_goto.objective_begin()
     sleep_until(pf_objective_goto.is_complete())
     pf_objective_goto.objective_end_silent()

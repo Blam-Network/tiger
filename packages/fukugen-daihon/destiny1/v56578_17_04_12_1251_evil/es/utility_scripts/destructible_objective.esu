@@ -6,13 +6,13 @@
 # listener are the script's own. The flag is what lets the placement's object
 # be hurt.
 
-c_player_objective_sensor_host _player_objective
-c_sequence_host _incoming_sequence
-c_sequence_host _completion_sequence
-c_nav_point_host _nav_point
-c_encounter_binding_host _object
-c_activity_flag _activity_flag
-c_kill_incident_listener _incident_listener
+player_objective _player_objective
+sequence _incoming_sequence
+sequence _completion_sequence
+nav_point _nav_point
+encounter_binding _object
+activity_flag _activity_flag
+kill_incident_listener _incident_listener
 string_hash _identifier
 string_hash _incident_destructible_kill_hash = "destructible_kill"
 

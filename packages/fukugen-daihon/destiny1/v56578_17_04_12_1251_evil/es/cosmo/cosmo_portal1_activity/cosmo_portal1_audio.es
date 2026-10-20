@@ -6,60 +6,64 @@
 
 @activity_bundle("cosmo_portal1_audio")
 
-c_sequence_host music_intro01  # true name unknown
-c_player_trigger_sensor_host pt_wake_trash01  # true name unknown
-c_sequence_host s01_xx40  # true name unknown
+sequence music_intro01
+player_trigger pt_wake_trash01
+sequence s01_xx40
 trigger_volume_objective obj_s1_phase01_m1
-c_sequence_host s01_xx45  # true name unknown
+sequence s01_xx45
 interactable_placement sp_placement_array  # archetype not authored on TU0
-c_sequence_host cue1  # true name unknown
-c_sequence_host s01_xx50  # true name unknown
-c_squad_sensor_host sq_objective_fallen01d
-c_sequence_host s01_xx60  # true name unknown
-c_sequence_host m02_alarm  # true name unknown
-c_sequence_host s01_xx70  # true name unknown
-c_object_sensor_host o_laserweb02
-c_sequence_host s01_xx80  # true name unknown
-c_sequence_host s01_xx90  # true name unknown
-c_object_sensor_host o_laserweb03
-c_player_trigger_sensor_host pt_play_s01_x100_s01_x110  # true name unknown
-c_sequence_host s01_x100  # true name unknown
-c_squad_sensor_host sq_tank
-c_incident_listener il_loot_pickup
-c_player_trigger_sensor_host pt_play_s01_x120  # true name unknown
-c_sequence_host s01_x120  # true name unknown
+sequence cue1
+sequence s01_xx50
+squad sq_objective_fallen01d
+sequence s01_xx60
+sequence m02_alarm
+sequence s01_xx70
+object o_laserweb02
+sequence s01_xx80
+sequence s01_xx90
+object o_laserweb03
+player_trigger pt_play_s01_x100_s01_x110
+sequence s01_x100
+squad sq_tank
+incident_listener il_loot_pickup
+player_trigger pt_play_s01_x120
+sequence s01_x120
 trigger_volume_objective obj_s1_phase05_m1
-c_sequence_host cue2  # true name unknown
-c_sequence_host cue3  # true name unknown
-c_squad_sensor_host sq_bossbattle_boss01
-c_sequence_host seq_music_ascent  # true name unknown
-c_sequence_host s01_x125  # true name unknown
-c_sequence_host s01_x130  # true name unknown
-c_squad_sensor_host sq_playfight_hive01
-c_squad_sensor_host sq_playfight_hive02
-c_squad_sensor_host sq_playfight_fallen01
-c_squad_sensor_host sq_playfight_fallen02
-c_squad_sensor_host sq_bossbattle_fallen01
-c_squad_sensor_host sq_bossbattle_fallen02
-c_squad_sensor_host sq_bossbattle_fallen03
-c_squad_sensor_host sq_bossbattle_fallen04
+sequence cue2
+sequence cue3
+squad sq_bossbattle_boss01
+sequence seq_music_ascent
+sequence s01_x125
+sequence s01_x130
+squad sq_playfight_hive01
+squad sq_playfight_hive02
+squad sq_playfight_fallen01
+squad sq_playfight_fallen02
+squad sq_bossbattle_fallen01
+squad sq_bossbattle_fallen02
+squad sq_bossbattle_fallen03
+squad sq_bossbattle_fallen04
 
-startup thread sc_audio_main:
+@startup()
+script sc_audio_main():
     sleep_until(c_player_script_utilities.all_players_are_ready())
     music_intro01.start()
 
-startup thread sc_wake_trash:
+@startup()
+script sc_wake_trash():
     sleep_until(pt_wake_trash01.is_triggered())
     s01_xx40.start()
     sleep_until(obj_s1_phase01_m1._player_trigger.is_triggered())
     s01_xx40.stop()
 
-startup thread sc_playfight_line:
+@startup()
+script sc_playfight_line():
     sleep_until(playfight_alive_count() > 0)
     sleep_until(playfight_alive_count() == 0)
     s01_xx45.start()
 
-startup thread sc_scan:
+@startup()
+script sc_scan():
     sleep_until(sp_placement_array._object.get_device_position() > 0)
     cue1.start()
     cue1.set_switch_mask(1)
@@ -84,14 +88,16 @@ startup thread sc_scan:
     sleep(3)
     cue1.stop()
 
-startup thread sc_walker_line:
+@startup()
+script sc_walker_line():
     sleep_until(pt_play_s01_x100_s01_x110.is_triggered())
     sleep(1)
     s01_x100.start()
     sleep_until_dead(sq_tank)
     s01_x100.stop()
 
-startup thread sc_ship:
+@startup()
+script sc_ship():
     il_loot_pickup.bind_incident_name_hash("inventory_item_added")
     sleep_until(pt_play_s01_x120.is_triggered())
     s01_x120.start()

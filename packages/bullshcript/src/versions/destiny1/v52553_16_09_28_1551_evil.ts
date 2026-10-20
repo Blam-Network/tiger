@@ -64,6 +64,7 @@ export {
   NATIVE_TYPES,
   nativeBaseNamed,
   nativeTypeNamed,
+  nativeTypeSpelled,
 } from "../../bungiescript/native_types.ts";
 export {
   bsFileKind,

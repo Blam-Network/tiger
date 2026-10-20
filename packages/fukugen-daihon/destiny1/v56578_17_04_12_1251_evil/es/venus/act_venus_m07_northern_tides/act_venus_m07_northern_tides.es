@@ -38,6 +38,7 @@ act_venus_m07_northern_tides_mission2 phase_southern_tides_goto
 act_venus_m07_northern_tides_mission3 phase_northern_tides_ascend_steps
 act_venus_m07_northern_tides_mission4 phase_northern_tides_boss
 act_venus_m07_northern_tides_mission5 phase_northern_tides_outro
-startup thread ss_venus_m07_northern_tides:
+@startup()
+script ss_venus_m07_northern_tides():
     print("script startup")
     c_lifetime_script_utilities.get_lifetime_sensor().set_state(e_activity_lifetime_state.pregame)

@@ -3,17 +3,18 @@
 @task("center", squad: sg_center)
 @task("left", squad: sg_left)
 @task("right", squad: sg_right)
-c_objective_sensor_host obj_vault_amb1  # true name unknown
-c_squad_group_sensor_host sg_left  # true name unknown
-c_squad_group_sensor_host sg_right  # true name unknown
-c_squad_group_sensor_host sg_center  # true name unknown
+objective obj_vault_amb1
+squad_group sg_left
+squad_group sg_right
+squad_group sg_center
 loot_vault loot_venus_vault
 
 
 
 
 
-startup thread sc_main_thread:
+@startup()
+script sc_main_thread():
     print("---------------------------------------------------------")
     print("ACADEMY VAULT ENCOUNTER AMBIENT")
     print("---------------------------------------------------------")

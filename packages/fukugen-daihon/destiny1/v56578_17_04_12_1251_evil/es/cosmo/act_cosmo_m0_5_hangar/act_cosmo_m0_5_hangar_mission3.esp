@@ -5,21 +5,21 @@
 # couple of seconds later with the ascent. From one retail capture.
 
 generic_objective obj_m0_5_generic
-c_squad_sensor_host sq_amb_fallen_vandal_1
-c_squad_sensor_host sq_amb_fallen_vandal_2
-c_squad_sensor_host sq_amb_fallen_vandal_3
-c_sequence_host seq_m_cue1
-c_sequence_host seq_m_ascent
-c_sequence_host seq_d_o4_s01
-c_sequence_host seq_d_o4_s02
-c_sequence_host seq_d_o4_s05
+squad sq_amb_fallen_vandal_1
+squad sq_amb_fallen_vandal_2
+squad sq_amb_fallen_vandal_3
+sequence seq_m_cue1
+sequence seq_m_ascent
+sequence seq_d_o4_s01
+sequence seq_d_o4_s02
+sequence seq_d_o4_s05
 
-thread init: pass
+script init(): pass
 
-thread complete:
+script complete():
     c_lifetime_script_utilities.get_lifetime_sensor().end_game(30)
 
-thread main:
+script main():
     seq_m_cue1.stop()
     obj_m0_5_generic.objective_begin(nil)
     sleep_until(vandals_alive_count() == 0)

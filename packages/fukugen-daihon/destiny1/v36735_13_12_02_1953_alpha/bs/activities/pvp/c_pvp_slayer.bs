@@ -18,9 +18,9 @@ class c_pvp_slayer : c_pvp_game_type:
     int base_proximity_target_assist_score
     int base_proximity_killer_assist_score
     int base_revive_score
-    c_kill_incident_listener kill_incident_listener  # true name unknown
-    c_incident_listener revive_incident_listener
-    c_incident_player_iterator incident_player_iterator  # true name unknown
+    kill_incident_listener kill_incident_listener
+    incident_listener revive_incident_listener
+    incident_player_iterator incident_player_iterator
     delegate d_slayer_init()
     delegate d_slayer_start()
     delegate d_slayer_tick(timer)

@@ -1,7 +1,7 @@
 u_globals utils
-c_location_sensor_host southern_tides  # true name unknown
-c_player_monitor_sensor_host pm_bubble_southern_tides bind(southern_tides)  # true name unknown
-c_encounter_handle enc_south_tides_ch2m3  # true name unknown
+location southern_tides
+player_monitor pm_bubble_southern_tides bind(southern_tides)
+encounter_handle enc_south_tides_ch2m3
 @task("sniper", squad: sqg_vex_snipers)
 @task(0x2B7C851F, squad: sq_vex_sniper03)
 @task(0x2B7C851A, squad: sq_vex_sniper01)
@@ -10,98 +10,98 @@ c_encounter_handle enc_south_tides_ch2m3  # true name unknown
 @task(0xA422EB12, squad: sq_vex_sniper02)
 @task("gate01", squad: sqg_vex_reinf01)
 @task("gate00", squad: sqg_vex_reinf00)
-c_objective_sensor_host obj_south_tides_ch2m3_phase  # true name unknown
-c_trigger_volume_slot_host tv_southern_tides_md01
-c_player_trigger_sensor_host pt_southern_tides_md01 bind(tv_southern_tides_md01)  # true name unknown
-c_trigger_volume_slot_host tv_southern_tides_md02
-c_player_trigger_sensor_host pt_southern_tides_md02 bind(tv_southern_tides_md02)  # true name unknown
+objective obj_south_tides_ch2m3_phase
+trigger_volume tv_southern_tides_md01
+player_trigger pt_southern_tides_md01 bind(tv_southern_tides_md01)
+trigger_volume tv_southern_tides_md02
+player_trigger pt_southern_tides_md02 bind(tv_southern_tides_md02)
 @member_counts({goblin: 3})
 @objective(obj_south_tides_ch2m3_phase)
-c_squad_sensor_host sq_vex_reinf00
+squad sq_vex_reinf00
 @member_counts({goblin: 2, leader: 1})
 @objective(obj_south_tides_ch2m3_phase)
-c_squad_sensor_host sq_vex_reinf00a
+squad sq_vex_reinf00a
 @member_counts({goblin: 3, cell: 1})
 @objective(obj_south_tides_ch2m3_phase)
-c_squad_sensor_host sq_vex_reinf01
+squad sq_vex_reinf01
 @member_counts({goblin: 2, cell: 1})
 @objective(obj_south_tides_ch2m3_phase)
-c_squad_sensor_host sq_vex_reinf01a
+squad sq_vex_reinf01a
 @member_counts({goblin: 2, cell: 1})
 @objective(obj_south_tides_ch2m3_phase)
-c_squad_sensor_host sq_vex_reinf01b
+squad sq_vex_reinf01b
 @member_counts({goblin: 2, leader: 1})
 @objective(obj_south_tides_ch2m3_phase)
-c_squad_sensor_host sq_vex_reinf01c
+squad sq_vex_reinf01c
 @member_counts({goblin: 4})
 @objective(obj_south_tides_ch2m3_phase)
-c_squad_sensor_host sq_vex_reinf02
+squad sq_vex_reinf02
 @member_counts({goblin: 2, cell: 1})
 @objective(obj_south_tides_ch2m3_phase)
-c_squad_sensor_host sq_vex_reinf02a
+squad sq_vex_reinf02a
 @member_counts({goblin: 3})
 @objective(obj_south_tides_ch2m3_phase)
-c_squad_sensor_host sq_vex_reinf02b
+squad sq_vex_reinf02b
 @member_counts({goblin: 2, leader: 1})
 @objective(obj_south_tides_ch2m3_phase)
-c_squad_sensor_host sq_vex_reinf02c
+squad sq_vex_reinf02c
 @member_counts({goblin: 3, cell: 1})
 @objective(obj_south_tides_ch2m3_phase)
-c_squad_sensor_host sq_vex_reinf03
+squad sq_vex_reinf03
 @member_counts({goblin: 2, cell: 1})
 @objective(obj_south_tides_ch2m3_phase)
-c_squad_sensor_host sq_vex_reinf03a
+squad sq_vex_reinf03a
 @member_counts({goblin: 3})
 @objective(obj_south_tides_ch2m3_phase)
-c_squad_sensor_host sq_vex_reinf03b
+squad sq_vex_reinf03b
 @member_counts({goblin: 2, leader: 1})
 @objective(obj_south_tides_ch2m3_phase)
-c_squad_sensor_host sq_vex_reinf03c
+squad sq_vex_reinf03c
 @member_counts({sniper: 0})
 @objective(obj_south_tides_ch2m3_phase)
-c_squad_sensor_host sq_vex_sniper01
+squad sq_vex_sniper01
 @member_counts({sniper: 0})
 @objective(obj_south_tides_ch2m3_phase)
-c_squad_sensor_host sq_vex_sniper02
+squad sq_vex_sniper02
 @member_counts({cell_1: 1})
 @objective(obj_south_tides_ch2m3_phase)
-c_squad_sensor_host sq_vex_sniper03
+squad sq_vex_sniper03
 @member_counts({cell_1: 1})
 @objective(obj_south_tides_ch2m3_phase)
-c_squad_sensor_host sq_vex_sniper04
+squad sq_vex_sniper04
 @member_counts({cell_1: 1})
 @objective(obj_south_tides_ch2m3_phase)
-c_squad_sensor_host sq_vex_sniper05
+squad sq_vex_sniper05
 @member_counts({cell_1: 1})
 @objective(obj_south_tides_ch2m3_phase)
-c_squad_sensor_host sq_vex_sniper06
+squad sq_vex_sniper06
 @member_counts({cell_1: 1})
 @objective(obj_south_tides_ch2m3_phase)
-c_squad_sensor_host sq_vex_sniper07
-c_control_point_sensor_host ps_snipe01  # true name unknown
-c_control_point_sensor_host ps_snipe02  # true name unknown
-c_squad_member_sensor_host sq_vex_sniper01__sniper  # true name unknown
-c_squad_member_sensor_host sq_vex_sniper02__sniper  # true name unknown
-c_squad_group_sensor_host sqg_vex_reinf00  # true name unknown
-c_squad_group_sensor_host sqg_vex_reinf01  # true name unknown
-c_squad_group_sensor_host sqg_vex_reinf03  # true name unknown
-c_squad_group_sensor_host sqg_vex_snipers  # true name unknown
-c_sequence_host md_c2_m3_d030  # true name unknown
-c_sequence_host md_c2_m3_d040  # true name unknown
-c_sequence_host md_c2_m4_d010  # true name unknown
-c_sequence_host md_c2_m4_d020  # true name unknown
-c_sequence_host md_c2_m4_d030  # true name unknown
-c_sequence_host md_c2_m4_d040  # true name unknown
-c_sequence_host md_c2_m4_d050  # true name unknown
-c_sequence_host minotaur_roar  # true name unknown
-c_trigger_volume_slot_host tv_vex_warpgate00
-c_player_monitor_sensor_host pm_vex_warpgate00 bind(tv_vex_warpgate00)  # true name unknown
-c_trigger_volume_slot_host tv_vex_warpgate01
-c_player_monitor_sensor_host pm_vex_warpgate01 bind(tv_vex_warpgate01)  # true name unknown
-c_trigger_volume_slot_host tv_vex_warpgate02
-c_player_monitor_sensor_host pm_vex_warpgate02 bind(tv_vex_warpgate02)  # true name unknown
-c_trigger_volume_slot_host tv_vex_warpgate03
-c_player_monitor_sensor_host pm_vex_warpgate03 bind(tv_vex_warpgate03)  # true name unknown
+squad sq_vex_sniper07
+control_point ps_snipe01
+control_point ps_snipe02
+squad_member sq_vex_sniper01__sniper
+squad_member sq_vex_sniper02__sniper
+squad_group sqg_vex_reinf00
+squad_group sqg_vex_reinf01
+squad_group sqg_vex_reinf03
+squad_group sqg_vex_snipers
+sequence md_c2_m3_d030
+sequence md_c2_m3_d040
+sequence md_c2_m4_d010
+sequence md_c2_m4_d020
+sequence md_c2_m4_d030
+sequence md_c2_m4_d040
+sequence md_c2_m4_d050
+sequence minotaur_roar
+trigger_volume tv_vex_warpgate00
+player_monitor pm_vex_warpgate00 bind(tv_vex_warpgate00)
+trigger_volume tv_vex_warpgate01
+player_monitor pm_vex_warpgate01 bind(tv_vex_warpgate01)
+trigger_volume tv_vex_warpgate02
+player_monitor pm_vex_warpgate02 bind(tv_vex_warpgate02)
+trigger_volume tv_vex_warpgate03
+player_monitor pm_vex_warpgate03 bind(tv_vex_warpgate03)
 bool gates_on
 bool text_dialog = true
 cinematic_midmission cine_ch2m3_midmission
@@ -118,10 +118,10 @@ vex_warp_gate vex_warp_gate01
 vex_warp_gate vex_warp_gate02
 @member_counts({_squad: {gate: 0}})
 vex_warp_gate vex_warp_gate03
-c_hop_on_sensor_host warpgate_invincible  # true name unknown
-c_object_filter_sensor_host warpgates
+hop_on warpgate_invincible
+object_filter warpgates
 string_hash vex_warpgate = "vex_warpgate"
-c_object_sensor_host minotaur_large_a_roar
+object minotaur_large_a_roar
 
 
 
@@ -138,17 +138,18 @@ c_object_sensor_host minotaur_large_a_roar
 
 
 
-startup thread startup:
+@startup()
+script startup():
     warpgates.add_combatant_type(vex_warpgate)
     warpgate_invincible.set_filter(warpgates)
 
-thread init: pass
+script init(): pass
 
 
-thread complete:
+script complete():
     warpgate_invincible.clear_filter()
 
-thread main:
+script main():
     sqg_vex_reinf00.add_child(sq_vex_reinf00)
     sqg_vex_reinf00.add_child(sq_vex_reinf00a)
     sqg_vex_reinf01.add_child(sq_vex_reinf01)
@@ -204,7 +205,7 @@ thread main:
 
 
 
-thread sc_gate00:
+script sc_gate00():
     vex_warp_gate00.activate()
     sleep_until(vex_warp_gate00.drop_cue == true)
     warpgates.remove(vex_warp_gate00._squad)
@@ -212,7 +213,7 @@ thread sc_gate00:
     sleep_until(sq_vex_reinf00.alive_count() < 2)
     vex_warp_gate00.drop_begin(sq_vex_reinf00a)
 
-thread sc_gate01:
+script sc_gate01():
     sleep(mathlib.random_int_inclusive(0.1, 2))
     vex_warp_gate01.power_up()
     sleep_until(vex_warp_gate01.drop_cue == true)
@@ -224,7 +225,7 @@ thread sc_gate01:
     vex_warp_gate01.reinforce(sq_vex_reinf01c)
 
 
-thread sc_gate02:
+script sc_gate02():
     sleep(mathlib.random_int_inclusive(0.1, 2))
     vex_warp_gate02.power_up()
     sleep_until(vex_warp_gate02.drop_cue == true)
@@ -240,7 +241,7 @@ thread sc_gate02:
     sleep(mathlib.random_int_inclusive(4, 6))
     vex_warp_gate02.reinforce(sq_vex_reinf02c)
 
-thread sc_gate03:
+script sc_gate03():
     sleep(mathlib.random_int_inclusive(0.1, 2))
     vex_warp_gate03.power_up()
     sleep_until(vex_warp_gate03.drop_cue == true)
@@ -257,7 +258,7 @@ thread sc_gate03:
     vex_warp_gate03.reinforce(sq_vex_reinf03c)
 
 
-thread sc_snipers:
+script sc_snipers():
     sq_vex_sniper01.place()
     sq_vex_sniper02.place()
     sq_vex_sniper03.place()
@@ -279,39 +280,39 @@ command_script sniper_teleport(path):
 
 
 
-thread venus_c2_m03_d30:
+script venus_c2_m03_d30():
     pt_southern_tides_md01.reset()
     sleep_until(pt_southern_tides_md01.is_triggered())
     md_c2_m3_d030.start()
     print("md_c3_m3_d030")
 
-thread venus_c2_m03_d40:
+script venus_c2_m03_d40():
     pt_southern_tides_md02.reset()
     sleep_until(pt_southern_tides_md02.is_triggered())
     md_c2_m3_d040.start()
     print("md_c3_m3_d040")
 
-thread venus_c2_m04_d10:
+script venus_c2_m04_d10():
     md_c2_m4_d010.start()
     print("md_c2_m4_d010")
 
-thread venus_c2_m04_d20:
+script venus_c2_m04_d20():
     sleep_until(ch2m3_kill_warpgates.get_count() < 4)
     sleep_until(pm_vex_warpgate01.test_any_inside() or pm_vex_warpgate03.test_any_inside())
     md_c2_m4_d020.start()
     print("md_c2_m4_d020")
 
-thread venus_c2_m04_d30:
+script venus_c2_m04_d30():
     sleep(8)
     md_c2_m4_d030.start()
     print("md_c2_m4_d030")
 
-thread venus_c2_m04_d40:
+script venus_c2_m04_d40():
     sleep_until(pm_vex_warpgate02.test_any_inside() and sqg_vex_snipers.alive_count() > 1 and ch2m3_kill_warpgates.get_count() == 2)
     md_c2_m4_d040.start()
     print("md_c2_m4_d040")
 
-thread venus_c2_m04_d50:
+script venus_c2_m04_d50():
     sleep(4)
     md_c2_m4_d050.start()
     print("md_c2_m4_d050")

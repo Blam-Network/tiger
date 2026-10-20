@@ -47,7 +47,7 @@ export const s_scenario_client = c.struct({
   unknown1c: c.u32(),
   unknown20: c.u32(),
   unknown24: c.u32(),
-  // A string list tag (8080035A).
+  // A localized strings tag (8080035A).
   unknown28: c.u32(),
   unknown2c: c.u32(),
   // The destination, e.g. "cosmo".

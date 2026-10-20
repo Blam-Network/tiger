@@ -3,7 +3,7 @@ enum e_rocket_launcher_type:
     count
 
 struct s_rocket_launcher : s_rocket_launcher_constants:
-    unknown_80802AA8 trigger_behavior  # true name unknown
+    e_trigger_behavior trigger_behavior
     real fire_mode
     real rate_of_fire
     real shots_per_fire

@@ -3,15 +3,15 @@
 # Mission 2, "Enter the Wall". The objective comes up shortly after the
 # player first stands on the highway, and clears at the wall.
 
-c_trigger_volume_slot_host tv_first_obj
-c_player_trigger_sensor_host pt_first_obj bind(tv_first_obj)  # true name unknown
+trigger_volume tv_first_obj
+player_trigger pt_first_obj bind(tv_first_obj)
 trigger_volume_objective obj_m0_phase00_m1
 
-thread init: pass
+script init(): pass
 
-thread complete: pass
+script complete(): pass
 
-thread main:
+script main():
     sleep_until(pt_first_obj.is_triggered())
     sleep(4)
     obj_m0_phase00_m1.objective_begin()

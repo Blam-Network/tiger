@@ -1,16 +1,16 @@
-c_player_objective_sensor_host po_event_dropship_multipoint
-c_trigger_volume_slot_host tv_drill_pre_engage
-c_player_trigger_sensor_host pt_drill_pre_engage bind(tv_drill_pre_engage)  # true name unknown
-c_sequence_host seq_glimmer_start bind(po_event_dropship_multipoint, e_sequence_suppression_behavior.skip)  # true name unknown
-c_sequence_host seq_glimmer_engage1  # true name unknown
-c_sequence_host seq_glimmer_engage2 bind(po_event_dropship_multipoint, e_sequence_suppression_behavior.skip)  # true name unknown
-c_sequence_host seq_glimmer_end_gold bind(po_event_dropship_multipoint, e_sequence_suppression_behavior.skip)  # true name unknown
-c_sequence_host seq_glimmer_end_silver bind(po_event_dropship_multipoint, e_sequence_suppression_behavior.skip)  # true name unknown
-c_sequence_host seq_glimmer_end_bronze bind(po_event_dropship_multipoint, e_sequence_suppression_behavior.skip)  # true name unknown
-c_sequence_host seq_glimmer_wave_complete1 bind(po_event_dropship_multipoint, e_sequence_suppression_behavior.skip)  # true name unknown
-c_sequence_host seq_glimmer_wave_complete2 bind(po_event_dropship_multipoint, e_sequence_suppression_behavior.skip)  # true name unknown
-c_sequence_host seq_glimmer_music1 bind(po_event_dropship_multipoint, e_sequence_suppression_behavior.postpone)  # true name unknown
-c_sequence_host seq_glimmer_incoming bind(po_event_dropship_multipoint, e_sequence_suppression_behavior.postpone)  # true name unknown
+player_objective po_event_dropship_multipoint
+trigger_volume tv_drill_pre_engage
+player_trigger pt_drill_pre_engage bind(tv_drill_pre_engage)
+sequence seq_glimmer_start bind(po_event_dropship_multipoint, e_sequence_suppression_behavior.skip)
+sequence seq_glimmer_engage1
+sequence seq_glimmer_engage2 bind(po_event_dropship_multipoint, e_sequence_suppression_behavior.skip)
+sequence seq_glimmer_end_gold bind(po_event_dropship_multipoint, e_sequence_suppression_behavior.skip)
+sequence seq_glimmer_end_silver bind(po_event_dropship_multipoint, e_sequence_suppression_behavior.skip)
+sequence seq_glimmer_end_bronze bind(po_event_dropship_multipoint, e_sequence_suppression_behavior.skip)
+sequence seq_glimmer_wave_complete1 bind(po_event_dropship_multipoint, e_sequence_suppression_behavior.skip)
+sequence seq_glimmer_wave_complete2 bind(po_event_dropship_multipoint, e_sequence_suppression_behavior.skip)
+sequence seq_glimmer_music1 bind(po_event_dropship_multipoint, e_sequence_suppression_behavior.postpone)
+sequence seq_glimmer_incoming bind(po_event_dropship_multipoint, e_sequence_suppression_behavior.postpone)
 
 # Decompiled from 36735.13.12.02.1953.alpha script tags
 # See tag 821B804C

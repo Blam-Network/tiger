@@ -1,15 +1,15 @@
-c_squad_sensor_host sq_vex01
-c_squad_sensor_host sq_vex02
-c_squad_sensor_host sq_vex03
-c_squad_sensor_host sq_vex04
-c_squad_group_sensor_host sg_vex  # true name unknown
-c_squad_member_sensor_host sq_vex01__vex  # true name unknown
-c_squad_member_sensor_host sq_vex02__vex  # true name unknown
-c_squad_member_sensor_host sq_vex03__vex  # true name unknown
-c_squad_member_sensor_host sq_vex04__vex_block_ai  # true name unknown
+squad sq_vex01
+squad sq_vex02
+squad sq_vex03
+squad sq_vex04
+squad_group sg_vex
+squad_member sq_vex01__vex
+squad_member sq_vex02__vex
+squad_member sq_vex03__vex
+squad_member sq_vex04__vex_block_ai
 string_hash sacrifice_incident = "vex_block_sacrifice"
-c_hop_on_sensor_host ho_vex_death  # true name unknown
-c_object_filter_sensor_host of_vex_death
+hop_on ho_vex_death
+object_filter of_vex_death
 
 
 
@@ -21,7 +21,8 @@ def set_objective(obj):
     obj.add_squad(sq_vex03)
     obj.add_squad(sq_vex04)
 
-startup thread initialize_wave:
+@startup()
+script initialize_wave():
     sg_vex.add_child(sq_vex01)
     sg_vex.add_child(sq_vex02)
     sg_vex.add_child(sq_vex03)
@@ -103,13 +104,13 @@ def select_cloud_i(cloud_prefab_list):
         sleep(0.5)
     return rand_i
 
-thread vex1_drop:
+script vex1_drop():
     ai_to_block(sq_vex01, sq_vex01__vex)
-thread vex2_drop:
+script vex2_drop():
     ai_to_block(sq_vex02, sq_vex02__vex)
-thread vex3_drop:
+script vex3_drop():
     ai_to_block(sq_vex03, sq_vex03__vex)
-thread vex4_drop:
+script vex4_drop():
     ai_to_block(sq_vex04, sq_vex04__vex_block_ai)
 
 def ai_to_block(sq, cb):

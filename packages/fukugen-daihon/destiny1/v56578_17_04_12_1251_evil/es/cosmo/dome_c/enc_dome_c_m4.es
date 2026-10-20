@@ -14,85 +14,86 @@
 
 @activity_bundle("enc_dome_c_m4")
 
-c_objective_sensor_host obj_dome_c_m4_fallen
-c_objective_sensor_host obj_dome_c_m4_hive
-c_player_monitor_sensor_host pm_refresh_corridor01
-c_player_monitor_sensor_host pm_corridor01c_spawn
-c_player_monitor_sensor_host pm_corridor01d_spawn
-c_player_monitor_sensor_host pm_refresh_corridor02
-c_player_monitor_sensor_host pm_outdoor_enc_start
-c_player_monitor_sensor_host pm_refresh_outdoor_enc01
-c_player_monitor_sensor_host pm_refresh_guards01
-c_player_monitor_sensor_host pm_outdoor_enc_wave02
-c_object_sensor_host o_terminal_invis_device
-c_object_sensor_host o_auto_door02
-c_object_sensor_host o_hei_satellite_event_a01
-c_object_sensor_host o_hei_satellite_event_a02
+objective obj_dome_c_m4_fallen
+objective obj_dome_c_m4_hive
+player_monitor pm_refresh_corridor01
+player_monitor pm_corridor01c_spawn
+player_monitor pm_corridor01d_spawn
+player_monitor pm_refresh_corridor02
+player_monitor pm_outdoor_enc_start
+player_monitor pm_refresh_outdoor_enc01
+player_monitor pm_refresh_guards01
+player_monitor pm_outdoor_enc_wave02
+object o_terminal_invis_device
+object o_auto_door02
+object o_hei_satellite_event_a01
+object o_hei_satellite_event_a02
 interactable_placement obj_placement_m4_o2 bind("0x4CBCA57B")
 interactable_placement obj_placement_m4_finish bind("0x3C97D375")
-c_squad_member_sensor_host sq_ds_fallen_landing01__dropship
-c_control_point_set_sensor_host cps_ds_fallen_landing01_enter
-c_control_point_set_sensor_host cps_ds_fallen_landing01
+squad_member sq_ds_fallen_landing01__dropship
+control_point_set cps_ds_fallen_landing01_enter
+control_point_set cps_ds_fallen_landing01
 @member_counts({dreg: 2})
-c_squad_sensor_host sq_fallen_corridor01a
+squad sq_fallen_corridor01a
 @member_counts({vandal: 1, dreg: 1})
-c_squad_sensor_host sq_fallen_corridor01b
-c_squad_sensor_host sq_fallen_corridor01c1
+squad sq_fallen_corridor01b
+squad sq_fallen_corridor01c1
 @member_counts({dreg: 2})
-c_squad_sensor_host sq_fallen_corridor01d
+squad sq_fallen_corridor01d
 @member_counts({dreg: 2})
-c_squad_sensor_host sq_fallen_corridor02a
+squad sq_fallen_corridor02a
 @member_counts({vandal: 1, dreg: 1})
-c_squad_sensor_host sq_fallen_corridor02b
+squad sq_fallen_corridor02b
 @member_counts({vandal: 2, dreg: 1})
-c_squad_sensor_host sq_fallen_flank01
+squad sq_fallen_flank01
 @member_counts({vandal: 1, captain: 1})
-c_squad_sensor_host sq_fallen_raised01
+squad sq_fallen_raised01
 @member_counts({dreg: 3, vandal: 1})
-c_squad_sensor_host sq_fallen_landing01
+squad sq_fallen_landing01
 @member_counts({dreg: 3, vandal: 2})
-c_squad_sensor_host sq_fallen_controlentrance01
+squad sq_fallen_controlentrance01
 @member_counts({shank: 4})
-c_squad_sensor_host sq_fallen_controlentrance_shanks
+squad sq_fallen_controlentrance_shanks
 @member_counts({vandal: 1, captain: 1})
-c_squad_sensor_host sq_fallen_controlentrance_guards
-c_squad_sensor_host sq_fallen_ctrlambush01
-c_squad_sensor_host sq_fallen_ctrlambush02
-c_squad_sensor_host sq_fallen_ctrlambush03
-c_sequence_host seq_hive_wave_announce
-c_squad_member_sensor_host sq_ds_hive_assault01__dropship
-c_squad_member_sensor_host sq_ds_hive_assault02__dropship
-c_squad_member_sensor_host sq_ds_hive_assault03__dropship
-c_control_point_set_sensor_host cps_ds_hive_assault01_enter
-c_control_point_set_sensor_host cps_ds_hive_assault01_exit
-c_control_point_set_sensor_host cps_ds_hive_assault02
-c_control_point_set_sensor_host cps_ds_hive_assault03
-c_control_point_set_sensor_host cps_ds_hive_assault03_enter
-c_control_point_set_sensor_host cps_ds_hive_assault03_exit
+squad sq_fallen_controlentrance_guards
+squad sq_fallen_ctrlambush01
+squad sq_fallen_ctrlambush02
+squad sq_fallen_ctrlambush03
+sequence seq_hive_wave_announce
+squad_member sq_ds_hive_assault01__dropship
+squad_member sq_ds_hive_assault02__dropship
+squad_member sq_ds_hive_assault03__dropship
+control_point_set cps_ds_hive_assault01_enter
+control_point_set cps_ds_hive_assault01_exit
+control_point_set cps_ds_hive_assault02
+control_point_set cps_ds_hive_assault03
+control_point_set cps_ds_hive_assault03_enter
+control_point_set cps_ds_hive_assault03_exit
 @member_counts({thrall: 3})
-c_squad_sensor_host sq_hive_assault_thrall_first1
+squad sq_hive_assault_thrall_first1
 @member_counts({thrall: 3})
-c_squad_sensor_host sq_hive_assault_thrall_first2
+squad sq_hive_assault_thrall_first2
 @member_counts([{thrall: 2, thrall_1: 2}, {thrall_1: 2, thrall_2: 2}])
-static_array<c_squad_sensor_host, 5> sq_hive_assault_thrall
+static_array<squad, 5> sq_hive_assault_thrall
 @member_counts({wizard: 1})
-c_squad_sensor_host sq_hive_assault_heavy01a
+squad sq_hive_assault_heavy01a
 @member_counts({trooper: 2})
-c_squad_sensor_host sq_hive_assault_trooper02a
+squad sq_hive_assault_trooper02a
 @member_counts({trooper: 2})
-c_squad_sensor_host sq_hive_assault_trooper02b
+squad sq_hive_assault_trooper02b
 @member_counts({0xEEAC5E41: 1})
-c_squad_sensor_host sq_hive_assault_heavy02a
+squad sq_hive_assault_heavy02a
 @member_counts({trooper: 2})
-c_squad_sensor_host sq_hive_assault_trooper03a
+squad sq_hive_assault_trooper03a
 @member_counts({trooper: 2})
-c_squad_sensor_host sq_hive_assault_trooper03b
+squad sq_hive_assault_trooper03b
 @member_counts({trooper: 2})
-c_squad_sensor_host sq_hive_assault_trooper03c
+squad sq_hive_assault_trooper03c
 @member_counts({knight_major: 1})
-c_squad_sensor_host sq_hive_assault_heavy03a
+squad sq_hive_assault_heavy03a
 
-startup thread sc_dome_c:
+@startup()
+script sc_dome_c():
     o_auto_door02.create()
     o_auto_door02.set_device_position(1)
     for satellite in [o_hei_satellite_event_a01, o_hei_satellite_event_a02]:
@@ -112,7 +113,7 @@ startup thread sc_dome_c:
 
 # the console shows it is working once used, and so does the terminal once
 # mission 3 makes it
-thread sc_console:
+script sc_console():
     console = obj_placement_m4_o2._object
     sleep_until(console.is_active())
     console.set_device_position(0.28)
@@ -120,12 +121,12 @@ thread sc_console:
     sleep(7)
     device_working(console)
 
-thread sc_terminal:
+script sc_terminal():
     sleep_until(o_terminal_invis_device.is_alive())
     device_working(o_terminal_invis_device)
 
 # the Fallen, corridor by corridor to the control room
-thread sc_corridors:
+script sc_corridors():
     sleep(3)
     sq_ds_fallen_landing01__dropship.place()
     sq_ds_fallen_landing01__dropship.execute(cs_skiff_enter(cps_ds_fallen_landing01_enter))
@@ -171,7 +172,7 @@ thread sc_corridors:
 
 # the Hive, once the console is working: two ships pass over the dome, the
 # third brings in three waves
-thread sc_assault:
+script sc_assault():
     sleep_until(o_terminal_invis_device.is_alive())
     o_hei_satellite_event_a01.set_device_position(1)
     sleep(3)

@@ -15,83 +15,84 @@
 
 @activity_bundle("enc_entrance_m01")
 
-c_objective_sensor_host obj_entrance_m01
-c_object_sensor_host o_vex_block_network_a
+objective obj_entrance_m01
+object o_vex_block_network_a
 interactable_placement pf_vex_block
 interactable_placement pf_door_hack
-static_array<c_object_sensor_host, 15> candy_dynamic_objects
-static_array<c_object_sensor_host, 5> candy_explosive_objects
-c_trigger_volume_slot_host tv_spawn02
-c_player_monitor_sensor_host pm_spawn02 bind(tv_spawn02)
-c_trigger_volume_slot_host tv_top_left
-c_player_monitor_sensor_host pm_top_left bind(tv_top_left)
-c_trigger_volume_slot_host tv_top_right
-c_player_monitor_sensor_host pm_top_right bind(tv_top_right)
-c_action_point_host ps_enter
+static_array<object, 15> candy_dynamic_objects
+static_array<object, 5> candy_explosive_objects
+trigger_volume tv_spawn02
+player_monitor pm_spawn02 bind(tv_spawn02)
+trigger_volume tv_top_left
+player_monitor pm_top_left bind(tv_top_left)
+trigger_volume tv_top_right
+player_monitor pm_top_right bind(tv_top_right)
+action_point ps_enter
 @member_counts({hobgoblins: 2, minotaur: 1})
-c_squad_sensor_host sq_anchor
-c_squad_sensor_host sq_anchor_tier2
+squad sq_anchor
+squad sq_anchor_tier2
 @member_counts({goblins: 3})
-c_squad_sensor_host sq_center01
-c_squad_sensor_host sq_mid_minotaur
+squad sq_center01
+squad sq_mid_minotaur
 @member_counts({hobgoblins: 2})
-c_squad_sensor_host sq_mid_snipers
+squad sq_mid_snipers
 @member_counts({goblins: 3})
-c_squad_sensor_host sq_mid_goblins
+squad sq_mid_goblins
 @member_counts({goblins: 3})
-c_squad_sensor_host sq_def_center01
+squad sq_def_center01
 @member_counts({goblins: 3})
-c_squad_sensor_host sq_def_center02
+squad sq_def_center02
 @member_counts({minotaur: 1, goblins: 2})
-c_squad_sensor_host sq_def_anchor01
+squad sq_def_anchor01
 @member_counts({minotaur: 1, goblins: 2})
-c_squad_sensor_host sq_def_anchor02
-c_squad_sensor_host sq_def_anchor_tier2
+squad sq_def_anchor02
+squad sq_def_anchor_tier2
 @member_counts({hobgoblins: 1, goblin: 2})
-c_squad_sensor_host sq_left_ledge_sniper
+squad sq_left_ledge_sniper
 @member_counts({hobgoblins: 1, goblin: 2})
-c_squad_sensor_host sq_right_ledge_sniper
-c_squad_sensor_host sq_cloud01
-c_squad_member_sensor_host sq_cloud01__cloud
-c_squad_sensor_host sq_cloud02
-c_squad_member_sensor_host sq_cloud02__cloud
-c_squad_sensor_host sq_cloud03
-c_squad_member_sensor_host sq_cloud03__cloud
-c_squad_sensor_host sq_cloud04
-c_squad_member_sensor_host sq_cloud04__cloud
-c_squad_sensor_host sq_cloud05
-c_squad_member_sensor_host sq_cloud05__cloud
-c_squad_sensor_host sq_left_ledge_cloud
-c_squad_member_sensor_host sq_left_ledge_cloud__cloud
-c_squad_sensor_host sq_right_ledge_cloud
-c_squad_member_sensor_host sq_right_ledge_cloud__cloud
-c_squad_sensor_host sq_march01
-c_squad_member_sensor_host sq_march01__goblin01
-c_squad_member_sensor_host sq_march01__goblin02
-c_squad_member_sensor_host sq_march01__goblin03
-c_squad_member_sensor_host sq_march01__goblin04
-c_squad_sensor_host sq_march02
-c_squad_member_sensor_host sq_march02__goblin01
-c_squad_member_sensor_host sq_march02__goblin02
-c_squad_member_sensor_host sq_march02__goblin03
-c_squad_member_sensor_host sq_march02__goblin04
-c_squad_sensor_host sq_march03
-c_squad_member_sensor_host sq_march03__goblin01
-c_squad_member_sensor_host sq_march03__goblin02
-c_squad_member_sensor_host sq_march03__goblin03
-c_squad_member_sensor_host sq_march03__goblin04
-c_squad_sensor_host sq_dummies
-c_squad_group_sensor_host sqg_center
-c_squad_group_sensor_host sqg_mid
-c_squad_group_sensor_host sqg_marching
-c_squad_group_sensor_host sqg_wave02
-c_squad_group_sensor_host sqg_defensive_wave
-c_squad_group_sensor_host sqg_defensive_anchor
+squad sq_right_ledge_sniper
+squad sq_cloud01
+squad_member sq_cloud01__cloud
+squad sq_cloud02
+squad_member sq_cloud02__cloud
+squad sq_cloud03
+squad_member sq_cloud03__cloud
+squad sq_cloud04
+squad_member sq_cloud04__cloud
+squad sq_cloud05
+squad_member sq_cloud05__cloud
+squad sq_left_ledge_cloud
+squad_member sq_left_ledge_cloud__cloud
+squad sq_right_ledge_cloud
+squad_member sq_right_ledge_cloud__cloud
+squad sq_march01
+squad_member sq_march01__goblin01
+squad_member sq_march01__goblin02
+squad_member sq_march01__goblin03
+squad_member sq_march01__goblin04
+squad sq_march02
+squad_member sq_march02__goblin01
+squad_member sq_march02__goblin02
+squad_member sq_march02__goblin03
+squad_member sq_march02__goblin04
+squad sq_march03
+squad_member sq_march03__goblin01
+squad_member sq_march03__goblin02
+squad_member sq_march03__goblin03
+squad_member sq_march03__goblin04
+squad sq_dummies
+squad_group sqg_center
+squad_group sqg_mid
+squad_group sqg_marching
+squad_group sqg_wave02
+squad_group sqg_defensive_wave
+squad_group sqg_defensive_anchor
 bool conflux_clear
 bool entrance_clear
 int i_resist_wave
 
-startup thread sc_entrance_main:
+@startup()
+script sc_entrance_main():
     print("script startup")
     sq_anchor.set_objective(obj_entrance_m01)
     sq_anchor_tier2.set_objective(obj_entrance_m01)
@@ -143,7 +144,7 @@ startup thread sc_entrance_main:
 
 # mission 4: the conflux is hacked. The network goes down, the marchers come
 # out of the first cloud, then the mid group and the anchor as each wave dies.
-thread sc_conflux_hacked:
+script sc_conflux_hacked():
     pf_vex_block._object.set_device_position(1)
     cloud_open(sq_cloud01, sq_cloud01__cloud)
     cloud_drop(sq_cloud01__cloud, sq_march01, "0xE32043F4")
@@ -175,7 +176,7 @@ thread sc_conflux_hacked:
 
 # mission 5: hold the entrance. The centre pair comes back with every wave;
 # the ledge snipers and the anchors join in turn.
-thread sc_resist:
+script sc_resist():
     i_resist_wave = 1
     cloud_open(sq_cloud03, sq_cloud03__cloud)
     cloud_open(sq_right_ledge_cloud, sq_right_ledge_cloud__cloud)
@@ -211,7 +212,7 @@ thread sc_resist:
     entrance_clear = true
 
 # mission 6: the loot goes with the fight
-thread sc_cleanup:
+script sc_cleanup():
     for candy in candy_dynamic_objects:
         candy.delete_object()
     for candy in candy_explosive_objects:

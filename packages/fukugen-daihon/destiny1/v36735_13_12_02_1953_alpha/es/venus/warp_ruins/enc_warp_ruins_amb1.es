@@ -1,7 +1,7 @@
 @activity_bundle("enc_warp_ruins_amb1")
 
 u_globals utils
-c_encounter_manager encounters  # true name unknown
+encounter_manager encounters
 @member_counts({_squad: [{cell: 5}]})
 ambush_encounter ambush_encounter_1
 @member_counts({_squad: [{cell: 4, cell_1: 1}]})
@@ -16,43 +16,43 @@ simple_encounter simple_encounter_2
 @task("left", squad: sq_raid_phase00_left)
 @task("right_leader", squad: sq_raid_phase00_right_leader)
 @task("right", squad: sq_raid_phase00_right)
-c_objective_sensor_host obj_raid_bridge_minotaur_phase00  # true name unknown
-c_activity_flag raid_encounter bind("raid_phase0")  # true name unknown
-c_activity_flag raid_gate bind("raid_gate_phase0")  # true name unknown
-c_object_sensor_host vex_infinity_portal_gate
-c_device_host d_vex_infinity_portal_gate bind(vex_infinity_portal_gate)
-c_timer_sensor_host center_switch_pillar_timer  # true name unknown
-c_timer_sensor_host left_switch_pillar_timer  # true name unknown
-c_timer_sensor_host right_switch_pillar_timer  # true name unknown
+objective obj_raid_bridge_minotaur_phase00
+activity_flag raid_encounter bind("raid_phase0")
+activity_flag raid_gate bind("raid_gate_phase0")
+object vex_infinity_portal_gate
+device d_vex_infinity_portal_gate bind(vex_infinity_portal_gate)
+timer center_switch_pillar_timer
+timer left_switch_pillar_timer
+timer right_switch_pillar_timer
 @member_counts({major: 1})
 @objective(obj_raid_bridge_minotaur_phase00)
-c_squad_sensor_host sq_raid_phase00_right_leader
+squad sq_raid_phase00_right_leader
 @member_counts({goblins: 4})
 @objective(obj_raid_bridge_minotaur_phase00)
-c_squad_sensor_host sq_raid_phase00_right
+squad sq_raid_phase00_right
 @member_counts({major: 1})
 @objective(obj_raid_bridge_minotaur_phase00)
-c_squad_sensor_host sq_raid_phase00_left_leader
+squad sq_raid_phase00_left_leader
 @member_counts({goblins: 4})
 @objective(obj_raid_bridge_minotaur_phase00)
-c_squad_sensor_host sq_raid_phase00_left
+squad sq_raid_phase00_left
 @member_counts({minotaurs: 3})
 @objective(obj_raid_bridge_minotaur_phase00)
-c_squad_sensor_host sq_raid_phase00_center
+squad sq_raid_phase00_center
 @member_counts({minotaurs: 1})
 @objective(obj_raid_bridge_minotaur_phase00)
-c_squad_sensor_host sq_raid_phase00_center_leader
+squad sq_raid_phase00_center_leader
 @member_counts({pilot: 0})
-c_squad_sensor_host sq_raid_phase00_cloud
+squad sq_raid_phase00_cloud
 @member_counts({pilot: 0})
-c_squad_sensor_host sq_raid_phase00_right_cloud
+squad sq_raid_phase00_right_cloud
 @member_counts({pilot: 0})
-c_squad_sensor_host sq_raid_phase00_left_cloud
-c_squad_member_sensor_host sq_raid_phase00_cloud__pilot  # true name unknown
-c_squad_member_sensor_host sq_raid_phase00_right_cloud__pilot  # true name unknown
-c_squad_member_sensor_host sq_raid_phase00_left_cloud__pilot  # true name unknown
-c_object_sensor_host vex_pillar
-c_objective_timer_host ot_vex_pillar bind(vex_pillar)  # true name unknown
+squad sq_raid_phase00_left_cloud
+squad_member sq_raid_phase00_cloud__pilot
+squad_member sq_raid_phase00_right_cloud__pilot
+squad_member sq_raid_phase00_left_cloud__pilot
+object vex_pillar
+objective_timer ot_vex_pillar bind(vex_pillar)
 int int_objective_timer = 120
 bool left_ai_goal
 bool right_ai_goal
@@ -78,7 +78,8 @@ loot_warp_ruins loot_venus_warp_ruins_1
 
 
 
-startup thread ss_encounter_controller_thread:
+@startup()
+script ss_encounter_controller_thread():
     encounters.actor_budget = 16
     encounters.add_ambient_encounter(ambush_encounter_1, 5, 100, 20, 300, 120)
     encounters.add_ambient_encounter(ambush_encounter_2, 5, 80, 20, 300, 120)
@@ -87,7 +88,8 @@ startup thread ss_encounter_controller_thread:
     encounters.add_ambient_encounter(simple_encounter_2, 5, 60, 20, 300, 120)
 
 
-startup thread sc_main_thread:
+@startup()
+script sc_main_thread():
 
     print("---------------------------------------------------------")
     print("WARP RUINS ENCOUNTER AMBIENT v. 1.1")
@@ -110,7 +112,7 @@ startup thread sc_main_thread:
 
 
 
-thread sc_phase00_encounter:
+script sc_phase00_encounter():
     right_switch_pillar.create()
     left_switch_pillar.create()
     center_switch_pillar.create()
@@ -151,7 +153,7 @@ def pillar_reset_slow():
     ot_vex_pillar.stop()
     print("RESET TIMER SLOWLY")
 
-thread sc_raid_gate_function:
+script sc_raid_gate_function():
     sleep_until(raid_gate.is_active())
     raid_clean_up()
     d_vex_infinity_portal_gate.set_device_position(1)
@@ -177,7 +179,7 @@ def raid_phase00_increment():
     else:
         return false
 
-thread sc_left_switch_pillar:
+script sc_left_switch_pillar():
     while raid_encounter.is_active():
         sleep_until(left_switch_pillar.succeed == true)
         sleep(2)
@@ -189,7 +191,7 @@ thread sc_left_switch_pillar:
     sq_raid_phase00_left.remove()
     sq_raid_phase00_left_leader.remove()
 
-thread sc_right_switch_pillar:
+script sc_right_switch_pillar():
     while raid_encounter.is_active():
         sleep_until(right_switch_pillar.succeed == true)
         sleep(2)
@@ -202,7 +204,7 @@ thread sc_right_switch_pillar:
     sq_raid_phase00_right_leader.remove()
 
 
-thread sc_center_switch_pillar:
+script sc_center_switch_pillar():
     while raid_encounter.is_active():
         sleep_until(center_switch_pillar.succeed == true)
         sleep(2)

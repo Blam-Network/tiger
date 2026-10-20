@@ -15,100 +15,101 @@
 
 @activity_bundle("enc_lowergarden_m07")
 
-c_object_sensor_host o_glyph_a
-c_object_sensor_host o_glyph_b
-c_object_sensor_host o_block
-c_object_sensor_host o_door_back
-c_object_sensor_host o_east_ghost_cage
-c_object_sensor_host o_west_ghost_cage
-c_object_sensor_host o_device_control_east
-c_object_sensor_host o_device_control_west
-c_objective_sensor_host obj_lowergarden_m07
+object o_glyph_a
+object o_glyph_b
+object o_block
+object o_door_back
+object o_east_ghost_cage
+object o_west_ghost_cage
+object o_device_control_east
+object o_device_control_west
+objective obj_lowergarden_m07
 @member_counts({goblin: 2})
-c_squad_sensor_host sq_foyer_goblin_a
+squad sq_foyer_goblin_a
 @member_counts({goblin: 2})
-c_squad_sensor_host sq_foyer_goblin_b
+squad sq_foyer_goblin_b
 @member_counts({hobgoblin: 2})
-c_squad_sensor_host sq_foyer_hobgoblin
+squad sq_foyer_hobgoblin
 @member_counts({hydra: 1})
-c_squad_sensor_host sq_center_hydra
+squad sq_center_hydra
 @member_counts({hobgoblin: 2})
-c_squad_sensor_host sq_glyph_a_hobgoblin
+squad sq_glyph_a_hobgoblin
 @member_counts({goblin: 3})
-c_squad_sensor_host sq_glyph_a_goblin_a
+squad sq_glyph_a_goblin_a
 @member_counts({goblin: 3})
-c_squad_sensor_host sq_glyph_a_goblin_b
+squad sq_glyph_a_goblin_b
 @member_counts({goblin: 2})
-c_squad_sensor_host sq_glyph_a_anchor
+squad sq_glyph_a_anchor
 @member_counts({harpy: 2})
-c_squad_sensor_host sq_glyph_b_harpy_a
+squad sq_glyph_b_harpy_a
 @member_counts({harpy: 2})
-c_squad_sensor_host sq_glyph_b_harpy_b
+squad sq_glyph_b_harpy_b
 @member_counts({harpy: 2})
-c_squad_sensor_host sq_glyph_b_harpy_c
+squad sq_glyph_b_harpy_c
 @member_counts({harpy: 2})
-c_squad_sensor_host sq_glyph_b_harpy_d
+squad sq_glyph_b_harpy_d
 @member_counts({goblin: 2})
-c_squad_sensor_host sq_glyph_b_anchor
+squad sq_glyph_b_anchor
 @member_counts({goblin: 3})
-c_squad_sensor_host sq_nexus_a
-c_squad_sensor_host sq_nexus_b
+squad sq_nexus_a
+squad sq_nexus_b
 @member_counts({goblin: 2})
-c_squad_sensor_host sq_minions_init_goblin_a
+squad sq_minions_init_goblin_a
 @member_counts({goblin: 2})
-c_squad_sensor_host sq_minions_init_goblin_b
+squad sq_minions_init_goblin_b
 @member_counts({goblin: 2})
-c_squad_sensor_host sq_minions_init_goblin_c
+squad sq_minions_init_goblin_c
 @member_counts({goblin: 2})
-c_squad_sensor_host sq_minions_init_goblin_d
+squad sq_minions_init_goblin_d
 @member_counts({goblin: 2})
-c_squad_sensor_host sq_minions_init_goblin_e
+squad sq_minions_init_goblin_e
 @member_counts({goblin: 2})
-c_squad_sensor_host sq_minions_init_goblin_f
+squad sq_minions_init_goblin_f
 @member_counts({goblin: 2})
-c_squad_sensor_host sq_minions_init_goblin_g
-c_squad_sensor_host sq_minions_init_goblin_h
-c_squad_sensor_host sq_minions_init_goblin_i
-c_squad_sensor_host sq_minions_init_hobgoblin_a
-c_squad_sensor_host sq_minions_init_hobgoblin_b
-c_squad_sensor_host sq_minions_init_hobgoblin_c
-c_squad_sensor_host sq_cloud_minions
-c_squad_member_sensor_host sq_cloud_minions__pilot
+squad sq_minions_init_goblin_g
+squad sq_minions_init_goblin_h
+squad sq_minions_init_goblin_i
+squad sq_minions_init_hobgoblin_a
+squad sq_minions_init_hobgoblin_b
+squad sq_minions_init_hobgoblin_c
+squad sq_cloud_minions
+squad_member sq_cloud_minions__pilot
 @member_counts({harpy: 1})
-c_squad_sensor_host sq_minions_a_harpy_a
+squad sq_minions_a_harpy_a
 @member_counts({harpy: 1})
-c_squad_sensor_host sq_minions_a_harpy_b
+squad sq_minions_a_harpy_b
 @member_counts({harpy: 1})
-c_squad_sensor_host sq_minions_a_harpy_c
-c_squad_sensor_host sq_minions_a_harpy_d
-c_squad_sensor_host sq_minions_a_harpy_e
-c_squad_sensor_host sq_minions_a_harpy_f
+squad sq_minions_a_harpy_c
+squad sq_minions_a_harpy_d
+squad sq_minions_a_harpy_e
+squad sq_minions_a_harpy_f
 @member_counts({hobgoblin: 1})
-c_squad_sensor_host sq_minions_b_hobgoblin_a
-c_squad_sensor_host sq_minions_b_hobgoblin_b
+squad sq_minions_b_hobgoblin_a
+squad sq_minions_b_hobgoblin_b
 @member_counts({goblin: 2})
-c_squad_sensor_host sq_minions_b_goblin_a
+squad sq_minions_b_goblin_a
 @member_counts({goblin: 2})
-c_squad_sensor_host sq_minions_b_goblin_b
+squad sq_minions_b_goblin_b
 @member_counts({minotaur: 1})
-c_squad_sensor_host sq_minions_c_minotaur_a
-c_squad_sensor_host sq_minions_c_minotaur_b
+squad sq_minions_c_minotaur_a
+squad sq_minions_c_minotaur_b
 @member_counts({goblin: 1})
-c_squad_sensor_host sq_minions_c_goblin_a
+squad sq_minions_c_goblin_a
 @member_counts({goblin: 1})
-c_squad_sensor_host sq_minions_c_goblin_b
-c_sequence_host seq_vex_announce
-c_encounter_handle sp_placement_glyphs
-c_encounter_handle sp_placement_kiosk
-c_encounter_handle sp_specops_door
-c_encounter_handle sp_specops_heart
-c_player_trigger_sensor_host pt_foyer
-c_player_trigger_sensor_host pt_glyph_a
-c_player_trigger_sensor_host pt_glyph_b
-c_player_trigger_sensor_host pt_center
-c_player_monitor_sensor_host pm_ledge
+squad sq_minions_c_goblin_b
+sequence seq_vex_announce
+encounter_handle sp_placement_glyphs
+encounter_handle sp_placement_kiosk
+encounter_handle sp_specops_door
+encounter_handle sp_specops_heart
+player_trigger pt_foyer
+player_trigger pt_glyph_a
+player_trigger pt_glyph_b
+player_trigger pt_center
+player_monitor pm_ledge
 
-startup thread sc_lowergarden:
+@startup()
+script sc_lowergarden():
     for o in [o_device_control_east, o_device_control_west]:
         o.create()
         o.set_device_position(0)
@@ -140,7 +141,7 @@ startup thread sc_lowergarden:
     sc_glyph_b.wake()
     sc_kiosk.wake()
 
-thread sc_foyer:
+script sc_foyer():
     sleep_until(pt_foyer.is_triggered())
     sleep(1)
     place_on_task(sq_foyer_goblin_a, "0x335DCDB0")
@@ -155,7 +156,7 @@ thread sc_foyer:
 
 # the arena: the hydra warps into the centre, the glyph squads come on,
 # and each glyph's anchor minotaur steps in as its squad falls
-thread sc_center:
+script sc_center():
     sleep_until(pt_center.is_triggered())
     sleep(0.4)
     sq_center_hydra.place()
@@ -169,7 +170,7 @@ thread sc_center:
     sc_glyph_b_anchor.wake()
     sc_glyph_a_anchor.wake()
 
-thread sc_glyph_b_anchor:
+script sc_glyph_b_anchor():
     sleep_until(sq_glyph_b_harpy_d.alive_count() > 0)
     sleep_until(sq_glyph_b_harpy_d.alive_count() == 0)
     sleep(2)
@@ -177,7 +178,7 @@ thread sc_glyph_b_anchor:
     sleep(10)
     sq_glyph_b_anchor.set_task("0xBB43AC26")
 
-thread sc_glyph_a_anchor:
+script sc_glyph_a_anchor():
     sleep_until(sq_glyph_a_hobgoblin.alive_count() > 0)
     sleep_until(sq_glyph_a_hobgoblin.alive_count() <= 1)
     sleep(1)
@@ -188,7 +189,7 @@ thread sc_glyph_a_anchor:
 
 # the west glyph: the Ghost scans it, the control lights, the glyph surges,
 # and the spire's scaffolding and eye appear
-thread sc_glyph_a:
+script sc_glyph_a():
     glyph = sp_placement_glyphs._objects[0]
     sleep_until(glyph.is_active())
     sleep(1)
@@ -210,7 +211,7 @@ thread sc_glyph_a:
 
 # the east glyph: the same, the tower rises, the arena's Vex close on the
 # nexus, and once the hydra is dead the block comes up at the kiosk
-thread sc_glyph_b:
+script sc_glyph_b():
     glyph = sp_placement_glyphs._objects[1]
     sleep_until(glyph.is_active())
     sleep(1)
@@ -242,7 +243,7 @@ thread sc_glyph_b:
 # the kiosk: the Ghost's scan clears the block and the key appears; the
 # door to the heart opens later, and the key is gone once the player is
 # through
-thread sc_kiosk:
+script sc_kiosk():
     kiosk = sp_placement_kiosk._object
     sleep_until(kiosk.is_active())
     sleep(1)

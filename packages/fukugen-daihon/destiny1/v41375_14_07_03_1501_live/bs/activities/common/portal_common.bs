@@ -6,8 +6,8 @@
 @activity_bundle("portal_common")
 
 class c_encounter__portal_common : c_encounter:
-    c_lifetime_sensor_host lifetime  # true name unknown
-    c_timer_sensor_host lifetime_timer  # true name unknown
+    lifetime lifetime
+    timer lifetime_timer
 
     def import():
         success = lifetime.import_only_bind(lifetime_timer)

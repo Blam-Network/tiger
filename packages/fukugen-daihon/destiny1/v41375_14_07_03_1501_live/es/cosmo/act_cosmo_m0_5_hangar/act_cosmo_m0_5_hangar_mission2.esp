@@ -6,20 +6,20 @@
 # steps up on reaching the hangar and again when the ultra lands. From one
 # retail capture.
 
-c_location_sensor_host hangar
+location hangar
 trigger_bubble_objective obj_m0_5_goto_hangar bind(hangar)
 collect_loot_objective obj_m0_5_loot bind("0x243999A0", 1)
-c_squad_sensor_host sq_amb_fallen_ultra
-c_sequence_host seq_m_cue1
-c_sequence_host seq_d_o4_s01
-c_sequence_host seq_d_o4_s02
-c_sequence_host seq_d_o4_s03
+squad sq_amb_fallen_ultra
+sequence seq_m_cue1
+sequence seq_d_o4_s01
+sequence seq_d_o4_s02
+sequence seq_d_o4_s03
 
-thread init: pass
+script init(): pass
 
-thread complete: pass
+script complete(): pass
 
-thread main:
+script main():
     seq_m_cue1.start()
     seq_m_cue1.set_switch_mask(3)
     seq_d_o4_s01.start()
@@ -37,6 +37,6 @@ thread main:
     sleep_until(obj_m0_5_loot.is_complete())
     obj_m0_5_loot.objective_end_silent()
 
-thread sc_hangar_music:
+script sc_hangar_music():
     sleep_until(obj_m0_5_goto_hangar.is_complete())
     seq_m_cue1.set_switch_mask(7)

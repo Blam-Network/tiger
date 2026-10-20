@@ -36,6 +36,7 @@ act_mars_m01_valley_mission4 phase_checkpoint
 act_mars_m01_valley_mission5 phase_checkpoint_boss
 act_mars_m01_valley_mission6 phase_valley
 
-startup thread ss_mars_m01_valley:
+@startup()
+script ss_mars_m01_valley():
     print("script startup")
     c_lifetime_script_utilities.get_lifetime_sensor().set_state(e_activity_lifetime_state.pregame)

@@ -5,15 +5,15 @@
 # Rubicon's bubble (a public bubble, enc_rubicon_amb1's Cabal). The Ghost's
 # opening line stops when it does.
 
-c_location_sensor_host rubicon
+location rubicon
 trigger_bubble_objective pf_objective_goto bind(rubicon)
-c_sequence_host seq_d_o1_s03
+sequence seq_d_o1_s03
 
-thread init: pass
+script init(): pass
 
-thread complete: pass
+script complete(): pass
 
-thread main:
+script main():
     sleep_until(c_player_script_utilities.all_players_are_ready())
     c_lifetime_script_utilities.get_lifetime_sensor().set_state(e_activity_lifetime_state.active)
     sleep(1.5)
