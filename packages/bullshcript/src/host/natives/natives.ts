@@ -19,6 +19,7 @@ export {
   registerBoundObject,
   resolveStringHash,
 } from "../bound/bound_object.ts";
+export { forgetEngagements } from "./incident_natives.ts";
 export type {
   HostClock,
   HostContext,
@@ -47,6 +48,8 @@ export {
   unboundAnswer,
   unboundLabel,
 } from "./native_support.ts";
+export { newObjectState } from "./object_natives.ts";
+export { forgetActorHolders, forgetSquadPlacement } from "./squad_natives.ts";
 
 // Registration order is the tick order of the advance hooks.
 objectNatives.register(nativeRegistry);

@@ -4,6 +4,7 @@
 # for it. The objective clears once the last wave dies; enc_dome_c_m4 runs
 # the waves.
 
+@hard_wipe()
 object o_terminal_invis_device
 sequence seq_m_cue1
 sequence seq_d_o3_s03

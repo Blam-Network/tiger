@@ -4,6 +4,7 @@
 # there belong to enc_south_tides_m07. The Ghost's line runs while the
 # objective is up and stops when it clears at the far trigger.
 
+@hard_wipe()
 trigger_volume_objective pf_goto_northern_tides
 location southern_tides
 player_trigger pt_southern_tides bind(southern_tides)

@@ -47,11 +47,13 @@ import {
   CommandScriptBuilder,
 } from "../natives/command_script.ts";
 import type {
+  BuiltScript,
   EncounterHostContext,
   SharedArchetype,
   TaskGate,
 } from "../activity/host_context.ts";
 import { itemKey } from "../tags/item_key.ts";
+import { rowKey } from "../state/phase_journal.ts";
 import type { NavPoint } from "../state/items.ts";
 import { fnv1, parseHashLiteral } from "../tags/name_hash.ts";
 import {
@@ -281,6 +283,31 @@ function schemaStartupThreads(schema: BsSchema): string[] {
     .map((member) => member.name);
 }
 
+// A top-level script's autostart threads, each guarded so that one raising on
+// its first step takes only itself out.
+export function autostart(
+  self: EncounterHostContext,
+  script: BuiltScript
+): void {
+  const started = startupThreads(
+    self,
+    script.chunk,
+    self.namedThreads,
+    script.implNames
+  );
+  for (const name of started) {
+    try {
+      schedulingThreads.restartThread(self, script.table, "", name);
+    } catch (error) {
+      self.writer.note(
+        `thread ${name} of ${script.declName} did not start: ` +
+          (error instanceof Error ? error.message : String(error))
+      );
+    }
+  }
+  self.writer.note(`script ${script.declName} threads [${started.join(",")}]`);
+}
+
 // The schema's startup flags, else the threads no chunk names as a string.
 export function startupThreads(
   self: EncounterHostContext,
@@ -365,16 +392,18 @@ export function buildInstance(
     ...new Set([...namespacesOf(self, declName), ...inherited]),
   ];
   const implNames: string[] = [];
-  const table = new ScriptInstance(
+  const table: ScriptInstance = new ScriptInstance(
     (field) =>
-      resolveField(
-        self,
-        prefix,
-        field,
-        namespaces,
-        childScripts,
-        bundles,
-        chunk
+      self.ownership.scope(table, () =>
+        resolveField(
+          self,
+          prefix,
+          field,
+          namespaces,
+          childScripts,
+          bundles,
+          chunk
+        )
       ),
     (field, value) => noteScalarField(self, table, field, value)
   );
@@ -407,74 +436,78 @@ export function buildInstance(
       table.set(name, impl);
     }
   }
-  // Scalar fields as the schema's fast-init data authored them, overridable by
-  // options.scalarDefaults; an unset scalar read via arithmetic throws on nil.
-  const schema = schemaOf(self, chunk);
-  if (schema !== undefined) {
-    noteMemberCounts(self, schema, prefix, namespaces, bundles);
-    noteObjectives(self, schema, prefix, namespaces, bundles);
-  }
-  for (const [key, value] of Object.entries({
-    ...(schema === undefined ? {} : schemaDefaults(schema)),
-    ...scalarDefaultsFor(self, chunk),
-    ...self.options.constants,
-  })) {
-    table.set(key, value);
-  }
-  // Thread handles: one per `<name>_d_execute_impl`.
-  for (const impl of implNames) {
-    const name = threadNameOf(impl);
-    if (name !== undefined) {
-      table.set(name, threadHandle(self, table, prefix, name));
+  // What this instance binds or builds from here on is its own.
+  self.ownership.noteInstance(table);
+  self.ownership.scope(table, () => {
+    // Scalar fields as the schema's fast-init data authored them, overridable by
+    // options.scalarDefaults; an unset scalar read via arithmetic throws on nil.
+    const schema = schemaOf(self, chunk);
+    if (schema !== undefined) {
+      noteMemberCounts(self, schema, prefix, namespaces, bundles);
+      noteObjectives(self, schema, prefix, namespaces, bundles);
     }
-  }
-  // Import slots start with no row; `import` binds them.
-  for (const slot of importSlotNames(chunk)) {
-    table.set(
-      slot,
-      importSlot(self, prefix, slot, childScripts, namespaces, bundles, chunk)
-    );
-  }
-  // Array import slots (`zone_capturables[i]`) with no authored row family;
-  // an authored family (`zones[i]`) resolves through resolveArrayField and a
-  // device array (`dev_x[i]` over `o_x[i]`) through resolveDeviceArray.
-  const hasRow = (field: string) =>
-    resolveInstanceField(bundles, prefix, `${field}[0]`, namespaces) !==
-    undefined;
-  for (const slot of arrayImportSlotNames(chunk)) {
-    if (
-      hasRow(slot) ||
-      (slot.startsWith("dev_") && hasRow(`o_${slot.slice("dev_".length)}`))
-    ) {
-      continue;
+    for (const [key, value] of Object.entries({
+      ...(schema === undefined ? {} : schemaDefaults(schema)),
+      ...scalarDefaultsFor(self, chunk),
+      ...self.options.constants,
+    })) {
+      table.set(key, value);
     }
-    table.set(
-      slot,
-      arrayImportSlot(
-        self,
-        prefix,
+    // Thread handles: one per `<name>_d_execute_impl`.
+    for (const impl of implNames) {
+      const name = threadNameOf(impl);
+      if (name !== undefined) {
+        table.set(name, threadHandle(self, table, prefix, name));
+      }
+    }
+    // Import slots start with no row; `import` binds them.
+    for (const slot of importSlotNames(chunk)) {
+      table.set(
         slot,
-        childScripts,
-        namespaces,
-        bundles,
-        chunk
-      )
-    );
-  }
-  table.set("encounters", schedulingThreads.encounterManager(self, table));
-  self.instancePrefix.set(table, prefix);
-  // Only a bubble's root script and what it builds have an owner; a phase
-  // script has none and always runs.
-  const owner = self.scopeOwner.get(bundles);
-  if (owner !== undefined) {
-    self.instanceBundle.set(table, owner);
-  }
-  if (prefix) {
-    reserveChildSquads(self, chunk, prefix, namespaces, bundles);
-  }
-  if (!prefix) {
-    self.instances.set(declName, table);
-  }
+        importSlot(self, prefix, slot, childScripts, namespaces, bundles, chunk)
+      );
+    }
+    // Array import slots (`zone_capturables[i]`) with no authored row family;
+    // an authored family (`zones[i]`) resolves through resolveArrayField and a
+    // device array (`dev_x[i]` over `o_x[i]`) through resolveDeviceArray.
+    const hasRow = (field: string) =>
+      resolveInstanceField(bundles, prefix, `${field}[0]`, namespaces) !==
+      undefined;
+    for (const slot of arrayImportSlotNames(chunk)) {
+      if (
+        hasRow(slot) ||
+        (slot.startsWith("dev_") && hasRow(`o_${slot.slice("dev_".length)}`))
+      ) {
+        continue;
+      }
+      table.set(
+        slot,
+        arrayImportSlot(
+          self,
+          prefix,
+          slot,
+          childScripts,
+          namespaces,
+          bundles,
+          chunk
+        )
+      );
+    }
+    table.set("encounters", schedulingThreads.encounterManager(self, table));
+    self.instancePrefix.set(table, prefix);
+    // Only a bubble's root script and what it builds have an owner; a phase
+    // script has none and always runs.
+    const owner = self.scopeOwner.get(bundles);
+    if (owner !== undefined) {
+      self.instanceBundle.set(table, owner);
+    }
+    if (prefix) {
+      reserveChildSquads(self, chunk, prefix, namespaces, bundles);
+    }
+    if (!prefix) {
+      self.instances.set(declName, table);
+    }
+  });
   return { declName, implNames, table };
 }
 
@@ -801,14 +834,22 @@ function childInstance(
       scope = { ...topLevelScope(self, owner), parent: owner };
     }
   }
+  // An archetype another script owns (a shared one) hangs under that script,
+  // so resetting this one's phase leaves it be.
+  const home =
+    owner !== undefined && owner !== parent
+      ? self.instances.get(scriptName(owner))
+      : undefined;
   // a nested prefab resolves its rows under its parent's path
-  const child = buildInstance(
-    self,
-    childChunk,
-    path,
-    undefined,
-    scope.namespaces,
-    childBundles(self, row, scope.bundles)
+  const child = self.ownership.scope(home ?? self.ownership.owner, () =>
+    buildInstance(
+      self,
+      childChunk,
+      path,
+      undefined,
+      scope.namespaces,
+      childBundles(self, row, scope.bundles)
+    )
   );
   const entry: SharedArchetype | undefined =
     key === undefined
@@ -1071,16 +1112,20 @@ function arrayImportSlot(
   bundles: readonly ActivityBundleTag[],
   parent?: HksBytecode
 ): LuaTable {
+  // An element binds when it is first read, for the instance that holds it.
+  const owner = self.ownership.owner;
   return new LazyArrayTable(
     (index) =>
-      importSlot(
-        self,
-        prefix,
-        `${slot}[${index}]`,
-        childScripts,
-        namespaces,
-        bundles,
-        parent
+      self.ownership.scope(owner, () =>
+        importSlot(
+          self,
+          prefix,
+          `${slot}[${index}]`,
+          childScripts,
+          namespaces,
+          bundles,
+          parent
+        )
       ),
     (index) =>
       resolveInstanceField(bundles, prefix, `${slot}[${index}]`, namespaces) !==
@@ -1782,7 +1827,7 @@ export function bound(
   path: string,
   row: BoundRow | undefined
 ): BoundInstance {
-  const object = new BoundInstance(
+  const object: BoundInstance = new BoundInstance(
     self.context,
     self.writer,
     path,
@@ -1820,9 +1865,17 @@ export function bound(
       squadSpawnPoint: (row) => squadSpawnPoint(self, row),
       sequenceDuration: (row) => sequenceDuration(self, row),
     },
-    (ownerPath, field) => member(self, ownerPath, field)
+    (ownerPath, field) =>
+      self.ownership.scope(self.ownership.ownerOfObject(object), () =>
+        member(self, ownerPath, field)
+      )
   );
+  self.ownership.noteObject(object);
   self.objects.push(object);
+  const restarted = row && self.restartedRows.get(rowKey(row));
+  if (restarted) {
+    object.restart(restarted);
+  }
   return object;
 }
 

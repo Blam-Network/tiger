@@ -4,6 +4,7 @@
 # is dead, and the Ghost's lines and the music cue stop with it. The wizard
 # and the rest of the upper floor are enc_dome_a_m1's.
 
+@hard_wipe()
 generic_objective obj_m1_o2
 squad sq_hive_upper_wizard01
 sequence seq_d_o3_s012

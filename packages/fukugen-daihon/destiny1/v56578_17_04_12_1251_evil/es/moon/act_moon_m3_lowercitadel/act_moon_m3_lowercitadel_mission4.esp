@@ -6,6 +6,7 @@
 # objective clears when its console reports the scan finished. The console
 # itself is placed by the activity root.
 
+@hard_wipe()
 encounter_handle enc_strength_m3
 interactable_placement pf_obj_strength_interact_place  # archetype not authored on TU0
 interactable_objective pf_obj_strength_interact bind("0x9D0AD7E7")

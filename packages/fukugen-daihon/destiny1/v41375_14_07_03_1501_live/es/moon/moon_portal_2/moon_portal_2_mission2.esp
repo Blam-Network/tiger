@@ -5,6 +5,7 @@
 # the locks as they fall and completes when the scan does; the hall encounter
 # runs the waves, the locks and the scan. The exit opens with the objective.
 
+@hard_wipe()
 encounter_handle enc_uppercitadel_portal2
 player_objective po_kill_reinforcements
 nav_point ap_waveannounce_1

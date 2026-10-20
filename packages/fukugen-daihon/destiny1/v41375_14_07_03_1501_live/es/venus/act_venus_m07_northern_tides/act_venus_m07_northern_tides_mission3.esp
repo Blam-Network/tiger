@@ -5,6 +5,7 @@
 # enc_north_tides_m07's. The Ghost's line at the top plays as the objective
 # clears.
 
+@hard_wipe()
 generic_objective pf_ascend_steps
 nav_point ap_northern_tides
 trigger_volume tv_top_stairs

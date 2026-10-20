@@ -59,6 +59,20 @@ function actorHoldersOf(context: HostContext): Map<string, BoundInstance> {
   return holders;
 }
 
+// Drops the handles a reset took away: a state that went out from one is not
+// theirs to resend any more.
+export function forgetActorHolders(
+  context: HostContext,
+  gone: ReadonlySet<BoundInstance>
+): void {
+  const holders = actorHoldersOf(context);
+  for (const [key, holder] of [...holders]) {
+    if (gone.has(holder)) {
+      holders.delete(key);
+    }
+  }
+}
+
 // Per squad (itemKey): its deaths when a drop last gave it a new wave - see
 // dropBodies.
 const dropWaveDeaths = new WeakMap<HostContext, Map<string, number>>();
@@ -83,6 +97,12 @@ function placementKillsOf(context: HostContext): Map<string, number> {
     placementKills.set(context, kills);
   }
   return kills;
+}
+
+// A squad a reset put back to its start has no placement or drop to remember.
+export function forgetSquadPlacement(context: HostContext, key: string): void {
+  placementKillsOf(context).delete(key);
+  dropWaveDeathsOf(context).delete(key);
 }
 
 // A squad group's roster is the squads added to it.

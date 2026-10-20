@@ -3,6 +3,7 @@
 # Mission 2: leave engineering for the dig site. The waypoint points at the
 # dig site and the objective clears, silently, when a player gets there.
 
+@hard_wipe()
 generic_objective obj_generic_engineering
 nav_point ap_dig_site
 location dig_site

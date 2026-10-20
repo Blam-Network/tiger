@@ -3,6 +3,7 @@
 # Mission 6, the end of the strike: a beat after Phogoth dies the strike
 # completes, the results show, then the activity ends.
 
+@hard_wipe()
 script init(): pass
 
 script complete():

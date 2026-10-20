@@ -134,6 +134,9 @@ export interface BsSchema {
   // an encounter class's start (@activity and the decorators below it); not
   // Bungie's: their host-only scenario tags held it
   readonly activityStart?: ActivityStart;
+  // a phase's @hard_wipe: a hard wipe is armed while it runs; not Bungie's
+  // either, their host-only phase data held it
+  readonly hardWipe?: boolean;
   readonly kind: BsDecl["kind"];
   readonly members: readonly BsSchemaMember[];
   readonly modulePath: string;
@@ -288,6 +291,7 @@ export function emitSchema(
     ...(start === undefined
       ? {}
       : { activityStart: authoredActivityStart(start) }),
+    ...(decl.decl.hardWipe ? { hardWipe: true } : {}),
     kind: decl.decl.kind,
     members,
     modulePath: decl.modulePath,

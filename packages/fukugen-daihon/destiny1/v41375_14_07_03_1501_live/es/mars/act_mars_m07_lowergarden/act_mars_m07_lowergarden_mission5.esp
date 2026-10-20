@@ -8,6 +8,7 @@
 # the door; this phase follows what it makes. Ghost cages, glyph surges and
 # the door open twenty-six seconds after the key appears, all one run's.
 
+@hard_wipe()
 trigger_volume_objective sp_objective_goto
 encounter_handle sp_objective_glyphs
 activity_flag af_glyph_a

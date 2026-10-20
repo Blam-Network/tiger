@@ -8,6 +8,7 @@
 # the second minotaur falls, and both spent statues go a few seconds
 # later. Timings are one run's.
 
+@hard_wipe()
 generic_objective sp_objective_kill
 trigger_volume tv_boss
 player_trigger pt_boss bind(tv_boss)

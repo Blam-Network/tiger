@@ -30,6 +30,7 @@ import {
   squadRosterSize,
 } from "../bound/bindings.ts";
 import * as instanceBuilding from "../build/instance_building.ts";
+import { Ownership } from "../build/ownership.ts";
 import { ENUM_OF, EnumDefinition } from "../build/script_graph.ts";
 import {
   type CommandScriptIndex,
@@ -53,9 +54,11 @@ import {
 } from "../natives/natives.ts";
 import * as sequenceNatives from "../natives/sequence_natives.ts";
 import * as objectiveTaskAssignment from "../schedule/objective_task_assignment.ts";
+import * as phaseReset from "../schedule/phase_reset.ts";
 import * as schedulingThreads from "../schedule/scheduling_threads.ts";
 import { ScriptItemState } from "../state/item_state.ts";
 import type { ItemChange, ItemKey } from "../state/items.ts";
+import { PhaseJournal } from "../state/phase_journal.ts";
 import { type CapturableSense, WorldState } from "../state/world_state.ts";
 import { itemKey } from "../tags/item_key.ts";
 import { FNV1_EMPTY, fnv1 } from "../tags/name_hash.ts";
@@ -66,6 +69,7 @@ import type {
 } from "../tags/tag_types.ts";
 import {
   type ActivityPlayer,
+  type BuiltScript,
   type EncounterHostContext,
   type EncounterManager,
   type EncounterScriptHostOptions,
@@ -140,6 +144,10 @@ export interface HostDebugSnapshot {
 
 export class EncounterScriptHost implements EncounterHostContext {
   readonly itemState = new ScriptItemState();
+  readonly journal = new PhaseJournal();
+  readonly ownership = new Ownership();
+  readonly built: BuiltScript[] = [];
+  readonly namedThreads = new Set<string>();
   readonly memberCounts = new Map<string, AuthoredCells>();
   readonly squadObjectives = new Map<
     string,
@@ -214,6 +222,10 @@ export class EncounterScriptHost implements EncounterHostContext {
   now = 0;
   ticks = 0;
   readonly threadOwners = new WeakMap<LuaScriptThread, LuaTable>();
+  // The instance whose listener an incident handler thread runs for. It is
+  // not a thread of that instance (a handler runs in any bubble), so it is
+  // only for a reset to find.
+  readonly handlerOwners = new WeakMap<LuaScriptThread, LuaTable>();
   // The thread record's `started` flag (xex thread instance +0x10).
   readonly threadStarted = new WeakMap<LuaTable, Set<string>>();
   readonly instanceBundle = new WeakMap<LuaTable, number>();
@@ -232,6 +244,7 @@ export class EncounterScriptHost implements EncounterHostContext {
   activeBundles: ReadonlySet<number> | undefined;
   lastTickWallMs: number | undefined;
   spawned = false;
+  readonly restartedRows = new Map<string, ItemChange>();
   // What get_outer() answers.
   rootInstance: LuaTable | undefined;
   lifetimeTimerHandle: LuaHostObject | undefined;
@@ -320,7 +333,10 @@ export class EncounterScriptHost implements EncounterHostContext {
       reports,
       runHandler: (handler, args) => this.runHandler(handler, args),
       scoreboardDefinition: options.scoreboardDefinition,
-      sink: options.onItemChange ?? (() => undefined),
+      sink: (change) => {
+        this.journal.note(change, this.writerRoot());
+        options.onItemChange?.(change);
+      },
       onNote: (line) => {
         for (const listener of this.noteListeners) {
           listener(line);
@@ -396,7 +412,7 @@ export class EncounterScriptHost implements EncounterHostContext {
   // A phase script autostarts only as a bundle's own script; as a root's child
   // it waits for its mission.
   start(): void {
-    const named = new Set<string>();
+    const named = this.namedThreads;
     // Child chunks' own fields are scanned too, so they degrade like a root's.
     const graph = [
       ...this.options.chunks,
@@ -422,9 +438,7 @@ export class EncounterScriptHost implements EncounterHostContext {
       }
     }
     // One bad chunk must not cost the activity its scripts.
-    const built: (ReturnType<typeof instanceBuilding.buildInstance> & {
-      chunk: HksBytecode;
-    })[] = [];
+    const built = this.built;
     // An archetype is built under the encounter that runs it, where its rows
     // resolve.
     const childChunks = new Set(this.options.childScripts?.values());
@@ -476,15 +490,18 @@ export class EncounterScriptHost implements EncounterHostContext {
       // An activity's phases all load, built so siblings resolve by name, but
       // only one runs at a time.
       if (instanceBuilding.isDormantPhase(this, instance.chunk)) {
-        this.phases.push({
+        const phase: HostPhase = {
+          chunk: instance.chunk,
           declName: instance.declName,
+          hardWipe:
+            instanceBuilding.schemaOf(this, instance.chunk)?.hardWipe === true,
           instance: instance.table,
           instantiate: () => {
             if (this.options.rowOwners !== undefined) {
               instanceBuilding.instantiateArchetypes(
                 this,
-                instance.chunk,
-                instance.table
+                phase.chunk,
+                phase.instance
               );
             }
           },
@@ -496,7 +513,8 @@ export class EncounterScriptHost implements EncounterHostContext {
                 name !== "complete" &&
                 !(PHASE_LIFECYCLE as readonly string[]).includes(name)
             ),
-        });
+        };
+        this.phases.push(phase);
         const ordinal = phaseOrdinal;
         phaseOrdinal += 1;
         if (startedPhase || ordinal !== resumeAt) {
@@ -507,21 +525,7 @@ export class EncounterScriptHost implements EncounterHostContext {
         this.phaseIndex = this.phases.length - 1;
         // Started here: the externally-driven heuristic would otherwise suppress
         // every phase's main.
-        this.writer.note(`mission ${instance.declName} starting`);
-        this.options.onPhaseStarted?.(instance.declName);
-        this.phases.at(-1)?.instantiate();
-        for (const name of [
-          ...PHASE_LIFECYCLE,
-          ...(this.phases.at(-1)?.startup ?? []),
-        ]) {
-          schedulingThreads.startThreadGuarded(
-            this,
-            instance.table,
-            "",
-            name,
-            instance.declName
-          );
-        }
+        schedulingThreads.startPhase(this, phase, "");
         continue;
       }
       if (!instanceBuilding.isTopLevelActor(this, instance.chunk)) {
@@ -530,26 +534,7 @@ export class EncounterScriptHost implements EncounterHostContext {
         );
         continue;
       }
-      const autoStart = instanceBuilding.startupThreads(
-        this,
-        instance.chunk,
-        named,
-        instance.implNames
-      );
-      for (const name of autoStart) {
-        // A thread that raises on its first step takes only itself out.
-        try {
-          schedulingThreads.restartThread(this, instance.table, "", name);
-        } catch (error) {
-          this.writer.note(
-            `thread ${name} of ${instance.declName} did not start: ` +
-              (error instanceof Error ? error.message : String(error))
-          );
-        }
-      }
-      this.writer.note(
-        `script ${instance.declName} threads [${autoStart.join(",")}]`
-      );
+      instanceBuilding.autostart(this, instance);
     }
   }
 
@@ -615,7 +600,9 @@ export class EncounterScriptHost implements EncounterHostContext {
     }
   }
 
-  // Cleared by reportPlayerRespawned.
+  // Cleared by reportPlayerRespawned. A player_resurrected or self_resurrection
+  // incident would clear it too, once its metadata is known to name who came
+  // back.
   reportPlayerDied(characterKey: string): void {
     if (!this.deadPlayers.has(characterKey)) {
       this.deadPlayers.add(characterKey);
@@ -627,6 +614,38 @@ export class EncounterScriptHost implements EncounterHostContext {
     if (this.deadPlayers.delete(characterKey)) {
       this.writer.note(`player ${characterKey} respawned`);
     }
+  }
+
+  // Every player of the activity is dead at once. A player the activity has
+  // not seen die, or has not got, does not make it so.
+  get allPlayersDead(): boolean {
+    const players = this.options.players?.() ?? [];
+    return (
+      players.length > 0 &&
+      players.every((player) => this.deadPlayers.has(player.characterKey))
+    );
+  }
+
+  // The running phase says @hard_wipe(): a hard wipe may happen while it runs.
+  get hardWipeArmed(): boolean {
+    return this.phases[this.phaseIndex]?.hardWipe === true;
+  }
+
+  // A hard wipe: the running phase starts again, and the world is back to what
+  // it was when the phase started (schedule/phase_reset.ts). Between ticks, not
+  // from a script.
+  resetCurrentPhase(): void {
+    phaseReset.resetCurrentPhase(this);
+  }
+
+  // The top-level script writing now: the one whose thread is running, else
+  // the one being built or driven.
+  private writerRoot(): LuaTable | undefined {
+    const thread = this.scheduler.current;
+    const owner = thread
+      ? (this.threadOwners.get(thread) ?? this.handlerOwners.get(thread))
+      : this.ownership.owner;
+    return owner === undefined ? undefined : this.ownership.rootOf(owner);
   }
 
   // Several connections beat their own keepalive; only a beat most of a
@@ -669,7 +688,9 @@ export class EncounterScriptHost implements EncounterHostContext {
       return;
     }
     for (const bound of this.objects) {
-      bound.advance(this.options.tickSeconds);
+      this.ownership.scope(this.ownership.ownerOfObject(bound), () =>
+        bound.advance(this.options.tickSeconds)
+      );
     }
     for (const manager of this.managers) {
       schedulingThreads.advanceManager(this, manager, this.options.tickSeconds);
@@ -1192,7 +1213,11 @@ export class EncounterScriptHost implements EncounterHostContext {
     }
     this.handlerThreadSeq += 1;
     const name = `incident_handler#${this.handlerThreadSeq}`;
-    this.scheduler.spawn(name, handler, args);
+    const thread = this.scheduler.spawn(name, handler, args);
+    // The handler's `self`, the instance whose script armed the listener.
+    if (args[0] instanceof LuaTable) {
+      this.handlerOwners.set(thread, args[0]);
+    }
     this.writer.note(`incident handler thread ${name} started`);
   }
 

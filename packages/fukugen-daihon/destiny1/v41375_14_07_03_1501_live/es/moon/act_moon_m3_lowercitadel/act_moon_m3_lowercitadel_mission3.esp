@@ -5,6 +5,7 @@
 # The Ghost's lines for both objectives play while they are up and stop with
 # the kill.
 
+@hard_wipe()
 location strength
 trigger_bubble_objective pf_objective_goto bind(strength)
 kill_squad_objective pf_objective_kill bind("0xD04758E3", 8)

@@ -2,6 +2,7 @@
 #
 # Mission 4: leave the refinery and head to the blast. Clears at the trigger.
 
+@hard_wipe()
 trigger_volume_objective obj_s1_phase03_m1
 
 script init(): pass

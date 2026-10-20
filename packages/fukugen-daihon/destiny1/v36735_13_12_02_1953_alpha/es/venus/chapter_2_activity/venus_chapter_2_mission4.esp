@@ -1,3 +1,4 @@
+@hard_wipe()
 u_globals utils
 location northern_tides
 player_monitor pm_bubble_northern_tides bind(northern_tides)

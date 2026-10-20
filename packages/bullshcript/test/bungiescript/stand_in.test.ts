@@ -180,6 +180,25 @@ ${BODY}`)
     );
   });
 
+  it("do not move, nor change a chunk, when a phase says @hard_wipe()", () => {
+    const phase = "es/x/phase_x.esp";
+    const body = "int a\n\nscript main():\n    a = 1\n";
+    const compile = (source: string) => {
+      const result = compileBungieScript([{ path: phase, source }]);
+      expect(result.diagnostics.filter((d) => d.severity === "error")).toEqual(
+        []
+      );
+      return result.decls[0];
+    };
+    const marked = compile(`# arms it\n@hard_wipe()\n${body}`);
+    const plain = compile(body);
+    expect(marked.standInLines).toEqual([1, 2]);
+    expect([...(marked.chunk ?? [])]).toEqual([...(plain.chunk ?? [])]);
+    expect(marked.lua).toBe(plain.lua);
+    expect(marked.schema.hardWipe).toBe(true);
+    expect(plain.schema).not.toHaveProperty("hardWipe");
+  });
+
   it("name the locals the chunk's line gave them", () => {
     const body =
       "def f(n):\n    switch n:\n        case 1:\n            go()\n";

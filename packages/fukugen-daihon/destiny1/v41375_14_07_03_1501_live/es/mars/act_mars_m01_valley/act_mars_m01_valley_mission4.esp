@@ -8,6 +8,7 @@
 #
 # One run: the 2 s after the console is the gap to the next phase.
 
+@hard_wipe()
 trigger_volume_objective sp_objective_goto
 interactable_objective sp_objective_console bind("0x47DCE9B0")
 trigger_volume tv_checkpoint_music_start

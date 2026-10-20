@@ -4,6 +4,7 @@
 # the hack brings down the three laser webs. The refinery encounter runs the
 # hack and the waves.
 
+@hard_wipe()
 encounter_handle enc_refinery_portal1
 countdown_objective obj_s1_phase02_m1
 player_objective po_repel_fallen01

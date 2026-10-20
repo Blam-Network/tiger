@@ -3,6 +3,7 @@
 # Mission 5, the lobby's north platform and pit. Clears when the player
 # reaches the subway stairs on the far side.
 
+@hard_wipe()
 trigger_volume_objective pf_objective_lobby_n_trigger
 
 script init(): pass

@@ -4,6 +4,7 @@
 # while the objective is up and the music's first cue starts as it ends (88 s in this run).
 # The Fallen on the way are enc_dome_c_m2's.
 
+@hard_wipe()
 interactable_objective obj_m2_o3 bind("0x9DF3A02E")
 sequence seq_d_o2_s005
 sequence seq_d_o2_s01

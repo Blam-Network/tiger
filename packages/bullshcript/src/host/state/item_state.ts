@@ -24,6 +24,13 @@ export const newSequenceState = (): SequenceState => ({
   target: undefined,
 });
 
+// Everything an item state holds, copied: what a phase reset puts back.
+export interface ItemStateCapture {
+  flags: ReadonlySet<number>;
+  sequences: ReadonlyMap<string, SequenceState>;
+  squads: ReadonlyMap<string, SquadState>;
+}
+
 // What the runtime has asked of its items, so scripts can read back their
 // own placements and flags and a squad change can carry the whole squad.
 export class ScriptItemState {
@@ -49,6 +56,38 @@ export class ScriptItemState {
 
   setSquad(item: ItemRef, state: SquadState): void {
     this.squads.set(squadKey(item.bundle, item.typeIndex), state);
+  }
+
+  // The squad as if no script had touched it.
+  clearSquad(item: ItemRef): void {
+    this.squads.delete(squadKey(item.bundle, item.typeIndex));
+  }
+
+  capture(): ItemStateCapture {
+    return {
+      flags: new Set(this.flags),
+      sequences: new Map(
+        [...this.sequences].map(([key, state]) => [
+          key,
+          { ...state, pairs: state.pairs.map((pair) => ({ ...pair })) },
+        ])
+      ),
+      squads: new Map(this.squads),
+    };
+  }
+
+  // The sequence as the capture held it, or as if no script had touched it.
+  restoreSequence(item: ItemRef, capture: ItemStateCapture): void {
+    const key = squadKey(item.bundle, item.typeIndex);
+    const held = capture.sequences.get(key);
+    if (held === undefined) {
+      this.sequences.delete(key);
+    } else {
+      this.sequences.set(key, {
+        ...held,
+        pairs: held.pairs.map((pair) => ({ ...pair })),
+      });
+    }
   }
 
   bodiesFor(bundle: number, typeIndex: number): number | undefined {

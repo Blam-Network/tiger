@@ -6,6 +6,7 @@
 # stop and start as each objective changes hands. The gaps between objectives
 # are this run's waits.
 
+@hard_wipe()
 trigger_volume_objective obj_m1_o1a
 interactable_objective obj_m1_o1b bind("0x3EA60D3D")
 trigger_volume_objective obj_m1_o1c

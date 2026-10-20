@@ -4,6 +4,7 @@
 # ledge sniper between them. Clears when the entrance is quiet; the music steps
 # up on the last wave and again at the end, then the Ghost sends the player on.
 
+@hard_wipe()
 generic_objective pf_resist_vex
 trigger_volume tv_resist_vex
 nav_point ap_resist_vex

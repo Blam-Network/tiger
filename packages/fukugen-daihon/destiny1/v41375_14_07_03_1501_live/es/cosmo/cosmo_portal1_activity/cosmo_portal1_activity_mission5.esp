@@ -3,6 +3,7 @@
 # Mission 5, the blast: kill the Devil Walker. The exit door starts shut and
 # opens when the Walker dies.
 
+@hard_wipe()
 object o_cosmo_strike01_door01
 encounter_handle enc_blast_portal1
 generic_objective obj_s1_phase04_m1

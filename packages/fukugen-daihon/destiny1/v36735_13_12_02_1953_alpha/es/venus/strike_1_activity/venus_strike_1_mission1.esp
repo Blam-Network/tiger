@@ -1,3 +1,4 @@
+@hard_wipe()
 u_globals utils
 encounter_handle enc_engineering_strike1
 location engineering

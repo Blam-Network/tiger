@@ -10,6 +10,7 @@
 # the wire, nothing more. Retail showed the vent objective in a state TU0
 # has no verb for (wire 1) from the spawn until the dunes.
 
+@hard_wipe()
 trigger_volume tv_dunes
 player_trigger pt_dunes bind(tv_dunes)
 interactable_objective sp_objective_vent bind("0x5F62CC37")

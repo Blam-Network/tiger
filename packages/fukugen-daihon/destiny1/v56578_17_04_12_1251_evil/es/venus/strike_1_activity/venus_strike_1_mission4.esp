@@ -22,6 +22,7 @@
 # mission 1), and the boss kill count has the same unresolved identifier
 # ("strike_kill_boss"), so these waits are only checked against the run by eye.
 
+@hard_wipe()
 objective obj_ruins_strike
 squad_group sgq_strike_minions
 squad sq_strike01_4

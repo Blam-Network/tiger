@@ -124,6 +124,8 @@ export interface BsDecl extends BsSpan {
   readonly activityBundle: BsActivityBundle | undefined;
   readonly activityStart: BsActivityStart | undefined;
   readonly base: string | undefined;
+  // `@hard_wipe()` on a phase (.esp) file: a hard wipe is armed while it runs
+  readonly hardWipe: boolean;
   // es-family files declare their one class implicitly
   readonly implicit: boolean;
   readonly kind: BsDeclKind;

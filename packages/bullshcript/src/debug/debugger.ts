@@ -22,10 +22,8 @@ import type {
 } from "../hks/vm/interpreter.ts";
 import { isTruthy, LuaTable, luaToString } from "../hks/vm/values.ts";
 import type { EncounterScriptHost } from "../host/activity/encounter_host.ts";
-import {
-  jumpToPhase,
-  restartThread,
-} from "../host/schedule/scheduling_threads.ts";
+import { jumpToPhase } from "../host/schedule/phase_reset.ts";
+import { restartThread } from "../host/schedule/scheduling_threads.ts";
 import type { ItemChange } from "../host/state/items.ts";
 import { evaluate } from "./evaluate.ts";
 import { activeLocals, Inspector, instanceLabel } from "./inspect.ts";

@@ -5,6 +5,7 @@
 # the reinforcements. The ogre's death can read as a short 0 in the squad
 # sense, so it has to hold for a moment before this clears.
 
+@hard_wipe()
 encounter_handle enc_wormway_portal2
 generic_objective pf_go_ogre
 nav_point ap_go_ogre
@@ -24,6 +25,7 @@ script main():
     enc.sc_boss_fight.wake()
     sleep_until(enc.sq_bossbattle_boss01.alive_count() > 0)
     sleep_until_boss_dead()
+    enc.end_boss_fight()
     pf_go_ogre.objective_end_silent()
 
 def sleep_until_boss_dead():

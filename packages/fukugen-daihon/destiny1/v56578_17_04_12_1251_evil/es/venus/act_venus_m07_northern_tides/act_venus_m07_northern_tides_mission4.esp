@@ -9,6 +9,7 @@
 # stands when the tides load (about 100 s before this phase); the pillar rows
 # have no archetype in TU0's table, so the replay does not project them.
 
+@hard_wipe()
 generic_objective pf_summon_gatekeeper
 generic_objective pf_kill_gatekeeper
 venus_raid_pillar_switch pf_boss_pillar bind(7)

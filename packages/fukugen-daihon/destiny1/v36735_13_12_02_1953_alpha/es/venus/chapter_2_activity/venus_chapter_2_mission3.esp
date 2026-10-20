@@ -1,3 +1,4 @@
+@hard_wipe()
 u_globals utils
 location southern_tides
 player_monitor pm_bubble_southern_tides bind(southern_tides)

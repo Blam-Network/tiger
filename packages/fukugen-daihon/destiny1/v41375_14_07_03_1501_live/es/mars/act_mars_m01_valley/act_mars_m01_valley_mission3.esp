@@ -7,6 +7,7 @@
 # One run: the 6 s after the last kill is the gap to the next phase on the
 # wire (a host incident we cannot name sits in the middle of it).
 
+@hard_wipe()
 generic_objective sp_objective_kill
 nav_point np_base
 sequence seq_music_cabal_intro

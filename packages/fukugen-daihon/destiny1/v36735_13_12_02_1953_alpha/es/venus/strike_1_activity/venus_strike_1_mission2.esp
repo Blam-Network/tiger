@@ -1,3 +1,4 @@
+@hard_wipe()
 u_globals utils
 encounter_handle enc_dig_site_strike1
 trigger_volume_objective trigger_volume_dig_site

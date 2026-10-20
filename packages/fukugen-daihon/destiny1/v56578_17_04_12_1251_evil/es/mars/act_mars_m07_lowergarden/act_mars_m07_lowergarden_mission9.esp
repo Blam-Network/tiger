@@ -4,6 +4,7 @@
 # darkness objective clears, with its minotaurs and goblins behind it. The
 # heart dies with it; the objective clears two seconds later. One run.
 
+@hard_wipe()
 generic_objective sp_objective_kill
 encounter_handle enc_lowergarden_m07
 sequence seq_music_lowergarden

@@ -101,6 +101,15 @@ script sc_thrall_rush():
     sleep(23)
     sq_bossbattle_hive04.set_task("0xE419C3BA")
 
+# Phogoth is dead: the fight stops sending squads and the chamber's Hive,
+# the tomb ship among them, die with him
+def end_boss_fight():
+    sc_boss_fight.kill()
+    sc_floor.kill()
+    sc_thrall_rush.kill()
+    for sq in [sq_bossbattle_hive01, sq_bossbattle_hive02, sq_bossbattle_hive03, sq_bossbattle_hive04, sq_bossbattle_snipers01, sq_bossbattle_snipers02, sq_bossbattle_snipers03, sq_bossbattle_snipers_reinf01, sq_bossbattle_snipers_reinf02, sq_bossbattle_reinf01_2nd, sq_bossbattle_reinf01_3rd, sq_bossbattle_reinf01_4th, sq_bossbattle_reinf02_3rd, sq_bossbattle_reinf02_4th, sq_bossbattle_ground01, sq_bossbattle_ground02, sq_dropship_hive01]:
+        sq.kill()
+
 # the tomb ship comes in and holds over the chamber; it is a new ship each
 # pass
 def tomb_ship_enter():

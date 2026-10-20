@@ -269,6 +269,45 @@ describe("the BungieScript parser", () => {
     ).toMatchObject([{ kind: "thread", startup: true }]);
   });
 
+  it("arms a hard wipe with @hard_wipe() on a phase, once, with no arguments", () => {
+    const parse = (text: string, path = "es/t.esp") =>
+      parseBungieScript(text, path);
+    expect(parse("@hard_wipe()\nint a\n").decls[0]).toMatchObject({
+      hardWipe: true,
+    });
+    expect(parse("int a\n").decls[0]).toMatchObject({ hardWipe: false });
+    // above the first member's own decorators, or with the other head ones
+    expect(parse("@hard_wipe()\n@placed()\nsquad sq\n").decls[0]).toMatchObject(
+      { hardWipe: true, members: [{ name: "sq" }] }
+    );
+    expect(() => parse("@placed()\n@hard_wipe()\nsquad sq\n")).toThrow(
+      /@hard_wipe goes above the member's decorators/
+    );
+    expect(() => parse("int a\n@hard_wipe()\nint b\n")).toThrow(
+      /t\.esp:3: @hard_wipe heads the file or its class/
+    );
+    expect(() => parse("@hard_wipe()\n@hard_wipe()\nint a\n")).toThrow(
+      /t\.esp:2: @hard_wipe is written once/
+    );
+    expect(() => parse("@hard_wipe(1)\nint a\n")).toThrow(
+      /t\.esp:1: '\)' expected/
+    );
+    expect(() => parse("@hard_wipe\nint a\n")).toThrow(
+      /t\.esp:1: '\(' expected/
+    );
+  });
+
+  it("takes @hard_wipe() on an .esp file only", () => {
+    for (const path of ["es/t.es", "es/t.esu"]) {
+      expect(() => parseBungieScript("@hard_wipe()\nint a\n", path)).toThrow(
+        /:1: @hard_wipe decorates a phase \(\.esp\) file/
+      );
+    }
+    expect(() =>
+      parseBungieScript("@hard_wipe()\nclass c_a:\n    pass\n", "bs/t.bs")
+    ).toThrow(/:1: @hard_wipe decorates a phase \(\.esp\) file/);
+  });
+
   it("reports syntax errors with the file and line", () => {
     expect(() => parseBungieScript("def f(:\n", "es/t.esu")).toThrow(
       BsCompileError

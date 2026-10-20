@@ -4,6 +4,7 @@
 # twice on the way, off the hall encounter's triggers; in the capture the
 # objective cleared at the second roar, not at its own volume.
 
+@hard_wipe()
 encounter_handle enc_uppercitadel_portal2
 trigger_volume_objective pf_tv_lowercitadel_entrance
 sequence moon_portal2_ogreroar01

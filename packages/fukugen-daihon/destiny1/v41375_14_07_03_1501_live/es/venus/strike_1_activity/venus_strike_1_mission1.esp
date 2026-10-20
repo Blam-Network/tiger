@@ -18,6 +18,7 @@
 # and the servitor kills never reach three. Every later phase (and its
 # audio) then goes missing. The waits are the run's, left as they are.
 
+@hard_wipe()
 objective obj_engineering_strike_phase
 object o_portal_end_door
 squad_group gr_floor1

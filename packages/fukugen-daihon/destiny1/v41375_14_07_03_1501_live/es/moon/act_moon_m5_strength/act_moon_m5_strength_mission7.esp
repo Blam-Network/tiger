@@ -5,6 +5,7 @@
 # ritual and the waves; this phase runs the objectives and the climax's
 # trigger group around them.
 
+@hard_wipe()
 encounter_handle unknown_d53aaa20
 kill_squad_objective pf_objective_kill bind("0x27C686D5", 3)
 trigger_group tg_moon_m5_climax_so

@@ -231,6 +231,13 @@ export interface LifetimeState {
   timeOfDay?: number;
 }
 
+// The activity's hard_wipe_globals row (type 34): whether a hard wipe is
+// armed, which the clients read off it. A phase that says @hard_wipe() arms it
+// as it starts.
+export interface HardWipeGlobalsState {
+  enabled: boolean;
+}
+
 export interface TimerState {
   running?: {
     progressBar: boolean;
@@ -345,6 +352,7 @@ export type ItemState =
   | { kind: "actor"; state: ActorState }
   | { kind: "cinematic"; state: CinematicState }
   | { kind: "health"; state: HealthState }
+  | { kind: "hardWipeGlobals"; state: HardWipeGlobalsState }
   | { kind: "hopOn"; state: FilteredState }
   | { kind: "lifetime"; state: LifetimeState }
   | { kind: "loot"; state: LootState }

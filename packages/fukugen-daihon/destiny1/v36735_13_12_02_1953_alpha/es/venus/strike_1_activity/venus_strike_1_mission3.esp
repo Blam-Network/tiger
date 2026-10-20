@@ -1,3 +1,4 @@
+@hard_wipe()
 u_globals utils
 @member_counts({storm: 0})
 squad warpstorm01

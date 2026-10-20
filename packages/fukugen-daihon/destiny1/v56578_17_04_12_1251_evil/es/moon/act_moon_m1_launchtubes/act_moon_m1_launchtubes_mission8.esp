@@ -4,6 +4,7 @@
 # that guards it (the launch tubes encounter places it at the Ghost's
 # volume).
 
+@hard_wipe()
 trigger_group tg_moon_m1_climax_so
 trigger_volume_objective pf_trigger_ghost
 kill_squad_objective pf_objective_kill bind("0x3DFAFA17", 1)

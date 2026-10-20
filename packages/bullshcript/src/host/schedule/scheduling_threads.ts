@@ -17,6 +17,7 @@ import {
 import {
   type EncounterHostContext,
   type EncounterManager,
+  type HostPhase,
   type ManagedEncounter,
   PHASE_LIFECYCLE,
   RANDOM_MODULUS,
@@ -120,51 +121,73 @@ export function advanceMissions(self: EncounterHostContext): void {
   if (next === undefined) {
     self.writer.note(`mission ${phase.declName} complete, no mission after`);
     self.phaseIndex = -1;
+    armHardWipe(self, false);
     return;
   }
   self.phaseIndex += 1;
   self.options.phaseProgress?.write(self.phaseIndex);
-  self.writer.note(`mission ${next.declName} starting`);
-  self.options.onPhaseStarted?.(next.declName);
-  next.instantiate();
-  for (const name of [...PHASE_LIFECYCLE, ...next.startup]) {
-    startThreadGuarded(self, next.instance, next.prefix, name, next.declName);
+  startPhase(self, next, "");
+}
+
+// A phase starts: the world as it stands is what a hard wipe puts back, then
+// its class instances are built and its own scripts run. `how` says why it
+// starts when it is not the activity reaching it.
+export function startPhase(
+  self: EncounterHostContext,
+  phase: HostPhase,
+  how: string
+): void {
+  self.writer.note(`mission ${phase.declName} starting${how}`);
+  self.journal.begin(self.context);
+  armHardWipe(self, phase.hardWipe);
+  self.options.onPhaseStarted?.(phase.declName);
+  phase.instantiate();
+  for (const name of [...PHASE_LIFECYCLE, ...phase.startup]) {
+    startThreadGuarded(
+      self,
+      phase.instance,
+      phase.prefix,
+      name,
+      phase.declName
+    );
   }
 }
 
-// Makes `index` the running mission phase now, whatever the running one was
-// doing: its threads are killed (not completed) and the new one starts as
-// advanceMissions would start it. A debugger's jump.
-export function jumpToPhase(self: EncounterHostContext, index: number): void {
-  const target = self.phases[index];
-  if (target === undefined) {
-    throw new Error(`no mission phase ${index}`);
+// The activity's hard_wipe_globals row says whether a hard wipe is armed, as
+// the running phase has it (the client enables its hard wipe respawn rules and
+// HUD off it). Sent when that changes; an activity with no such row has none
+// to tell.
+function armHardWipe(self: EncounterHostContext, armed: boolean): void {
+  const row = hardWipeGlobalsRow(self);
+  if (row === undefined) {
+    return;
   }
-  const current = self.phases[self.phaseIndex];
-  if (current) {
-    for (const script of [...self.scheduler.threads]) {
-      if (self.threadOwners.get(script) === current.instance) {
-        self.scheduler.remove(script);
-      }
-    }
-    self.writer.note(`mission ${current.declName} left (debugger)`);
-  }
-  self.phaseIndex = index;
-  self.phaseCompleting = false;
-  self.phaseFailed = false;
-  self.options.phaseProgress?.write(index);
-  self.writer.note(`mission ${target.declName} starting (debugger)`);
-  self.options.onPhaseStarted?.(target.declName);
-  target.instantiate();
-  for (const name of [...PHASE_LIFECYCLE, ...target.startup]) {
-    startThreadGuarded(
-      self,
-      target.instance,
-      target.prefix,
-      name,
-      target.declName
+  const last = self.journal.last("hardWipeGlobals", itemRef(row));
+  const was = last?.kind === "hardWipeGlobals" && last.state.enabled;
+  if (was !== armed) {
+    self.writer.set(
+      row,
+      { kind: "hardWipeGlobals", state: { enabled: armed } },
+      `hard wipe ${armed ? "armed" : "disarmed"}`
     );
   }
+}
+
+// The activity's one hard_wipe_globals row, found by type like the scoreboard.
+function hardWipeGlobalsRow(self: EncounterHostContext): BoundRow | undefined {
+  for (const tag of self.options.bundles) {
+    for (const row of tag.rows) {
+      if (row.typeId === self.types.HardWipeGlobals) {
+        return {
+          bundle: tag.bundle,
+          name: row.name ?? "hard_wipe_globals",
+          typeId: row.typeId,
+          typeIndex: row.typeIndex,
+        };
+      }
+    }
+  }
+  return;
 }
 
 // Same isolation the auto-start loop has: a phase whose thread raises on
@@ -405,6 +428,12 @@ export function playerCount(
     : players.length;
 }
 
+// A handle the whole runtime shares belongs to no instance, whichever one asks
+// for it first.
+function shared<T>(self: EncounterHostContext, make: () => T): T {
+  return self.ownership.scope(undefined, make);
+}
+
 // One handle for the whole runtime, so the timer a script resets and
 // starts is the one it polls on the next call.
 export function lifetimeTimer(
@@ -422,8 +451,8 @@ export function lifetimeTimer(
     self.writer.note(
       `${library}:get_lifetime_timer() -> t${row.typeId}#${row.typeIndex}`
     );
-    self.lifetimeTimerHandle = registerBoundObject(
-      self.bound(LIFETIME_TIMER_ROW, row)
+    self.lifetimeTimerHandle = shared(self, () =>
+      registerBoundObject(self.bound(LIFETIME_TIMER_ROW, row))
     );
     return self.lifetimeTimerHandle;
   }
@@ -487,8 +516,8 @@ export function lifetimeSensor(
     self.writer.note(
       `${library}:get_lifetime_sensor() -> t${row.typeId}#${row.typeIndex}`
     );
-    self.lifetimeSensorHandle = registerBoundObject(
-      self.bound("lifetime_sensor", row)
+    self.lifetimeSensorHandle = shared(self, () =>
+      registerBoundObject(self.bound("lifetime_sensor", row))
     );
     return self.lifetimeSensorHandle;
   }
@@ -540,7 +569,9 @@ export function scoreboardSensor(
     self.writer.note(
       `${library}:get_scoreboard() -> t${row.typeId}#${row.typeIndex}`
     );
-    self.scoreboardHandle = registerBoundObject(self.bound("scoreboard", row));
+    self.scoreboardHandle = shared(self, () =>
+      registerBoundObject(self.bound("scoreboard", row))
+    );
     return self.scoreboardHandle;
   }
   self.writer.note(
@@ -923,7 +954,9 @@ function activateEncounter(
   const activate = encounter.instance.get("activate");
   try {
     if (activate instanceof LuaClosure) {
-      self.vm.call(activate, [encounter.instance]);
+      self.ownership.scope(encounter.instance, () =>
+        self.vm.call(activate, [encounter.instance])
+      );
     } else {
       restartThread(self, encounter.instance, encounter.name, "main");
     }

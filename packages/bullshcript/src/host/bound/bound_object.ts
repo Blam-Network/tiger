@@ -18,6 +18,8 @@ import {
   unboundAnswer,
   unboundLabel,
 } from "../natives/native_support.ts";
+import { newSequenceState } from "../state/item_state.ts";
+import type { ItemChange } from "../state/items.ts";
 import { FNV1_EMPTY, fnv1, parseHashLiteral } from "../tags/name_hash.ts";
 import type { ActivityBundleItemTypes } from "../tags/tag_types.ts";
 import type { BoundRow } from "./bindings.ts";
@@ -110,6 +112,59 @@ export class BoundInstance {
 
   advance(seconds: number): void {
     nativeRegistry.advance(this, seconds);
+  }
+
+  // A hard wipe put the row back to how it started: the handle forgets what it
+  // did to it. Its counters only go up, so they stay, and are past the ones
+  // the wipe sent.
+  restart(change: ItemChange | undefined): void {
+    const { actor, loot, objective, squad } = this;
+    Object.assign(this.squad, {
+      ...newSquadSlice(),
+      behaviourIncarnation: squad.behaviourIncarnation,
+    });
+    Object.assign(this.actor, {
+      ...newActorSlice(),
+      healthIncarnation: actor.healthIncarnation,
+      incarnation: actor.incarnation,
+      killEpoch: actor.killEpoch,
+      scriptCookie: actor.scriptCookie,
+    });
+    Object.assign(this.loot, { ...newLootSlice(), epoch: loot.epoch });
+    Object.assign(this.objective, {
+      ...newObjectiveSlice(),
+      generation: objective.generation,
+    });
+    Object.assign(this.objectRow, newObjectSlice());
+    this.sequence.cinematicFinished = false;
+    this.sequence.timer = undefined;
+    this.sequence.own = {
+      ...newSequenceState(),
+      nextPlayingId: this.sequence.own.nextPlayingId,
+    };
+    switch (change?.kind) {
+      case "actor":
+        actor.incarnation = Math.max(
+          actor.incarnation,
+          change.state.incarnation ?? 1
+        );
+        squad.behaviourIncarnation = Math.max(
+          squad.behaviourIncarnation,
+          change.state.behaviour?.incarnation ?? 0
+        );
+        break;
+      case "loot":
+        loot.epoch = Math.max(loot.epoch, change.state.epoch);
+        break;
+      case "objective":
+        objective.generation = Math.max(
+          objective.generation,
+          change.state.unk1 ?? 0
+        );
+        break;
+      default:
+        break;
+    }
   }
 
   private invoke({ method, args }: LuaHostInvocation): readonly LuaValue[] {

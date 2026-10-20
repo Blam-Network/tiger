@@ -26,9 +26,9 @@ export const COMPILED_BS_INDEX = "index.json";
 // starts, 5: starts name their slices, 6: starts name the phase that owns
 // their state, 7: starts lock the time of day, 8: chunk line numbers leave out
 // the stand-in lines, which the index lists, 9: @placed, 10: @objective and
-// @task, 11: member types are the short spellings); bumped when it changes,
-// so an old tree is rebuilt
-export const COMPILED_BS_FORMAT = 11;
+// @task, 11: member types are the short spellings, 12: a phase's @hard_wipe
+// is in its schema); bumped when it changes, so an old tree is rebuilt
+export const COMPILED_BS_FORMAT = 12;
 
 export interface CompiledBsDecl {
   // the chunk's file, relative to the tree; a struct or enum has none

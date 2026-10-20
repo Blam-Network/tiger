@@ -4,6 +4,7 @@
 # warbase. The Ghost's line plays while the objective is up. Clears as a
 # player enters the warbase's bubble.
 
+@hard_wipe()
 location warbase
 trigger_bubble_objective pf_objective_goto bind(warbase)
 sequence seq_d_o3_s01

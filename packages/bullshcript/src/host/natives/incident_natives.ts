@@ -207,6 +207,22 @@ export function engagementsOf(
   return sources;
 }
 
+// Drops the sources a reset took away.
+export function forgetEngagements(
+  context: HostContext,
+  gone: ReadonlySet<BoundInstance>
+): void {
+  const sources = engagementsOf(context);
+  for (const [objective, handles] of [...sources]) {
+    const kept = handles.filter((handle) => !gone.has(handle));
+    if (kept.length === 0) {
+      sources.delete(objective);
+    } else {
+      sources.set(objective, kept);
+    }
+  }
+}
+
 export function hasEngaged(self: BoundInstance): boolean {
   const watch = self.incident.watch;
   if (!watch || watch.disabled) {

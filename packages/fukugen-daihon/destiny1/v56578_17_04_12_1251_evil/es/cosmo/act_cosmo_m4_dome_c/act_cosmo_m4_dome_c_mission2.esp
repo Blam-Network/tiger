@@ -5,6 +5,7 @@
 # music moves on when a player first reaches the control room. The
 # Fallen on the way belong to enc_dome_c_m4.
 
+@hard_wipe()
 interactable_objective obj_m4_o2 bind("0x4CBCA57B")
 sequence seq_m_cue1
 sequence seq_d_o2_s01

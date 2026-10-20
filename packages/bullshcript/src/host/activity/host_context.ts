@@ -17,6 +17,7 @@ import type {
   BoundRow,
   navPointIndex,
 } from "../bound/bindings.ts";
+import type { Ownership } from "../build/ownership.ts";
 import type { CommandScriptIndex } from "../natives/command_script.ts";
 import type {
   BoundInstance,
@@ -30,6 +31,7 @@ import type {
   ItemRef,
   ScoreboardDefinition,
 } from "../state/items.ts";
+import type { PhaseJournal } from "../state/phase_journal.ts";
 import type { WorldState } from "../state/world_state.ts";
 import type { ActivityOptionSet } from "../tags/activity_options.ts";
 import type {
@@ -91,7 +93,11 @@ export interface TaskGate {
 }
 
 export interface HostPhase {
+  chunk: HksBytecode;
   declName: string;
+  // The phase says @hard_wipe(): a hard wipe is armed while it runs.
+  hardWipe: boolean;
+  // Replaced by a rebuild when the phase resets.
   instance: LuaTable;
   // Builds the phase's class instances, as the phase starts.
   instantiate: () => void;
@@ -100,10 +106,21 @@ export interface HostPhase {
   startup: string[];
 }
 
+// A top-level script's instance, with what built it, so a reset can build it
+// again.
+export interface BuiltScript {
+  chunk: HksBytecode;
+  declName: string;
+  implNames: string[];
+  table: LuaTable;
+}
+
 export interface EncounterHostContext {
   activeBundles: ReadonlySet<number> | undefined;
   // instance_building.bound, which scheduling_threads needs but sits above it.
   bound(path: string, row: BoundRow | undefined): BoundInstance;
+  // Every top-level script built, in load order.
+  readonly built: BuiltScript[];
   chunksByClassName: Map<string, HksBytecode> | undefined;
   chunksByScriptName: Map<string, HksBytecode> | undefined;
   chunksByTagId: Map<string, HksBytecode> | undefined;
@@ -112,6 +129,7 @@ export interface EncounterHostContext {
   defaultBodies(bundle: number, typeIndex: number): number;
   dispatchByHash(nameHash: number, metadata: LuaValue): void;
   findPlayer(characterKey: string): ActivityPlayer | undefined;
+  readonly handlerOwners: WeakMap<LuaScriptThread, LuaTable>;
   readonly handles: Set<string>;
   readonly importSlots: BoundInstance[];
   readonly instanceBundle: WeakMap<LuaTable, number>;
@@ -119,15 +137,20 @@ export interface EncounterHostContext {
   readonly instanceScalarFieldValues: WeakMap<LuaTable, Map<number, LuaValue>>;
   readonly instances: Map<string, LuaTable>;
   readonly itemState: ScriptItemState;
+  // What the running phase has written, to put back on a hard wipe.
+  readonly journal: PhaseJournal;
   lifetimeSensorHandle: LuaHostObject | undefined;
   lifetimeTimerHandle: LuaHostObject | undefined;
   readonly managers: EncounterManager[];
   // The scripts' @member_counts by itemKey, as the instances bind them.
   readonly memberCounts: Map<string, AuthoredCells>;
+  // Threads another script restarts or wakes: not started with the script.
+  readonly namedThreads: Set<string>;
   readonly navPoints: ReturnType<typeof navPointIndex>;
   now: number;
   readonly objects: BoundInstance[];
   readonly options: EncounterScriptHostOptions;
+  readonly ownership: Ownership;
   readonly parentShapes: WeakMap<
     HksBytecode,
     {
@@ -142,6 +165,9 @@ export interface EncounterHostContext {
   readonly phases: HostPhase[];
   playerSensorObject(player: ActivityPlayer): LuaHostObject;
   random: number;
+  // The change a hard wipe last put each row of a restarted encounter back
+  // with, by rowKey: a handle made for the row afterwards counts on from it.
+  readonly restartedRows: Map<string, ItemChange>;
   rootInstance: LuaTable | undefined;
   sawAnyRead: boolean;
   sawRealRow: boolean;
@@ -234,6 +260,10 @@ export interface EncounterScriptHostOptions {
   onActivityFlag?: (hash: number, active: boolean) => void;
   onEncounterActivated?: (encounter: string) => void;
   onItemChange?: (change: ItemChange) => void;
+  // A hard wipe put these rows back to untouched: nothing of a script's is
+  // left in them. (The rows it put back to an earlier state go out as item
+  // changes.)
+  onItemsCleared?: (items: readonly ItemRef[]) => void;
   onPhaseStarted?: (phase: string) => void;
   onThreadStarted?: (thread: string) => void;
   // The phase index lives outside the host, which is rebuilt per bubble.

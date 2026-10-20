@@ -7,6 +7,7 @@
 # gatehouse encounter send its miniboss out behind the player. The climax
 # trigger group is up from the wall objective to the door.
 
+@hard_wipe()
 object o_m05_ghost
 trigger_volume_objective pf_trigger_wall
 trigger_group tg_mars_m5_gatehouse_climax_so

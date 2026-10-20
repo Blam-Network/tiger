@@ -8,6 +8,7 @@
 # so the loot is left to the archetype. The 3 s after is the gap to the
 # next phase.
 
+@hard_wipe()
 collect_loot_objective sp_objective_loot bind("0x0CD4D5F7", 1)
 nav_point np_choke
 squad sq_boss

@@ -5,6 +5,7 @@
 # moves on with it and stops when the objective ends. The waves are
 # enc_dome_c_m2's. The wait after the last kill is this run's.
 
+@hard_wipe()
 generic_objective obj_m2_o4a
 sequence seq_m_cue2
 squad sq_fallen_wave03a

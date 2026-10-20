@@ -7,6 +7,7 @@
 # From one retail capture: the three seconds after the last kill are that
 # run's.
 
+@hard_wipe()
 trigger_volume tv_warpgate_destroy
 trigger_volume tv_vex_clear
 nav_point ap_subway_conflux

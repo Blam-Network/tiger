@@ -3,6 +3,7 @@
 # Mission 6, the ship: reach the hangar door, then kill the guards. The
 # objective clears a few seconds after the last guard dies.
 
+@hard_wipe()
 object o_cosmo_strike01_hangar_door01
 encounter_handle enc_ship_portal1
 trigger_volume_objective obj_s1_phase05_m1

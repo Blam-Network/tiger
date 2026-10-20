@@ -67,6 +67,18 @@ export class WorldState {
     return record;
   }
 
+  // Forgets what the client reported of an item the host has put back to an
+  // earlier state. A player's standing in a volume is the client's, and
+  // stays.
+  forget(key: string): void {
+    const record = this.records.get(key);
+    if (record === undefined) {
+      return;
+    }
+    const { monitorCount, safeZoneInside } = record;
+    this.records.set(key, { monitorCount, safeZoneInside });
+  }
+
   // Every item that has the field, by key: a debugger's view of one report.
   collect<T>(pick: (record: ItemWorldRecord) => T | undefined): [string, T][] {
     const found: [string, T][] = [];

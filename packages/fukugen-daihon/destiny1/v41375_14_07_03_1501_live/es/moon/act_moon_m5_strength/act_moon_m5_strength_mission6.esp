@@ -3,6 +3,7 @@
 # Mission 6, into the chamber: fight through the approach to the ritual's
 # trigger volume. The approach's Hive belong to enc_strength_m5.
 
+@hard_wipe()
 trigger_volume_objective pf_obj_ritual_trigger
 
 script init(): pass

@@ -6,6 +6,7 @@
 # steps up on reaching the hangar and again when the ultra lands. From one
 # retail capture.
 
+@hard_wipe()
 location hangar
 trigger_bubble_objective obj_m0_5_goto_hangar bind(hangar)
 collect_loot_objective obj_m0_5_loot bind("0x243999A0", 1)

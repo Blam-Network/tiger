@@ -6,6 +6,7 @@
 # sealing the subway shows up with this phase, shut (device 1); the last
 # phase opens it.
 
+@hard_wipe()
 object o_m06_subway_vexblock_a
 location subway
 player_monitor pm_subway_bubble bind(subway)

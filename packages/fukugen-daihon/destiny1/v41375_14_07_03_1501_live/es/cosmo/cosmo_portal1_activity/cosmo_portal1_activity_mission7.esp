@@ -3,6 +3,7 @@
 # Mission 7, Sepiks Prime: kill the servitor. It teleports, which can read as
 # dead for a moment, so it has to stay dead for a while before this clears.
 
+@hard_wipe()
 encounter_handle enc_ship_portal1
 generic_objective obj_s1_phase06_m1
 nav_point ap_kill_boss01

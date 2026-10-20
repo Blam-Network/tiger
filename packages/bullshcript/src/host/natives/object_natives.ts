@@ -359,6 +359,34 @@ export function setTriggerGroup(self: BoundInstance, active: boolean): boolean {
   return true;
 }
 
+// An object no script has touched: not created, nothing attached.
+export function newObjectState(): ObjectItemState {
+  return {
+    capturableFilter: undefined,
+    capturableIcon: 0,
+    capturableLockStamp: 0,
+    capturableLocked: false,
+    capturablePresent: false,
+    capturableResetStamp: 0,
+    componentsHeld: false,
+    devicePosition: 0,
+    deviceRevision: 0,
+    factionPresent: false,
+    factionSentAt: 0,
+    factionStamp: 0,
+    factionValue: 0,
+    incarnation: 0,
+    interactableDisabled: false,
+    interactableEnabled: false,
+    interactableExcludeFilter: false,
+    interactableFilter: undefined,
+    interactableUsed: false,
+    interactableUsedStamp: 0,
+    objectTimer: undefined,
+    present: false,
+  };
+}
+
 // Shared by every handle bound to the object, so a device change never drops
 // an interactable filter.
 export function objectState(self: BoundInstance): ObjectItemState {
@@ -367,30 +395,7 @@ export function objectState(self: BoundInstance): ObjectItemState {
     : self.path;
   let state = self.context.objectStates.get(key);
   if (!state) {
-    state = {
-      capturableFilter: undefined,
-      capturableIcon: 0,
-      capturableLockStamp: 0,
-      capturableLocked: false,
-      capturablePresent: false,
-      capturableResetStamp: 0,
-      componentsHeld: false,
-      devicePosition: 0,
-      deviceRevision: 0,
-      factionPresent: false,
-      factionSentAt: 0,
-      factionStamp: 0,
-      factionValue: 0,
-      incarnation: 0,
-      interactableDisabled: false,
-      interactableEnabled: false,
-      interactableExcludeFilter: false,
-      interactableFilter: undefined,
-      interactableUsed: false,
-      interactableUsedStamp: 0,
-      objectTimer: undefined,
-      present: false,
-    };
+    state = newObjectState();
     self.context.objectStates.set(key, state);
   }
   return state;

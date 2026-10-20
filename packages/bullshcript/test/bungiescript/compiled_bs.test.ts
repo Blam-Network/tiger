@@ -249,6 +249,23 @@ describe("the compiled_bs tree", () => {
     expect(readdirSync(root)).toEqual(["compiled_bs"]);
   });
 
+  it("carries a phase's @hard_wipe in its schema, and only a phase that has it", () => {
+    const phases = compileScriptFiles([
+      { path: "es/x/armed.esp", text: "@hard_wipe()\nint a\n" },
+      { path: "es/x/plain.esp", text: "int a\n" },
+    ]);
+    expect(phases.diagnostics).toEqual([]);
+    expect(phases.compiledDecl("es/x/armed.esp").schema.hardWipe).toBe(true);
+    expect(phases.compiledDecl("es/x/plain.esp").schema).not.toHaveProperty(
+      "hardWipe"
+    );
+    const out = join(root, "phases");
+    writeCompiledBs(out, phases);
+    const set = readCompiledBs(out);
+    expect(set.schemaFor("es/x/armed.esp").hardWipe).toBe(true);
+    expect(set.schemaFor("es/x/plain.esp")).not.toHaveProperty("hardWipe");
+  });
+
   it("refuses a tree written in another format", () => {
     const other = join(root, "other");
     writeCompiledBs(other, compiled);

@@ -3,6 +3,7 @@
 # Mission 3, the dig site: cross it to the far trigger volume. The dig site
 # encounter runs its own Fallen.
 
+@hard_wipe()
 trigger_volume_objective trigger_volume_dig_site
 
 script init(): pass

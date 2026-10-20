@@ -2,6 +2,7 @@
 #
 # Mission 4, the lower citadel: cross it to the wormway.
 
+@hard_wipe()
 trigger_volume_objective pf_tv_wormway_entrance
 
 script init(): pass

@@ -5,6 +5,7 @@
 # door to the lower garden once it dies; the objective clears four
 # seconds after.
 
+@hard_wipe()
 trigger_volume_objective sp_objective_pit
 generic_objective sp_objective_kill
 nav_point np_pit

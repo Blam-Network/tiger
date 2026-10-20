@@ -3,6 +3,7 @@
 # Mission 2, the refinery: reach the door, then clear the playfight squads.
 # The squads themselves belong to the refinery encounter.
 
+@hard_wipe()
 trigger_volume_objective obj_s1_phase01_m1
 generic_objective obj_s1_phase01_m2
 nav_point ap_refinery_central01

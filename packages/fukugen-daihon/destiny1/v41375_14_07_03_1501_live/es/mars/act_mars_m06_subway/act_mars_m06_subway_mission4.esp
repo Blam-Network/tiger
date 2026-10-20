@@ -3,6 +3,7 @@
 # Mission 4, the lobby's south hall. Clears when the player reaches the
 # far end of the hall, past the Vex clouds.
 
+@hard_wipe()
 trigger_volume_objective pf_objective_lobby_s_trigger
 
 script init(): pass

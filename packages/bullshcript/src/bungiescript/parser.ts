@@ -103,6 +103,11 @@ type BsDecorator =
       readonly name: string;
       readonly value: BsTask;
     }
+  | {
+      readonly kind: "hard_wipe";
+      readonly line: number;
+      readonly name: string;
+    }
   | BsStartDecorator;
 
 // What decorates a member: its squad counts, that it starts placed, the
@@ -127,10 +132,11 @@ function isMemberDecorator(
   return MEMBER_DECORATORS.has(decorator.kind);
 }
 
-// What the head decorators gave: the bundle, the activity's start and the
-// first member's own decorators.
+// What the head decorators gave: the bundle, the activity's start, whether a
+// phase arms a hard wipe and the first member's own decorators.
 interface BsHead {
   readonly bundle: BsActivityBundle | undefined;
+  readonly hardWipe: boolean;
   readonly members: BsMemberDecorator[];
   readonly start: BsActivityStart | undefined;
 }
@@ -190,7 +196,7 @@ export function parseBungieScript(source: string, path: string): BsFile {
       1
     );
   }
-  const parser = new BsParser(source, normalized);
+  const parser = new BsParser(source, normalized, kind);
   const decls =
     kind === "bs"
       ? parser.bsFile()
@@ -205,12 +211,14 @@ export function parseBungieScript(source: string, path: string): BsFile {
 
 class BsParser {
   private readonly decoratorSpans: BsTokenSpan[] = [];
+  private readonly fileKind: BsFileKind;
   private readonly path: string;
   private position = 0;
   private readonly source: string;
   private readonly tokens: BsToken[];
 
-  constructor(source: string, path: string) {
+  constructor(source: string, path: string, fileKind: BsFileKind) {
+    this.fileKind = fileKind;
     this.source = source;
     this.path = path;
     this.tokens = tokenize(source, path);
@@ -337,6 +345,7 @@ class BsParser {
         activityStart: head.start,
         base,
         end: this.peek(-1).end,
+        hardWipe: head.hardWipe,
         implicit: false,
         kind,
         line: start.line,
@@ -399,6 +408,9 @@ class BsParser {
     }
     if (name.text === "placed") {
       return { kind: "placed", line: name.line, name: name.text };
+    }
+    if (name.text === "hard_wipe") {
+      return { kind: "hard_wipe", line: name.line, name: name.text };
     }
     if (name.text === "startup") {
       return { kind: "startup", line: name.line, name: name.text };
@@ -706,14 +718,16 @@ class BsParser {
     }
   }
 
-  // A class's or file's head takes one @activity_bundle and the decorators
-  // that say how its activity starts; an es-family file's head decorators
-  // can also be its first member's, below those.
+  // A class's or file's head takes one @activity_bundle, the decorators
+  // that say how its activity starts and, on a phase, @hard_wipe; an
+  // es-family file's head decorators can also be its first member's, below
+  // those.
   private headDecorators(
     decorators: readonly BsDecorator[],
     memberFollows: boolean
   ): BsHead {
     let bundle: BsActivityBundle | undefined;
+    let hardWipe = false;
     const members: BsMemberDecorator[] = [];
     const starts: BsStartDecorator[] = [];
     for (const decorator of decorators) {
@@ -726,13 +740,29 @@ class BsParser {
         this.error(`@${decorator.name} goes above the member's decorators`);
       } else if (decorator.kind === "start") {
         starts.push(decorator);
+      } else if (decorator.kind === "hard_wipe") {
+        if (this.fileKind !== "esp") {
+          throw new BsCompileError(
+            "@hard_wipe decorates a phase (.esp) file",
+            this.path,
+            decorator.line
+          );
+        }
+        if (hardWipe) {
+          throw new BsCompileError(
+            "@hard_wipe is written once",
+            this.path,
+            decorator.line
+          );
+        }
+        hardWipe = true;
       } else if (bundle === undefined) {
         bundle = decorator.value;
       } else {
         this.error("an encounter takes one @activity_bundle");
       }
     }
-    return { bundle, members, start: this.activityStart(starts) };
+    return { bundle, hardWipe, members, start: this.activityStart(starts) };
   }
 
   // The start decorators together: @activity names the activities and the
@@ -875,6 +905,7 @@ class BsParser {
       activityStart: head.start,
       base: undefined,
       end: this.source.length,
+      hardWipe: head.hardWipe,
       implicit: true,
       kind: "class",
       line: 1,

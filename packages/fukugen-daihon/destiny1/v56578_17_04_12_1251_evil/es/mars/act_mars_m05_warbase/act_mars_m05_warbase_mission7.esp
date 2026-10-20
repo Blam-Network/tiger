@@ -5,6 +5,7 @@
 # the yard counts as clear three seconds after the last of them dies. The
 # first climax trigger group is up for the phase.
 
+@hard_wipe()
 trigger_volume_objective pf_trigger_ascend
 trigger_group tg_mars_m5_climax_1_so
 generic_objective pf_gen_obj_clear

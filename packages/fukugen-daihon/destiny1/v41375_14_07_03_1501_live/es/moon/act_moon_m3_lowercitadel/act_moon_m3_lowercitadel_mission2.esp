@@ -6,6 +6,7 @@
 # clears on the pickup. The pause after it is the run's gap before the next
 # objective comes up.
 
+@hard_wipe()
 trigger_volume_objective pf_obj_ultra_trigger
 collect_loot_objective pf_objective_loot bind("0x9737BF52", 1)
 sequence seq_d_o1_s05
