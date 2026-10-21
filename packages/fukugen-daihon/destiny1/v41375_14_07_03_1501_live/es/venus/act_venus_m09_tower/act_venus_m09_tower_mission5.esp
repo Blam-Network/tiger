@@ -1,0 +1,20 @@
+# es\venus\act_venus_m09_tower\act_venus_m09_tower_mission5.esp
+#
+# Mission 5, phase_tower_outro. The Ghost's last, long line plays over the
+# end of the music, the activity completes and the results come up 30
+# seconds on.
+
+sequence venus_m09_intro_music
+sequence md_vn09_020_50
+
+script init(): pass
+
+script complete():
+    c_lifetime_script_utilities.get_lifetime_sensor().end_game(30)
+
+script main():
+    sleep(4)
+    md_vn09_020_50.start()
+    set_activity_complete()
+    sleep_until_timeout(md_vn09_020_50.is_done(), 20)
+    venus_m09_intro_music.stop()

@@ -381,6 +381,8 @@ function untouched(current: ItemChange): ItemChange | undefined {
         kind: "loot",
         state: { enabled: false, epoch: current.state.epoch + 1 },
       };
+    case "passenger":
+      return { item, kind: "passenger", state: { state: 0 } };
     default:
       return;
   }

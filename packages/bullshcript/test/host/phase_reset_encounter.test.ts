@@ -9,18 +9,19 @@ import {
   formatScriptTag,
   type ScriptSource,
 } from "../../src/hks/source/script_source.ts";
-import type {
-  ItemChange,
-  ItemRef,
-  SquadState,
-} from "../../src/host/state/items.ts";
+import type { ItemChange, ItemState } from "../../src/host/state/items.ts";
 import { fnv1 } from "../../src/host/tags/name_hash.ts";
 import type { ActivityBundleTag } from "../../src/host/tags/tag_types.ts";
 import { ScriptRuntime } from "../../src/versions/destiny1/v52553_16_09_28_1551_evil/host/runtime.ts";
 import { ActivityBundleItemType } from "../../src/versions/destiny1/v52553_16_09_28_1551_evil/host/tag_types.ts";
 
-const { Actor, HardWipeGlobals, Object: ObjectRow, Passenger, Squad } =
-  ActivityBundleItemType;
+const {
+  Actor,
+  HardWipeGlobals,
+  Object: ObjectRow,
+  Passenger,
+  Squad,
+} = ActivityBundleItemType;
 
 const FILES = {
   root: { path: "es/test/act_c/act_c.es", text: "int unused = 0\n" },
@@ -218,12 +219,10 @@ function project() {
 function start() {
   const { bundles, scripts } = project();
   const changes: ItemChange[] = [];
-  const cleared: ItemRef[] = [];
   const runtime = new ScriptRuntime({
     bundles,
     clock: { activityTicks: () => 0 },
     onItemChange: (change) => changes.push(change),
-    onItemsCleared: (items) => cleared.push(...items),
     scriptFor: (tag) =>
       ({
         [TAG_A]: TAGS.root,
@@ -244,27 +243,26 @@ function start() {
   };
   const printed = (text: string) =>
     runtime.trace.filter((line) => line === `print ${text}`).length;
-  // every change sent of a row, oldest first
-  const sent = <K extends ItemChange["kind"]>(
+  // every state sent of a row, oldest first
+  const sent = <K extends ItemState["kind"]>(
     kind: K,
     bundle: number,
     typeIndex: number
   ) =>
     changes
       .filter(
-        (change): change is Extract<ItemChange, { kind: K }> =>
+        (change) =>
           change.kind === kind &&
           change.item.bundle === bundle &&
           change.item.typeIndex === typeIndex
       )
-      .map((change) => change.state);
-  const last = <K extends ItemChange["kind"]>(
+      .map((change) => change.state as StateOf<K>);
+  const last = <K extends ItemState["kind"]>(
     kind: K,
     bundle: number,
     typeIndex: number
   ) => {
-    const states = sent(kind, bundle, typeIndex);
-    const found = states.at(-1);
+    const found = sent(kind, bundle, typeIndex).at(-1);
     if (found === undefined) {
       throw new Error(`${kind} ${bundle}:${typeIndex} was never written`);
     }
@@ -275,37 +273,32 @@ function start() {
     tickUntil(() => printed("chains fight") === 1);
     expect(runtime.phaseIndex).toBe(1);
   };
-  // What the host holds of a squad is what it last sent, so nothing is left
-  // placed on the host that the client was not told of.
-  const heldSquad = (bundle: number, typeIndex: number): SquadState =>
-    JSON.parse(
-      JSON.stringify(runtime.itemState.squad({ bundle, typeId: Squad, typeIndex }))
-    );
-  const sentSquad = (bundle: number, typeIndex: number): SquadState => {
-    const { initial: _, ...state } = {
-      ...last("squad", bundle, typeIndex),
-    } as SquadState & { initial?: boolean };
-    return JSON.parse(JSON.stringify(state));
-  };
+  // What the host holds of a squad is what it last sent, so nothing stands on
+  // the host that the client was not told of.
+  const heldSquad = (bundle: number, typeIndex: number) =>
+    runtime.itemState.squad({ bundle, typeId: Squad, typeIndex });
   return {
     changes,
-    cleared,
     heldSquad,
     last,
     printed,
     reachFight,
     runtime,
     sent,
-    sentSquad,
     tickUntil,
   };
 }
+
+type StateOf<K extends ItemState["kind"]> = Extract<
+  ItemState,
+  { kind: K }
+>["state"];
 
 const BOSS = { bundle: BUNDLE_D, typeIndex: SQ_BOSS };
 const OWNED_SQUADS = [SQ_BOSS, SQ_ADD, SQ_SHARED];
 
 describe("a restarted encounter's rows", () => {
-  it("run the fight as the test expects before the wipe", () => {
+  it("stand before the wipe: the boss placed and seated, the fight placing more and letting him go", () => {
     const { last, printed, reachFight, runtime } = start();
     reachFight();
     expect(printed("boss unplaced")).toBe(1);
@@ -321,8 +314,7 @@ describe("a restarted encounter's rows", () => {
   });
 
   it("go back to untouched, the ones placed before the phase and the ones placed in it", () => {
-    const { changes, cleared, heldSquad, last, reachFight, runtime, sentSquad } =
-      start();
+    const { changes, heldSquad, last, reachFight, runtime } = start();
     reachFight();
     runtime.reportSquadAlive(BOSS, 1);
     const mark = changes.length;
@@ -338,12 +330,8 @@ describe("a restarted encounter's rows", () => {
       });
     }
     expect(last("actor", BUNDLE_D, OGRE)).toMatchObject({ placed: false });
-    // a seat has no state to put back: it is handed to the sink
-    expect(cleared).toContainEqual({
-      bundle: BUNDLE_D,
-      typeId: Passenger,
-      typeIndex: SEAT,
-    });
+    // the seat is let go of, whether or not the fight had released it
+    expect(last("passenger", BUNDLE_D, SEAT)).toEqual({ state: 0 });
     // the door is a new object, absent, in a generation past the one created
     expect(last("object", BUNDLE_D, DOOR)).toMatchObject({
       incarnation: 2,
@@ -355,6 +343,7 @@ describe("a restarted encounter's rows", () => {
     expect(restore.map((change) => change.kind).sort()).toEqual([
       "actor",
       "object",
+      "passenger",
       "squad",
       "squad",
       "squad",
@@ -363,10 +352,10 @@ describe("a restarted encounter's rows", () => {
     // the host holds what it sent, and nothing the client was not told of
     for (const typeIndex of OWNED_SQUADS) {
       expect(heldSquad(BUNDLE_D, typeIndex)).toEqual(
-        sentSquad(BUNDLE_D, typeIndex)
+        last("squad", BUNDLE_D, typeIndex)
       );
+      expect(runtime.itemState.bodiesFor(BUNDLE_D, typeIndex)).toBe(0);
     }
-    expect(runtime.itemState.bodiesFor(BUNDLE_D, SQ_BOSS)).toBe(0);
     // what the client said of the boss is of a world that is gone
     expect(runtime.world.at(`${BUNDLE_D.toString(16)}:${SQ_BOSS}`)).toEqual({});
   });
@@ -378,8 +367,8 @@ describe("a restarted encounter's rows", () => {
     runtime.reportSquadAlive(BOSS, 1);
     const wave = (typeIndex: number) =>
       Math.max(...sent("squad", BUNDLE_D, typeIndex).map((s) => s.wave));
+    const waves = new Map(OWNED_SQUADS.map((i) => [i, wave(i)]));
     const doors = sent("object", BUNDLE_D, DOOR).map((s) => s.incarnation);
-    const waves = OWNED_SQUADS.map(wave);
     runtime.resetCurrentPhase();
     tickUntil(() => printed("chains main") === 2);
     // the boss reads as unplaced to the restarted thread, as at a fresh start
@@ -391,23 +380,28 @@ describe("a restarted encounter's rows", () => {
       temperaments: [fnv1("held")],
     });
     expect(last("actor", BUNDLE_D, OGRE)).toMatchObject({ placed: true });
-    // seated again, after the seat was let go
+    // seated again, after the seat was released and let go of
     expect(sent("passenger", BUNDLE_D, SEAT).map((s) => s.state)).toEqual([
-      1, 2, 1,
+      1, 2, 0, 1,
     ]);
+    expect(sent("passenger", BUNDLE_D, SEAT)[3].passenger).toEqual({
+      bundle: BUNDLE_D,
+      typeId: Actor,
+      typeIndex: OGRE,
+    });
     // the door comes back as a newer object than any sent before
     const created = sent("object", BUNDLE_D, DOOR).at(-1);
     expect(created).toMatchObject({ present: true });
     expect(created?.incarnation).toBeGreaterThan(Math.max(...doors));
     // the squads that stand again are in a wave past every one sent before
-    for (const [i, typeIndex] of [SQ_BOSS, SQ_SHARED].entries()) {
+    for (const typeIndex of [SQ_BOSS, SQ_SHARED]) {
       expect(last("squad", BUNDLE_D, typeIndex)).toMatchObject({ bodies: 1 });
-      expect(wave(typeIndex)).toBeGreaterThan(waves[i === 0 ? 0 : 2]);
+      expect(wave(typeIndex)).toBeGreaterThan(waves.get(typeIndex) ?? 0);
     }
     // the fight happens again
     tickUntil(() => printed("chains fight") === 2);
     expect(last("squad", BUNDLE_D, SQ_ADD)).toMatchObject({ bodies: 1 });
-    expect(wave(SQ_ADD)).toBeGreaterThan(waves[1]);
+    expect(wave(SQ_ADD)).toBeGreaterThan(waves.get(SQ_ADD) ?? 0);
     expect(last("passenger", BUNDLE_D, SEAT)).toEqual({ state: 2 });
   });
 
@@ -439,19 +433,27 @@ describe("a restarted encounter's rows", () => {
         expect(change.state.present).toBe(false);
       }
     }
-    // the next ticks run them, and what they send follows
+    // the next ticks run them, and what they send follows, in the waves the
+    // put-back opened
     tickUntil(
       () => printed("chains main") === ran.chains + 1 && printed("m2 main") > 0
     );
     const after = changes.slice(mark + restore.length);
-    expect(after.some((change) => change.kind === "squad")).toBe(true);
-    expect(
-      after.some(
-        (change) => change.kind === "squad" && (change.state.bodies ?? 0) > 0
-      )
-    ).toBe(true);
-    // nothing was sent in between, so the order of the log is the order sent
-    expect(changes.slice(mark, mark + restore.length)).toEqual(restore);
+    const placed = after.filter(
+      (change) => change.kind === "squad" && (change.state.bodies ?? 0) > 0
+    );
+    expect(placed.length).toBeGreaterThan(0);
+    for (const change of placed) {
+      const putBack = restore.find(
+        (other) =>
+          other.kind === "squad" &&
+          other.item.bundle === change.item.bundle &&
+          other.item.typeIndex === change.item.typeIndex
+      );
+      if (change.kind === "squad" && putBack?.kind === "squad") {
+        expect(change.state.wave).toBeGreaterThanOrEqual(putBack.state.wave);
+      }
+    }
   });
 
   it("leave a row only the phase wrote at its phase-start image", () => {

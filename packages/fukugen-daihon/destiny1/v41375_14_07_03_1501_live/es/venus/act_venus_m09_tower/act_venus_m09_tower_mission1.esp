@@ -1,0 +1,30 @@
+# es\venus\act_venus_m09_tower\act_venus_m09_tower_mission1.esp
+#
+# Mission 1, phase_lower_tower_goto: over the bridge from the Citadel into the
+# lower tower. The objective comes up once the players are in and clears at
+# the tower's entrance. The Fallen and Vex fighting over the tower's base are
+# enc_lower_tower_m09's; its anchor captain holds the bridge, and goes in the
+# bridge guardian filter once the players are across.
+
+@hard_wipe()
+trigger_volume_objective pf_enter_lower_tower
+object_filter of_bridge_guardian
+encounter_handle enc_lower_tower_m09
+sequence md_vn09_010_20
+sequence md_vn09_010_40
+
+script init(): pass
+
+script complete(): pass
+
+script main():
+    sleep_until(c_player_script_utilities.all_players_are_ready())
+    c_lifetime_script_utilities.get_lifetime_sensor().set_state(e_activity_lifetime_state.active)
+    sleep(2)
+    pf_enter_lower_tower.objective_begin()
+    md_vn09_010_20.start()
+    sleep_until(pf_enter_lower_tower.is_complete())
+    of_bridge_guardian.add(enc_lower_tower_m09.sq_major_anchor)
+    md_vn09_010_20.stop()
+    md_vn09_010_40.start()
+    pf_enter_lower_tower.objective_end()

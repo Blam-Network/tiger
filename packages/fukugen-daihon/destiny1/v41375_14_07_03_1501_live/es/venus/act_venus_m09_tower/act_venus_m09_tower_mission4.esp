@@ -1,0 +1,30 @@
+# es\venus\act_venus_m09_tower\act_venus_m09_tower_mission4.esp
+#
+# Mission 4, phase_tower_kill_boss: the ultra captain. enc_tower_m09's
+# sc_boss brings it out once a player is on its platform; the kill objective
+# comes up as it arrives, its waypoint on the platform where the Ghost waits,
+# and clears a couple of seconds after it dies. The music builds with the
+# fight.
+
+@hard_wipe()
+generic_objective pf_kill_boss
+nav_point ap_defend_ghost
+encounter_handle enc_tower_m09
+sequence venus_m09_intro_music
+sequence md_vn09_020_60
+
+script init(): pass
+
+script complete(): pass
+
+script main():
+    enc = enc_tower_m09
+    enc.sc_boss.wake()
+    sleep_until(enc.boss_arrived)
+    venus_m09_intro_music.set_switch_mask(7)
+    pf_kill_boss.objective_begin(ap_defend_ghost)
+    sleep_until(enc.boss_dead)
+    sleep(2)
+    venus_m09_intro_music.set_switch_mask(15)
+    pf_kill_boss.objective_end()
+    md_vn09_020_60.start()
