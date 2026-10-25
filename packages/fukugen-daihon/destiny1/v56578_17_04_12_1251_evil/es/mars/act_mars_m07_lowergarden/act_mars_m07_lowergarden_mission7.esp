@@ -16,7 +16,9 @@ script init(): pass
 script complete(): pass
 
 script main():
+    # back from the cinematic: the lifetime is live again once the players are
     sleep_until(c_player_script_utilities.all_players_are_ready())
+    c_lifetime_script_utilities.get_lifetime_sensor().set_state(e_activity_lifetime_state.active)
     enc = enc_lowergarden_m07
     seq_music_lowergarden.start()
     seq_music_lowergarden.set_switch_mask(1)

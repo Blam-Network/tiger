@@ -9,6 +9,11 @@ export interface CapturableSense {
   resetStamp: number;
 }
 
+export interface DeviceSense {
+  position: number;
+  positionStamp: number;
+}
+
 export interface ItemWorldRecord {
   // ActorSense flags 7/8 (Actor.is_bound).
   actorBound?: { flag7: boolean; flag8: boolean };
@@ -27,6 +32,9 @@ export interface ItemWorldRecord {
   // Deaths from alive-count drops; what a squad-scoped listener's get_count()
   // sums.
   deaths?: number;
+  // An Object's device as the client holds it: its position and that
+  // position's stamp.
+  device?: DeviceSense;
   // ObjectFaction sense 0x80801620 per Object item.
   faction?: number;
   health?: { current: number; max: number };

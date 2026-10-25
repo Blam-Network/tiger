@@ -1,0 +1,45 @@
+# es\utility_scripts\u_event_dropship_point.esu
+#
+# One drop point of a public event (a pf_point): where the dropship comes in
+# and leaves, the troops it drops there, the beacon and the cover the drop
+# puts down, and the volume that counts a player as engaged at the point.
+# The 360 alpha's u_event_dropship_point_temp on this build's rows: one troop
+# squad per point (the alpha had two waves and a leader), and the dropship
+# flies its whole entry path, so there is no separate approach path.
+
+squad sq_event_dropship_troops
+objective obj_event_dropship_pt
+object o_event_dropship_beacon_pt
+object o_event_fiction_device_temp
+device d_event_fiction_device bind(o_event_fiction_device_temp)
+dynamic_array<object> o_dropship_cov
+static_array<device, 10> dev_dropship_cov
+trigger_volume cv_event_dropship_pt
+player_trigger pt_event_dropship bind(cv_event_dropship_pt)
+control_point_set cps_dropship_point_enter
+control_point_set cps_dropship_point_exit
+
+def user_import():
+    for i, obj in o_dropship_cov:
+        dev_dropship_cov[i].import_only_bind(o_dropship_cov[i])
+
+# the beacon goes down, the cover comes up around it 5s later
+def create_beacon():
+    o_event_dropship_beacon_pt.create()
+    o_event_fiction_device_temp.create()
+    d_event_fiction_device.set_device_position(0)
+    sleep(5)
+    for i in range(len(o_dropship_cov)):
+        o_dropship_cov[i].create()
+        dev_dropship_cov[i].set_device_position(0)
+
+# 0.3 as the point is won, 0.4 as it is lost
+def remove_cover(position):
+    for i in range(len(o_dropship_cov)):
+        dev_dropship_cov[i].set_device_position(position)
+    d_event_fiction_device.set_device_position(position)
+    sleep(1)
+    for i in range(len(o_dropship_cov)):
+        o_dropship_cov[i].delete_object()
+    o_event_fiction_device_temp.delete_object()
+    o_event_dropship_beacon_pt.delete_object()

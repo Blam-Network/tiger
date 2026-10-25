@@ -1,0 +1,15 @@
+# es\cosmo\cosmo_portal1_activity\cosmo_portal1_activity_mission4.esp
+#
+# Mission 4: leave the refinery and head to the blast. Clears at the trigger.
+
+# @hard_wipe()  (off: Codie, 2026-10-22)
+trigger_volume_objective obj_s1_phase03_m1
+
+script init(): pass
+
+script complete(): pass
+
+script main():
+    obj_s1_phase03_m1.objective_begin()
+    sleep_until(obj_s1_phase03_m1.is_complete())
+    obj_s1_phase03_m1.objective_end_silent()

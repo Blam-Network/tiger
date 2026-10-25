@@ -1,0 +1,25 @@
+# es\cosmo\cosmo_portal1_activity\cosmo_portal1_activity_mission5.esp
+#
+# Mission 5, the blast: kill the Devil Walker. The exit door starts shut and
+# opens when the Walker dies.
+
+@hard_wipe()
+object o_cosmo_strike01_door01
+encounter_handle enc_blast_portal1
+generic_objective obj_s1_phase04_m1
+nav_point ap_eliminate_fallen01
+
+script init():
+    o_cosmo_strike01_door01.create()
+    o_cosmo_strike01_door01.set_device_position(0)
+
+script complete(): pass
+
+script main():
+    enc = enc_blast_portal1
+    obj_s1_phase04_m1.objective_begin(ap_eliminate_fallen01)
+    sleep_until(enc.sq_tank.alive_count() > 0)
+    sleep_until(enc.sq_tank.alive_count() == 0)
+    sleep(2)
+    obj_s1_phase04_m1.objective_end_silent()
+    o_cosmo_strike01_door01.set_device_position(1)

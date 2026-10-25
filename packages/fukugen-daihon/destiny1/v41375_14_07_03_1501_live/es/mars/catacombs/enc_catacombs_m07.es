@@ -14,17 +14,26 @@ objective obj_catacombs_m07
 squad sq_hall_goblin_a
 squad sq_hall_goblin_b
 squad sq_hall_goblin_c
+@member_counts({minotaur: 1})
 squad sq_hall_anchor_minotaur
+@member_counts({harpy: 2})
 squad sq_hall_anchor_harpy
 squad sq_pit_cloud
 squad_member sq_pit_cloud__pilot
+@member_counts({minotaur: 1})
 squad sq_pit_minotaur_a
+@member_counts({harpy: 1})
 squad sq_pit_harpy_a
+@member_counts({harpy: 2})
 squad sq_pit_harpy_b
+@member_counts({harpy: 2})
 squad sq_pit_harpy_c
+@member_counts({0xB84FD02D: 1, 0xB84FD02E: 1})
 squad sq_foyer_hobgoblin
 squad sq_foyer_minotaur_a
+@member_counts({goblin: 3})
 squad sq_foyer_goblin_a
+@member_counts({goblin: 3})
 squad sq_foyer_goblin_b
 sequence seq_vex_announce
 player_trigger pt_hall

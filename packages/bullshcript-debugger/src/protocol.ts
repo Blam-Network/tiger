@@ -138,7 +138,7 @@ export interface ActionParam {
 }
 
 export interface RowAction {
-  kind: "instance" | "native" | "report";
+  kind: "host" | "instance" | "native" | "report";
   label: string;
   name: string;
   params?: ActionParam[];

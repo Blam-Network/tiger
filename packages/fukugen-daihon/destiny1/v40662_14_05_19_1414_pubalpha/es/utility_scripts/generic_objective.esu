@@ -1,0 +1,39 @@
+# es\utility_scripts\generic_objective.esu
+#
+# An objective with no completion rule of its own: the phase that runs it
+# decides when it is done and where the waypoint points. True name unknown.
+
+bool _complete
+player_objective _player_objective
+sequence _incoming_sequence
+sequence _completion_sequence
+
+def is_complete():
+    return _complete == true
+
+def complete():
+    _complete = true
+
+def objective_begin(nav_point):
+    _player_objective.set_incoming()
+    sleep(2)
+    _incoming_sequence.start()
+    sleep_until_timeout(_incoming_sequence.is_done(), 10)
+    objective_begin_immediate(nav_point)
+
+def objective_begin_immediate(nav_point):
+    _complete = false
+    _player_objective.set_active()
+    if nav_point:
+        _player_objective.nav_point_activate(nav_point)
+
+def objective_end():
+    _player_objective.nav_point_clear()
+    _completion_sequence.start()
+    sleep_until_timeout(_completion_sequence.is_done(), 10)
+    _player_objective.set_complete()
+    sleep(2)
+    _player_objective.clear()
+
+def objective_end_silent():
+    _player_objective.clear()

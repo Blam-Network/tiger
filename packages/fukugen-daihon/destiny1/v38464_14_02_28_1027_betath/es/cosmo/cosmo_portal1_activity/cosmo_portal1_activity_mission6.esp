@@ -1,0 +1,71 @@
+# es\cosmo\cosmo_portal1_activity\cosmo_portal1_activity_mission6.esp
+#
+# Mission 6, the ship: get inside, then kill the guards. The pre-alpha keeps
+# the guards in this phase (phase05.sq_bossbattle_fallen01, 02) where the
+# Alpha Trial has them in the ship encounter. The hangar door opens at the
+# entrance, the inner doors at their trigger; the objective clears a few
+# seconds after the last guard dies.
+
+# @hard_wipe()  (off: Codie, 2026-10-22)
+encounter_handle enc_ship_portal1
+player_objective po_enter_ship
+player_objective po_kill_guards
+sequence m04_x10
+objective obj_ship_trash
+@member_counts({dreg: 2, vandal: 1})
+squad sq_bossbattle_fallen01
+@member_counts({dreg: 2, vandal: 1})
+squad sq_bossbattle_fallen02
+squad_group sqg_bossbattle_guards
+trigger_volume tv_ship_entrance01
+player_trigger pt_ship_entrance01 bind(tv_ship_entrance01)
+trigger_volume tv_play_m04_x10t
+player_trigger pt_play_m04_x10t bind(tv_play_m04_x10t)
+trigger_volume tv_open_doors01
+player_trigger pt_open_doors01 bind(tv_open_doors01)
+nav_point ap_ship_entrance01
+nav_point ap_kill_guards01
+
+script init(): pass
+
+script complete(): pass
+
+script main():
+    enc = enc_ship_portal1
+    pt_ship_entrance01.reset()
+    pt_play_m04_x10t.reset()
+    pt_open_doors01.reset()
+    sc_ship_line.wake()
+    sc_inner_doors.wake()
+    sqg_bossbattle_guards.add_child(sq_bossbattle_fallen01)
+    sqg_bossbattle_guards.add_child(sq_bossbattle_fallen02)
+    po_enter_ship.set_active()
+    po_enter_ship.nav_point_activate(ap_ship_entrance01)
+    sleep_until(pt_ship_entrance01.is_triggered())
+    po_enter_ship.nav_point_clear()
+    po_enter_ship.clear()
+    enc.o_hangar_door01.set_device_position(1)
+    guard(sq_bossbattle_fallen01, "default_fallen01")
+    guard(sq_bossbattle_fallen02, "default_fallen02")
+    po_kill_guards.set_active()
+    po_kill_guards.nav_point_activate(ap_kill_guards01)
+    sleep_until_timeout(sqg_bossbattle_guards.alive_count() > 0, 10)
+    sleep_until(sqg_bossbattle_guards.alive_count() == 0)
+    sleep(3)
+    po_kill_guards.nav_point_clear()
+    po_kill_guards.clear()
+
+script sc_ship_line():
+    sleep_until(pt_play_m04_x10t.is_triggered())
+    m04_x10.start()
+
+script sc_inner_doors():
+    enc = enc_ship_portal1
+    sleep_until(pt_open_doors01.is_triggered())
+    enc.o_door_left01.set_device_position(1)
+    enc.o_door_right01.set_device_position(1)
+
+def guard(sq, task):
+    sq.set_objective(obj_ship_trash)
+    sq.set_task(task)
+    sq.place()

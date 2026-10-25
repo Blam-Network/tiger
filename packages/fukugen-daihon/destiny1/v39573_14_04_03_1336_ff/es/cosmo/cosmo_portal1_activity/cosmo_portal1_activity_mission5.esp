@@ -1,0 +1,28 @@
+# es\cosmo\cosmo_portal1_activity\cosmo_portal1_activity_mission5.esp
+#
+# Mission 5, the blast: kill the Devil Walker. The exit door is the blast
+# encounter's (o_door01), shut until the Walker dies; the Walker comes when
+# the phase's own trigger wakes the blast's sc_walker.
+
+# @hard_wipe()  (off: Codie, 2026-10-22)
+encounter_handle enc_blast_portal1
+generic_objective obj_s1_phase04_m1
+nav_point ap_eliminate_fallen01
+trigger_volume tv_play_s01_x100_s01_x110
+player_trigger pt_play_s01_x100_s01_x110 bind(tv_play_s01_x100_s01_x110)
+
+script init(): pass
+
+script complete(): pass
+
+script main():
+    enc = enc_blast_portal1
+    pt_play_s01_x100_s01_x110.reset()
+    obj_s1_phase04_m1.objective_begin(ap_eliminate_fallen01)
+    sleep_until(pt_play_s01_x100_s01_x110.is_triggered())
+    enc.sc_walker.wake()
+    sleep_until(enc.sq_tank.alive_count() > 0)
+    sleep_until(enc.sq_tank.alive_count() == 0)
+    sleep(2)
+    obj_s1_phase04_m1.objective_end_silent()
+    enc.o_door01.set_device_position(1)

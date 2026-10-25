@@ -5,6 +5,9 @@ import { resolve } from "node:path";
 import { fukugenDaihonDir } from "@blamnetwork/bullshcript/destiny1/v41375_14_07_03_1501_live";
 
 export const ALPHA_BUILD = "v36735_13_12_02_1953_alpha";
+export const BETATH_BUILD = "v38464_14_02_28_1027_betath";
+export const FF_BUILD = "v39573_14_04_03_1336_ff";
+export const PUBALPHA_BUILD = "v40662_14_05_19_1414_pubalpha";
 export const TU0_BUILD = "v41375_14_07_03_1501_live";
 export const EVIL_BUILD = "v56578_17_04_12_1251_evil";
 

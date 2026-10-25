@@ -62,6 +62,8 @@ const FILES = {
     text: [
       "squad sq_boss",
       "squad_member sq_boss__ogre",
+      "squad sq_ship",
+      "squad_member sq_ship__pilot",
       "passenger chains_seat",
       "squad sq_add",
       "squad sq_shared",
@@ -75,6 +77,8 @@ const FILES = {
       "    if sq_boss__ogre.is_bound() == false:",
       '        print("ogre unbound")',
       "    o_door.create()",
+      "    sq_ship__pilot.place()",
+      "    sq_ship__pilot.place()",
       "    sq_shared.place()",
       "    sq_boss.place()",
       '    sq_boss.activate_temperament("held")',
@@ -129,6 +133,8 @@ const SEAT = 1;
 const SQ_ADD = 2;
 const SQ_SHARED = 3;
 const DOOR = 1;
+const SQ_SHIP = 4;
+const PILOT = 2;
 
 const squad = (name: string, typeIndex: number, cells: number[] = [1]) => ({
   cells,
@@ -208,6 +214,9 @@ function project() {
         row("o_door", ObjectRow, DOOR),
         squad("sq_add", SQ_ADD),
         squad("sq_shared", SQ_SHARED),
+        // a ship the encounter places twice, a new actor the second time
+        squad("sq_ship", SQ_SHIP, [0]),
+        row("sq_ship__pilot", Actor, PILOT),
       ],
       tag: TAG_D,
     },
@@ -342,6 +351,7 @@ describe("a restarted encounter's rows", () => {
     // all of it out before the call returns, with the phase's own squad
     expect(restore.map((change) => change.kind).sort()).toEqual([
       "actor",
+      "actor",
       "object",
       "passenger",
       "squad",
@@ -358,6 +368,10 @@ describe("a restarted encounter's rows", () => {
     }
     // what the client said of the boss is of a world that is gone
     expect(runtime.world.at(`${BUNDLE_D.toString(16)}:${SQ_BOSS}`)).toEqual({});
+    // the host holds the door as absent as it sent it, in the same generation
+    expect(
+      runtime.context.objectStates.get(`${BUNDLE_D}:${ObjectRow}:${DOOR}`)
+    ).toMatchObject({ incarnation: 2, present: false });
   });
 
   it("are placed and seated again by the restarted startup, past everything sent before", () => {
@@ -403,6 +417,25 @@ describe("a restarted encounter's rows", () => {
     expect(last("squad", BUNDLE_D, SQ_ADD)).toMatchObject({ bodies: 1 });
     expect(wave(SQ_ADD)).toBeGreaterThan(waves.get(SQ_ADD) ?? 0);
     expect(last("passenger", BUNDLE_D, SEAT)).toEqual({ state: 2 });
+  });
+
+  it("count on from what was sent, as the restarted threads place an actor again", () => {
+    const { last, printed, reachFight, runtime, sent, tickUntil } = start();
+    reachFight();
+    // the second place() of the encounter's ship is a new actor
+    expect(last("actor", BUNDLE_D, PILOT)).toMatchObject({ incarnation: 2 });
+    runtime.resetCurrentPhase();
+    expect(last("actor", BUNDLE_D, PILOT)).toMatchObject({
+      incarnation: 2,
+      placed: false,
+    });
+    tickUntil(() => printed("chains main") === 2);
+    // never a lower one than the client has had
+    const incarnations = sent("actor", BUNDLE_D, PILOT).map(
+      (state) => state.incarnation ?? 1
+    );
+    expect(incarnations).toEqual([...incarnations].sort((a, b) => a - b));
+    expect(incarnations.at(-1)).toBe(3);
   });
 
   it("go out before the restarted threads or the phase send anything", () => {

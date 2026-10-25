@@ -1,0 +1,24 @@
+# es\utility_scripts\u_event_patrol_preset.esu
+#
+# The target patrol's presentation (pf_event_patrol's pf_preset): the public
+# event objective and the lines and music it plays. This build's preset has
+# TU0's lines (announce, engage, progress updates, the last-leg warning and
+# the tier endings with generic takes); the generic takes are left unbound as
+# the countdown preset leaves its own.
+
+player_objective po_event_patrol
+sequence seq_intro_behavior
+sequence seq_patrol_announce bind(po_event_patrol, e_sequence_suppression_behavior.postpone)
+sequence seq_patrol_engage
+sequence seq_patrol_engage_generic  # WARNING: unused - the event plays the specific take, as the tank drop's endings were
+sequence seq_patrol_update_progress bind(po_event_patrol, e_sequence_suppression_behavior.skip)
+sequence seq_patrol_ending_progress bind(po_event_patrol, e_sequence_suppression_behavior.skip)
+sequence seq_patrol_complete_gold bind(po_event_patrol, e_sequence_suppression_behavior.skip)
+sequence seq_patrol_complete_gold_generic  # WARNING: unused - retail's tank drop played the specific take
+sequence seq_patrol_complete_silver bind(po_event_patrol, e_sequence_suppression_behavior.skip)
+sequence seq_patrol_complete_silver_generic  # WARNING: unused - retail's tank drop played the specific take
+sequence seq_patrol_complete_bronze bind(po_event_patrol, e_sequence_suppression_behavior.skip)
+sequence seq_patrol_complete_bronze_generic  # WARNING: unused - retail's tank drop played the specific take
+sequence seq_patrol_complete_failure bind(po_event_patrol, e_sequence_suppression_behavior.skip)
+sequence seq_patrol_complete_failure_generic  # WARNING: unused - retail's tank drop played the specific take
+sequence seq_patrol_music1 bind(po_event_patrol, e_sequence_suppression_behavior.postpone)

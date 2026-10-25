@@ -1,0 +1,9 @@
+# es\utility_scripts\patrol_faction.esu
+#
+# The faction a faction kill mission (patrol_kill_faction) counts. Its rows
+# are an Encounter row per mission (patrol_kill_fallen._faction) and nothing
+# under it, so it holds no rows; what it held is not known and no script
+# reads it yet.
+
+# nothing in the packages or captures says which faction a mission names
+string_hash faction_name

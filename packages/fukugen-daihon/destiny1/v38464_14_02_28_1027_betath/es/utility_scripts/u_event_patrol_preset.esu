@@ -1,0 +1,28 @@
+# es\utility_scripts\u_event_patrol_preset.esu
+#
+# The target patrol's presentation (pf_event_patrol's pf_preset): the public
+# event objective and the lines and music it plays, bound as the alpha's
+# presets are (lines skipped, music postponed while the objective is
+# suppressed).
+
+player_objective po_event_patrol
+sequence seq_intro_behavior
+sequence seq_patrol_incoming bind(po_event_patrol, e_sequence_suppression_behavior.postpone)
+sequence seq_patrol_intro
+sequence seq_patrol_start bind(po_event_patrol, e_sequence_suppression_behavior.skip)
+sequence seq_patrol_active bind(po_event_patrol, e_sequence_suppression_behavior.skip)
+sequence seq_patrol_25_travel bind(po_event_patrol, e_sequence_suppression_behavior.skip)
+sequence seq_patrol_50_travel bind(po_event_patrol, e_sequence_suppression_behavior.skip)
+sequence seq_patrol_75_travel bind(po_event_patrol, e_sequence_suppression_behavior.skip)
+sequence seq_patrol_25_timeleft bind(po_event_patrol, e_sequence_suppression_behavior.skip)
+sequence seq_patrol_50_timeleft bind(po_event_patrol, e_sequence_suppression_behavior.skip)
+sequence seq_patrol_75_timeleft bind(po_event_patrol, e_sequence_suppression_behavior.skip)
+sequence seq_patrol_health75 bind(po_event_patrol, e_sequence_suppression_behavior.skip)  # WARNING: unused - no native reads a squad's health
+sequence seq_patrol_health50 bind(po_event_patrol, e_sequence_suppression_behavior.skip)  # WARNING: unused - no native reads a squad's health
+sequence seq_patrol_health25 bind(po_event_patrol, e_sequence_suppression_behavior.skip)  # WARNING: unused - no native reads a squad's health
+sequence seq_patrol_flee bind(po_event_patrol, e_sequence_suppression_behavior.skip)
+sequence seq_patrol_end_gold bind(po_event_patrol, e_sequence_suppression_behavior.skip)
+sequence seq_patrol_end_silver bind(po_event_patrol, e_sequence_suppression_behavior.skip)
+sequence seq_patrol_end_bronze bind(po_event_patrol, e_sequence_suppression_behavior.skip)
+sequence seq_patrol_end_part bind(po_event_patrol, e_sequence_suppression_behavior.skip)
+sequence seq_patrol_music1 bind(po_event_patrol, e_sequence_suppression_behavior.postpone)

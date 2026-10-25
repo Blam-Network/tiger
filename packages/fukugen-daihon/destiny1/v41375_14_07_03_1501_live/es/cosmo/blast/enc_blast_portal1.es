@@ -38,6 +38,7 @@ c_command_script __cs  # true name unknown
 control_point_set dropship_entry_path
 squad sq_dropship_tank
 squad_member sq_dropship_tank__dropship
+passenger skiff_passenger
 control_point_set dropship_exit_path
 
 @startup()
@@ -57,17 +58,19 @@ script sc_blast_main():
     hold_ground(sq_fallen_mid05, "mid03")
     sc_walker.wake()
 
+# The Walker rides in seated in its skiff and is let go once the skiff has
+# reached the drop; the skiff leaves 3s later.
 script sc_walker():
     sleep_until(pt_play_s01_x100_s01_x110.is_triggered())
     sleep(1)
     sq_tank.set_objective(obj_tank)
     sq_tank.set_task("tank")
-    sq_tank.place()
-    sleep(1)
     skiff_enter()
     sc_reinforcements.wake()
     sc_shanks.wake()
-    sleep(12)
+    sleep_until_timeout(sq_dropship_tank__dropship.get_command_script_state() != e_command_script_state.executing, 20)
+    skiff_passenger.release()
+    sleep(3)
     skiff_leave()
     sleep_until(sq_tank.alive_count() == 0)
     sleep(3)
@@ -97,6 +100,8 @@ def skiff_enter():
     __cs.move_to(dropship_entry_path, 1, false)
     __cs.move_to(dropship_entry_path, 2, true)
     sq_dropship_tank__dropship.place()
+    sq_tank.place()
+    skiff_passenger.seat(sq_tank__tank)
     sq_dropship_tank__dropship.execute(__cs)
 
 def skiff_leave():

@@ -1,0 +1,133 @@
+# es\utility_scripts\u_event_patrol.esu
+#
+# Target patrol, the high-value target public event (pf_event_patrol): a
+# Fallen target and its escort walk a route of hills (the pf_points, the
+# objective's tasks task, task_1, task_2 ... in route order) towards its goal.
+# Kill it before it gets there; the sooner, the better the tier. If it
+# reaches the end of the route or the clock runs out it flees.
+#
+# No capture has seen it run, here or in retail, so the rules are a guess on
+# the rows: the opening is the one retail's tank drop showed (intro behaviour
+# at once, the objective incoming 4s in), the route is the tasks' numbering
+# (every route has one task a stop), the clock is the tank drop's 600s, and
+# the tier is how far along the route the target got: gold inside the first
+# quarter, silver inside the half, bronze after. This build's preset speaks
+# TU0's lines: a progress update a quarter and half of the way, a warning on
+# the last quarter.
+
+u_event_globals event_globals
+u_event_patrol_preset pf_preset
+dynamic_array<u_event_patrol_point> pf_point
+squad sq_boss
+squad_member sq_boss__cell_boss
+objective obj_boss_path
+squad_group sg_patrol
+object o_goal
+hop_on ho_engagement
+object_filter of_engagement
+hop_on ho_hopon  # WARNING: unused - what the target's own hop-on does is unseen
+object_filter of_hopon  # WARNING: unused - the filter of the target's hop-on
+int i_event_time = 600
+int i_leg_time = 10
+int g_i_current_point
+
+script main():
+    g_i_current_point = 0
+    func_patrol_intro()
+    func_patrol_start()
+    func_patrol_route()
+    func_patrol_award()
+    func_patrol_cleanup()
+
+script complete():
+    func_patrol_cleanup()
+
+def func_patrol_intro():
+    pf_preset.seq_intro_behavior.start()
+    sleep(4)
+    pf_preset.po_event_patrol.set_incoming()
+    pf_preset.seq_patrol_announce.start()
+    sleep(14)
+    pf_preset.seq_intro_behavior.stop()
+
+# the target stands at the first hill; the clock starts as it sets off, and
+# the waypoint is on its goal
+def func_patrol_start():
+    o_goal.create()
+    sq_boss.set_objective(obj_boss_path)
+    obj_boss_path.add_squad(sq_boss)
+    sq_boss.set_task("task")
+    sg_patrol.add_child(sq_boss)
+    pf_point[0].sg_boss.add_child(sq_boss)
+    sq_boss.place()
+    sc_patrol_engage_line.restart()
+
+    pf_preset.po_event_patrol.set_active()
+    pf_preset.po_event_patrol.nav_point_activate(o_goal)
+    pf_preset.po_event_patrol.timer_activate(i_event_time)
+    pf_preset.po_event_patrol.timer_start()
+    of_engagement.add_players_on_team(0)
+    ho_engagement.set_filter(of_engagement)
+    event_globals.bind_squad_engagement(sq_boss, pf_preset.po_event_patrol)
+    pf_preset.seq_patrol_music1.start()
+
+# one stop at a time; a quarter and half of the way the Ghost calls out how
+# far it has got, and warns on the last quarter
+def func_patrol_route():
+    legs = len(pf_point) - 1
+    for i in range(1, len(pf_point)):
+        g_i_current_point = i
+        pf_point[i].sg_boss.add_child(sq_boss)
+        sq_boss.set_task("task_" + i)
+        # a leg takes at least i_leg_time, so an arrival is never read off the
+        # squad before it has set off
+        sleep(i_leg_time)
+        sleep_until(pf_point[i].has_arrived() or sq_boss.alive_count() <= 0 or pf_preset.po_event_patrol.timer_is_complete())
+        if sq_boss.alive_count() <= 0 or pf_preset.po_event_patrol.timer_is_complete():
+            return
+        travel_line(i, legs, 0.25, pf_preset.seq_patrol_update_progress)
+        travel_line(i, legs, 0.5, pf_preset.seq_patrol_update_progress)
+        travel_line(i, legs, 0.75, pf_preset.seq_patrol_ending_progress)
+    g_i_current_point = len(pf_point)
+
+def travel_line(i, legs, fraction, line):
+    if i - 1 < legs * fraction and i >= legs * fraction:
+        line.start()
+
+script sc_patrol_engage_line():
+    sleep_until(event_globals.get_kil_squad_count() > 0 or sq_boss.alive_count() <= 0)
+    if sq_boss.alive_count() > 0:
+        pf_preset.seq_patrol_engage.start()
+
+def func_patrol_award():
+    sc_patrol_engage_line.kill()
+    legs = len(pf_point) - 1
+    if sq_boss.alive_count() > 0:
+        # it got away
+        pf_preset.po_event_patrol.set_failed()
+        sq_boss.activate_temperament("temper_despawn")
+        pf_preset.seq_patrol_complete_failure.start()
+    elif g_i_current_point <= legs * 0.25:
+        pf_preset.po_event_patrol.set_public_event_tier(3)
+        pf_preset.po_event_patrol.set_complete()
+        pf_preset.seq_patrol_complete_gold.start()
+    elif g_i_current_point <= legs * 0.5:
+        pf_preset.po_event_patrol.set_public_event_tier(2)
+        pf_preset.po_event_patrol.set_complete()
+        pf_preset.seq_patrol_complete_silver.start()
+    else:
+        pf_preset.po_event_patrol.set_public_event_tier(1)
+        pf_preset.po_event_patrol.set_complete()
+        pf_preset.seq_patrol_complete_bronze.start()
+
+def func_patrol_cleanup():
+    pf_preset.seq_patrol_music1.stop()
+    ho_engagement.clear_filter()
+    of_engagement.clear()
+    sleep(5)
+    pf_preset.po_event_patrol.clear()
+    o_goal.delete_object()
+    sg_patrol.activate_temperament("temper_despawn")
+    sleep(4)
+    sg_patrol.deactivate_temperament("temper_despawn")
+    sg_patrol.remove()

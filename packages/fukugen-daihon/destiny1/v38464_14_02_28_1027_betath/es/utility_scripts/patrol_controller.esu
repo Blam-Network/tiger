@@ -1,0 +1,42 @@
+# es\utility_scripts\patrol_controller.esu
+#
+# A destination's patrol controller (cosmo_patrols_controller): the "find a
+# patrol beacon" objective shown between patrol missions and the
+# announcers, one object per mission giver and kind (collect, kill, scan).
+# The patrol root runs the missions and calls in here. This build has no
+# intro music row.
+#
+# Retail 2.3.1's (cosmo patrol capture, one run): the beacon objective goes
+# active with a waypoint on the first beacon of each patrol zone, and is
+# cleared as a mission is taken. Whenever a mission starts or ends every
+# announcer is put out again (each one's incarnation steps); at the start
+# the mission's giver is created in the same update.
+
+player_objective _meta_objective
+object announcer_coll_cryptarch
+object announcer_coll_ship
+object announcer_coll_weapons
+object announcer_kill_hunter
+object announcer_kill_titan
+object announcer_kill_warlock
+object announcer_scan_do
+object announcer_scan_fwc
+object announcer_scan_nm
+
+def show_beacons(hotspots):
+    _meta_objective.set_active()
+    for hotspot in hotspots:
+        _meta_objective.nav_point_activate(hotspot)
+
+def hide_beacons():
+    _meta_objective.nav_point_clear()
+    _meta_objective.clear()
+
+def silence():
+    for announcer in [announcer_coll_cryptarch, announcer_coll_ship, announcer_coll_weapons, announcer_kill_hunter, announcer_kill_titan, announcer_kill_warlock, announcer_scan_do, announcer_scan_fwc, announcer_scan_nm]:
+        announcer.delete_object()
+
+# one giver from the list speaks for the mission, the rest go
+def announce(givers):
+    silence()
+    givers[mathlib.random_int_never_highest_value(0, len(givers))].create()

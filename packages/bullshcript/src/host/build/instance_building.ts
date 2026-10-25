@@ -921,11 +921,16 @@ export function instantiateArchetypes(
   }
 }
 
+// The child an Encounter row runs: the row's own record class, then the class
+// the declaring script gives the member, then the slot's by name. Two phases
+// can name rows alike (phase_valley.sp_objective_goto, phase_catacombs's) with
+// different archetypes, and the slot map keeps only the first.
 function childChunkFor(
   self: EncounterHostContext,
   row: BoundRow | undefined,
   key: string,
-  childScripts: ReadonlyMap<string, HksBytecode> | undefined
+  childScripts: ReadonlyMap<string, HksBytecode> | undefined,
+  declaredChild?: HksBytecode
 ): HksBytecode | undefined {
   if (row === undefined) {
     return childScripts?.get(key);
@@ -942,7 +947,7 @@ function childChunkFor(
     )?.childScript;
   const own =
     declared === undefined ? undefined : chunkByScriptName(self, declared);
-  return own ?? childScripts?.get(key);
+  return own ?? declaredChild ?? childScripts?.get(key);
 }
 
 function chunkByScriptName(
@@ -1080,7 +1085,14 @@ function importSlot(
   const row = resolveInstanceField(bundles, prefix, slot, namespaces);
   // childScripts is keyed by parent chunk and slot name, so a listed slot runs
   // its child whether or not its row resolves in the bundle being served.
-  const childChunk = childChunkFor(self, row, slot, childScripts);
+  const declared = declaredChildChunk(self, parent, slot);
+  const childChunk = childChunkFor(
+    self,
+    row,
+    slot,
+    childScripts,
+    declared && !isPhaseChunk(declared) ? declared : undefined
+  );
   if (childChunk) {
     return childInstance(
       self,
@@ -1400,7 +1412,7 @@ function resolveField(
   const childChunk =
     row === undefined
       ? (embedded ?? childChunkFor(self, row, field, childScripts))
-      : (childChunkFor(self, row, field, childScripts) ?? embedded);
+      : (childChunkFor(self, row, field, childScripts, embedded) ?? embedded);
   if (childChunk) {
     return childInstance(
       self,
@@ -2061,6 +2073,23 @@ export function instanceForBundle(
   return;
 }
 
+function memberFamily(
+  self: EncounterHostContext,
+  ownerPath: string,
+  field: string
+): LuaTable | undefined {
+  const rowAt = (index: number) =>
+    resolveInstanceField(self.options.bundles, ownerPath, `${field}[${index}]`);
+  if (rowAt(0) === undefined) {
+    return;
+  }
+  const table = new LuaTable();
+  for (let i = 0, row = rowAt(0); row !== undefined; i++, row = rowAt(i)) {
+    table.set(i, registerBoundObject(bound(self, `${ownerPath}.${field}[${i}]`, row)));
+  }
+  return table;
+}
+
 // A member read on a bound object that names a row of its own, rather than
 // calling a method.
 export function member(
@@ -2071,6 +2100,12 @@ export function member(
   const path = `${ownerPath}.${field}`;
   const row = resolveInstanceField(self.options.bundles, ownerPath, field);
   if (!row) {
+    // A row family under the object (a placement prefab's `_objects[0]`,
+    // `_objects[1]`) is a list of its rows, as resolveArrayField builds one.
+    const family = memberFamily(self, ownerPath, field);
+    if (family) {
+      return family;
+    }
     // An unrecognized handle is a verb, not a row: method dispatch has it.
     if (!self.handles.has(field)) {
       return;

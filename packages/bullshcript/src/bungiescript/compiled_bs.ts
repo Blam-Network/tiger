@@ -278,15 +278,18 @@ function compiledScriptSet(
   };
 }
 
-// Reads a published tree, every chunk and schema into memory, so the tree
-// can be replaced underneath it.
-export function readCompiledBs(dir: string): CompiledScriptSet {
-  const index = JSON.parse(
-    readFileSync(join(dir, COMPILED_BS_INDEX), "utf8")
-  ) as CompiledBsIndex;
+// Reads a published tree through `read` (a path in the tree to its bytes),
+// every chunk and schema into memory, so the tree can be replaced underneath
+// it. `label` names the tree in errors.
+export function readCompiledBsFrom(
+  label: string,
+  read: (path: string) => Uint8Array
+): CompiledScriptSet {
+  const text = (path: string) => Buffer.from(read(path)).toString("utf8");
+  const index = JSON.parse(text(COMPILED_BS_INDEX)) as CompiledBsIndex;
   if (index.format !== COMPILED_BS_FORMAT) {
     throw new Error(
-      `${dir}: compiled_bs format ${index.format}, expected ${COMPILED_BS_FORMAT}`
+      `${label}: compiled_bs format ${index.format}, expected ${COMPILED_BS_FORMAT}`
     );
   }
   const chunks = new Map<string, Uint8Array>();
@@ -294,15 +297,9 @@ export function readCompiledBs(dir: string): CompiledScriptSet {
   for (const file of index.files) {
     for (const decl of file.decls) {
       if (decl.chunk !== undefined) {
-        chunks.set(
-          decl.chunk,
-          new Uint8Array(readFileSync(join(dir, decl.chunk)))
-        );
+        chunks.set(decl.chunk, new Uint8Array(read(decl.chunk)));
       }
-      schemas.set(
-        decl.schema,
-        JSON.parse(readFileSync(join(dir, decl.schema), "utf8")) as BsSchema
-      );
+      schemas.set(decl.schema, JSON.parse(text(decl.schema)) as BsSchema);
     }
   }
   return compiledScriptSet(
@@ -311,11 +308,16 @@ export function readCompiledBs(dir: string): CompiledScriptSet {
     (decl) => {
       const schema = schemas.get(decl.schema);
       if (schema === undefined) {
-        throw new Error(`${dir}: ${decl.schema} is not in the tree`);
+        throw new Error(`${label}: ${decl.schema} is not in the tree`);
       }
       return schema;
     }
   );
+}
+
+// Reads a published tree from `dir`.
+export function readCompiledBs(dir: string): CompiledScriptSet {
+  return readCompiledBsFrom(dir, (path) => readFileSync(join(dir, path)));
 }
 
 // The same set straight from a compile, nothing on disk: what tests and

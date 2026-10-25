@@ -1,7 +1,8 @@
 # es\cosmo\cosmo_portal1_activity\cosmo_portal1_activity_mission7.esp
 #
-# Mission 7, Sepiks Prime: kill the servitor. It teleports, which can read as
-# dead for a moment, so it has to stay dead for a while before this clears.
+# Mission 7, Sepiks Prime: kill the servitor. Its squad counts it alive until
+# its own death edge, so its teleports never read as a death; the phase ends
+# as it dies and its adds die with it.
 
 @hard_wipe()
 encounter_handle enc_ship_portal1
@@ -17,13 +18,6 @@ script main():
     enc.sc_boss_fight.wake()
     obj_s1_phase06_m1.objective_begin(ap_kill_boss01)
     sleep_until(enc.sq_bossbattle_boss01.alive_count() > 0)
-    sleep_until_boss_dead()
+    sleep_until(enc.sq_bossbattle_boss01.alive_count() == 0)
+    enc.end_boss_fight()
     obj_s1_phase06_m1.objective_end_silent()
-
-def sleep_until_boss_dead():
-    enc = enc_ship_portal1
-    while true:
-        sleep_until(enc.sq_bossbattle_boss01.alive_count() == 0)
-        sleep(15)
-        if enc.sq_bossbattle_boss01.alive_count() == 0:
-            break

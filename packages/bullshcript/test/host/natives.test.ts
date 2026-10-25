@@ -652,10 +652,11 @@ function makeCarrier() {
     deaths: number;
   } = { deaths: 0 };
   const state = new ScriptItemState();
+  let tick = 0;
   const context: HostContext = {
     types: ActivityBundleItemType,
     activityFlagChanged: () => undefined,
-    clock: { activityTicks: () => 0 },
+    clock: { activityTicks: () => tick },
     currentInstance: () => undefined,
     log: () => undefined,
     namedHandles: new Map(),
@@ -731,8 +732,13 @@ function makeCarrier() {
         )
         .at(-1) as { state: ActorState } | undefined
     )?.state;
-  const drop = (target: BoundInstance) =>
+  // Each drop() is a tick of its own; dropInTick() drops in the current one.
+  const dropInTick = (target: BoundInstance) =>
     call(gate, "drop_squad", target.object);
+  const drop = (target: BoundInstance) => {
+    tick += 1;
+    return dropInTick(target);
+  };
   const dropping = () => call(gate, "is_dropping");
   const squadState = (typeIndex: number) =>
     state.squad({
@@ -745,6 +751,7 @@ function makeCarrier() {
     bind,
     call,
     drop,
+    dropInTick,
     dropping,
     gate,
     minibossRow,
@@ -852,6 +859,24 @@ describe("a carrier drop", () => {
     expect(actor(72)?.carried).toBe(false);
   });
 
+  // The Black Garden's clouds carry the squads dropped in one tick as one
+  // drop: three refs under drop 1, and the pilot acknowledges drop 1.
+  it("drops one tick's squads under one id", () => {
+    const { actor, drop, dropInTick, dropping, reported, squad } =
+      makeCarrier();
+    drop(squad(27));
+    dropInTick(squad(28));
+    dropInTick(squad(30));
+    expect(actor(72)?.drop?.id).toBe(1);
+    expect(actor(72)?.drop?.squads.map((ref) => ref.typeIndex)).toEqual([
+      27, 28, 30,
+    ]);
+    reported.ack = { dropId: 1, inProgress: false };
+    expect(dropping()).toBe(false);
+    drop(squad(27));
+    expect(actor(72)?.drop?.id).toBe(2);
+  });
+
   it("seats nobody for an anonymous-only squad", () => {
     const { actor, drop, squad } = makeCarrier();
     drop(squad(27));
@@ -864,7 +889,10 @@ describe("a carrier drop", () => {
 describe("an event interactable", () => {
   function makeInteractable() {
     const changes: ItemChange[] = [];
-    const sense: { current?: { used: boolean; usedStamp: number } } = {};
+    const sense: {
+      current?: { used: boolean; usedStamp: number };
+      device?: { position: number; positionStamp: number };
+    } = {};
     const context: HostContext = {
       types: ActivityBundleItemType,
       activityFlagChanged: () => undefined,
@@ -882,6 +910,7 @@ describe("an event interactable", () => {
         actorCommandScript: () => undefined,
         actorDropAck: () => undefined,
         bubbleOccupied: () => undefined,
+        deviceSense: () => sense.device,
         health: () => undefined,
         interactableSense: () => sense.current,
         objectAlive: () => undefined,
@@ -929,6 +958,35 @@ describe("an event interactable", () => {
     };
     return { bound, call, changes, sense };
   }
+
+  // The client applies a grouped device's position and counts its stamp up
+  // again: the Devil's Lair console reported stamp 2 for our 0.1 at 1.
+  it("stamps its device past the stamp the client holds", () => {
+    const { bound, changes, sense } = makeInteractable();
+    const fn = bound.object.get("set_device_position");
+    if (!(fn instanceof LuaHostFunction)) {
+      throw new Error("set_device_position did not resolve");
+    }
+    const set = (position: number) =>
+      fn.callback([bound.object, position], {
+        name: "set_device_position",
+        requestYield: () => undefined,
+      });
+    set(0.1);
+    expect(changes.at(-1)).toMatchObject({
+      state: { device: { position: 0.1, revision: 1 } },
+    });
+    sense.device = { position: 0.1, positionStamp: 2 };
+    set(1);
+    expect(changes.at(-1)).toMatchObject({
+      state: { device: { position: 1, revision: 3 } },
+    });
+    sense.device = { position: 1, positionStamp: 1 };
+    set(0);
+    expect(changes.at(-1)).toMatchObject({
+      state: { device: { position: 0, revision: 4 } },
+    });
+  });
 
   it("is enabled for every player", () => {
     const { call, changes } = makeInteractable();
@@ -1576,6 +1634,49 @@ describe("an actor placed on its own", () => {
     squad.call("place");
     expect(last("actor", 5)?.placed).toBe(true);
   });
+
+  // Sepiks Prime comes in blind and deaf and wakes as his guards die (2.3.1
+  // capture: behaviour 3 under mask 3|16, then 0, each a new generation).
+  it("carries set_blind and set_deaf into its behaviour, placed with its squad", () => {
+    const squadRow: BoundRow = {
+      bundle: BUNDLE,
+      name: "sq_boss",
+      typeId: ActivityBundleItemType.Squad,
+      typeIndex: 4,
+    };
+    const servitorRow: BoundRow = {
+      bundle: BUNDLE,
+      name: "sq_boss__servitor",
+      typeId: ActivityBundleItemType.Actor,
+      typeIndex: 5,
+    };
+    const { bind, last } = makeRows({
+      defaultBodies: () => 0,
+      namedMembers: (row) => (row.typeIndex === 4 ? [servitorRow] : []),
+      owningSquad: (row) =>
+        row.typeId === ActivityBundleItemType.Actor ? squadRow : undefined,
+    });
+    const servitor = bind("sq_boss__servitor", ActivityBundleItemType.Actor, 5);
+    const squad = bind("sq_boss", ActivityBundleItemType.Squad, 4);
+    servitor.call("set_blind", true);
+    servitor.call("set_deaf", true);
+    squad.call("place");
+    const placed = last("actor", 5) as ActorState;
+    expect(placed.placed).toBe(true);
+    expect(placed.behaviour).toMatchObject({
+      awarenessFlags: 3,
+      awarenessMask: 3,
+    });
+    const generation = placed.behaviour?.incarnation ?? 0;
+    servitor.call("set_blind", false);
+    servitor.call("set_deaf", false);
+    const awake = last("actor", 5) as ActorState;
+    expect(awake.behaviour).toMatchObject({
+      awarenessFlags: 0,
+      awarenessMask: 3,
+      incarnation: generation + 2,
+    });
+  });
 });
 
 // Phogoth is his squad's one body, a named member. His death is his own
@@ -1707,14 +1808,29 @@ describe("Loot enable/disable/reset", () => {
 describe("Passenger seat and release", () => {
   it("seats an actor at state 1 and releases it at state 2", () => {
     const PASSENGER = 37;
-    const { bind, last } = makeRows({}, {}, {
-      types: { ...ActivityBundleItemType, Passenger: PASSENGER },
-    });
-    const seat = bind("phogoth_chains_seat", PASSENGER as ActivityBundleItemType, 62);
-    const ogre = bind("sq_bossbattle_boss01__ogre", ActivityBundleItemType.Actor, 5);
+    const { bind, last } = makeRows(
+      {},
+      {},
+      {
+        types: { ...ActivityBundleItemType, Passenger: PASSENGER },
+      }
+    );
+    const seat = bind(
+      "phogoth_chains_seat",
+      PASSENGER as ActivityBundleItemType,
+      62
+    );
+    const ogre = bind(
+      "sq_bossbattle_boss01__ogre",
+      ActivityBundleItemType.Actor,
+      5
+    );
     seat.call("seat", ogre.object);
     expect(last("passenger", 62)).toEqual({
-      passenger: expect.objectContaining({ typeId: ActivityBundleItemType.Actor, typeIndex: 5 }),
+      passenger: expect.objectContaining({
+        typeId: ActivityBundleItemType.Actor,
+        typeIndex: 5,
+      }),
       state: 1,
     });
     seat.call("release");

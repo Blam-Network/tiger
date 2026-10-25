@@ -81,8 +81,12 @@ export function newObjectSlice(): ObjectSlice {
 
 // Squad rows (and the groups over them).
 export interface SquadSlice {
-  // Temperaments and set_channel_scalar share state field 4 behind one
-  // generation the client diffs on (sub_835B7560).
+  // An actor's perception overrides (set_blind, set_deaf): the bits turned
+  // on, and the bits the host decides at all; the rest the AI keeps.
+  awarenessFlags: number;
+  awarenessMask: number;
+  // Temperaments, set_channel_scalar and the awareness flags share state
+  // field 4 behind one generation the client diffs on (sub_835B7560).
   behaviourIncarnation: number;
   channelScalars: Map<number, number>;
   deathsAtPlace: number;
@@ -97,6 +101,8 @@ export interface SquadSlice {
 
 export function newSquadSlice(): SquadSlice {
   return {
+    awarenessFlags: 0,
+    awarenessMask: 0,
     behaviourIncarnation: 0,
     channelScalars: new Map(),
     deathsAtPlace: 0,
@@ -112,6 +118,8 @@ export function newSquadSlice(): SquadSlice {
 export interface ActorSlice {
   dropId: number;
   dropRefs: ItemRef[];
+  // The tick the last drop began: drop_squad calls in one tick share its id.
+  dropTick: number | undefined;
   // The generation must change for the client to re-resolve the ref.
   healthIncarnation: number;
   // ActorAuth [0] without the kill flag: a place() of an actor already placed
@@ -134,6 +142,7 @@ export function newActorSlice(): ActorSlice {
   return {
     dropId: 0,
     dropRefs: [],
+    dropTick: undefined,
     healthIncarnation: 0,
     incarnation: 1,
     killEpoch: undefined,

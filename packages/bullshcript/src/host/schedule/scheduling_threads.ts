@@ -121,6 +121,7 @@ export function advanceMissions(self: EncounterHostContext): void {
   if (next === undefined) {
     self.writer.note(`mission ${phase.declName} complete, no mission after`);
     self.phaseIndex = -1;
+    self.hardWipeOverride = undefined;
     armHardWipe(self, false);
     return;
   }
@@ -139,6 +140,7 @@ export function startPhase(
 ): void {
   self.writer.note(`mission ${phase.declName} starting${how}`);
   self.journal.begin(self.context);
+  self.hardWipeOverride = undefined;
   armHardWipe(self, phase.hardWipe);
   self.options.onPhaseStarted?.(phase.declName);
   phase.instantiate();
@@ -171,6 +173,19 @@ function armHardWipe(self: EncounterHostContext, armed: boolean): void {
       `hard wipe ${armed ? "armed" : "disarmed"}`
     );
   }
+}
+
+// The debugger's override: armed or not whatever the running phase says, until
+// the next phase starts. Nothing to arm while no phase runs.
+export function setHardWipeArmed(
+  self: EncounterHostContext,
+  armed: boolean
+): void {
+  if (self.phases[self.phaseIndex] === undefined) {
+    return;
+  }
+  self.hardWipeOverride = armed;
+  armHardWipe(self, armed);
 }
 
 // The activity's one hard_wipe_globals row, found by type like the scoreboard.

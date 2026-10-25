@@ -324,6 +324,31 @@ describe("the hard wipe row", () => {
     jumpToPhase(runtime, 0);
     expect(enabled(changes)).toEqual([true, false]);
   });
+
+  it("takes the debugger's word until the next phase starts", () => {
+    const { changes, runtime, tickUntil } = start();
+    runtime.setHardWipeArmed(true);
+    expect(runtime.hardWipeArmed).toBe(true);
+    expect(enabled(changes)).toEqual([true]);
+    runtime.setHardWipeArmed(false);
+    expect(runtime.hardWipeArmed).toBe(false);
+    expect(enabled(changes)).toEqual([true, false]);
+    // the armed phase starts armed again, then the debugger disarms it
+    tickUntil(() => runtime.phaseIndex === 1);
+    expect(enabled(changes)).toEqual([true, false, true]);
+    runtime.setHardWipeArmed(false);
+    expect(runtime.hardWipeArmed).toBe(false);
+    jumpToPhase(runtime, 0);
+    expect(enabled(changes)).toEqual([true, false, true, false]);
+  });
+
+  it("has nothing to arm while no phase runs", () => {
+    const { changes, runtime } = start();
+    runtime.phaseIndex = -1;
+    runtime.setHardWipeArmed(true);
+    expect(runtime.hardWipeArmed).toBe(false);
+    expect(enabled(changes)).toEqual([]);
+  });
 });
 
 describe("every player dead", () => {

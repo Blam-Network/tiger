@@ -1,0 +1,44 @@
+# es\cosmo\cosmo_portal1_activity\cosmo_portal1_activity_mission3.esp
+#
+# Mission 3, the beacon: hold the refinery while the Ghost brings the relay's
+# beacon up. The three tripwire sets come down one by one as the hack runs
+# (the refinery encounter runs it and the waves); the progress bar counts
+# them.
+
+# @hard_wipe()  (off: Codie, 2026-10-22)
+encounter_handle enc_refinery_portal1
+player_objective po_activate_beacon01
+player_objective po_repel_fallen01
+sequence m02_x20
+sequence m02_x30
+sequence m02_x40
+sequence m02_x50
+sequence m02_x60
+
+script init(): pass
+
+script complete(): pass
+
+script main():
+    enc = enc_refinery_portal1
+    po_activate_beacon01.set_active()
+    m02_x20.start()
+    sleep_until_timeout(m02_x20.is_done(), 8)
+    po_repel_fallen01.set_active()
+    po_repel_fallen01.progress_activate(0, 3)
+    wait_for_tripwire(enc.o_tripwire10, 1)
+    m02_x30.start()
+    wait_for_tripwire(enc.o_tripwire20, 2)
+    m02_x40.start()
+    sleep_until_timeout(m02_x40.is_done(), 3)
+    m02_x50.start()
+    wait_for_tripwire(enc.o_tripwire30, 3)
+    sleep_until(enc.sp_placement_array._object.get_device_position() >= 1)
+    po_activate_beacon01.clear()
+    m02_x60.start()
+    sleep(3)
+    po_repel_fallen01.clear()
+
+def wait_for_tripwire(tripwire, count):
+    sleep_until(not tripwire.is_alive())
+    po_repel_fallen01.progress_update(count)

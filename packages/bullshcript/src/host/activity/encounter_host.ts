@@ -31,7 +31,7 @@ import {
 } from "../bound/bindings.ts";
 import * as instanceBuilding from "../build/instance_building.ts";
 import { Ownership } from "../build/ownership.ts";
-import { ENUM_OF, EnumDefinition } from "../build/script_graph.ts";
+import { ENUM_OF, EnumDefinition, scriptName } from "../build/script_graph.ts";
 import {
   type CommandScriptIndex,
   commandScriptIndex,
@@ -59,7 +59,11 @@ import * as schedulingThreads from "../schedule/scheduling_threads.ts";
 import { ScriptItemState } from "../state/item_state.ts";
 import type { ItemChange, ItemKey } from "../state/items.ts";
 import { PhaseJournal } from "../state/phase_journal.ts";
-import { type CapturableSense, WorldState } from "../state/world_state.ts";
+import {
+  type CapturableSense,
+  type DeviceSense,
+  WorldState,
+} from "../state/world_state.ts";
 import { itemKey } from "../tags/item_key.ts";
 import { FNV1_EMPTY, fnv1 } from "../tags/name_hash.ts";
 import type {
@@ -206,6 +210,7 @@ export class EncounterScriptHost implements EncounterHostContext {
   readonly phases: HostPhase[] = [];
   phaseIndex = -1;
   phaseCompleting = false;
+  hardWipeOverride: boolean | undefined = undefined;
   // A failed main does not finish its mission; the phase stays put.
   phaseFailed = false;
   // Victims of a player_died kill since their last spawn (PlayerSensor.is_dead).
@@ -263,6 +268,7 @@ export class EncounterScriptHost implements EncounterHostContext {
     const reports: HostReports = {
       bubbleOccupied: (bundle) => this.bubbleOccupied(bundle),
       capturableSense: (key) => this.world.at(key)?.capturable,
+      deviceSense: (key) => this.world.at(key)?.device,
       factionSense: (key) => this.world.at(key)?.faction,
       interactableSense: (key) => this.world.at(key)?.interactable,
       objectiveCount: (key, slot) =>
@@ -440,10 +446,23 @@ export class EncounterScriptHost implements EncounterHostContext {
     // One bad chunk must not cost the activity its scripts.
     const built = this.built;
     // An archetype is built under the encounter that runs it, where its rows
-    // resolve.
+    // resolve. childScripts keeps one class per slot name, and rows of
+    // different classes can share one (pf_preset, pf_point), so the rows say
+    // which chunks are archetypes.
     const childChunks = new Set(this.options.childScripts?.values());
+    const childNames = new Set<string>();
+    for (const bundle of this.options.bundles) {
+      for (const row of bundle.rows) {
+        if (row.typeId === this.types.Encounter && row.childScript) {
+          childNames.add(row.childScript);
+        }
+      }
+    }
     for (const chunk of this.options.chunks) {
-      if (childChunks.has(chunk) && !this.options.rootTags?.has(chunk.tagId)) {
+      if (
+        (childChunks.has(chunk) || childNames.has(scriptName(chunk))) &&
+        !this.options.rootTags?.has(chunk.tagId)
+      ) {
         continue;
       }
       try {
@@ -627,8 +646,15 @@ export class EncounterScriptHost implements EncounterHostContext {
   }
 
   // The running phase says @hard_wipe(): a hard wipe may happen while it runs.
+  // The debugger can say otherwise for the rest of the phase.
   get hardWipeArmed(): boolean {
-    return this.phases[this.phaseIndex]?.hardWipe === true;
+    const phase = this.phases[this.phaseIndex];
+    return phase !== undefined && (this.hardWipeOverride ?? phase.hardWipe);
+  }
+
+  // The debugger arms or disarms the hard wipe until the next phase starts.
+  setHardWipeArmed(armed: boolean): void {
+    schedulingThreads.setHardWipeArmed(this, armed);
   }
 
   // A hard wipe: the running phase starts again, and the world is back to what
@@ -820,6 +846,10 @@ export class EncounterScriptHost implements EncounterHostContext {
 
   reportFactionSense(item: ItemKey, faction: number): void {
     this.world.record(itemKey(item.bundle, item.typeIndex)).faction = faction;
+  }
+
+  reportDeviceSense(item: ItemKey, sense: DeviceSense): void {
+    this.world.record(itemKey(item.bundle, item.typeIndex)).device = sense;
   }
 
   reportInteractableSense(

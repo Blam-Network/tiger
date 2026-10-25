@@ -2,7 +2,7 @@
 // and the Health combatant-bar verbs - the receiver-side split of natives.ts's
 // BoundInstance.
 
-import { type LuaValue, toNumber } from "../../hks/vm/values.ts";
+import { isTruthy, type LuaValue, toNumber } from "../../hks/vm/values.ts";
 import type { BoundRow } from "../bound/bindings.ts";
 import {
   type BoundInstance,
@@ -251,7 +251,14 @@ export function dropSquad(self: BoundInstance, value: LuaValue): boolean {
   while (self.actor.dropRefs.length > MAX_DROP_QUEUE) {
     self.actor.dropRefs.shift();
   }
-  self.actor.dropId += 1;
+  // Squads dropped in one tick go out as one drop under one id: a Black
+  // Garden cloud carries its three squads under drop 1, and its pilot
+  // acknowledges drop 1.
+  const tick = self.context.clock.activityTicks();
+  if (self.actor.dropId === 0 || self.actor.dropTick !== tick) {
+    self.actor.dropId += 1;
+  }
+  self.actor.dropTick = tick;
   return pushActor(
     self,
     `drop #${self.actor.dropId} queue ${self.actor.dropRefs.length}`
@@ -630,6 +637,37 @@ export function setChannelScalar(
   return pushBehaviour(self, `set_channel_scalar(${text}, ${value})`);
 }
 
+// The actor's perception overrides, field 4's two nibbles after the
+// generation. The alpha's one 2-bit field lands in the combatant's flags
+// (sub_835B3F40): bit 0 gates its perception queries (sub_83713B18), bit 1
+// its stimuli (sub_8364EAA8). Later builds pair the bits with a mask.
+export const AWARENESS_BLIND = 1;
+export const AWARENESS_DEAF = 2;
+
+export function setAwareness(
+  self: BoundInstance,
+  bit: number,
+  value: LuaValue,
+  verb: string
+): boolean {
+  if (self.children.length > 0) {
+    for (const child of self.children) {
+      setAwareness(child, bit, value, verb);
+    }
+    return true;
+  }
+  const on = isTruthy(value);
+  if (self.row?.typeId !== self.types.Actor) {
+    self.writer.note(`${self.path}:${verb}(${on}) (${rowKind(self.row)})`);
+    return true;
+  }
+  self.squad.awarenessMask |= bit;
+  self.squad.awarenessFlags = on
+    ? self.squad.awarenessFlags | bit
+    : self.squad.awarenessFlags & ~bit;
+  return pushBehaviour(self, `${verb}(${on})`);
+}
+
 // The actor form needs a fresh generation: sub_835B7560 re-applies field 4
 // only when it differs.
 function pushBehaviour(self: BoundInstance, label: string): boolean {
@@ -693,6 +731,8 @@ export function pushActor(self: BoundInstance, label: string): boolean {
         behaviour:
           self.squad.behaviourIncarnation > 0
             ? {
+                awarenessFlags: self.squad.awarenessFlags,
+                awarenessMask: self.squad.awarenessMask,
                 channels: [...self.squad.channelScalars].map(
                   ([id, scalar]) => ({
                     id,
@@ -861,9 +901,14 @@ export function respawn(self: BoundInstance): boolean {
 function setBodies(self: BoundInstance, count: number): boolean {
   notePlacement(self, count);
   if (self.row) {
+    const standing =
+      (self.context.state.bodiesFor(self.row.bundle, self.row.typeIndex) ?? 0) >
+      0;
     self.writer.bodies(self.row, count);
     if (count > 0) {
-      placeNamedMembers(self, self.row);
+      placeNamedMembers(self, self.row, !standing);
+    } else if (standing) {
+      removeNamedMembers(self, self.row);
     }
   }
   return true;
@@ -887,12 +932,49 @@ function notePlacement(self: BoundInstance, count: number): void {
 }
 
 // A squad whose every member is named places those actors; the roster leaves
-// their cells at 0.
-export function placeNamedMembers(self: BoundInstance, squad: BoundRow): void {
+// their cells at 0. Placed after a remove(), each actor's drops count from 1
+// again, as placeActor's do (a Black Garden cloud's pilot takes drop 1 on each
+// of its three trips); placed again while it stands, it is a new actor too
+// (the upper garden's gulch cloud came back as incarnation 3 for its second
+// wave).
+export function placeNamedMembers(
+  self: BoundInstance,
+  squad: BoundRow,
+  fresh: boolean
+): void {
   if (self.context.state.squad(squad).carried) {
     return;
   }
   const label = `placed with ${squad.name}`;
+  for (const member of self.rows.namedMembers?.(squad) ?? []) {
+    const holder = actorHoldersOf(self.context).get(
+      itemKey(member.bundle, member.typeIndex)
+    );
+    if (holder) {
+      if (!fresh) {
+        holder.actor.incarnation += 1;
+      }
+      holder.actor.dropRefs = [];
+      holder.actor.dropId = 0;
+      holder.actor.placed = undefined;
+      pushActor(holder, label);
+    } else {
+      self.writer.set(
+        member,
+        { kind: "actor", state: { placed: true } },
+        label
+      );
+    }
+  }
+}
+
+// remove() on a squad whose every member is named takes those actors out
+// with it: a Vex cloud's pilot goes when its squad does.
+function removeNamedMembers(self: BoundInstance, squad: BoundRow): void {
+  if (self.context.state.squad(squad).carried) {
+    return;
+  }
+  const label = `removed with ${squad.name}`;
   for (const member of self.rows.namedMembers?.(squad) ?? []) {
     const holder = actorHoldersOf(self.context).get(
       itemKey(member.bundle, member.typeIndex)
@@ -903,7 +985,7 @@ export function placeNamedMembers(self: BoundInstance, squad: BoundRow): void {
     } else {
       self.writer.set(
         member,
-        { kind: "actor", state: { placed: true } },
+        { kind: "actor", state: { placed: false } },
         label
       );
     }
@@ -945,12 +1027,23 @@ export function aliveCount(self: BoundInstance): number {
   // named members that are placed and not spent.
   const incidentDeaths = self.context.reports.squadIncidentDeaths?.(key);
   const tally = self.context.reports.squadTally?.(key);
-  const reported = self.context.reports.squadAliveCount(key);
+  let reported = self.context.reports.squadAliveCount(key);
   if (self.squad.respawnPending) {
-    if (!reported) {
-      return self.squad.desiredBodies;
+    if (reported) {
+      self.squad.respawnPending = false;
+    } else {
+      // The 0 is still the wipe's; some respawned squads never report again
+      // (the refinery's last push), so a death since the respawn ends the hold
+      // and the tally and incidents count it from there.
+      const died =
+        (self.context.reports.squadDeaths?.(key) ?? 0) >
+          self.squad.deathsAtPlace ||
+        (incidentDeaths ?? 0) > self.squad.incidentDeathsAtPlace;
+      if (!died) {
+        return self.squad.desiredBodies;
+      }
+      reported = undefined;
     }
-    self.squad.respawnPending = false;
   }
   if (tally !== undefined) {
     const lost = tally.reduce((sum, cell) => sum + Math.max(0, cell), 0);
@@ -1130,6 +1223,12 @@ export function register(registry: NativeRegistry<BoundInstance>): void {
   registry.verb("get_command_script_state", (self) => commandScriptState(self));
   registry.verb("set_channel_scalar", (self, args) =>
     setChannelScalar(self, args[0], toNumber(args[1]) ?? 0)
+  );
+  registry.verb("set_blind", (self, args) =>
+    setAwareness(self, AWARENESS_BLIND, args[0], "set_blind")
+  );
+  registry.verb("set_deaf", (self, args) =>
+    setAwareness(self, AWARENESS_DEAF, args[0], "set_deaf")
   );
   registry.verb("add_child", (self, args) => addChild(self, args[0]));
   // A kill flag plus an epoch bump, not the placed=false of remove.

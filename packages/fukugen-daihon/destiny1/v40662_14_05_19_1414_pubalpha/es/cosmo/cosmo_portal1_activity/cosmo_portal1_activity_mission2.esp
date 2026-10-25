@@ -1,0 +1,28 @@
+# es\cosmo\cosmo_portal1_activity\cosmo_portal1_activity_mission2.esp
+#
+# Mission 2, the refinery: reach the door, then clear the playfight squads.
+# The squads themselves belong to the refinery encounter.
+
+@hard_wipe()
+trigger_volume_objective obj_s1_phase01_m1
+generic_objective obj_s1_phase01_m2
+nav_point ap_refinery_central01
+encounter_handle enc_refinery_portal1
+
+script init(): pass
+
+script complete(): pass
+
+script main():
+    obj_s1_phase01_m1.objective_begin()
+    sleep_until(obj_s1_phase01_m1.is_complete())
+    obj_s1_phase01_m1.objective_end_silent()
+    obj_s1_phase01_m2.objective_begin(ap_refinery_central01)
+    sleep_until(playfight_alive_count() > 0)
+    sleep_until(playfight_alive_count() == 0)
+    sleep(1)
+    obj_s1_phase01_m2.objective_end_silent()
+
+def playfight_alive_count():
+    enc = enc_refinery_portal1
+    return enc.sq_playfight_hive01.alive_count() + enc.sq_playfight_hive02.alive_count() + enc.sq_playfight_fallen01.alive_count() + enc.sq_playfight_fallen02.alive_count()

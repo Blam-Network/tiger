@@ -2,11 +2,17 @@
 #
 # Devils' Lair, the ship (Sepiks Prime): kill the guards to drop the boss's
 # shield, then fight the servitor. It teleports around while shanks and
-# reinforcements come in.
+# reinforcements come in, and its adds die with it.
+#
+# The servitor comes in blind and deaf under its shield and wakes as the last
+# guard dies, with the stim; the shield goes 8 s later. In the one capture
+# that moment is also 13 s after pt_arenaentry01, so the arena trigger could
+# be the real cue.
 
 @activity_bundle("enc_ship_portal1")
 
 squad sq_bossbattle_boss01
+squad_member sq_bossbattle_boss01__servitor
 objective obj_bossbattle_fallen
 @member_counts({dregs: 2, vandal: 1})
 squad sq_bossbattle_reinf01
@@ -44,8 +50,6 @@ sequence seq_soulfx_g
 sequence seq_soulfx_h
 object_filter of_ultra_servitor
 hop_on ho_servitor_performance_shield01
-trigger_volume tv_arenaentry01
-player_trigger pt_arenaentry01 bind(tv_arenaentry01)
 object o_sepix_stim
 objective obj_ship_trash
 
@@ -68,7 +72,6 @@ script sc_ship_main():
     guard(sq_bossbattle_fallen03, "default_fallen02")
     guard(sq_bossbattle_fallen04, "group")
     sc_boss_entrance.wake()
-    sc_arena.wake()
     sc_guards.wake()
 
 script sc_boss_entrance():
@@ -81,20 +84,20 @@ script sc_boss_entrance():
     seq_soulfx_f.start()
     seq_soulfx_g.start()
     seq_soulfx_h.start()
+    sq_bossbattle_boss01__servitor.set_blind(true)
+    sq_bossbattle_boss01__servitor.set_deaf(true)
     place_on_task(sq_bossbattle_boss01, "zone03")
     of_ultra_servitor.add(sq_bossbattle_boss01)
     sleep(1)
     ho_servitor_performance_shield01.set_filter(of_ultra_servitor)
 
-script sc_arena():
-    sleep_until(pt_arenaentry01.is_triggered())
-    sleep(13)
-    o_sepix_stim.create()
-
 script sc_guards():
     sleep_until(guards_alive_count() > 0)
     sleep_until(guards_alive_count() == 0)
-    sleep(10)
+    sq_bossbattle_boss01__servitor.set_blind(false)
+    sq_bossbattle_boss01__servitor.set_deaf(false)
+    o_sepix_stim.create()
+    sleep(8)
     ho_servitor_performance_shield01.clear_filter()
     sleep(1)
     seq_soulfx_a.stop()
@@ -127,6 +130,13 @@ script sc_boss_fight():
     patrol("teleport_on")
     patrol("zone02")
     patrol("0xFA33A175")
+
+# Sepiks Prime is dead: the fight stops sending squads and whatever still
+# stands dies with him
+def end_boss_fight():
+    sc_boss_fight.kill()
+    for sq in [sq_bossbattle_shanks01, sq_bossbattle_shanks02, sq_bossbattle_shanks03, sq_bossbattle_shanks04, sq_bossbattle_reinf01, sq_bossbattle_reinf02, sq_bossbattle_fallen01, sq_bossbattle_fallen02, sq_bossbattle_fallen03, sq_bossbattle_fallen04]:
+        sq.kill()
 
 def patrol(task):
     if sq_bossbattle_boss01.alive_count() > 0:

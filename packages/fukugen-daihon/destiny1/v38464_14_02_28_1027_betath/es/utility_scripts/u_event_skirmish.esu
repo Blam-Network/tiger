@@ -1,0 +1,185 @@
+# es\utility_scripts\u_event_skirmish.esu
+#
+# Skirmish, the two-sides public event (pf_event_skirmish): two forces (side
+# a, side b) fight over a hill, and the players are asked to wipe both out in
+# three rounds (intro, mid, end), each with its own objective, waves and
+# anchor squad. The tier is how many rounds were won before their clock ran
+# out; what is left of a lost round flees.
+#
+# No capture has seen it run (retail's skirmish rows sat idle on the
+# rocketyard's public host), so the rules are a guess on the rows: the
+# opening is the one retail's tank drop showed (intro behaviour at once,
+# incoming 4s in), each round has 180s, and the waves fight on the tasks the
+# objective names for them (side a a_wave_fight_1, side b b_wave_fight; the
+# anchors and the flight on the uncracked tasks beside them, in the
+# objective's order).
+
+u_event_globals event_globals
+u_event_skirmish_preset pf_preset
+dynamic_array<squad> sq_a_intro_wave
+dynamic_array<squad> sq_a_mid_wave
+dynamic_array<squad> sq_a_end_wave
+squad sq_a_intro_anchor
+squad sq_a_mid_anchor
+squad sq_a_end_anchor
+dynamic_array<squad> sq_b_intro_wave
+dynamic_array<squad> sq_b_mid_wave
+dynamic_array<squad> sq_b_end_wave
+squad sq_b_intro_anchor
+squad sq_b_mid_anchor
+squad sq_b_end_anchor
+squad_group g_a_wave
+squad_group g_b_wave
+objective obj_skirmish
+nav_point ap_skirmish
+trigger_volume tv_engagement_volume
+player_trigger pt_engagement_volume bind(tv_engagement_volume)
+trigger_volume tv_objective_volume  # WARNING: unused - no run showed what it bounds (the hill the round objectives cover?)
+hop_on ho_engagement
+object_filter of_engagement
+int i_round_time = 180
+
+script main():
+    func_skirmish_intro()
+    rounds_won = 0
+    if func_skirmish_round(pf_preset.po_event_skirmish_intro, sq_a_intro_wave, sq_a_intro_anchor, sq_b_intro_wave, sq_b_intro_anchor):
+        rounds_won = 1
+        if func_skirmish_round(pf_preset.po_event_skirmish_mid, sq_a_mid_wave, sq_a_mid_anchor, sq_b_mid_wave, sq_b_mid_anchor):
+            rounds_won = 2
+            if func_skirmish_round(pf_preset.po_event_skirmish_end, sq_a_end_wave, sq_a_end_anchor, sq_b_end_wave, sq_b_end_anchor):
+                rounds_won = 3
+    func_skirmish_award(rounds_won)
+    func_skirmish_cleanup()
+
+script complete():
+    func_skirmish_cleanup()
+
+def func_skirmish_intro():
+    pf_preset.seq_intro_behavior.start()
+    sleep(4)
+    pf_preset.po_event_skirmish_intro.set_incoming()
+    pf_preset.seq_skirmish_incoming.start()
+    pf_preset.seq_skirmish_warmup.start()
+    pt_engagement_volume.reset()
+    sc_skirmish_engage_line.restart()
+    sleep(14)
+    pf_preset.seq_intro_behavior.stop()
+    of_engagement.add_players_on_team(0)
+    ho_engagement.set_filter(of_engagement)
+    pf_preset.seq_skirmish_intro.start()
+    sleep_until_timeout(pf_preset.seq_skirmish_intro.is_done(), 10)
+    pf_preset.seq_skirmish_start.start()
+    pf_preset.seq_skirmish_music1.start()
+
+script sc_skirmish_engage_line():
+    sleep_until(pt_engagement_volume.is_triggered())
+    pf_preset.seq_skirmish_engage.start()
+
+def func_skirmish_round(po, a_waves, a_anchor, b_waves, b_anchor):
+    pt_engagement_volume.set_handler(po.d_handle_engagement_incident)
+    event_globals.bind_squad_engagement(a_anchor, po)
+    func_skirmish_place_side(a_waves, a_anchor, g_a_wave, "a_wave_fight_1", "0x2C1DFB56")
+    func_skirmish_place_side(b_waves, b_anchor, g_b_wave, "b_wave_fight", "0xA055F32B")
+    po.set_active()
+    po.nav_point_activate(ap_skirmish)
+    po.timer_activate(i_round_time)
+    po.timer_start()
+    sc_team1_lines.restart()
+    sc_team2_lines.restart()
+    sc_skirmish_time_lines.restart()
+
+    sleep_until(g_a_wave.alive_count() + g_b_wave.alive_count() <= 0 or po.timer_is_complete())
+    sc_skirmish_time_lines.kill()
+    won = g_a_wave.alive_count() + g_b_wave.alive_count() <= 0
+    po.timer_clear()
+    po.nav_point_clear()
+    if won:
+        po.set_complete()
+    else:
+        po.set_failed()
+    sleep(2)
+    po.clear()
+    return won
+
+def func_skirmish_place_side(waves, anchor, group, wave_task, anchor_task):
+    for sq in waves:
+        sq.set_objective(obj_skirmish)
+        sq.set_task(wave_task)
+        group.add_child(sq)
+        sq.place()
+    anchor.set_objective(obj_skirmish)
+    anchor.set_task(anchor_task)
+    group.add_child(anchor)
+    anchor.place()
+
+script sc_team1_lines():
+    team_lines(g_a_wave, pf_preset.seq_skirmish_team1_dmg_75, pf_preset.seq_skirmish_team1_dmg_50, pf_preset.seq_skirmish_team1_dmg_25, pf_preset.seq_skirmish_team1_dmg_defeat)
+
+script sc_team2_lines():
+    team_lines(g_b_wave, pf_preset.seq_skirmish_team2_dmg_75, pf_preset.seq_skirmish_team2_dmg_50, pf_preset.seq_skirmish_team2_dmg_25, pf_preset.seq_skirmish_team2_dmg_defeat)
+
+# a line as each side falls to three quarters, half and a quarter of what it
+# fielded this round, and one as it is wiped out
+def team_lines(group, line75, line50, line25, defeat):
+    fielded = group.alive_count()
+    team_line(group, fielded * 0.75, line75)
+    team_line(group, fielded * 0.5, line50)
+    team_line(group, fielded * 0.25, line25)
+    team_line(group, 0, defeat)
+
+def team_line(group, threshold, line):
+    sleep_until(group.alive_count() <= threshold)
+    line.start()
+
+script sc_skirmish_time_lines():
+    time_line(0.75, pf_preset.seq_skirmish_time_75)
+    time_line(0.5, pf_preset.seq_skirmish_time_50)
+    time_line(0.25, pf_preset.seq_skirmish_time_25)
+
+def time_line(fraction, line):
+    sleep_until(func_round_timer() <= i_round_time * fraction)
+    line.start()
+
+def func_round_timer():
+    if pf_preset.po_event_skirmish_end.is_active():
+        return pf_preset.po_event_skirmish_end.timer_get_current()
+    if pf_preset.po_event_skirmish_mid.is_active():
+        return pf_preset.po_event_skirmish_mid.timer_get_current()
+    return pf_preset.po_event_skirmish_intro.timer_get_current()
+
+def func_skirmish_award(rounds_won):
+    sc_team1_lines.kill()
+    sc_team2_lines.kill()
+    po = pf_preset.po_event_skirmish_end
+    if rounds_won == 3:
+        po.set_public_event_tier(3)
+        pf_preset.seq_skirmish_end_gold.start()
+    elif rounds_won == 2:
+        po.set_public_event_tier(2)
+        pf_preset.seq_skirmish_end_silver.start()
+    elif rounds_won == 1:
+        po.set_public_event_tier(1)
+        pf_preset.seq_skirmish_end_bronze.start()
+    else:
+        pf_preset.seq_skirmish_end_part.start()
+    if rounds_won < 3:
+        # what is left of the lost round runs for it
+        pf_preset.seq_skirmish_flee.start()
+        for sq in [sq_a_intro_anchor, sq_a_mid_anchor, sq_a_end_anchor]:
+            sq.set_task("0xEE61CD64")
+        for sq in [sq_b_intro_anchor, sq_b_mid_anchor, sq_b_end_anchor]:
+            sq.set_task("0x5BEEE037")
+
+def func_skirmish_cleanup():
+    pf_preset.seq_skirmish_music1.stop()
+    pt_engagement_volume.disable()
+    ho_engagement.clear_filter()
+    of_engagement.clear()
+    for po in [pf_preset.po_event_skirmish_intro, pf_preset.po_event_skirmish_mid, pf_preset.po_event_skirmish_end]:
+        po.clear()
+    for group in [g_a_wave, g_b_wave]:
+        group.activate_temperament("temper_despawn")
+    sleep(4)
+    for group in [g_a_wave, g_b_wave]:
+        group.deactivate_temperament("temper_despawn")
+        group.remove()

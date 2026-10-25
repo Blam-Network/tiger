@@ -1,0 +1,23 @@
+# es\utility_scripts\u_event_dropship_multipoint_preset.esu
+#
+# The glimmer drop's presentation (pf_event_dropship_multipoint_fallen's
+# pf_preset): the public event objective, the pre-engage volume around the
+# first drop point, and the lines and music the event plays. The 360 alpha's
+# u_event_dropship_preset with its bindings; this build's adds the intro
+# behaviour and the part-tier ending.
+
+player_objective po_event_dropship_multipoint
+trigger_volume tv_drill_pre_engage
+player_trigger pt_drill_pre_engage bind(tv_drill_pre_engage)
+sequence seq_intro_behavior
+sequence seq_glimmer_start bind(po_event_dropship_multipoint, e_sequence_suppression_behavior.skip)
+sequence seq_glimmer_engage1
+sequence seq_glimmer_engage2 bind(po_event_dropship_multipoint, e_sequence_suppression_behavior.skip)
+sequence seq_glimmer_wave_complete1 bind(po_event_dropship_multipoint, e_sequence_suppression_behavior.skip)
+sequence seq_glimmer_wave_complete2 bind(po_event_dropship_multipoint, e_sequence_suppression_behavior.skip)
+sequence seq_glimmer_end_gold bind(po_event_dropship_multipoint, e_sequence_suppression_behavior.skip)
+sequence seq_glimmer_end_silver bind(po_event_dropship_multipoint, e_sequence_suppression_behavior.skip)
+sequence seq_glimmer_end_bronze bind(po_event_dropship_multipoint, e_sequence_suppression_behavior.skip)
+sequence seq_glimmer_end_part bind(po_event_dropship_multipoint, e_sequence_suppression_behavior.skip)
+sequence seq_glimmer_music1 bind(po_event_dropship_multipoint, e_sequence_suppression_behavior.postpone)
+sequence seq_glimmer_incoming bind(po_event_dropship_multipoint, e_sequence_suppression_behavior.postpone)

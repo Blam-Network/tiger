@@ -162,6 +162,27 @@ describe("a wiped squad's respawn", () => {
     expect(call("alive_count")).toBe(1);
   });
 
+  it("counts deaths after the respawn when the client never reports it", () => {
+    const { call, client } = makeSquad();
+    call("place");
+    client.alive = 2;
+    client.tally = [0];
+    client.deaths = 0;
+    client.alive = 0;
+    client.tally = [2];
+    client.deaths = 2;
+    expect(call("alive_count")).toBe(0);
+    call("respawn");
+    expect(call("alive_count")).toBe(2);
+    // [3] stays at the wipe's 0; only the tally and incidents move
+    client.tally = [3];
+    client.deaths = 3;
+    expect(call("alive_count")).toBe(1);
+    client.tally = [4];
+    client.deaths = 4;
+    expect(call("alive_count")).toBe(0);
+  });
+
   // simple_encounter's main, run again by the encounter manager: add_child
   // each time, place the first time, respawn after.
   it("comes back under its group when the encounter runs again", () => {

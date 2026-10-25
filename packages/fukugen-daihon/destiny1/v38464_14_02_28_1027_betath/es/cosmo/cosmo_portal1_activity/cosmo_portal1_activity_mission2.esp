@@ -1,0 +1,40 @@
+# es\cosmo\cosmo_portal1_activity\cosmo_portal1_activity_mission2.esp
+#
+# Mission 2, the refinery: locate the relay. Reaching the central floor wakes
+# the playfight; once it is cleared the relay's console goes live, and using
+# it starts the Ghost's hack. The squads and the hack belong to the refinery
+# encounter.
+
+# @hard_wipe()  (off: Codie, 2026-10-22)
+player_objective po_locate_relay
+countdown_objective obj_s1_phase01_m1 bind("0x1C450A3D")
+trigger_volume tv_refinery_central01
+player_trigger pt_refinery_central01 bind(tv_refinery_central01)
+nav_point ap_refinery_central01
+encounter_handle enc_refinery_portal1
+
+script init(): pass
+
+script complete(): pass
+
+script main():
+    enc = enc_refinery_portal1
+    pt_refinery_central01.reset()
+    po_locate_relay.set_active()
+    po_locate_relay.nav_point_activate(ap_refinery_central01)
+    sleep_until(pt_refinery_central01.is_triggered())
+    po_locate_relay.nav_point_clear()
+    enc.sc_playfight.wake()
+    sleep_until_timeout(playfight_alive_count() > 0, 10)
+    sleep_until(playfight_alive_count() == 0)
+    sleep(1)
+    po_locate_relay.clear()
+    enc.sc_hack.wake()
+    obj_s1_phase01_m1.objective_begin()
+    sleep_until(enc.sp_placement_array._object.get_device_position() > 0)
+    obj_s1_phase01_m1.complete()
+    obj_s1_phase01_m1.objective_end_silent()
+
+def playfight_alive_count():
+    enc = enc_refinery_portal1
+    return enc.sq_playfight_hive01.alive_count() + enc.sq_playfight_hive02.alive_count() + enc.sq_playfight_fallen01.alive_count() + enc.sq_playfight_fallen02.alive_count()

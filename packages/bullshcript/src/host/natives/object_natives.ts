@@ -232,7 +232,9 @@ function passengerVerb(
     case "seat": {
       const actor = value === undefined ? undefined : boundObjectOf(value)?.row;
       if (actor?.typeId !== self.types.Actor) {
-        self.writer.note(`${self.path}:seat(${show(value)}) (not an Actor row)`);
+        self.writer.note(
+          `${self.path}:seat(${show(value)}) (not an Actor row)`
+        );
         return true;
       }
       self.writer.set(
@@ -243,7 +245,11 @@ function passengerVerb(
       return true;
     }
     case "release":
-      self.writer.set(self.row, { kind: "passenger", state: { state: 2 } }, "release()");
+      self.writer.set(
+        self.row,
+        { kind: "passenger", state: { state: 2 } },
+        "release()"
+      );
       return true;
     default:
       return;
@@ -534,8 +540,17 @@ export function setDevicePosition(
     self.writer.note(`${self.path}:set_device_position(${position}) (no row)`);
     return true;
   }
-  // The client keeps the last stamp it saw, so every write counts up.
-  objectState(self).deviceRevision += 1;
+  // The client takes a position only with a stamp above the one it holds,
+  // and a device in a group counts that stamp up once more as it applies
+  // ours (40662's sub_9FB700 -> sub_A00030 -> sub_9FB1A0): the Devil's Lair
+  // console reported stamp 2 for our 0.1 at stamp 1 and dropped the 1 we
+  // sent at stamp 2. So a write goes one past the newer of the two.
+  const sensed =
+    self.context.reports.deviceSense?.(
+      itemKey(self.row.bundle, self.row.typeIndex)
+    )?.positionStamp ?? 0;
+  objectState(self).deviceRevision =
+    Math.max(objectState(self).deviceRevision, sensed) + 1;
   return pushObject(
     self,
     `device position ${position} stamp ${objectState(self).deviceRevision}`

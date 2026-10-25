@@ -1,0 +1,43 @@
+# es\utility_scripts\patrol_encounter.esu
+#
+# An ambient patrol route: a chain of objectives (each a t_patrol leg and a
+# t_combat hold) that another encounter's squads walk. The route has no
+# squads of its own; every amb_ptrl_<x> in the Cosmodrome sits beside an
+# amb_smpl_<x> (or amb_ptrl_smpl_<x>) whose own objective has no tasks, and
+# that encounter's squads are the patrol. They take the first leg as they
+# go in and move on to the next one each time they have been out of combat
+# for leg_time; a fight holds them where they are.
+#
+# Guessed from the rows: retail's route objectives fill with squads within
+# 20s of the bubble loading (delta south, amb_ptrl_south01) but no capture
+# shows which squads or when they move on.
+
+dynamic_array<objective> _objective
+common_reference _patrol_reference
+int leg_time = 30
+timer _respawn_timer
+
+def add_patrol(patrol_encounter):
+    _patrol_reference = patrol_encounter
+    patrol_encounter.set_objective(_objective[0])
+
+@startup()
+script main():
+    sleep_until(_patrol_reference)
+    i_leg = 0
+    while true:
+        sleep_until(_patrol_reference._squad_group.alive_count() > 0)
+        if _patrol_reference._squad_group.current_in_combat_count() > 0:
+            _respawn_timer.reset(leg_time)
+            _respawn_timer.stop()
+        else:
+            _respawn_timer.start()
+
+        if _respawn_timer.is_expired():
+            i_leg = i_leg + 1
+            if i_leg >= len(_objective):
+                i_leg = 0
+            _objective[i_leg].add_squad(_patrol_reference._squad_group)
+            _respawn_timer.reset(leg_time)
+
+        sleep(1)

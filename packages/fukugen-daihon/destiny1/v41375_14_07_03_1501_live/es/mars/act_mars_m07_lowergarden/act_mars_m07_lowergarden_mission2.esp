@@ -1,15 +1,16 @@
 # es\mars\act_mars_m07_lowergarden\act_mars_m07_lowergarden_mission2.esp
 #
 # Mission 2, the valley: reach it, clear the Vex at the gate, then step
-# through the gate. The Vex at the gate are the valley's ambient ones and
-# never show on the wire, so the gate's volume ends the kill objective
-# (one run: it took thirty seconds). The gate teleports the player to the
-# catacombs five seconds after they stand in it.
+# through the gate. The kill objective is the gate volume's (retail's
+# objective names tv_gate), but the Vex at the gate are the valley's ambient
+# ones and never show on the wire, so it ends on a timeout: one run took
+# twenty-eight seconds, three after the last kill. Stepping into the gate
+# ends the phase. The valley is a public bubble, so its triggers fire on
+# the public host's session.
 
 trigger_volume_objective sp_objective_goto
 generic_objective sp_objective_kill
-trigger_volume tv_gate
-player_trigger pt_gate bind(tv_gate)
+trigger_volume tv_gate  # WARNING: unused - the kill objective's volume, which no native here takes
 nav_point np_gate
 trigger_volume_objective sp_objective_gate
 sequence seq_music_garden
@@ -27,12 +28,11 @@ script main():
     seq_music_garden.start()
     seq_music_garden.set_switch_mask(1)
     sp_objective_kill.objective_begin(np_gate)
-    sleep_until_timeout(pt_gate.is_triggered(), 30)
+    sleep(28)
     sp_objective_kill.objective_end_silent()
     seq_dialog_valley_teleport.start()
     sp_objective_gate.objective_begin()
     sleep_until(sp_objective_gate.is_complete())
-    sleep(5)
     seq_dialog_valley_gate.stop()
     seq_dialog_valley_teleport.stop()
     seq_music_garden.set_switch_mask(3)

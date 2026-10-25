@@ -161,6 +161,8 @@ function host(
     rowOf,
     runtime,
     said: (text: string) => log.some((line) => line.includes(text)),
+    saidAll: (...texts: string[]) =>
+      log.some((line) => texts.every((text) => line.includes(text))),
     ticks: (n: number) => {
       for (let i = 0; i < n; i++) {
         runtime.tick();
@@ -297,41 +299,130 @@ describe("TU0 cosmo_portal_1 scripts", () => {
       console_?.kind === "object" && console_.state.device?.position
     ).toBeCloseTo(0.1);
     expect(h.last("sequence", "cue1")?.kind).toBe("sequence");
-    // The waves and the webs run on the run's clock from the scan
-    // (sc_hack_waves): the webs fall at 83, 149 and 283 s.
+    // The hack runs on the waves' deaths (sc_hack): nothing moves on while
+    // a wave stands, and each web falls a few seconds after its wave is down.
+    const actorPushes = (name: string) => {
+      const row = h.rowOf(name);
+      return h.changes.filter(
+        (change) =>
+          change.kind === "actor" && change.item.typeIndex === row.typeIndex
+      ).length;
+    };
+    const webPresent = (name: string) => {
+      const web = h.last("object", name);
+      return web?.kind === "object" && web.state.present;
+    };
+    const devicePosition = () => {
+      const console_ = h.last("object", "sp_placement_array._object");
+      return console_?.kind === "object"
+        ? console_.state.device?.position
+        : undefined;
+    };
     h.ticks(8);
     expect(squadTask("sq_objective_suppressors01")).toBe(18);
     expect(squadTask("sq_objective_fallen01a")).toBe(4);
-    h.ticks(34);
+    h.ticks(40);
+    expect(squadTask("sq_objective_fallen01c")).not.toBe(5);
+    // the third squad as the first two thin out to three
+    alive("sq_objective_fallen01a", 2);
+    alive("sq_objective_fallen01b", 1);
+    h.ticks(2);
     expect(squadTask("sq_objective_fallen01c")).toBe(5);
-    h.ticks(21);
+    // the shanks once wave 1's Fallen are down, and that holds
+    for (const squad of [
+      "sq_objective_fallen01a",
+      "sq_objective_fallen01b",
+      "sq_objective_fallen01c",
+    ]) {
+      alive(squad, 0);
+    }
+    h.ticks(6);
     expect(squadTask("sq_objective_fallen01d")).toBe(0);
-    expect(h.last("actor", "sq_objective_fallen01e__shank04")?.kind).toBe(
-      "actor"
-    );
-    h.ticks(23);
-    const web1 = h.last("object", "o_laserweb01");
-    expect(web1?.kind === "object" && web1.state.present).toBe(false);
+    const shankPushes = actorPushes("sq_objective_fallen01d__shank01");
+    expect(actorPushes("sq_objective_fallen01e__shank04")).toBeGreaterThan(0);
+    h.ticks(30);
+    expect(webPresent("o_laserweb01")).toBe(true);
+    alive("sq_objective_fallen01d", 0);
+    alive("sq_objective_fallen01e", 0);
+    h.ticks(5);
+    expect(webPresent("o_laserweb01")).toBe(false);
     h.ticks(2);
     expect(objectiveState("phase02.po_repel_fallen01")?.progress?.min).toBe(1);
     h.ticks(10);
     expect(squadTask("sq_objective_fallen02b")).toBe(8);
     expect(squadTask("sq_objective_suppressors05")).toBe(20);
-    h.ticks(30);
+    // the rushers as the first two squads thin out
+    alive("sq_objective_fallen02b", 4);
+    alive("sq_objective_fallen02c", 0);
+    h.ticks(6);
     expect(squadTask("sq_objective_fallen02b")).toBe(7);
     expect(squadTask("sq_objective_fallen02d")).toBe(10);
     h.ticks(30);
-    const web2 = h.last("object", "o_laserweb02");
-    expect(web2?.kind === "object" && web2.state.present).toBe(false);
-    h.ticks(20);
+    expect(webPresent("o_laserweb02")).toBe(true);
+    for (const squad of [
+      "sq_objective_fallen02b",
+      "sq_objective_fallen02d",
+      "sq_objective_fallen02e",
+    ]) {
+      alive(squad, 0);
+    }
+    h.ticks(5);
+    expect(webPresent("o_laserweb02")).toBe(false);
+    h.ticks(8);
+    expect(squadTask("sq_objective_fallen03a")).toBe(11);
+    expect(squadTask("sq_objective_hive04")).not.toBe(17);
+    alive("sq_objective_hive01", 0);
+    alive("sq_objective_hive02", 1);
+    h.ticks(3);
     expect(squadTask("sq_objective_hive04")).toBe(17);
-    h.ticks(110);
-    expect(h.last("actor", "sq_objective_fallen03c__captain_major")?.kind).toBe(
-      "actor"
+    // wave 3 down: the shanks again, and the rushers back as they thin out
+    for (const squad of [
+      "sq_objective_hive02",
+      "sq_objective_hive03",
+      "sq_objective_hive04",
+      "sq_objective_fallen03a",
+      "sq_objective_fallen03b",
+    ]) {
+      alive(squad, 0);
+    }
+    // the four pairs of shanks take 4 s to drop
+    h.ticks(9);
+    expect(actorPushes("sq_objective_fallen01d__shank01")).toBeGreaterThan(
+      shankPushes
     );
-    h.ticks(14);
-    const hacked = h.last("object", "sp_placement_array._object");
-    expect(hacked?.kind === "object" && hacked.state.device?.position).toBe(1);
+    alive("sq_objective_fallen01d", 4);
+    alive("sq_objective_fallen01e", 4);
+    h.ticks(3);
+    expect(h.saidAll("sq_objective_fallen02d", "bodies=8")).toBe(false);
+    alive("sq_objective_fallen01d", 1);
+    alive("sq_objective_fallen01e", 1);
+    h.ticks(2);
+    expect(h.saidAll("sq_objective_fallen02d", "bodies=8")).toBe(true);
+    // wave 3's Fallen back as the rushers thin out, the captain once they
+    // are down
+    alive("sq_objective_fallen02d", 3);
+    alive("sq_objective_fallen02e", 3);
+    h.ticks(2);
+    alive("sq_objective_fallen02d", 1);
+    alive("sq_objective_fallen02e", 0);
+    h.ticks(2);
+    expect(h.saidAll("sq_objective_fallen03a", "bodies=6")).toBe(true);
+    const captainPushes = actorPushes("sq_objective_fallen03c__captain_major");
+    alive("sq_objective_fallen02d", 0);
+    h.ticks(3);
+    expect(
+      actorPushes("sq_objective_fallen03c__captain_major")
+    ).toBeGreaterThan(captainPushes);
+    // the hack waits on the captain, and completes as he dies
+    h.ticks(20);
+    expect(devicePosition()).toBeCloseTo(0.1);
+    h.runtime.reportActorBound(
+      h.rowOf("sq_objective_fallen03c__captain_major"),
+      true,
+      true
+    );
+    h.ticks(4);
+    expect(devicePosition()).toBe(1);
     h.ticks(8);
     const repelRow = h.rowOf("phase02.po_repel_fallen01");
     expect(
@@ -366,7 +457,14 @@ describe("TU0 cosmo_portal_1 scripts", () => {
       skiff?.kind === "actor" && skiff.state.commandScript?.atoms.length
     ).toBe(4);
     expect(h.last("sequence", "s01_x100")?.kind).toBe("sequence");
+    // The Walker rides in seated in the skiff, placed with it.
+    const seat = () => {
+      const change = h.last("passenger", "skiff_passenger");
+      return change?.kind === "passenger" ? change.state : undefined;
+    };
+    expect(seat()).toEqual({ passenger: h.rowOf("sq_tank__tank"), state: 1 });
     h.ticks(50);
+    expect(seat()).toEqual({ state: 2 });
     const walker = h.last("actor", "sq_tank__tank");
     expect(walker?.kind === "actor" && walker.state.drop?.squads.length).toBe(
       2
@@ -390,6 +488,18 @@ describe("TU0 cosmo_portal_1 scripts", () => {
     expect(squadTask("sq_bossbattle_boss01")).toBe(6);
     const shield = h.last("hopOn", "ho_servitor_performance_shield01");
     expect(shield?.kind === "hopOn" && shield.state.filter).toBeDefined();
+    // The servitor comes in blind and deaf: it does not fight its guards' fight.
+    const servitor = () => {
+      const change = h.last("actor", "sq_bossbattle_boss01__servitor");
+      return change?.kind === "actor" ? change.state : undefined;
+    };
+    expect(servitor()?.placed).toBe(true);
+    expect(servitor()?.behaviour).toMatchObject({
+      awarenessFlags: 3,
+      awarenessMask: 3,
+    });
+    // As the client does at placement: the named servitor is no tally cell.
+    h.runtime.reportSquadTally(h.rowOf("sq_bossbattle_boss01"), [0]);
     fire("phase05.obj_s1_phase05_m1._player_trigger");
     h.ticks(3);
     const hangar = h.last("object", "phase05.o_cosmo_strike01_hangar_door01");
@@ -408,7 +518,23 @@ describe("TU0 cosmo_portal_1 scripts", () => {
     for (const squad of guards) {
       alive(squad, 0);
     }
-    h.ticks(15);
+    // It wakes with the stim as the last guard dies; the shield goes 8 s on.
+    h.ticks(1);
+    expect(servitor()?.behaviour).toMatchObject({
+      awarenessFlags: 0,
+      awarenessMask: 3,
+    });
+    const stim = h.last("object", "o_sepix_stim");
+    expect(stim?.kind === "object" && stim.state.present).toBe(true);
+    h.ticks(7);
+    const shielded = h.last("hopOn", "ho_servitor_performance_shield01");
+    expect(shielded?.kind === "hopOn" && shielded.state.filter).toBeDefined();
+    h.ticks(2);
+    const unshielded = h.last("hopOn", "ho_servitor_performance_shield01");
+    expect(unshielded?.kind === "hopOn" && unshielded.state.filter).toBe(
+      undefined
+    );
+    h.ticks(4);
     expect(h.said("mission cosmo_portal1_activity_mission7 starting")).toBe(
       true
     );
@@ -424,17 +550,25 @@ describe("TU0 cosmo_portal_1 scripts", () => {
     h.ticks(1);
     alive("sq_bossbattle_boss01", 0);
     h.ticks(3);
-    // A teleport's 0 does not end the fight; a 0 that holds 15 s does.
-    alive("sq_bossbattle_boss01", 1);
-    h.ticks(15);
+    // A teleport's 0 is not his death: the squad holds him alive until his
+    // own death edge, and his adds die with him.
     expect(h.said("mission cosmo_portal1_activity_mission8 starting")).toBe(
       false
     );
-    alive("sq_bossbattle_boss01", 0);
-    h.ticks(18);
+    alive("sq_bossbattle_boss01", 1);
+    h.runtime.reportActorBound(
+      h.rowOf("sq_bossbattle_boss01__servitor"),
+      true,
+      true
+    );
+    h.ticks(3);
     expect(h.said("mission cosmo_portal1_activity_mission8 starting")).toBe(
       true
     );
+    const reinf = h.last("squad", "sq_bossbattle_reinf02");
+    expect(reinf?.kind === "squad" && reinf.state.killed).toBe(1);
+    // The audio still holds the boss's 0 for 15 s before its ascent.
+    h.ticks(15);
 
     // The end: the loot's lines, activity complete, the 30 s results hold.
     h.runtime.reportClientIncident(0xbd_1f_b4_18);

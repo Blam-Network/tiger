@@ -84,6 +84,11 @@ export interface HostReports {
         resetStamp: number;
       }
     | undefined;
+  // The device an Object's sense carries: the position the client holds and
+  // its stamp.
+  deviceSense?(
+    key: string
+  ): { position: number; positionStamp: number } | undefined;
   // ObjectFaction sense 0x80801620.
   factionSense?(key: string): number | undefined;
   health(key: string): { current: number; max: number } | undefined;

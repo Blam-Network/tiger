@@ -1,0 +1,44 @@
+# es\cosmo\cosmo_portal1_activity\cosmo_portal1_activity_mission5.esp
+#
+# Mission 5, the blast: fight down into the pit, where the Devil Walker
+# lands. Killing it opens the blast's exit door (the blast encounter's
+# o_door01); the phase ends at the far trigger.
+
+# @hard_wipe()  (off: Codie, 2026-10-22)
+encounter_handle enc_blast_portal1
+player_objective po_eliminate_fallen
+player_objective po_destroy_tank
+sequence m03_x10
+sequence m03_x20
+trigger_volume tv_play_m03_x10t
+player_trigger pt_play_m03_x10t bind(tv_play_m03_x10t)
+trigger_volume tv_play_m04_10t
+player_trigger pt_play_m04_10t bind(tv_play_m04_10t)
+nav_point ap_eliminate_fallen01
+nav_point ap_destroy_tank01
+
+script init(): pass
+
+script complete(): pass
+
+script main():
+    enc = enc_blast_portal1
+    pt_play_m03_x10t.reset()
+    pt_play_m04_10t.reset()
+    po_eliminate_fallen.set_active()
+    po_eliminate_fallen.nav_point_activate(ap_eliminate_fallen01)
+    sleep_until(pt_play_m03_x10t.is_triggered())
+    m03_x10.start()
+    enc.sc_walker.wake()
+    sleep_until(enc.sq_tank.alive_count() > 0)
+    po_eliminate_fallen.nav_point_clear()
+    po_eliminate_fallen.clear()
+    po_destroy_tank.set_active()
+    po_destroy_tank.nav_point_activate(ap_destroy_tank01)
+    sleep_until(enc.sq_tank.alive_count() == 0)
+    sleep(2)
+    po_destroy_tank.nav_point_clear()
+    po_destroy_tank.clear()
+    m03_x20.start()
+    enc.o_door01.set_device_position(1)
+    sleep_until(pt_play_m04_10t.is_triggered())

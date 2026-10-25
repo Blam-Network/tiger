@@ -1,0 +1,48 @@
+# es\utility_scripts\u_event_pike_gang.esu
+#
+# Pike gang (pf_event_pike_gang): a gang of Fallen on Pikes rides through the
+# dry sea, hill by hill (its objective's tasks fa_a, fa_b, fa_c, fa_d, one for
+# each pf_point's firing area), and leaves by the exit. It has no player
+# objective of its own: it is a world event, not a public one.
+#
+# No capture has seen it; the ride (a minute at each hill unless the gang is
+# fought, then on to the exit) is a guess on the rows. The points hold only
+# their firing areas, so they are not declared.
+
+dynamic_array<squad> sq_event_pike
+objective obj_pike_path
+int i_hill_time = 60
+
+script main():
+    for sq in sq_event_pike:
+        sq.set_objective(obj_pike_path)
+        obj_pike_path.add_squad(sq)
+        sq.set_task("fa_a")
+        sq.place()
+    for hill in ["fa_a", "fa_b", "fa_c", "fa_d"]:
+        for sq in sq_event_pike:
+            sq.set_task(hill)
+        sleep_until_timeout(func_gang_alive() <= 0, i_hill_time)
+        if func_gang_alive() <= 0:
+            return
+    for sq in sq_event_pike:
+        sq.set_task("exit")
+    sleep_until_timeout(func_gang_alive() <= 0, i_hill_time)
+    func_pike_cleanup()
+
+script complete():
+    func_pike_cleanup()
+
+def func_gang_alive():
+    alive = 0
+    for sq in sq_event_pike:
+        alive = alive + sq.alive_count()
+    return alive
+
+def func_pike_cleanup():
+    for sq in sq_event_pike:
+        sq.activate_temperament("temper_despawn")
+    sleep(4)
+    for sq in sq_event_pike:
+        sq.deactivate_temperament("temper_despawn")
+        sq.remove()

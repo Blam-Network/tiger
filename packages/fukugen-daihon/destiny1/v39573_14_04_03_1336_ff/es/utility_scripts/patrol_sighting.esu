@@ -1,0 +1,38 @@
+# es\utility_scripts\patrol_sighting.esu
+#
+# A patrol mission: go and look at something. The waypoint leads to the
+# sighting volume; the mission is done once a player stands in it. Its
+# monitor loads with the volume's bubble (retail 2.3.1 sends
+# patrol_sighting_<zone>.pm_bubble as the player reaches the zone, and its
+# count went to 1 as the player crossed the graveyard's volume). The rows'
+# player objective carries the import name "patrol_sighting", this class's
+# name.
+#
+# No capture has run one; the start and the end follow the captured kill
+# and scan missions.
+
+player_objective _player_objective
+nav_point _nav_point
+trigger_volume _sighting_trigger
+player_monitor pm_bubble bind(_sighting_trigger)
+
+def is_active():
+    return _player_objective.is_active()
+
+def is_complete():
+    return pm_bubble.test_any_inside()
+
+def objective_begin():
+    _player_objective.set_active()
+    _player_objective.nav_point_activate(_nav_point)
+
+def objective_end():
+    _player_objective.nav_point_clear()
+    sleep(1.5)
+    _player_objective.set_complete()
+    sleep(5)
+    _player_objective.clear()
+
+def objective_end_silent():
+    _player_objective.nav_point_clear()
+    _player_objective.clear()

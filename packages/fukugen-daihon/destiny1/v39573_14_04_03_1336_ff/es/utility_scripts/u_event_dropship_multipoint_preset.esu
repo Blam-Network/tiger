@@ -1,0 +1,29 @@
+# es\utility_scripts\u_event_dropship_multipoint_preset.esu
+#
+# The glimmer drop's presentation (pf_event_dropship_multipoint_fallen's
+# pf_preset): the public event objective, the pre-engage volume around the
+# first drop point, and the lines and music the event plays. This build's
+# preset has TU0's lines (announce, engage, a wave update, a low-time warning
+# and the tier endings, each with a generic take); bound as the 360 alpha's
+# u_event_dropship_preset was, the generic takes left unbound as the
+# countdown preset leaves its own.
+
+player_objective po_event_dropship_multipoint
+trigger_volume tv_drill_pre_engage
+player_trigger pt_drill_pre_engage bind(tv_drill_pre_engage)
+sequence seq_intro_behavior
+sequence seq_glimmer_announce bind(po_event_dropship_multipoint, e_sequence_suppression_behavior.postpone)
+sequence seq_glimmer_announce_generic
+sequence seq_glimmer_engage
+sequence seq_glimmer_engage_generic
+sequence seq_glimmer_update_wave_generic
+sequence seq_glimmer_ending_time_generic
+sequence seq_glimmer_complete_gold bind(po_event_dropship_multipoint, e_sequence_suppression_behavior.skip)
+sequence seq_glimmer_complete_gold_generic
+sequence seq_glimmer_complete_silver bind(po_event_dropship_multipoint, e_sequence_suppression_behavior.skip)
+sequence seq_glimmer_complete_silver_generic
+sequence seq_glimmer_complete_bronze bind(po_event_dropship_multipoint, e_sequence_suppression_behavior.skip)
+sequence seq_glimmer_complete_bronze_generic
+sequence seq_glimmer_complete_failure bind(po_event_dropship_multipoint, e_sequence_suppression_behavior.skip)
+sequence seq_glimmer_complete_failure_generic
+sequence seq_glimmer_music1 bind(po_event_dropship_multipoint, e_sequence_suppression_behavior.postpone)

@@ -1,0 +1,31 @@
+# es\utility_scripts\interactable_placement.esu
+#
+# Something the player can use (a console, a conflux to scan). Ported from
+# the pre-alpha's: creates the object, lets the players holding its activity
+# flag use it, and clears it again a few seconds after each use. TU0's rows
+# are the object and its filter; the flag, interactable and device are the
+# script's own.
+
+object _object
+real _minimum_time_to_reset = 3
+activity_flag _activity_flag
+object_filter _object_filter
+interactable _interactable bind(_object)
+device _device bind(_object)
+
+def import_only_bind(identifier):
+    return _object.import_only_bind(identifier) and _activity_flag.import_only_bind(identifier)
+
+@startup()
+script main():
+    _object.create()
+    _object_filter.add_players_with_activity_flag(_activity_flag)
+    _interactable.set_enabled_player_filter(_object_filter)
+
+    while true:
+        if not _interactable.is_active():
+            sleep(1)
+        else:
+            sleep(_minimum_time_to_reset)
+            while not _activity_flag.is_active(): sleep(1)
+            _interactable.clear()

@@ -1,0 +1,275 @@
+# es\utility_scripts\u_event_tank_drop.esu
+#
+# Walker drop, the tank public event (pf_event_tank_drop): a Fallen ketch goes
+# over, a dropship lands a screen of fodder, a second one carries the Walker
+# in beside a beacon, and the players get ten minutes to bring it down.
+#
+# From one retail run (the Cosmodrome patrol's graveyard,
+# pf_event_tank_drop[1] on its public host, 2.3.1), whose rows this build's
+# are. Seconds from the start: the intro behaviour and the ketch at 0, the
+# objective incoming at 4, the ketch moving off at 18, three of the seven
+# skiffs over at 19.5 for 10s, the squads under obj_tank and the fodder
+# dropship coming in at 22, the generic announce at 23, the cover and the
+# fiction device at 30, the fodder dropped on fodder_task at 31, the beacon at
+# 37 with the Walker's dropship, the Walker on tank_task seated in it and let
+# go as it arrives 7s later (its dropship's orders are below), the objective
+# active at 50 with a 600s timer and its waypoint on the beacon, the
+# engagement hop-on filtered and the trigger armed. The minions and the hard
+# fodder came 42s after the Walker landed, the hard fodder on fodder_task 8s
+# after that. The Walker died 60s into the timer: complete with tier 2
+# (silver) and the silver ending, the cover and the fiction device to 0.4, the
+# fodder back to their first task, the Walker despawning, the engagement
+# trigger and filter cleared; the beacon went 6s later and the squads were
+# removed 16s after the end. What decides the tier is not seen: here the
+# fodder were still standing, so silver is the Walker without its escort and
+# gold the Walker and escort both (a guess); bronze past two thirds of the
+# clock, failed when it runs out.
+
+u_event_globals event_globals
+u_event_tank_drop_preset pf_preset
+squad sq_tank
+squad_member sq_tank__tank
+squad sq_tank_dropship
+squad_member sq_tank_dropship__pilot
+squad sq_fodder_dropship
+squad_member sq_fodder_dropship__pilot
+squad sq_tank_minions
+squad sq_tank_fodder
+squad sq_tank_fodder_hard
+squad_group sg_tank
+squad_group sg_fodder
+objective obj_tank
+object o_ketch_intro
+object o_event_dropship_beacon_pt
+object o_event_fiction_device_temp
+dynamic_array<object> o_dropship_cov
+dynamic_array<u_event_dropship_skiff> pf_skiffs
+passenger dropship_passenger
+control_point_set ps_tank_dropship_enter
+control_point_set ps_tank_dropship_exit
+control_point_set ps_fodder_dropship_enter_initial
+control_point_set ps_fodder_dropship_exit_initial
+control_point_set ps_fodder_dropship_enter_reinforce
+control_point_set ps_fodder_dropship_exit_reinforce
+nav_point ap_pre_drop  # WARNING: unused - no run showed what it marks (the dropship's hold point before the drop?)
+trigger_volume tv_engagement
+player_trigger pt_engagement bind(tv_engagement)
+object_filter of_engagement
+trigger_volume tv_objective_volume  # WARNING: unused - nothing in the run showed what it bounds
+int i_event_time = 600
+bool b_tank_landed
+
+script main():
+    b_tank_landed = false
+    func_tank_intro()
+    func_tank_arrival()
+    func_tank_engagement()
+
+    sleep_until(sq_tank.alive_count() <= 0 or pf_preset.po_event_tank.timer_is_complete())
+    func_tank_award()
+    func_tank_cleanup()
+
+script complete():
+    func_tank_cleanup()
+
+def func_tank_intro():
+    pf_preset.pt_drill_pre_engage.reset()
+    pf_preset.seq_intro_behavior.start()
+    o_ketch_intro.create()
+    o_ketch_intro.set_device_position(0)
+    sleep(4)
+    pf_preset.po_event_tank.set_incoming()
+    sleep(14)
+    o_ketch_intro.set_device_position(0.1)
+    sleep(1.5)
+    sc_skiffs.restart()
+    sleep(2.5)
+    pf_preset.seq_intro_behavior.stop()
+    sc_tank_engage_line.restart()
+
+script sc_skiffs():
+    for i in pick_random_count(3, 0, 1, 2, 3, 4, 5, 6):
+        if i < len(pf_skiffs):
+            pf_skiffs[i].fly_past.restart()
+
+def func_tank_arrival():
+    for sq in [sq_tank, sq_tank_minions, sq_tank_fodder, sq_tank_fodder_hard]:
+        sq.set_objective(obj_tank)
+        obj_tank.add_squad(sq)
+    sg_tank.add_child(sq_tank)
+    sg_tank.add_child(sq_tank_minions)
+    sg_fodder.add_child(sq_tank_fodder)
+    sg_fodder.add_child(sq_tank_fodder_hard)
+    sc_fodder_drop.restart()
+    sleep(1)
+    pf_preset.seq_tank_announce_generic.start()
+    sleep(7)
+    o_event_fiction_device_temp.create()
+    o_event_fiction_device_temp.set_device_position(0)
+    for cov in o_dropship_cov:
+        cov.create()
+        cov.set_device_position(0)
+    sleep(6)
+    o_event_dropship_beacon_pt.create()
+    o_event_dropship_beacon_pt.set_device_position(0)
+    sleep(1)
+    o_event_dropship_beacon_pt.set_device_position(1)
+    sc_tank_drop.restart()
+    sleep(3)
+    o_event_fiction_device_temp.set_device_position(0.2)
+    sleep(10)
+
+# the fodder dropship comes in, drops its squad and goes
+script sc_fodder_drop():
+    sq_fodder_dropship__pilot.place()
+    sq_fodder_dropship__pilot.execute(cs_dropship_enter(ps_fodder_dropship_enter_initial)); sleep_until(sq_fodder_dropship__pilot.get_command_script_state() != e_command_script_state.executing)
+    sq_fodder_dropship__pilot.execute(cs_dropship_open_doors())
+    sq_tank_fodder.set_task("fodder_task")
+    sq_fodder_dropship__pilot.drop_squad(sq_tank_fodder); sleep_until(not sq_fodder_dropship__pilot.is_dropping())
+    sq_fodder_dropship__pilot.execute(cs_dropship_close_doors()); sleep(1)
+    sq_fodder_dropship__pilot.execute(cs_dropship_exit(ps_fodder_dropship_exit_initial)); sleep_until(sq_fodder_dropship__pilot.get_command_script_state() != e_command_script_state.executing)
+    sq_fodder_dropship.remove()
+
+# the Walker rides in under its dropship and is let go at the beacon
+script sc_tank_drop():
+    sq_tank.set_task("tank_task")
+    sq_tank_dropship__pilot.place()
+    sq_tank__tank.place()
+    dropship_passenger.seat(sq_tank__tank)
+    sq_tank_dropship__pilot.execute(cs_tank_dropship_enter(ps_tank_dropship_enter)); sleep_until(sq_tank_dropship__pilot.get_command_script_state() != e_command_script_state.executing)
+    dropship_passenger.release()
+    b_tank_landed = true
+    sq_tank_dropship__pilot.execute(cs_tank_dropship_exit(ps_tank_dropship_exit)); sleep_until(sq_tank_dropship__pilot.get_command_script_state() != e_command_script_state.executing)
+    sq_tank_dropship.remove()
+    sc_tank_minions.restart()
+
+# 42s after it lands the Walker drops its minions and the fodder dropship
+# brings the hard fodder
+script sc_tank_minions():
+    sleep(42)
+    if sq_tank.alive_count() > 0:
+        sq_tank_minions.set_task("task")
+        sq_tank__tank.drop_squad(sq_tank_minions)
+        sq_fodder_dropship__pilot.place()
+        sq_fodder_dropship__pilot.execute(cs_dropship_enter(ps_fodder_dropship_enter_reinforce)); sleep_until(sq_fodder_dropship__pilot.get_command_script_state() != e_command_script_state.executing)
+        sq_fodder_dropship__pilot.execute(cs_dropship_open_doors())
+        sq_tank_fodder_hard.set_task("fodder_task")
+        sq_fodder_dropship__pilot.drop_squad(sq_tank_fodder_hard); sleep_until(not sq_fodder_dropship__pilot.is_dropping())
+        sq_fodder_dropship__pilot.execute(cs_dropship_close_doors()); sleep(1)
+        sq_fodder_dropship__pilot.execute(cs_dropship_exit(ps_fodder_dropship_exit_reinforce)); sleep_until(sq_fodder_dropship__pilot.get_command_script_state() != e_command_script_state.executing)
+        sq_fodder_dropship.remove()
+
+def func_tank_engagement():
+    sleep_until(b_tank_landed == true, 0.5)
+    sleep(6)
+    pf_preset.po_event_tank.set_active()
+    pf_preset.po_event_tank.timer_activate(i_event_time)
+    pf_preset.po_event_tank.timer_start()
+    pf_preset.po_event_tank.nav_point_activate(o_event_dropship_beacon_pt)
+    of_engagement.add_players_on_team(0)
+    pf_preset.ho_engagement.set_filter(of_engagement)
+    pt_engagement.reset()
+    pt_engagement.set_handler(pf_preset.po_event_tank.d_handle_engagement_incident)
+    event_globals.bind_squad_engagement(sq_tank, pf_preset.po_event_tank)
+    pf_preset.seq_tank_music1.start()
+    sc_tank_time_lines.restart()
+
+script sc_tank_engage_line():
+    sleep_until(pf_preset.pt_drill_pre_engage.is_triggered() or pf_preset.po_event_tank.is_active())
+    if not pf_preset.po_event_tank.is_active():
+        pf_preset.seq_tank_engage_generic.start()
+
+# a warning as the last quarter of the clock starts
+script sc_tank_time_lines():
+    tank_time_line(0.25, pf_preset.seq_tank_ending_time)
+
+def tank_time_line(fraction, line):
+    sleep_until(pf_preset.po_event_tank.timer_get_current() <= i_event_time * fraction or sq_tank.alive_count() <= 0)
+    if sq_tank.alive_count() > 0:
+        line.start()
+
+def func_tank_award():
+    sc_tank_time_lines.kill()
+    if sq_tank.alive_count() > 0:
+        pf_preset.seq_tank_complete_failure.start()
+        pf_preset.po_event_tank.set_failed()
+    elif pf_preset.po_event_tank.timer_get_current() < i_event_time / 3:
+        pf_preset.po_event_tank.set_public_event_tier(1)
+        pf_preset.po_event_tank.set_complete()
+        sleep(0.5)
+        pf_preset.seq_tank_complete_bronze.start()
+    elif sg_fodder.alive_count() + sq_tank_minions.alive_count() > 0:
+        pf_preset.po_event_tank.set_public_event_tier(2)
+        pf_preset.po_event_tank.set_complete()
+        sleep(0.5)
+        pf_preset.seq_tank_complete_silver.start()
+    else:
+        pf_preset.po_event_tank.set_public_event_tier(3)
+        pf_preset.po_event_tank.set_complete()
+        sleep(0.5)
+        pf_preset.seq_tank_complete_gold.start()
+
+def func_tank_cleanup():
+    sq_tank_fodder.set_task("task")
+    sq_tank_fodder_hard.set_task("task")
+    o_event_fiction_device_temp.set_device_position(0.4)
+    for cov in o_dropship_cov:
+        cov.set_device_position(0.4)
+    sq_tank.activate_temperament("temper_despawn")
+    o_ketch_intro.delete_object()
+    pt_engagement.disable()
+    of_engagement.clear()
+    pf_preset.ho_engagement.clear_filter()
+    pf_preset.pt_drill_pre_engage.disable()
+    pf_preset.seq_tank_music1.stop()
+    sleep(2)
+    o_event_dropship_beacon_pt.set_device_position(0)
+    sleep(3)
+    pf_preset.po_event_tank.clear()
+    o_event_dropship_beacon_pt.delete_object()
+    for cov in o_dropship_cov:
+        cov.delete_object()
+    sleep(2)
+    o_event_fiction_device_temp.delete_object()
+    sleep(3)
+    sq_tank_minions.activate_temperament("temper_despawn")
+    sg_fodder.activate_temperament("temper_despawn")
+    sleep(5)
+    sg_fodder.deactivate_temperament("temper_despawn")
+    sg_fodder.remove()
+    for sq in [sq_tank, sq_tank_minions]:
+        sq.deactivate_temperament("temper_despawn")
+        sq.remove()
+
+# The dropships' orders, atom for atom as retail's graveyard run sent them: in
+# along the entry path's two points with the dropship entry, doors open on
+# arrival for a second; out along the exit path with exit_45. The Walker's
+# dropship comes in with its doors shut and waits 5s before it leaves.
+command_script cs_dropship_enter(path):
+    snap_to(path, 0)
+    ability("dropship", "0x4A82D3FF")
+    move_to(path, 1, true)
+    set_channel_scalar("doors", 1)
+    terminate_delay(1)
+
+command_script cs_dropship_open_doors():
+    set_channel_scalar("doors", 1)
+
+command_script cs_dropship_close_doors():
+    set_channel_scalar("doors", 0)
+
+command_script cs_dropship_exit(path):
+    move_to(path, 0, false)
+    move_to(path, 1, false)
+    ability("dropship", "exit_45")
+
+command_script cs_tank_dropship_enter(path):
+    snap_to(path, 0)
+    ability("dropship", "0x4A82D3FF")
+    move_to(path, 1, true)
+
+command_script cs_tank_dropship_exit(path):
+    sleep(5)
+    move_to(path, 0, false)
+    move_to(path, 1, false)
+    ability("dropship", "exit_45")

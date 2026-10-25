@@ -1,0 +1,34 @@
+# es\cosmo\cosmo_portal1_activity\cosmo_portal1_activity_mission1.esp
+#
+# Mission 1, the rocketyard: move to the ship. The Ghost's lines play over
+# the run to the refinery; the objective clears at the trigger.
+
+player_objective po_move_to_ship
+sequence m01_x10
+sequence m01_x20
+sequence m01_x30
+sequence m02_x10
+trigger_volume tv_rocketyard_to_blast01
+player_trigger pt_rocketyard_to_blast01 bind(tv_rocketyard_to_blast01)
+nav_point ap_rocketyard_to_blast01
+
+script init(): pass
+
+script complete(): pass
+
+script main():
+    sleep_until(c_player_script_utilities.all_players_are_ready())
+    c_lifetime_script_utilities.get_lifetime_sensor().set_state(e_activity_lifetime_state.active)
+    pt_rocketyard_to_blast01.reset()
+    po_move_to_ship.set_incoming()
+    m01_x10.start()
+    sleep_until_timeout(m01_x10.is_done(), 15)
+    po_move_to_ship.set_active()
+    po_move_to_ship.nav_point_activate(ap_rocketyard_to_blast01)
+    m01_x20.start()
+    sleep_until(pt_rocketyard_to_blast01.is_triggered())
+    po_move_to_ship.nav_point_clear()
+    po_move_to_ship.clear()
+    m01_x30.start()
+    sleep_until_timeout(m01_x30.is_done(), 5)
+    m02_x10.start()

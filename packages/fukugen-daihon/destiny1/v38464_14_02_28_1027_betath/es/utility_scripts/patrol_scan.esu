@@ -1,0 +1,55 @@
+# es\utility_scripts\patrol_scan.esu
+#
+# A patrol mission: go to a marked spot and have the Ghost scan it. The
+# spot is an interactable placement put out from the load (retail sends
+# its object present in the first world update); only players holding the
+# mission's activity flag can use it. This build has one scan per spot,
+# named for its zone (patrol_scan_graveyard, patrol_scan_delta_n_1); the
+# class is named after the ff build's, whose player objectives carry the
+# import name "patrol_scan".
+#
+# Retail 2.3.1's (cosmo patrol capture, the Dead Orbit scan): the objective
+# goes active with a waypoint on the spot and a bar of 0 to 1. A second
+# after the use (the controller's poll) the bar fills, the waypoint goes a
+# second after that, the objective completes 1.5 s later and is cleared 5 s
+# after.
+
+player_objective _player_objective
+interactable_placement _placement
+encounter_binding _object
+nav_point _nav_point
+trigger_volume _nav_excl  # WARNING: unused - the waypoint's exclusion volume; no script reads it and no capture shows it
+player_monitor pm_bubble  # WARNING: unused - loads with the spot's bubble (its sensor's slice set); the ff build's scans dropped it
+activity_flag _activity_flag
+interactable_incident_listener _incident_listener
+
+def import_only_bind(identifier):
+    return _placement.import_only_bind(identifier) and _object.import_only_bind_object(identifier) and _activity_flag.import_only_bind(identifier) and _incident_listener.import_only_bind(identifier)
+
+def is_active():
+    return _player_objective.is_active()
+
+def is_complete():
+    return _incident_listener.get_count() > 0
+
+def objective_begin():
+    _incident_listener.reset()
+    _activity_flag.activate()
+    _player_objective.set_active()
+    _player_objective.progress_activate(0, 1)
+    _player_objective.nav_point_activate_with_fallback(_object, _nav_point)
+
+def objective_end():
+    _player_objective.progress_update(1)
+    sleep(1)
+    _player_objective.nav_point_clear()
+    _activity_flag.clear()
+    sleep(1.5)
+    _player_objective.set_complete()
+    sleep(5)
+    _player_objective.clear()
+
+def objective_end_silent():
+    _activity_flag.clear()
+    _player_objective.nav_point_clear()
+    _player_objective.clear()

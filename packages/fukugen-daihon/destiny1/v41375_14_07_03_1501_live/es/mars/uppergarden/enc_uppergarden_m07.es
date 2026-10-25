@@ -12,27 +12,44 @@
 
 object o_door_lowergarden
 objective obj_uppergarden_m07
+@member_counts({0xB84FD02D: 1, 0xB84FD02E: 1})
 squad sq_overlook_hobgoblin
+@member_counts({goblin: 3})
 squad sq_overlook_goblin
+@member_counts({harpy: 1})
 squad sq_landing_harpy_a
+@member_counts({harpy: 1})
 squad sq_landing_harpy_b
+@member_counts({harpy: 1})
 squad sq_landing_harpy_c
 squad sq_gulch_cyclops
 squad sq_gulch_minotaur
+@member_counts({goblin: 3})
 squad sq_gulch_goblin_a_a
+@member_counts({goblin: 3})
 squad sq_gulch_goblin_a_b
+@member_counts({goblin: 3})
 squad sq_gulch_goblin_b_a
 squad sq_pit_hobgoblin_a
 squad sq_pit_hobgoblin_b
 squad sq_boss
+@member_counts({goblin: 3})
 squad sq_pit_goblin_a
+@member_counts({goblin: 3})
 squad sq_pit_goblin_b
+@member_counts({goblin: 3})
 squad sq_pit_goblin_c
+@member_counts({goblin: 3})
 squad sq_stair_goblin
+@member_counts({hobgoblin: 1})
 squad sq_stair_hobgoblin_a
+@member_counts({hobgoblin: 1})
 squad sq_stair_hobgoblin_b
+@member_counts({minotaur: 1})
 squad sq_bottom_minotaur
+@member_counts({harpy: 2})
 squad sq_bottom_harpy_a
+@member_counts({harpy: 2})
 squad sq_bottom_harpy_b
 squad sq_cloud_boss
 squad_member sq_cloud_boss__pilot
@@ -68,7 +85,9 @@ script sc_overlook():
     sleep(1)
     sq_overlook_hobgoblin.set_task("0x2F9FD614")
 
-# the gulch: the cyclops first, then the goblins once it is down
+# the gulch: the cyclops first, then two waves of goblins on the second
+# cloud, the second wave four seconds after the cyclops is down. The cloud
+# comes back as a new one for the second wave.
 script sc_gulch():
     sleep_until(pt_gulch.is_triggered())
     sleep(1)
@@ -78,15 +97,15 @@ script sc_gulch():
     sq_cloud_gulch.place()
     sq_cloud_gulch__pilot.drop_squad(sq_gulch_goblin_a_a)
     sq_cloud_gulch__pilot.drop_squad(sq_gulch_goblin_a_b)
-    sleep_until(not sq_cloud_gulch__pilot.is_dropping())
     sleep_until(sq_gulch_cyclops.alive_count() == 0)
     sleep(4)
+    sleep_until(not sq_cloud_gulch__pilot.is_dropping())
     sq_gulch_goblin_b_a.set_task("0x5BE4444B")
+    sq_cloud_gulch.place()
     sq_cloud_gulch__pilot.drop_squad(sq_gulch_goblin_b_a)
     sleep(2)
     sq_gulch_goblin_a_a.set_task("0x4FE0C811")
     sleep_until(not sq_cloud_gulch__pilot.is_dropping())
-    sleep(5)
     sq_cloud_gulch.remove()
     sleep(1)
     sq_gulch_goblin_b_a.set_task("0x4FE0C811")

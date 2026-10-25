@@ -416,10 +416,13 @@ export function noteInteraction(
   namesOf: (row: BoundRow) => number[]
 ): void {
   if (self.row?.typeId === self.types.Object) {
-    if (
-      !self.objectRow.interacted &&
-      namesOf(self.row).some((name) => carries(name))
-    ) {
+    // The row's own identifier, or the one import_only_bind gave the object
+    // (an interactable_placement binds its _object by the placement's).
+    const names = [
+      ...namesOf(self.row),
+      ...(self.boundIdentifier === undefined ? [] : [self.boundIdentifier]),
+    ];
+    if (!self.objectRow.interacted && names.some((name) => carries(name))) {
       self.objectRow.interacted = true;
       self.writer.note(`${self.path} used (interaction incident)`);
     }

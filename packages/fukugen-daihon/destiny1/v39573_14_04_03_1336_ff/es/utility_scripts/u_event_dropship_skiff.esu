@@ -1,0 +1,14 @@
+# es\utility_scripts\u_event_dropship_skiff.esu
+#
+# A Fallen skiff flying over at the start of a dropship event (a pf_skiffs
+# entry): a sequence that flies it past its nav point. Retail's graveyard
+# Walker drop (2.3.1) started three of its seven, picked at random, 19.5s in
+# and stopped them 10s later.
+
+nav_point ap_dropship_skiff
+sequence seq_dropship_skiff
+
+script fly_past():
+    seq_dropship_skiff.start()
+    sleep(10)
+    seq_dropship_skiff.stop()

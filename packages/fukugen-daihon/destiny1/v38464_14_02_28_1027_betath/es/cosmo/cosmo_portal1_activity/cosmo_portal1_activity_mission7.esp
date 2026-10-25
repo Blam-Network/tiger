@@ -1,0 +1,121 @@
+# es\cosmo\cosmo_portal1_activity\cosmo_portal1_activity_mission7.esp
+#
+# Mission 7, Sepiks Prime. The pre-alpha holds the whole fight in this phase
+# (phase06): the servitor arrives shielded, then teleports around the arena
+# while shanks, reinforcements and a dropship's squads come in. It can read
+# as dead for a moment while it teleports, so it has to stay dead for a while
+# before this clears; whatever still stands then dies with it. The fight's
+# timing is the Alpha Trial's.
+
+# @hard_wipe()  (off: Codie, 2026-10-22)
+player_objective po_kill_boss
+sequence sepix_arrival01
+sequence m04_30
+nav_point ap_kill_boss01
+object o_sepix_stim
+objective obj_bossbattle_fallen
+squad sq_bossbattle_boss01
+@member_counts({dreg: 2, vandal: 1})
+squad sq_bossbattle_reinf01
+@member_counts({dreg: 2, vandal: 1})
+squad sq_bossbattle_reinf02
+@member_counts({dreg: 2, vandal: 1})
+squad sq_bossbattle_dropsquad01
+@member_counts({dreg: 2, vandal: 1})
+squad sq_bossbattle_dropsquad02
+@member_counts({dreg: 2, vandal: 1})
+squad sq_bossbattle_sweeper01
+squad sq_bossbattle_shanks01
+squad sq_bossbattle_shanks02
+squad sq_dropship_fallen01
+squad_member sq_dropship_fallen01__pilot
+c_command_script __cs
+control_point_set cp_dropship_fallen01_enter
+control_point_set cp_dropship_fallen01_exit
+object_filter of_ultra_servitor
+hop_on ho_servitor_shield01
+
+script init(): pass
+
+script complete(): pass
+
+script main():
+    for sq in [sq_bossbattle_boss01, sq_bossbattle_reinf01, sq_bossbattle_reinf02, sq_bossbattle_dropsquad01, sq_bossbattle_dropsquad02, sq_bossbattle_sweeper01, sq_bossbattle_shanks01, sq_bossbattle_shanks02]:
+        sq.set_objective(obj_bossbattle_fallen)
+    sepix_arrival01.start()
+    place_on_task(sq_bossbattle_boss01, "zone03")
+    of_ultra_servitor.add(sq_bossbattle_boss01)
+    sleep(1)
+    ho_servitor_shield01.set_filter(of_ultra_servitor)
+    o_sepix_stim.create()
+    po_kill_boss.set_active()
+    po_kill_boss.nav_point_activate(ap_kill_boss01)
+    sleep_until_timeout(sepix_arrival01.is_done(), 10)
+    ho_servitor_shield01.clear_filter()
+    sc_boss_fight.wake()
+    sleep_until(sq_bossbattle_boss01.alive_count() > 0)
+    sleep_until_boss_dead()
+    sc_boss_fight.kill()
+    for sq in [sq_bossbattle_reinf01, sq_bossbattle_reinf02, sq_bossbattle_dropsquad01, sq_bossbattle_dropsquad02, sq_bossbattle_sweeper01, sq_bossbattle_shanks01, sq_bossbattle_shanks02]:
+        sq.kill()
+    po_kill_boss.nav_point_clear()
+    po_kill_boss.clear()
+    m04_30.start()
+
+script sc_boss_fight():
+    sleep(9)
+    sq_bossbattle_boss01.set_task("boss")
+    place_on_task(sq_bossbattle_shanks01, "dropsquad01")
+    place_on_task(sq_bossbattle_shanks02, "dropsquad02")
+    sleep(24)
+    sq_bossbattle_boss01.set_task("zone03")
+    sleep(4)
+    sq_bossbattle_boss01.set_task("boss")
+    place_on_task(sq_bossbattle_reinf01, "zone05")
+    place_on_task(sq_bossbattle_reinf02, "zone04")
+    sleep(20)
+    dropship_drop()
+    sleep(16)
+    sq_bossbattle_boss01.set_task("zone03")
+    sleep(4)
+    patrol("teleport_on")
+    patrol("zone01")
+    place_on_task(sq_bossbattle_sweeper01, "press_short")
+    patrol("teleport_on")
+    patrol("zone02")
+    patrol("0xFA33A175")
+
+def dropship_drop():
+    sq_bossbattle_dropsquad01.set_task("dropsquads")
+    sq_bossbattle_dropsquad02.set_task("dropsquads")
+    __cs.clear()
+    __cs.snap_to(cp_dropship_fallen01_enter, 0)
+    __cs.ability("dropship", "enter_45")
+    __cs.move_to(cp_dropship_fallen01_enter, 1, false)
+    __cs.move_to(cp_dropship_fallen01_enter, 2, true)
+    sq_dropship_fallen01__pilot.place()
+    sq_dropship_fallen01__pilot.execute(__cs)
+    sq_dropship_fallen01__pilot.drop_squad(sq_bossbattle_dropsquad01)
+    sq_dropship_fallen01__pilot.drop_squad(sq_bossbattle_dropsquad02)
+    sleep(12)
+    __cs.clear()
+    __cs.move_to(cp_dropship_fallen01_exit, 0, false)
+    __cs.move_to(cp_dropship_fallen01_exit, 1, false)
+    __cs.ability("dropship", "exit_45")
+    sq_dropship_fallen01__pilot.execute(__cs)
+
+def patrol(task):
+    if sq_bossbattle_boss01.alive_count() > 0:
+        sq_bossbattle_boss01.set_task(task)
+        sleep(12)
+
+def sleep_until_boss_dead():
+    while true:
+        sleep_until(sq_bossbattle_boss01.alive_count() == 0)
+        sleep(15)
+        if sq_bossbattle_boss01.alive_count() == 0:
+            break
+
+def place_on_task(sq, task):
+    sq.set_task(task)
+    sq.place()

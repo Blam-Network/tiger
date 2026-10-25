@@ -66,6 +66,11 @@ export const MAX_COMMAND_SCRIPT_ATOMS = 32;
 export interface ActorState {
   // Renumbered on every change.
   behaviour?: {
+    // Perception overrides: bit 0 blind, bit 1 deaf. The mask names the bits
+    // the host sets; a bit outside it is the AI's own (2.3.1 capture: the
+    // servitor placed at 3 under 3|16, then 0 as its guards die).
+    awarenessFlags: number;
+    awarenessMask: number;
     channels: readonly { id: number; values: readonly number[] }[];
     incarnation: number;
     temperaments: readonly number[];

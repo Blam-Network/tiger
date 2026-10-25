@@ -1,0 +1,73 @@
+# es\utility_scripts\wave_encounter.esu
+#
+# A run of encounters, each brought on as the one before it thins out below
+# its reinforcement threshold. Ported from the 360 alpha's.
+
+static_array<common_reference, 8> _encounter_reference
+squad_group _squad_group
+common_reference _objective_reference
+int respawn_time = 30
+int _encounter_reference_iterator
+static_array<int, 4> _reinforcement_threshold
+timer _respawn_timer
+
+def add_wave(wave_encounter, reinforcement_threshold):
+    _encounter_reference[_encounter_reference_iterator] = wave_encounter
+    _reinforcement_threshold[_encounter_reference_iterator] = reinforcement_threshold
+    _encounter_reference_iterator = _encounter_reference_iterator + 1
+
+def set_objective(override_objective):
+    _objective_reference = override_objective
+
+def activate():
+    init.restart()
+
+script init():
+    for e in _encounter_reference:
+        if e:
+            e.respawn_time = 0
+            if _objective_reference:
+                e._objective_reference = _objective_reference
+            for s in e._squad:
+                e._squad_group.add_child(s)
+
+            _squad_group.add_child(e._squad_group)
+
+    _encounter_reference[0].init.restart()
+
+    sleep_until(not _encounter_reference[0].init.is_running())
+
+    if _encounter_reference[0].main.is_running():
+        main.restart()
+
+script main():
+    currEncounter = 0
+
+    sleep_until(_encounter_reference[currEncounter]._squad_group.alive_count() == _encounter_reference[currEncounter]._squad_group.max_count(), 0.5)
+
+    while true:
+        if _squad_group.alive_count() <= _reinforcement_threshold[currEncounter]:
+            if _encounter_reference[currEncounter + 1]:
+                currEncounter = currEncounter + 1
+                _encounter_reference[currEncounter].main.restart()
+                sleep_until(_encounter_reference[currEncounter]._squad_group.alive_count() == _encounter_reference[currEncounter]._squad_group.max_count(), 0.5)
+            elif _squad_group.alive_count() == 0:
+                break
+        if _squad_group.current_in_combat_count() > 0:
+            _respawn_timer.reset(respawn_time)
+            _respawn_timer.stop()
+        else:
+            _respawn_timer.start()
+
+        if _respawn_timer.is_expired() and respawn_time > 0:
+
+            _encounter_reference[currEncounter]._squad_group.respawn()
+            _encounter_reference[currEncounter]._objective.reset()
+
+        sleep(1)
+
+script complete():
+    for e in _encounter_reference:
+        if e and \
+                e.main.is_running():
+            e.complete.restart()

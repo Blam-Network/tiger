@@ -25,7 +25,7 @@ script main():
     obj_s1_phase05_m2.objective_begin(ap_kill_guards01)
     sleep_until(guards_alive_count() > 0)
     sleep_until(guards_alive_count() == 0)
-    sleep(12)
+    sleep(10)
     obj_s1_phase05_m2.objective_end_silent()
 
 def guards_alive_count():

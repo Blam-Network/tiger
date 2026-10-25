@@ -1,0 +1,33 @@
+# es\cosmo\cosmo_portal1_activity\cosmo_portal1_activity_mission4.esp
+#
+# Mission 4: the last of the refinery's Fallen come in as the tripwires go;
+# clear them, then leave the refinery for the blast. Clears at the trigger.
+
+# @hard_wipe()  (off: Codie, 2026-10-22)
+encounter_handle enc_refinery_portal1
+player_objective po_trash_encounter02
+player_objective po_refinery_exit
+trigger_volume tv_refinery_exit01
+player_trigger pt_refinery_exit01 bind(tv_refinery_exit01)
+nav_point ap_refinery_exit01
+
+script init(): pass
+
+script complete(): pass
+
+script main():
+    po_trash_encounter02.set_active()
+    sleep_until_timeout(trash_alive_count() > 0, 10)
+    sleep_until(trash_alive_count() == 0)
+    sleep(2)
+    po_trash_encounter02.clear()
+    pt_refinery_exit01.reset()
+    po_refinery_exit.set_active()
+    po_refinery_exit.nav_point_activate(ap_refinery_exit01)
+    sleep_until(pt_refinery_exit01.is_triggered())
+    po_refinery_exit.nav_point_clear()
+    po_refinery_exit.clear()
+
+def trash_alive_count():
+    enc = enc_refinery_portal1
+    return enc.sq_trash02_fallen01.alive_count() + enc.sq_trash02_fallen02.alive_count() + enc.sq_trash02_fallen03.alive_count()

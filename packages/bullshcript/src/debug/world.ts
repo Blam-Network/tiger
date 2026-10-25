@@ -25,9 +25,10 @@ export interface ActionParam {
 }
 
 // One context-menu entry: a native on the row's bound object, a client
-// report for the row, or a method of the encounter instance the row names.
+// report for the row, a method of the encounter instance the row names, or
+// something only the host does to the row.
 export interface RowAction {
-  kind: "instance" | "native" | "report";
+  kind: "host" | "instance" | "native" | "report";
   label: string;
   name: string;
   params?: ActionParam[];
@@ -93,6 +94,11 @@ const ACTIONS: Readonly<Record<string, readonly RowAction[]>> = {
   Encounter: [
     { kind: "instance", label: "activate()", name: "activate" },
     { kind: "instance", label: "deactivate()", name: "deactivate" },
+  ],
+  // Until the next phase starts, whatever the running phase's @hard_wipe says.
+  HardWipeGlobals: [
+    { kind: "host", label: "enable hard wipe", name: "enable" },
+    { kind: "host", label: "disable hard wipe", name: "disable" },
   ],
 };
 
@@ -288,6 +294,16 @@ export function runRowAction(
         return;
       default:
         throw new Error(`no report ${name}`);
+    }
+  }
+  if (action?.kind === "host") {
+    switch (name) {
+      case "enable":
+      case "disable":
+        host.setHardWipeArmed(name === "enable");
+        return;
+      default:
+        throw new Error(`no host action ${name}`);
     }
   }
   if (action?.kind === "instance" || typeId === host.types.Encounter) {

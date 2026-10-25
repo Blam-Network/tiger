@@ -1,6 +1,6 @@
 // TU0's row type ids (80800533 bundles). Types from 40 up are the alpha's +1
 // (new types in 36..40 and 62); TU0-only types with no entry: 18, 26, 36,
-// 37, 38, 39, 62. True names unknown.
+// 38, 39, 62. True names unknown.
 import type { ActivityBundleItemTypes } from "../../../../host/tags/tag_types.ts";
 
 export const ActivityBundleItemType = {
@@ -30,6 +30,8 @@ export const ActivityBundleItemType = {
   ObjectFilter: 33,
   HardWipeGlobals: 34,
   Loot: 35,
+  // skiff_passenger, dropship_passenger: auth 80802213, as the PS4 builds'.
+  Passenger: 37,
   // AI-managed performance rows (auth 80800556); TU0 only, true name unknown.
   Machine: 40,
   // 41..47 and 53..60 are alpha id + 1, joined by name hash.

@@ -1,0 +1,15 @@
+# es\utility_scripts\interactable_placement_set.esu
+#
+# A story objective's set of things to use, placed in a patrol bubble ahead
+# of its mission (dry sea, obj_m2_o2b_placement: two objects and four
+# filters). Out of the mission nothing raises their flags, so the patrol
+# only puts the objects out, as interactable_placement does with its one.
+# The filters stay with the mission that uses them.
+
+dynamic_array<object> _objects
+dynamic_array<object_filter> _object_filters
+
+@startup()
+script main():
+    for o in _objects:
+        o.create()

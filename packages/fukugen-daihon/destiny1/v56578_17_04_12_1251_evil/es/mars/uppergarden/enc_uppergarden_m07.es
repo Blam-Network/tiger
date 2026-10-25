@@ -85,7 +85,9 @@ script sc_overlook():
     sleep(1)
     sq_overlook_hobgoblin.set_task("0x2F9FD614")
 
-# the gulch: the cyclops first, then the goblins once it is down
+# the gulch: the cyclops first, then two waves of goblins on the second
+# cloud, the second wave four seconds after the cyclops is down. The cloud
+# comes back as a new one for the second wave.
 script sc_gulch():
     sleep_until(pt_gulch.is_triggered())
     sleep(1)
@@ -95,15 +97,15 @@ script sc_gulch():
     sq_cloud_gulch.place()
     sq_cloud_gulch__pilot.drop_squad(sq_gulch_goblin_a_a)
     sq_cloud_gulch__pilot.drop_squad(sq_gulch_goblin_a_b)
-    sleep_until(not sq_cloud_gulch__pilot.is_dropping())
     sleep_until(sq_gulch_cyclops.alive_count() == 0)
     sleep(4)
+    sleep_until(not sq_cloud_gulch__pilot.is_dropping())
     sq_gulch_goblin_b_a.set_task("0x5BE4444B")
+    sq_cloud_gulch.place()
     sq_cloud_gulch__pilot.drop_squad(sq_gulch_goblin_b_a)
     sleep(2)
     sq_gulch_goblin_a_a.set_task("0x4FE0C811")
     sleep_until(not sq_cloud_gulch__pilot.is_dropping())
-    sleep(5)
     sq_cloud_gulch.remove()
     sleep(1)
     sq_gulch_goblin_b_a.set_task("0x4FE0C811")

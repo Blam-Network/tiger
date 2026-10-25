@@ -1,0 +1,17 @@
+# es\cosmo\cosmo_portal1_activity\cosmo_portal1_activity_mission8.esp
+#
+# Mission 8, the end of the strike: the last objective completes, the results
+# show, then the activity ends.
+
+generic_objective obj_s1_phase07_m1
+
+script init(): pass
+
+script complete():
+    c_lifetime_script_utilities.get_lifetime_sensor().end_game(30)
+
+script main():
+    obj_s1_phase07_m1.objective_begin_immediate()
+    sleep(15)
+    obj_s1_phase07_m1.objective_end_silent()
+    set_activity_complete()

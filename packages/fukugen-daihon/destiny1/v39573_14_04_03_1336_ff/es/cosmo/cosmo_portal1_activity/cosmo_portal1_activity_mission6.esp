@@ -1,0 +1,35 @@
+# es\cosmo\cosmo_portal1_activity\cosmo_portal1_activity_mission6.esp
+#
+# Mission 6, the ship: reach the hangar door, then kill the guards. The
+# objective clears a few seconds after the last guard dies. The alpha keeps
+# the hangar door in the ship encounter's bundle (o_hangar_door01) where TU0
+# has it in phase05 (o_cosmo_strike01_hangar_door01); the bare name binds it.
+
+# @hard_wipe()  (off: Codie, 2026-10-22)
+object o_hangar_door01
+encounter_handle enc_ship_portal1
+trigger_volume_objective obj_s1_phase05_m1
+generic_objective obj_s1_phase05_m2
+nav_point ap_kill_guards01
+
+script init():
+    o_hangar_door01.create()
+    o_hangar_door01.set_device_position(0)
+
+script complete(): pass
+
+script main():
+    enc = enc_ship_portal1
+    obj_s1_phase05_m1.objective_begin()
+    sleep_until(obj_s1_phase05_m1.is_complete())
+    obj_s1_phase05_m1.objective_end_silent()
+    o_hangar_door01.set_device_position(1)
+    obj_s1_phase05_m2.objective_begin(ap_kill_guards01)
+    sleep_until(guards_alive_count() > 0)
+    sleep_until(guards_alive_count() == 0)
+    sleep(10)
+    obj_s1_phase05_m2.objective_end_silent()
+
+def guards_alive_count():
+    enc = enc_ship_portal1
+    return enc.sq_bossbattle_fallen01.alive_count() + enc.sq_bossbattle_fallen02.alive_count() + enc.sq_bossbattle_fallen03.alive_count()

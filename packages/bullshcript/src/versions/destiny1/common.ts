@@ -47,6 +47,7 @@ export {
   compiledScriptSetOf,
   formatDiagnostic,
   readCompiledBs,
+  readCompiledBsFrom,
   writeCompiledBs,
 } from "../../bungiescript/compiled_bs.ts";
 export {

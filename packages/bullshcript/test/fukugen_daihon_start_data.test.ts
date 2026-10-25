@@ -20,8 +20,11 @@ import {
 import { describe, expect, it } from "vitest";
 import {
   ALPHA_BUILD,
+  BETATH_BUILD,
   EVIL_BUILD,
+  FF_BUILD,
   fukugenDaihonBuildDir,
+  PUBALPHA_BUILD,
   TU0_BUILD,
 } from "../tools/fukugen-daihon/folder.ts";
 
@@ -232,6 +235,17 @@ const TU0_STARTS: Readonly<Record<string, ExpectedStart>> = {
     ],
     spawnTransition: 0xff_ba_6f_9c,
   },
+  act_venus_m09_tower: {
+    destination: "venus",
+    startSlice: "complex",
+    phases: [
+      ["phase_lower_tower_goto", "lower_tower"],
+      ["phase_lower_tower_elevator", "lower_tower"],
+      ["phase_tower_find_boss", "tower"],
+      ["phase_tower_kill_boss", "tower"],
+      ["phase_tower_outro", "tower"],
+    ],
+  },
   cine_reveal: {
     destination: "cosmo",
     startSlice: "plaza",
@@ -291,7 +305,6 @@ const TU0_STARTS: Readonly<Record<string, ExpectedStart>> = {
   act_venus_m03_thieves_den: startsIn("venus", "archive"),
   act_venus_m05_vault: startsIn("venus", "archive"),
   act_venus_m06_ketch: startsIn("venus", "archive"),
-  act_venus_m09_tower: startsIn("venus", "archive"),
   cosmo_portal_2: startsIn("cosmo", "array"),
   cosmo_patrols_1: startsIn("cosmo", "array"),
   act_cosmo_m5_refinery: startsIn("cosmo", "array"),
@@ -337,6 +350,10 @@ const TU0_REGION_SPAWN_TRANSITIONS: Readonly<
     105: EMPTY_NAME_HASH,
     112: 0xea_ec_23_35,
     113: 0xea_ec_23_35,
+  },
+  act_venus_m09_tower: {
+    96: fnv1("complex_to_tower"),
+    192: 0xe4_81_4c_e5,
   },
 };
 
@@ -403,6 +420,48 @@ const EVIL_REGION_SPAWN_TRANSITIONS: Readonly<
     152: 0x3b_7e_f6_f6,
     168: 0x37_56_57_30,
   },
+};
+
+// The PS4 Alpha Trial (40662): the activities its packages hold a scenario
+// client for. Those scenarios are TU0's bubble for bubble, so the starts are
+// TU0's; the Tower has only its default state.
+const PUBALPHA_STARTS: Readonly<Record<string, ExpectedStart>> = {
+  act_cosmo_m1_dome_a: TU0_STARTS.act_cosmo_m1_dome_a,
+  city_tower_default1: TU0_STARTS.city_tower_default1,
+  cosmo_patrols_1: TU0_STARTS.cosmo_patrols_1,
+  cosmo_portal_1: TU0_STARTS.cosmo_portal_1,
+  pvp_factory: TU0_STARTS.pvp_factory,
+  pvp_moonbase: TU0_STARTS.pvp_moonbase,
+};
+
+// The PS4 pre-alpha (38464): the activities its packages hold a scenario
+// client for. Its regions are TU0's, so the starts are TU0's but the
+// strike's and the patrol's: the strike's phases are TU0's, but it starts at
+// the default spawn point (no rocketyard spawn point is
+// cosmo_portal_1_phase00); the patrol starts in delta_s, as its capture does.
+const BETATH_STARTS: Readonly<Record<string, ExpectedStart>> = {
+  city_tower_default1: TU0_STARTS.city_tower_default1,
+  cosmo_patrols_1: startsIn("cosmo", "delta_s"),
+  cosmo_portal_1: {
+    destination: "cosmo",
+    phases: TU0_STARTS.cosmo_portal_1?.phases,
+    startPhase: "phase00",
+    startSlice: "rocketyard",
+  },
+  pvp_factory: TU0_STARTS.pvp_factory,
+  pvp_marsbattle: TU0_STARTS.pvp_marsbattle,
+};
+
+// The PS4 ff build (39573): the activities its packages hold a scenario
+// client for. Its regions are TU0's, and the Cosmodrome holds the strike's
+// spawn point, so the starts are TU0's but the patrol's (delta_s, as its
+// capture); the DLC test map starts in its only bubble, whose region never
+// cracked.
+const FF_STARTS: Readonly<Record<string, ExpectedStart>> = {
+  city_tower_default1: TU0_STARTS.city_tower_default1,
+  cosmo_patrols_1: startsIn("cosmo", "delta_s"),
+  cosmo_portal_1: TU0_STARTS.cosmo_portal_1,
+  dlc_test_activity: startsIn("dlc_test_destination", "0x9C0CA0DB"),
 };
 
 // The alpha's activities: the initial slice of each <name>:scenario_fah, and
@@ -508,6 +567,18 @@ describe("Fukugen Daihon's alpha start data", () => {
 
 describe("Fukugen Daihon's TU0 start data", () => {
   check(TU0_BUILD, TU0_STARTS, TU0_REGION_SPAWN_TRANSITIONS, TU0_TIME_OF_DAY);
+});
+
+describe("Fukugen Daihon's PS4 pre-alpha start data", () => {
+  check(BETATH_BUILD, BETATH_STARTS, {}, {});
+});
+
+describe("Fukugen Daihon's PS4 ff start data", () => {
+  check(FF_BUILD, FF_STARTS, {}, {});
+});
+
+describe("Fukugen Daihon's PS4 Alpha Trial start data", () => {
+  check(PUBALPHA_BUILD, PUBALPHA_STARTS, {}, {});
 });
 
 describe("Fukugen Daihon's PS4 1.33 start data", () => {

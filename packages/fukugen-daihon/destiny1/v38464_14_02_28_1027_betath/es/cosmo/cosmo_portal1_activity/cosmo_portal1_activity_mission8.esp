@@ -1,0 +1,19 @@
+# es\cosmo\cosmo_portal1_activity\cosmo_portal1_activity_mission8.esp
+#
+# Mission 8, return to orbit: the Ghost's closing line plays under the last
+# objective, the results show, then the activity ends.
+
+player_objective po_return_to_orbit
+sequence m04_x20
+
+script init(): pass
+
+script complete():
+    c_lifetime_script_utilities.get_lifetime_sensor().end_game(30)
+
+script main():
+    po_return_to_orbit.set_active()
+    m04_x20.start()
+    sleep(15)
+    po_return_to_orbit.clear()
+    set_activity_complete()

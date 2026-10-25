@@ -1,0 +1,22 @@
+# es\utility_scripts\patrol_terminal.esu
+#
+# A patrol beacon: the hotspot a player uses to take a patrol mission. Each
+# patrol zone's enc_<zone>_patrols1 bundle holds two or three of them. The
+# hotspot is up from the bundle's load (retail 2.3.1 sends a zone's beacons
+# in its first world update) and any player may use it; the destination's
+# patrol controller watches is_used() and hands out the mission.
+
+object _terminal_hotspot
+interactable _interactable bind(_terminal_hotspot)
+
+@startup()
+script main():
+    _terminal_hotspot.create()
+    _interactable.enable_all_players()
+
+def is_used():
+    return _interactable.is_active()
+
+# ready for the next player once the controller has taken the use
+def reset():
+    _interactable.clear()

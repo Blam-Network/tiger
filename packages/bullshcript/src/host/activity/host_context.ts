@@ -131,6 +131,9 @@ export interface EncounterHostContext {
   findPlayer(characterKey: string): ActivityPlayer | undefined;
   readonly handlerOwners: WeakMap<LuaScriptThread, LuaTable>;
   readonly handles: Set<string>;
+  // The debugger's word on the hard wipe, over the running phase's, until
+  // the next phase starts.
+  hardWipeOverride: boolean | undefined;
   readonly importSlots: BoundInstance[];
   readonly instanceBundle: WeakMap<LuaTable, number>;
   readonly instancePrefix: WeakMap<LuaTable, string>;

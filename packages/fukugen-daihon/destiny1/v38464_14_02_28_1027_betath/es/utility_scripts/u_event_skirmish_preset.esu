@@ -1,0 +1,33 @@
+# es\utility_scripts\u_event_skirmish_preset.esu
+#
+# The skirmish's presentation (pf_event_skirmish's pf_preset): an objective for
+# each of its three rounds, and the lines and music it plays, bound to the
+# round objectives as the alpha's presets are (lines skipped, music postponed
+# while the objective is suppressed).
+
+player_objective po_event_skirmish_intro
+player_objective po_event_skirmish_mid
+player_objective po_event_skirmish_end
+sequence seq_intro_behavior
+sequence seq_skirmish_incoming bind(po_event_skirmish_intro, e_sequence_suppression_behavior.postpone)
+sequence seq_skirmish_warmup
+sequence seq_skirmish_intro bind(po_event_skirmish_intro, e_sequence_suppression_behavior.skip)
+sequence seq_skirmish_engage
+sequence seq_skirmish_start bind(po_event_skirmish_intro, e_sequence_suppression_behavior.skip)
+sequence seq_skirmish_team1_dmg_75 bind(po_event_skirmish_mid, e_sequence_suppression_behavior.skip)
+sequence seq_skirmish_team1_dmg_50 bind(po_event_skirmish_mid, e_sequence_suppression_behavior.skip)
+sequence seq_skirmish_team1_dmg_25 bind(po_event_skirmish_mid, e_sequence_suppression_behavior.skip)
+sequence seq_skirmish_team1_dmg_defeat bind(po_event_skirmish_end, e_sequence_suppression_behavior.skip)
+sequence seq_skirmish_team2_dmg_75 bind(po_event_skirmish_mid, e_sequence_suppression_behavior.skip)
+sequence seq_skirmish_team2_dmg_50 bind(po_event_skirmish_mid, e_sequence_suppression_behavior.skip)
+sequence seq_skirmish_team2_dmg_25 bind(po_event_skirmish_mid, e_sequence_suppression_behavior.skip)
+sequence seq_skirmish_team2_dmg_defeat bind(po_event_skirmish_end, e_sequence_suppression_behavior.skip)
+sequence seq_skirmish_time_75 bind(po_event_skirmish_mid, e_sequence_suppression_behavior.skip)
+sequence seq_skirmish_time_50 bind(po_event_skirmish_mid, e_sequence_suppression_behavior.skip)
+sequence seq_skirmish_time_25 bind(po_event_skirmish_end, e_sequence_suppression_behavior.skip)
+sequence seq_skirmish_flee bind(po_event_skirmish_end, e_sequence_suppression_behavior.skip)
+sequence seq_skirmish_end_gold bind(po_event_skirmish_end, e_sequence_suppression_behavior.skip)
+sequence seq_skirmish_end_silver bind(po_event_skirmish_end, e_sequence_suppression_behavior.skip)
+sequence seq_skirmish_end_bronze bind(po_event_skirmish_end, e_sequence_suppression_behavior.skip)
+sequence seq_skirmish_end_part bind(po_event_skirmish_end, e_sequence_suppression_behavior.skip)
+sequence seq_skirmish_music1 bind(po_event_skirmish_intro, e_sequence_suppression_behavior.postpone)

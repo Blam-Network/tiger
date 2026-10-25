@@ -1,0 +1,14 @@
+# bs\activities\common\story_common.bs
+#
+# The story missions' binder. Ties the activity's lifetime to its timer.
+# The players rows need no script; the host assigns them.
+
+@activity_bundle("story_common")
+
+class c_encounter__story_common : c_encounter:
+    lifetime lifetime
+    timer lifetime_timer
+
+    def import():
+        success = lifetime.import_only_bind(lifetime_timer)
+        return success

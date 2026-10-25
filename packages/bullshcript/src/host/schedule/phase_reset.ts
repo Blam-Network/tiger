@@ -53,8 +53,10 @@ export function resetCurrentPhase(self: EncounterHostContext): void {
   const roots = [phase.instance, ...encounters];
   // before discard forgets who owns what
   const restarted = ownedRows(self, encounters);
+  const triggers = boundTriggers(self, roots);
   const dead = discard(self, roots);
   restoreRows(self, restarted);
+  rearmTriggers(self, triggers);
   const fresh = build(self, roots, dead);
   for (const old of encounters) {
     const script = self.built.find(({ table }) => table === fresh.get(old));
@@ -110,6 +112,57 @@ function ownedRows(
     }
   }
   return rows;
+}
+
+// The player triggers the handles of these instances, and of everything built
+// under them, are bound to, by rowKey.
+function boundTriggers(
+  self: EncounterHostContext,
+  roots: readonly LuaTable[]
+): Map<string, ItemRef> {
+  const trees = new Set(
+    roots.flatMap((root) => [...self.ownership.treeOf(root)])
+  );
+  const rows = new Map<string, ItemRef>();
+  for (const bound of self.objects) {
+    const owner = self.ownership.ownerOfObject(bound);
+    if (
+      bound.row?.typeId === self.types.PlayerTrigger &&
+      owner !== undefined &&
+      trees.has(owner)
+    ) {
+      rows.set(rowKey(bound.row), itemRef(bound.row));
+    }
+  }
+  return rows;
+}
+
+// A player trigger fires once per arming (the client's last fire < the arm
+// stamp), and the host keeps its fire until a script arms it again. One a
+// script only polls (the m09 tower's skiff triggers, never armed) would read
+// as fired from the reset phase's first tick, and the client would never fire
+// it again. So each goes out armed afresh, enabled as the reset left it, and
+// its fire is forgotten: the next player to walk in fires it.
+function rearmTriggers(
+  self: EncounterHostContext,
+  triggers: ReadonlyMap<string, ItemRef>
+): void {
+  const armedAt = self.context.clock.activityTicks();
+  for (const item of triggers.values()) {
+    self.world.forget(itemKey(item.bundle, item.typeIndex));
+    const last = self.journal.last("playerTrigger", item);
+    const change: ItemChange = {
+      item,
+      kind: "playerTrigger",
+      state: {
+        armedAt,
+        enabled: last?.kind === "playerTrigger" ? last.state.enabled : true,
+      },
+    };
+    self.journal.noteRestored(change);
+    self.options.onItemChange?.(change);
+    self.context.onSent?.(change);
+  }
 }
 
 // Stops the scripts of these top-level instances and everything built under
@@ -333,6 +386,8 @@ function withoutBehaviour(
     state: {
       ...change.state,
       behaviour: {
+        awarenessFlags: behaviour?.awarenessFlags ?? 0,
+        awarenessMask: behaviour?.awarenessMask ?? 0,
         channels: behaviour?.channels ?? [],
         incarnation:
           Math.max(behaviour?.incarnation ?? 0, current.behaviour.incarnation) +

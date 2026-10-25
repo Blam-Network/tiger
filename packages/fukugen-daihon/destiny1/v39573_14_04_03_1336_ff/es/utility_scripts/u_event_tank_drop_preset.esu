@@ -1,0 +1,30 @@
+# es\utility_scripts\u_event_tank_drop_preset.esu
+#
+# The Walker drop's presentation (pf_event_tank_drop's pf_preset): the public
+# event objective, the engagement hop-on, the pre-engage volume, and the lines
+# and music the event plays. This build's preset has TU0's lines (announce,
+# engage, a health update, health and time warnings and the tier endings,
+# with generic takes), as retail's; the generic takes are left unbound as the
+# countdown preset leaves its own.
+
+player_objective po_event_tank
+hop_on ho_engagement
+trigger_volume tv_drill_pre_engage
+player_trigger pt_drill_pre_engage bind(tv_drill_pre_engage)
+sequence seq_intro_behavior
+sequence seq_tank_announce bind(po_event_tank, e_sequence_suppression_behavior.postpone)  # WARNING: unused - retail played the other take (announce_generic, complete_silver)
+sequence seq_tank_announce_generic
+sequence seq_tank_engage  # WARNING: unused - retail played the other take (announce_generic, complete_silver)
+sequence seq_tank_engage_generic
+sequence seq_tank_update_health bind(po_event_tank, e_sequence_suppression_behavior.skip)  # WARNING: unused - no native reads the Walker's health
+sequence seq_tank_ending_health bind(po_event_tank, e_sequence_suppression_behavior.skip)  # WARNING: unused - no native reads the Walker's health
+sequence seq_tank_ending_time bind(po_event_tank, e_sequence_suppression_behavior.skip)
+sequence seq_tank_complete_gold bind(po_event_tank, e_sequence_suppression_behavior.skip)
+sequence seq_tank_complete_gold_generic  # WARNING: unused - retail played the other take (announce_generic, complete_silver)
+sequence seq_tank_complete_silver bind(po_event_tank, e_sequence_suppression_behavior.skip)
+sequence seq_tank_complete_silver_generic  # WARNING: unused - retail played the other take (announce_generic, complete_silver)
+sequence seq_tank_complete_bronze bind(po_event_tank, e_sequence_suppression_behavior.skip)
+sequence seq_tank_complete_bronze_generic  # WARNING: unused - retail played the other take (announce_generic, complete_silver)
+sequence seq_tank_complete_failure bind(po_event_tank, e_sequence_suppression_behavior.skip)
+sequence seq_tank_complete_failure_generic  # WARNING: unused - retail played the other take (announce_generic, complete_silver)
+sequence seq_tank_music1 bind(po_event_tank, e_sequence_suppression_behavior.postpone)

@@ -188,6 +188,10 @@ script sc_pusher():
     sleep_until(not o_laserweb_pusher01.is_alive())
     o_laserweb_pusher01.delete_object()
 
+# The hack runs on the waves' deaths, not a clock: each web falls a few
+# seconds after its wave is down, and the console finishes as the last
+# wave's captain dies (the 2.3.1 run: web 1 2.8 s after the last shank,
+# web 2 3 s after the last rusher, the console 2 s after the captain).
 script sc_hack():
     o_laserweb01.delete_object()
     o_laserweb02.delete_object()
@@ -198,17 +202,46 @@ script sc_hack():
     console = sp_placement_array._object
     sleep_until(console.is_active())
     console.set_device_position(0.1)
-    sc_hack_waves.wake()
     sleep(1)
     o_ghost_scan_cage_orb.create()
     o_ghost_scan_cage_cyln.create()
-    sleep(82)
+    sleep(5)
+
+    # wave 1: the floor Fallen, the third squad as the first two thin out,
+    # then the shanks once they are all down
+    place_on_task(sq_objective_suppressors01, "hive_disruptor04")
+    place_on_task(sq_objective_suppressors02, "suppress05")
+    place_on_task(sq_objective_suppressors03, "suppression")
+    sleep(2)
+    place_on_task(sq_objective_fallen01a, "wave01b")
+    place_on_task(sq_objective_fallen01b, "wave01e")
+    sleep_until(sq_objective_fallen01a.alive_count() + sq_objective_fallen01b.alive_count() <= 3)
+    place_on_task(sq_objective_fallen01c, "wave01a")
+    sleep_until_cleared("wave01", 3)
+    place_shanks()
+    sleep_until_cleared("shanks", 3)
     o_laserweb01.delete_object()
     o_laserweb_nutblock0101.delete_object()
     o_laserweb_nutblock0102.delete_object()
     o_laserweb_behavior0101.delete_object()
     o_laserweb_behavior0102.delete_object()
-    sleep(66)
+
+    # wave 2: the rushers come in as the first two squads thin out
+    sleep(6)
+    sq_objective_suppressors02.respawn()
+    sq_objective_suppressors03.respawn()
+    sleep(2)
+    place_on_task(sq_objective_fallen02b, "0x54B63915")
+    place_on_task(sq_objective_fallen02c, "wave02a")
+    sleep(1)
+    place_on_task(sq_objective_suppressors04, "suppress01")
+    place_on_task(sq_objective_suppressors05, "suppress04")
+    sleep_until(sq_objective_fallen02b.alive_count() + sq_objective_fallen02c.alive_count() <= 4)
+    sq_objective_fallen02b.set_task("wave02a")
+    sleep(4)
+    place_on_task(sq_objective_fallen02d, "wave02_rush")
+    place_on_task(sq_objective_fallen02e, "0xE85AA53A")
+    sleep_until_cleared("wave02", 3)
     o_laserweb02.delete_object()
     o_laserweb_nutblock0201.delete_object()
     o_laserweb_nutblock0202.delete_object()
@@ -216,7 +249,49 @@ script sc_hack():
     o_laserweb_behavior0201.delete_object()
     o_laserweb_behavior0202.delete_object()
     o_laserweb_behavior0203.delete_object()
-    sleep(134)
+
+    # wave 3: Hive and Fallen together, the second Hive pair as the first
+    # is all but gone
+    sleep(4)
+    place_on_task(sq_objective_hive01, "wave03c")
+    place_on_task(sq_objective_hive02, "hive_disruptor01")
+    sleep(1)
+    sq_objective_suppressors01.respawn()
+    sq_objective_suppressors02.respawn()
+    sq_objective_suppressors03.respawn()
+    sleep(2)
+    place_on_task(sq_objective_fallen03a, "rush_point")
+    place_on_task(sq_objective_fallen03b, "wave03a")
+    sleep(1)
+    sq_objective_suppressors04.respawn()
+    sq_objective_suppressors05.respawn()
+    sleep_until(sq_objective_hive01.alive_count() + sq_objective_hive02.alive_count() <= 1)
+    sleep(1)
+    place_on_task(sq_objective_hive03, "hive_disruptor02")
+    place_on_task(sq_objective_hive04, "hive_disruptor03")
+    sleep_until_cleared("wave03", 4)
+
+    # the last push: the shanks again, the rushers back as the shanks thin
+    # out, wave 3's Fallen back as the rushers do, then the captain once the
+    # rushers are down
+    place_shanks()
+    # a shank placed again reads dead until the client reports it back
+    sleep_until_timeout(shanks_alive_count() > 2, 10)
+    sleep_until(shanks_alive_count() <= 2)
+    sq_objective_fallen02d.respawn()
+    sq_objective_fallen02e.respawn()
+    sleep_until(rushers_alive_count() <= 1)
+    sq_objective_fallen03a.respawn()
+    sq_objective_fallen03b.respawn()
+    sleep_until(rushers_alive_count() == 0)
+    sleep(1)
+    sq_objective_fallen03c.set_task("wave03b")
+    sq_objective_fallen03c__captain_major.place()
+    sleep_until_timeout(sq_objective_fallen03c__captain_major.is_bound(), 10)
+    sleep_until(not sq_objective_fallen03c__captain_major.is_bound())
+    sleep(2)
+
+    # the captain is dead: the hack completes and the last web falls
     o_ghost_scan_cage_orb.set_device_position(1)
     o_ghost_scan_cage_cyln.set_device_position(1)
     console.set_device_position(1)
@@ -234,51 +309,50 @@ script sc_hack():
     place_on_task(sq_trash02_fallen02, "0xC8966C13")
     place_on_task(sq_trash02_fallen03, "0xC8966C10")
 
-script sc_hack_waves():
-    sleep(6)
-    place_on_task(sq_objective_suppressors01, "hive_disruptor04")
-    place_on_task(sq_objective_suppressors02, "suppress05")
-    place_on_task(sq_objective_suppressors03, "suppression")
-    sleep(2)
-    place_on_task(sq_objective_fallen01a, "wave01b")
-    place_on_task(sq_objective_fallen01b, "wave01e")
-    sleep(33)
-    place_on_task(sq_objective_fallen01c, "wave01a")
-    sleep(20)
+# the shanks drop two at a time, one from each squad (the 2.3.1 run dropped a
+# squad's pairs together: 01d's 01 and 03, 01e's 02 and 04 0.9 s on, 01d's 02
+# and 04 0.5 s after, 01e's 01 and 03 1.9 s after that); two of one squad
+# placed in one update leave the first unspawned on ff
+def place_shanks():
     sq_objective_fallen01d.set_task("0xC8389513")
-    sq_objective_fallen01d__shank01.place()
-    sq_objective_fallen01d__shank02.place()
-    sq_objective_fallen01d__shank03.place()
-    sq_objective_fallen01d__shank04.place()
-    sleep(1)
     sq_objective_fallen01e.set_task("wave01d")
-    sq_objective_fallen01e__shank01.place()
+    sq_objective_fallen01d__shank01.place()
     sq_objective_fallen01e__shank02.place()
-    sq_objective_fallen01e__shank03.place()
-    sq_objective_fallen01e__shank04.place()
-    sleep(31)
-    place_on_task(sq_objective_fallen02b, "0x54B63915")
-    place_on_task(sq_objective_fallen02c, "wave02a")
     sleep(1)
-    place_on_task(sq_objective_suppressors04, "suppress01")
-    place_on_task(sq_objective_suppressors05, "suppress04")
-    sleep(24)
-    sq_objective_fallen02b.set_task("wave02a")
-    sleep(4)
-    place_on_task(sq_objective_fallen02d, "wave02_rush")
-    place_on_task(sq_objective_fallen02e, "0xE85AA53A")
-    sleep(32)
-    place_on_task(sq_objective_hive01, "wave03c")
-    place_on_task(sq_objective_hive02, "hive_disruptor01")
-    sleep(3)
-    place_on_task(sq_objective_fallen03a, "rush_point")
-    place_on_task(sq_objective_fallen03b, "wave03a")
-    sleep(12)
-    place_on_task(sq_objective_hive03, "hive_disruptor02")
-    place_on_task(sq_objective_hive04, "hive_disruptor03")
-    sleep(103)
-    sq_objective_fallen03c.set_task("wave03b")
-    sq_objective_fallen03c__captain_major.place()
+    sq_objective_fallen01d__shank03.place()
+    sq_objective_fallen01e__shank04.place()
+    sleep(1)
+    sq_objective_fallen01d__shank02.place()
+    sq_objective_fallen01e__shank01.place()
+    sleep(1)
+    sq_objective_fallen01d__shank04.place()
+    sq_objective_fallen01e__shank03.place()
+
+# a wave is down when none of its squads has anyone standing, and that holds
+# for a moment (a squad reads 0 between one member dying and the next coming
+# in)
+def sleep_until_cleared(wave, hold):
+    while true:
+        sleep_until(wave_alive_count(wave) == 0)
+        sleep(hold)
+        if wave_alive_count(wave) == 0:
+            return
+
+def wave_alive_count(wave):
+    if wave == "wave01":
+        return sq_objective_fallen01a.alive_count() + sq_objective_fallen01b.alive_count() + sq_objective_fallen01c.alive_count()
+    elif wave == "shanks":
+        return shanks_alive_count()
+    elif wave == "wave02":
+        return sq_objective_fallen02b.alive_count() + sq_objective_fallen02c.alive_count() + rushers_alive_count()
+    # wave 3
+    return sq_objective_hive01.alive_count() + sq_objective_hive02.alive_count() + sq_objective_hive03.alive_count() + sq_objective_hive04.alive_count() + sq_objective_fallen03a.alive_count() + sq_objective_fallen03b.alive_count()
+
+def shanks_alive_count():
+    return sq_objective_fallen01d.alive_count() + sq_objective_fallen01e.alive_count()
+
+def rushers_alive_count():
+    return sq_objective_fallen02d.alive_count() + sq_objective_fallen02e.alive_count()
 
 def place_on_task(sq, task):
     sq.set_task(task)

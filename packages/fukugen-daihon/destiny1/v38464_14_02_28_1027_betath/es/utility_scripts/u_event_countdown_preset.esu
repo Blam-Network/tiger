@@ -1,0 +1,24 @@
+# es\utility_scripts\u_event_countdown_preset.esu
+#
+# The countdown (Warsat) events' presentation (their pf_preset): the public
+# event objective, and the dialogue and music the event plays as it goes.
+# This build's preset has the 360 alpha's sequences and bindings, without the
+# pre-engage volume, which has moved out to the event.
+
+player_objective po_event_countdown
+sequence seq_intro_behavior
+sequence seq_warsat_start bind(po_event_countdown, e_sequence_suppression_behavior.skip)
+sequence seq_warsat_engage1
+sequence seq_warsat_engage2 bind(po_event_countdown, e_sequence_suppression_behavior.skip)
+sequence seq_warsat_25_progress bind(po_event_countdown, e_sequence_suppression_behavior.skip)
+sequence seq_warsat_50_progress bind(po_event_countdown, e_sequence_suppression_behavior.skip)
+sequence seq_warsat_75_progress bind(po_event_countdown, e_sequence_suppression_behavior.skip)
+sequence seq_warsat_end_gold bind(po_event_countdown, e_sequence_suppression_behavior.skip)
+sequence seq_warsat_end_silver bind(po_event_countdown, e_sequence_suppression_behavior.skip)
+sequence seq_warsat_end_bronze bind(po_event_countdown, e_sequence_suppression_behavior.skip)
+sequence seq_warsat_end_part bind(po_event_countdown, e_sequence_suppression_behavior.skip)
+sequence seq_warsat_25_timeleft bind(po_event_countdown, e_sequence_suppression_behavior.skip)
+sequence seq_warsat_50_timeleft bind(po_event_countdown, e_sequence_suppression_behavior.skip)
+sequence seq_warsat_75_timeleft bind(po_event_countdown, e_sequence_suppression_behavior.skip)
+sequence seq_warsat_music1 bind(po_event_countdown, e_sequence_suppression_behavior.postpone)
+sequence seq_warsat_incoming bind(po_event_countdown, e_sequence_suppression_behavior.postpone)

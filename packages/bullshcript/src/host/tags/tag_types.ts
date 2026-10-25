@@ -27,11 +27,11 @@ export interface ActivityBundleItemTypes {
   readonly Object: number;
   readonly ObjectFilter: number;
   readonly Objective: number;
+  readonly Passenger?: number;
   readonly Phase: number;
   readonly Player: number;
   readonly PlayerMonitor: number;
   readonly PlayerObjective: number;
-  readonly Passenger?: number;
   readonly PlayerTrigger: number;
   readonly SafeZone: number;
   readonly Scoreboard: number;

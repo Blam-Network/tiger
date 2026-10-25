@@ -42,7 +42,7 @@ describe("TU0 BungieScript sources", () => {
     // the missions built from captures, and the utility scripts only their
     // bundles use: their bundles' rows are not among the tests' tables
     const noRowTablePath =
-      /^es\/(mars|moon)\/|^es\/cosmo\/(act_cosmo_m(0_5_hangar|1_dome_a|2_dome_c)|dome_[ac])\/|^es\/cosmo\/hangar\/enc_hangar_m0_5\.es$|^es\/venus\/(academy_entrance|act_venus_m01_engineering|act_venus_m07_northern_tides|north_tides|south_tides)\/|^es\/utility_scripts\/(venus_raid_pillar_switch|vex_warp_gate)\.esu$/;
+      /^es\/(mars|moon)\/|^es\/cosmo\/(act_cosmo_m(0_5_hangar|1_dome_a|2_dome_c)|dome_[ac])\/|^es\/cosmo\/hangar\/enc_hangar_m0_5\.es$|^es\/venus\/(academy_entrance|act_venus_m01_engineering|act_venus_m07_northern_tides|act_venus_m09_tower|lower_tower|north_tides|south_tides|tower)\/|^es\/utility_scripts\/(venus_raid_pillar_switch|vex_warp_gate)\.esu$/;
     for (const file of scriptFiles) {
       const decl = compiled.compiledDecl(file.path);
       if (noRowTable.test(decl.name) || noRowTablePath.test(file.path)) {

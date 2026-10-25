@@ -1,0 +1,74 @@
+# es\utility_scripts\ambush_encounter.esu
+#
+# An ambient ambush: its squads go in when a player walks into its volume,
+# and it re-arms once they have been out of combat for respawn_time. Ported
+# from the pre-alpha's.
+
+trigger_volume _trigger_volume
+dynamic_array<squad> _squad
+squad_group _squad_group
+objective _objective
+common_reference _objective_reference
+int respawn_time = 30
+timer _respawn_timer
+player_monitor _player_monitor bind(_trigger_volume)
+
+def import_only_bind(identifier):
+    for s in _squad:
+        s.import_only_bind(identifier)
+    return true
+
+def set_objective(override_objective):
+    _objective_reference = override_objective
+
+def activate():
+    main.restart()
+
+script init():
+    main.restart()
+
+def deactivate():
+    main.kill()
+    complete.restart()
+
+script main():
+    finished = false
+
+    for s in _squad:
+        _squad_group.add_child(s)
+
+    if _objective_reference:
+        _objective_reference.add_squad(_squad_group)
+    else:
+        _objective.add_squad(_squad_group)
+        _objective.reset()
+
+    while not finished:
+        sleep_until(_player_monitor.test_any_inside(), 0)
+
+        _squad_group.place()
+        _respawn_timer.reset(respawn_time)
+
+        while true:
+            if _squad_group.alive_count() == 0:
+                finished = true
+                break
+
+            if _squad_group.current_in_combat_count() > 0:
+                _respawn_timer.reset(respawn_time)
+                _respawn_timer.stop()
+            else:
+                _respawn_timer.start()
+
+            if _respawn_timer.is_expired() and respawn_time > 0:
+                break
+            sleep(1)
+
+        complete.restart()
+
+script complete():
+    if _squad_group.alive_count() > 0:
+        _squad_group.activate_temperament("temper_despawn")
+        sleep(4)
+        _squad_group.deactivate_temperament("temper_despawn")
+    _squad_group.remove()

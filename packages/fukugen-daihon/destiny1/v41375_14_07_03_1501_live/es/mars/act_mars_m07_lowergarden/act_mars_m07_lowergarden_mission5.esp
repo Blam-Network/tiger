@@ -7,6 +7,7 @@
 # glyphs. The lowergarden encounter runs the scans, the block, the key and
 # the door; this phase follows what it makes. Ghost cages, glyph surges and
 # the door open twenty-six seconds after the key appears, all one run's.
+# The phase ends as the player reaches the heart's ledge.
 
 @hard_wipe()
 trigger_volume_objective sp_objective_goto
@@ -46,8 +47,6 @@ script main():
     seq_sound_lowergarden_darkness.start()
     sp_objective_heart_goto.objective_begin()
     sleep_until(sp_objective_heart_goto.is_complete())
-    sleep_until(enc.pm_ledge.test_any_inside())
-    sleep(3)
     seq_music_garden_ambience.stop()
     sp_objective_heart_goto.objective_end_silent()
 

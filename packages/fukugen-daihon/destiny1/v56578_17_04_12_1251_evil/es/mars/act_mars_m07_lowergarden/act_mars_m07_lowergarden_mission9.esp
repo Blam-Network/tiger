@@ -1,8 +1,9 @@
 # es\mars\act_mars_m07_lowergarden\act_mars_m07_lowergarden_mission9.esp
 #
-# Mission 9, the climax: the last Sol Progeny wakes ten seconds after the
-# darkness objective clears, with its minotaurs and goblins behind it. The
-# heart dies with it; the objective clears two seconds later. One run.
+# Mission 9, the climax: the last Sol Progeny wakes five seconds into the
+# phase (ten after the darkness objective clears), with its minotaurs and
+# goblins behind it; the objective comes up as it starts to wake. The heart
+# dies with it; the objective clears two seconds later. One run.
 
 @hard_wipe()
 generic_objective sp_objective_kill
@@ -16,9 +17,9 @@ script complete(): pass
 script main():
     enc = enc_lowergarden_m07
     heart = enc.sp_specops_heart
-    sleep(10)
+    sleep(5)
     seq_music_lowergarden.set_switch_mask(8)
-    sp_objective_kill.objective_begin(nil)
+    sc_objective.wake()
     wake_statue(heart.o_statue_b, heart.sq_bg_mino_b, "0xA003D0D0")
     enc.sq_minions_c_minotaur_a.set_task("0xA003D0D1")
     enc.sq_minions_c_goblin_a.set_task("0x4083042B")
@@ -35,6 +36,9 @@ script main():
     seq_music_lowergarden.stop()
     sleep(1)
     sp_objective_kill.objective_end_silent()
+
+script sc_objective():
+    sp_objective_kill.objective_begin(nil)
 
 def wake_statue(statue, boss, task):
     heart = enc_lowergarden_m07.sp_specops_heart

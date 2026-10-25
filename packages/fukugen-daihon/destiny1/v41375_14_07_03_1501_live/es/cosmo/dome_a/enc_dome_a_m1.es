@@ -56,7 +56,10 @@ script sc_scan():
     sleep(1.1)
     place_on_task(sq_hive_basement_thrall01, "0x0A52BC0C")
     place_on_task(sq_hive_basement_troopers01, "0x8F0587D7")
-    sleep_until(sq_hive_basement_thrall01.alive_count() == 0)
+    # the thralls wait frozen behind the door (one run: their squad read
+    # none alive 0.2 s after they were placed, and the door moved 2.5 s
+    # after that)
+    sleep(2.7)
     o_door01.set_device_position(1)
     sleep(2.5)
     sq_hive_scare02b.place()

@@ -1,0 +1,50 @@
+# es\utility_scripts\patrol_kill_vip.esu
+#
+# A patrol mission: hunt down a named target. The target is a squad of the
+# zone's enc_<zone>_patrols1 bundle, bound here by its import name; that
+# bundle puts it out while this mission is active (is_active()) and calls
+# target_down() once it has seen the target stand and then wiped. Named
+# after the ff build's missions, whose player objectives carry the import
+# name "patrol_kill_vip".
+#
+# No capture has run one (retail 2.3.1's targets were never placed in 32
+# minutes without the mission). The waypoint, the one-kill bar and the end
+# follow the captured kill and scan missions. The kill is the target's
+# bundle's to see: two targets' bindings name their encounter
+# (sq_patrol_vip_servitor1), not a squad, so a kill listener on the
+# binding would not know their bodies.
+
+player_objective _player_objective
+nav_point _nav_point
+encounter_binding _squad
+bool _target_down
+
+def import_only_bind(identifier):
+    return _squad.import_only_bind_object(identifier)
+
+def is_active():
+    return _player_objective.is_active()
+
+def target_down():
+    _target_down = true
+
+def is_complete():
+    return _target_down
+
+def objective_begin():
+    _target_down = false
+    _player_objective.set_active()
+    _player_objective.progress_activate(0, 1)
+    _player_objective.nav_point_activate_with_fallback(_squad, _nav_point)
+
+def objective_end():
+    _player_objective.progress_update(1)
+    _player_objective.nav_point_clear()
+    sleep(1.5)
+    _player_objective.set_complete()
+    sleep(5)
+    _player_objective.clear()
+
+def objective_end_silent():
+    _player_objective.nav_point_clear()
+    _player_objective.clear()

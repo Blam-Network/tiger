@@ -1,0 +1,25 @@
+# es\utility_scripts\u_event_skirmish_preset.esu
+#
+# The skirmish's presentation (pf_event_skirmish's pf_preset): an objective for
+# each of its three rounds, and the lines and music it plays. This build's
+# preset has TU0's lines (announce, engage and the tier endings, each with a
+# generic take), bound to the round objectives; the generic takes are left
+# unbound as the countdown preset leaves its own.
+
+player_objective po_event_skirmish_intro
+player_objective po_event_skirmish_mid
+player_objective po_event_skirmish_end
+sequence seq_intro_behavior
+sequence seq_skirmish_announce bind(po_event_skirmish_intro, e_sequence_suppression_behavior.postpone)
+sequence seq_skirmish_announce_generic  # WARNING: unused - the event plays the specific take
+sequence seq_skirmish_engage
+sequence seq_skirmish_engage_generic  # WARNING: unused - the event plays the specific take
+sequence seq_skirmish_complete_gold bind(po_event_skirmish_end, e_sequence_suppression_behavior.skip)
+sequence seq_skirmish_complete_gold_generic  # WARNING: unused - retail's tank drop played the specific take
+sequence seq_skirmish_complete_silver bind(po_event_skirmish_end, e_sequence_suppression_behavior.skip)
+sequence seq_skirmish_complete_silver_generic  # WARNING: unused - retail's tank drop played the specific take
+sequence seq_skirmish_complete_bronze bind(po_event_skirmish_end, e_sequence_suppression_behavior.skip)
+sequence seq_skirmish_complete_bronze_generic  # WARNING: unused - retail's tank drop played the specific take
+sequence seq_skirmish_complete_failure bind(po_event_skirmish_end, e_sequence_suppression_behavior.skip)
+sequence seq_skirmish_complete_failure_generic  # WARNING: unused - retail's tank drop played the specific take
+sequence seq_skirmish_music1 bind(po_event_skirmish_intro, e_sequence_suppression_behavior.postpone)
