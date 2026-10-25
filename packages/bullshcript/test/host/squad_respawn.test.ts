@@ -20,6 +20,8 @@ const BUNDLE = 0x34e80eed;
 function makeSquad() {
   const client: {
     alive?: number;
+    bound?: { flag7: boolean; flag8: boolean };
+    standing?: { epoch: number; standing: boolean };
     deaths?: number;
     tally?: readonly number[];
   } = {};
@@ -38,9 +40,10 @@ function makeSquad() {
     players: () => [],
     playerSensor: () => undefined,
     reports: {
-      actorBound: () => undefined,
+      actorBound: () => client.bound,
       actorCommandScript: () => undefined,
       actorDropAck: () => undefined,
+      actorStanding: () => client.standing,
       bubbleOccupied: () => undefined,
       health: () => undefined,
       objectAlive: () => undefined,
@@ -122,6 +125,8 @@ function makeSquad() {
     },
     bodies: () => context.state.bodiesFor(BUNDLE, 7),
     actor: callOn(actor),
+    actorChanges: () => changes.filter((c) => c.kind === "actor").length,
+    advanceActor: (seconds: number) => actor.advance(seconds),
     actorState: () => {
       const last = changes.filter((c) => c.kind === "actor").at(-1);
       return last?.kind === "actor" ? last.state : undefined;
@@ -183,6 +188,25 @@ describe("a wiped squad's respawn", () => {
     expect(call("alive_count")).toBe(0);
   });
 
+  // ff, the refinery's last push: 02e's [3] and incidents never moved after
+  // the respawn, only its tally, 4 -> 8.
+  it("ends the hold when only the tally moves", () => {
+    const { call, client } = makeSquad();
+    call("place");
+    client.alive = 2;
+    client.tally = [0];
+    client.deaths = 0;
+    client.alive = 0;
+    client.tally = [2];
+    expect(call("alive_count")).toBe(0);
+    call("respawn");
+    expect(call("alive_count")).toBe(2);
+    client.tally = [3];
+    expect(call("alive_count")).toBe(1);
+    client.tally = [4];
+    expect(call("alive_count")).toBe(0);
+  });
+
   // simple_encounter's main, run again by the encounter manager: add_child
   // each time, place the first time, respawn after.
   it("comes back under its group when the encounter runs again", () => {
@@ -218,6 +242,40 @@ describe("a wiped squad's respawn", () => {
 
   // Retail's Last Array wave ship flew its exit and came back for the next
   // wave as a new actor: ActorAuth [0] 1 -> 2 -> 3, nothing left to drop.
+  // ff: two of a squad's shanks placed together left the first with the auth
+  // taken ([10]), nothing spent and no actor - the spawn volume's cap - and
+  // the client never tried it again.
+  it("places a deferred actor again under the next epoch until it stands", () => {
+    const { actor, actorChanges, actorState, advanceActor, client } =
+      makeSquad();
+    actor("place");
+    expect(actorState()?.incarnation).toBeUndefined();
+    client.bound = { flag7: false, flag8: true };
+    client.standing = { epoch: 0, standing: false };
+    const sent = actorChanges();
+    advanceActor(1);
+    advanceActor(1);
+    expect(actorChanges()).toBe(sent);
+    advanceActor(1);
+    expect(actorState()?.incarnation).toBe(2);
+    // the client has not taken epoch 2 yet: the old sense is no deferral
+    advanceActor(3);
+    expect(actorState()?.incarnation).toBe(2);
+    // it took it and the actor stands
+    client.standing = { epoch: 2, standing: true };
+    advanceActor(6);
+    expect(actorState()?.incarnation).toBe(2);
+  });
+
+  it("leaves a spent actor alone", () => {
+    const { actor, actorState, advanceActor, client } = makeSquad();
+    actor("place");
+    client.bound = { flag7: true, flag8: true };
+    client.standing = { epoch: 0, standing: false };
+    advanceActor(10);
+    expect(actorState()?.incarnation).toBeUndefined();
+  });
+
   it("places an already placed actor afresh, its drops cleared", () => {
     const { actor, actorState, squad } = makeSquad();
     actor("place");

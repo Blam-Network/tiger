@@ -288,6 +288,7 @@ export class EncounterScriptHost implements EncounterHostContext {
       triggerFired: (key) => this.world.at(key)?.triggerFiredAt !== undefined,
       triggerArmed: (key) => this.forgetStaleTriggerFire(key),
       health: (key) => this.world.at(key)?.health,
+      actorStanding: (key) => this.world.at(key)?.actorStanding,
       actorDropAck: (key) => {
         const ack = this.world.at(key)?.actorDropAck;
         return ack?.dropId === undefined
@@ -1311,6 +1312,23 @@ export class EncounterScriptHost implements EncounterHostContext {
     record.actorDropAck = {
       dropId: dropId ?? record.actorDropAck?.dropId,
       inProgress,
+    };
+  }
+
+  // Dirty-gated as the command script is: the epoch is carried when it moves,
+  // and a new one starts the combatant over, with no actor until one is
+  // reported.
+  reportActorStanding(
+    item: ItemKey,
+    epoch: number | undefined,
+    standing: boolean
+  ): void {
+    const record = this.world.record(itemKey(item.bundle, item.typeIndex));
+    const last = record.actorStanding ?? { epoch: 0, standing: false };
+    const fresh = epoch !== undefined && epoch !== last.epoch;
+    record.actorStanding = {
+      epoch: fresh ? epoch : last.epoch,
+      standing: standing || (!fresh && last.standing),
     };
   }
 

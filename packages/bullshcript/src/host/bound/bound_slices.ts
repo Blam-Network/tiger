@@ -96,6 +96,8 @@ export interface SquadSlice {
   // A wiped squad respawned and not yet reported back: alive_count answers
   // the bodies asked for until the client counts them.
   respawnPending: boolean;
+  // The squad's death tally, summed, when it was last placed.
+  tallyAtPlace: number;
   temperaments: Set<number>;
 }
 
@@ -110,12 +112,17 @@ export function newSquadSlice(): SquadSlice {
     dropElapsed: 0,
     incidentDeathsAtPlace: 0,
     respawnPending: false,
+    tallyAtPlace: 0,
     temperaments: new Set(),
   };
 }
 
 // Actor rows: the placed actor and its command script.
 export interface ActorSlice {
+  // How long the client has held the placement back, and how often it has
+  // been placed again for it (placeDeferredActor).
+  deferredFor: number;
+  deferredReplaces: number;
   dropId: number;
   dropRefs: ItemRef[];
   // The tick the last drop began: drop_squad calls in one tick share its id.
@@ -140,6 +147,8 @@ export interface ActorSlice {
 
 export function newActorSlice(): ActorSlice {
   return {
+    deferredFor: 0,
+    deferredReplaces: 0,
     dropId: 0,
     dropRefs: [],
     dropTick: undefined,

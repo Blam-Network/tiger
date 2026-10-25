@@ -45,6 +45,10 @@ const COMMAND_SCRIPT_ACK_TIMEOUT_SECONDS = 30;
 // and bumps the heartbeat (808006A2) every 2.5 s; both flat this long = unprimed.
 const COMMAND_SCRIPT_STALL_SECONDS = 6;
 const MAX_COMMAND_SCRIPT_REARMS = 10;
+// A deferred placement goes again this often while the client holds it back,
+// for two minutes at most.
+const DEFERRED_PLACE_SECONDS = 3;
+const MAX_DEFERRED_REPLACES = 40;
 
 // The handle each actor's state last went out from, so a change elsewhere
 // resends it rather than a blank.
@@ -465,6 +469,57 @@ export function rearmUnprimedScript(
   pushActor(self, `command script cookie #${self.actor.scriptCookie}`);
 }
 
+// The client holds a placement back while the spawner's volume is at its cap
+// ("deferring placement due to too many squad members in spawn volume", ff
+// sub_16C5A60) and never tries it again: the combatant has taken the auth
+// ([10]) with nothing spent and no actor. Two of the Devils' Lair's shanks of
+// one squad dropped together left the first of them so, and the wave waited
+// on it for good. The same actor goes again under the next epoch, which runs
+// the client's place test afresh, until it stands.
+export function placeDeferredActor(
+  self: BoundInstance,
+  seconds: number
+): void {
+  if (self.row?.typeId !== self.types.Actor) {
+    return;
+  }
+  const key = itemKey(self.row.bundle, self.row.typeIndex);
+  const bound = self.context.reports.actorBound(key);
+  const standing = self.context.reports.actorStanding(key);
+  const epoch = self.actor.incarnation > 1 ? self.actor.incarnation : 0;
+  const deferred =
+    (self.actor.placed ?? squadPlaced(self)) &&
+    self.actor.killEpoch === undefined &&
+    !carrierSeated(self) &&
+    bound?.flag8 === true &&
+    !bound.flag7 &&
+    standing?.epoch === epoch &&
+    !standing.standing;
+  if (!deferred) {
+    self.actor.deferredFor = 0;
+    if (standing?.standing) {
+      self.actor.deferredReplaces = 0;
+    }
+    return;
+  }
+  self.actor.deferredFor += seconds;
+  if (
+    self.actor.deferredFor < DEFERRED_PLACE_SECONDS ||
+    self.actor.deferredReplaces >= MAX_DEFERRED_REPLACES
+  ) {
+    return;
+  }
+  self.actor.deferredFor = 0;
+  self.actor.deferredReplaces += 1;
+  self.actor.incarnation += 1;
+  self.writer.note(
+    `${self.path} placed again as incarnation ${self.actor.incarnation} ` +
+      `(placement deferred, ${self.actor.deferredReplaces}/` +
+      `${MAX_DEFERRED_REPLACES})`
+  );
+  pushActor(self, `placed again, incarnation ${self.actor.incarnation}`);
+}
+
 // What the client reports for the command script (808006A2): f0 is the PC it
 // has reached, f1 the cookie it is running.
 export function commandScriptState(self: BoundInstance): LuaValue {
@@ -858,6 +913,7 @@ function placeActor(self: BoundInstance, placed: boolean): boolean {
     self.actor.dropId = 0;
   }
   self.actor.placed = placed;
+  self.actor.deferredReplaces = 0;
   notePlacement(self, placed ? 1 : 0);
   return pushActor(self, placed ? "place()" : "remove()");
 }
@@ -927,6 +983,9 @@ function notePlacement(self: BoundInstance, count: number): void {
     self.squad.deathsAtPlace = self.context.reports.squadDeaths?.(key) ?? 0;
     self.squad.incidentDeathsAtPlace =
       self.context.reports.squadIncidentDeaths?.(key) ?? 0;
+    self.squad.tallyAtPlace = tallySum(
+      self.context.reports.squadTally?.(key)
+    );
     placementKillsOf(self.context).set(key, self.squad.incidentDeathsAtPlace);
   }
 }
@@ -1034,11 +1093,13 @@ export function aliveCount(self: BoundInstance): number {
     } else {
       // The 0 is still the wipe's; some respawned squads never report again
       // (the refinery's last push), so a death since the respawn ends the hold
-      // and the tally and incidents count it from there.
+      // and the tally and incidents count it from there. On ff the tally alone
+      // moved for the last push's 02e, from 4 to 8.
       const died =
         (self.context.reports.squadDeaths?.(key) ?? 0) >
           self.squad.deathsAtPlace ||
-        (incidentDeaths ?? 0) > self.squad.incidentDeathsAtPlace;
+        (incidentDeaths ?? 0) > self.squad.incidentDeathsAtPlace ||
+        tallySum(tally) > self.squad.tallyAtPlace;
       if (!died) {
         return self.squad.desiredBodies;
       }
@@ -1046,7 +1107,7 @@ export function aliveCount(self: BoundInstance): number {
     }
   }
   if (tally !== undefined) {
-    const lost = tally.reduce((sum, cell) => sum + Math.max(0, cell), 0);
+    const lost = tallySum(tally);
     // A placed named member's cell goes out as 0 (sensor-auth's roster),
     // so it is not an anonymous body the tally could ever count down.
     const named = namedMembersPlaced(self, squad);
@@ -1098,6 +1159,10 @@ export function aliveCount(self: BoundInstance): number {
         ? self.squad.desiredBodies
         : squadBodies(self, squad))
   );
+}
+
+function tallySum(tally: readonly number[] | undefined): number {
+  return (tally ?? []).reduce((sum, cell) => sum + Math.max(0, cell), 0);
 }
 
 // Without a tally the count stands for the named members too, and a named
@@ -1241,6 +1306,7 @@ export function register(registry: NativeRegistry<BoundInstance>): void {
     self.squad.dropElapsed += seconds;
     self.actor.scriptElapsed += seconds;
     rearmUnprimedScript(self, seconds);
+    placeDeferredActor(self, seconds);
   });
 }
 

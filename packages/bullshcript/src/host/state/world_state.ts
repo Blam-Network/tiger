@@ -23,6 +23,9 @@ export interface ItemWorldRecord {
     pcReached?: number;
   };
   actorDropAck?: { dropId?: number; inProgress: boolean };
+  // Where the build's sense says: the epoch the client's combatant last took
+  // (ActorSense [0]) and whether it has had an actor since.
+  actorStanding?: { epoch: number; standing: boolean };
   // Capturable sense 0x80802E50 per Object item.
   capturable?: CapturableSense;
   // SquadSense squad +452: live members with a real target.

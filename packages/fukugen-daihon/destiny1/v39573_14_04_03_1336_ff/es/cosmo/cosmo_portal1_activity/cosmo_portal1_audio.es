@@ -4,6 +4,12 @@
 # trigger or a mission event; the music cues step through their sections as the
 # strike goes on. This build has no ascent music after Sepiks (TU0's
 # seq_music_ascent), so the closing lines play alone.
+#
+# The cues step by their Wwise music_switch state, not retail's switch mask:
+# the client takes the pair as a state name and value and refuses a mask.
+# cue1's switch has start and two more sections, 0x419C2C76 (three segments)
+# and 0xBED9FDF0 (four); which wave each plays is the bank's order, not
+# heard. cue3's switch has only start.
 
 @activity_bundle("cosmo_portal1_audio")
 
@@ -68,7 +74,7 @@ script sc_scan():
     console = enc_refinery_portal1.sp_placement_array._object
     sleep_until(console.get_device_position() > 0)
     cue1.start()
-    cue1.set_switch_mask(1)
+    cue1.set_state("music_switch", "start")
     sleep(3)
     s01_xx50.start()
     sleep_until_shanks_dead()
@@ -76,12 +82,12 @@ script sc_scan():
     sleep(3)
     m02_alarm.start()
     sleep(2)
-    cue1.set_switch_mask(2)
+    cue1.set_state("music_switch", "0x419C2C76")
     s01_xx70.start()
     sleep_until(not o_laser_21.is_alive())
     s01_xx80.start()
     sleep(2)
-    cue1.set_switch_mask(4)
+    cue1.set_state("music_switch", "0xBED9FDF0")
     sleep_until(console.get_device_position() >= 1)
     s01_xx90.start()
     sleep_until(not o_laser_31.is_alive())
@@ -110,7 +116,7 @@ script sc_ship():
     cue2.stop()
     sleep(1)
     cue3.start()
-    cue3.set_switch_mask(1)
+    cue3.set_state("music_switch", "start")
     sleep_until(sq_bossbattle_boss01.alive_count() > 0)
     sleep_until(sq_bossbattle_boss01.alive_count() == 0)
     cue3.stop()

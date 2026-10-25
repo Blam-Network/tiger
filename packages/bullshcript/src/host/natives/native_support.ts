@@ -70,6 +70,7 @@ export interface HostReports {
   ):
     | { cookieRunning?: number; heartbeat?: number; pcReached?: number }
     | undefined;
+  actorStanding(key: string): { epoch: number; standing: boolean } | undefined;
   actorDropAck(
     key: string
   ): { dropId: number; inProgress: boolean } | undefined;
