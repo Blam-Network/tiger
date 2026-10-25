@@ -18,6 +18,12 @@ toolbar (remembered) or open the UI with `?address=127.0.0.1:8199` for the mock.
 
 Keys: F5 continue, F6 pause, F10 step over, F11 step into, Shift+F11 step out, F8 one tick.
 
+Builds are numbered like Datamine Explorer's, `{seq}.{yy}.{mm}.{dd}.{hhmm}.{branch}`, or
+`untracked version` for local and pull request builds. `.github/workflows/bullshcript-debugger.yml`
+builds the app for Windows, macOS and Linux whenever it changes, tags each branch build
+`bullshcript-debugger-v<build string>` and publishes main's builds as GitHub releases, which the
+app's update check reads.
+
 ## The script debugger
 
 The app talks to bullshcript's `ScriptDebugger` (`@blamnetwork/bullshcript/destiny1/debug`, source in `../bullshcript/src/debug/`). It attaches to running script hosts, one target per host. A client can:

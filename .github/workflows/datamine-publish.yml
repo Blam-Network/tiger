@@ -16,7 +16,7 @@ jobs:
   publish:
     runs-on: ubuntu-latest
     permissions:
-      contents: write
+      contents: read
       id-token: write
     steps:
       - uses: actions/checkout@v4
@@ -51,9 +51,3 @@ jobs:
           fi
           echo "Publishing @blamnetwork/datamine@${PKG_VERSION} with dist-tag ${NPM_TAG}"
           npx npm@latest publish --provenance --access public --tag "$NPM_TAG"
-
-      - name: Create GitHub release
-        uses: softprops/action-gh-release@v2
-        with:
-          name: "@blamnetwork/datamine ${{ github.ref_name }}"
-          generate_release_notes: true

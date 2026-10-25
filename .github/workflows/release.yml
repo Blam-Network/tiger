@@ -3,8 +3,9 @@ name: release
 # scripts/release.mjs pushes a `<package dir>-v<version>` tag.
 on:
   push:
-    # datamine has its own workflow (datamine-publish.yml) for npm trusted publishing.
-    tags: ["*-v*", "!datamine-v*"]
+    # datamine has its own workflow (datamine-publish.yml) for npm trusted publishing;
+    # bullshcript-debugger-v tags are app builds (bullshcript-debugger.yml), not npm.
+    tags: ["*-v*", "!datamine-v*", "!bullshcript-debugger-v*"]
 
 permissions:
   contents: read
