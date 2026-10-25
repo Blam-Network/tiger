@@ -4,17 +4,10 @@
 // every class hash here is read off this build's data.
 export const k_build_string = "38464.14.02.28.1027.betath";
 
-export * from "./v38464_14_02_28_1027_betath/definitions/activity_bundle.ts";
-export * from "./v38464_14_02_28_1027_betath/definitions/activity_lookup.ts";
-export * from "./v38464_14_02_28_1027_betath/definitions/manifest.ts";
-export * from "./v38464_14_02_28_1027_betath/definitions/object_blueprint.ts";
-export * from "./v38464_14_02_28_1027_betath/definitions/scenario_client.ts";
-export * from "./v38464_14_02_28_1027_betath/definitions/sensor_slot.ts";
-export * from "./v38464_14_02_28_1027_betath/definitions/spawn_point.ts";
-export * from "./v38464_14_02_28_1027_betath/definitions/squad_definition.ts";
-export * from "./v38464_14_02_28_1027_betath/definitions/world_binding.ts";
 export * from "./v38464_14_02_28_1027_betath/definitions/ability.ts";
+export * from "./v38464_14_02_28_1027_betath/definitions/activity_bundle.ts";
 export * from "./v38464_14_02_28_1027_betath/definitions/activity_definition.ts";
+export * from "./v38464_14_02_28_1027_betath/definitions/activity_lookup.ts";
 export * from "./v38464_14_02_28_1027_betath/definitions/character.ts";
 export * from "./v38464_14_02_28_1027_betath/definitions/client_destination.ts";
 export * from "./v38464_14_02_28_1027_betath/definitions/director.ts";
@@ -25,10 +18,17 @@ export * from "./v38464_14_02_28_1027_betath/definitions/investment_client_globa
 export * from "./v38464_14_02_28_1027_betath/definitions/investment_globals.ts";
 export * from "./v38464_14_02_28_1027_betath/definitions/investment_rewards.ts";
 export * from "./v38464_14_02_28_1027_betath/definitions/item_display.ts";
+export * from "./v38464_14_02_28_1027_betath/definitions/manifest.ts";
+export * from "./v38464_14_02_28_1027_betath/definitions/object_blueprint.ts";
+export * from "./v38464_14_02_28_1027_betath/definitions/scenario_client.ts";
 export * from "./v38464_14_02_28_1027_betath/definitions/schema.ts";
 export * from "./v38464_14_02_28_1027_betath/definitions/schema_fast_init.ts";
+export * from "./v38464_14_02_28_1027_betath/definitions/sensor_slot.ts";
 export * from "./v38464_14_02_28_1027_betath/definitions/server_message.ts";
+export * from "./v38464_14_02_28_1027_betath/definitions/spawn_point.ts";
+export * from "./v38464_14_02_28_1027_betath/definitions/squad_definition.ts";
 export * from "./v38464_14_02_28_1027_betath/definitions/unlock_flags.ts";
+export * from "./v38464_14_02_28_1027_betath/definitions/world_binding.ts";
 export * from "./v38464_14_02_28_1027_betath/pkg/package_file.ts";
 export * from "./v38464_14_02_28_1027_betath/pkg/package_header.ts";
 export * from "./v38464_14_02_28_1027_betath/pkg/package_set.ts";
