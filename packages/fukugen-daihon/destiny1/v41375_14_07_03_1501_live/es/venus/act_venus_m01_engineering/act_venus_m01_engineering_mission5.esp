@@ -1,8 +1,9 @@
 # es\venus\act_venus_m01_engineering\act_venus_m01_engineering_mission5.esp
 #
-# Mission 5, hold the entrance: three defensive waves out of the Vex clouds, a
-# ledge sniper between them. Clears when the entrance is quiet; the music steps
-# up on the last wave and again at the end, then the Ghost sends the player on.
+# Mission 5, hold the entrance: three defensive waves out of the Vex clouds,
+# each once the last is dead. Completes when the entrance is quiet; the music
+# steps up on the last wave and again at the end, then the Ghost sends the
+# player on.
 
 @hard_wipe()
 generic_objective pf_resist_vex
@@ -22,17 +23,13 @@ script main():
     sc_last_wave_music.wake()
     sleep_until(enc_entrance_m01.entrance_clear == true)
     sleep(1)
-    pf_resist_vex.objective_end_silent()
+    pf_resist_vex.objective_end()
     sleep(1)
     venus_m01_music_cue1.set_switch_mask(31)
     sleep(5)
-    venus_m01_020_d100.wake()
+    md_vn01_020_100.start()
     sleep_until(md_vn01_020_100.is_done())
 
 script sc_last_wave_music():
     sleep_until(enc_entrance_m01.i_resist_wave >= 3)
     venus_m01_music_cue1.set_switch_mask(15)
-
-script venus_m01_020_d100():
-    md_vn01_020_100.start()
-    print("md_vn01_020_100")

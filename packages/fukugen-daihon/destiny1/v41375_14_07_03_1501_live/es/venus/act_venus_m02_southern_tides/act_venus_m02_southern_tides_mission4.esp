@@ -1,0 +1,59 @@
+# es\venus\act_venus_m02_southern_tides\act_venus_m02_southern_tides_mission4.esp
+#
+# Mission 4, the dome. When the player walks in, the analyze objective comes
+# up on the Ishtar terminal. Using it starts the analysis (the device goes
+# halfway), raises the cage over the terminal and hands the dome to
+# enc_southern_tides_m02's Vex waves; the defend objective follows. Once the
+# last wave is dead the music stops, the dome trigger is armed again and the
+# Ghost calls the player back to the terminal; walking in finishes the
+# analysis and the cage goes.
+#
+# One run: the eleven seconds before the defend objective and the gaps at
+# the end are that run's.
+
+@hard_wipe()
+player_trigger pt_dome
+interactable_objective pf_po_analyze bind("0x6F75442B")
+interactable_placement pf_ia_analyze bind("0x6F75442B")
+generic_objective pf_po_defend
+trigger_volume_objective pf_po_return
+object o_m02_terminal_cage
+encounter_handle enc_southern_tides_m02
+sequence seq_vn02_020_s030
+sequence seq_vn02_020_s040
+sequence seq_vn02_020_s070
+sequence seq_act_venus_m2_cue1_music
+
+script init(): pass
+
+script complete(): pass
+
+script main():
+    sleep_until(pt_dome.is_triggered())
+    seq_vn02_020_s030.start()
+    pf_po_analyze.objective_begin()
+    sleep_until(pf_po_analyze.is_complete())
+    pf_ia_analyze._object.set_device_position(0.5)
+    pf_po_analyze.objective_end_silent()
+    seq_vn02_020_s040.start()
+    o_m02_terminal_cage.create()
+    enc_southern_tides_m02.sc_defend.wake()
+    sleep(11)
+    pf_po_defend.objective_begin(nil)
+    sleep_until(enc_southern_tides_m02.defend_clear == true)
+    sleep(1)
+    pt_dome.reset()
+    sleep(0.6)
+    seq_act_venus_m2_cue1_music.stop()
+    seq_act_venus_m2_cue1_music.set_switch_mask(31)
+    sleep(2)
+    pf_po_defend.objective_end_silent()
+    seq_vn02_020_s070.start()
+    pf_po_return.objective_begin()
+    sleep_until(pf_po_return.is_complete())
+    sleep(2)
+    pf_ia_analyze._object.set_device_position(1)
+    o_m02_terminal_cage.set_device_position(1)
+    sleep(1)
+    o_m02_terminal_cage.delete_object()
+    pf_po_return.objective_end_silent()

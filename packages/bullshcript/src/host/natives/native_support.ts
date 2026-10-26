@@ -70,10 +70,10 @@ export interface HostReports {
   ):
     | { cookieRunning?: number; heartbeat?: number; pcReached?: number }
     | undefined;
-  actorStanding(key: string): { epoch: number; standing: boolean } | undefined;
   actorDropAck(
     key: string
   ): { dropId: number; inProgress: boolean } | undefined;
+  actorStanding(key: string): { epoch: number; standing: boolean } | undefined;
   bubbleOccupied(bundle: number): boolean | undefined;
   // Capturable sense 0x80802E50: owner (engine faction), echoed stamps, progress in tenths.
   capturableSense?(key: string):
@@ -176,6 +176,8 @@ export interface HostContext {
   currentInstance(): LuaValue | undefined;
   endActivity?(): void;
   holdLifetimeForCinematic?(row: BoundRow): void;
+  // The change last sent for a row, as the client has it.
+  lastSent?(kind: ItemChange["kind"], item: ItemRef): ItemChange | undefined;
   log(line: string): void;
   machineStates?: Map<string, MachineState>;
   // The scripts' @member_counts by itemKey; unset, no squad has any.

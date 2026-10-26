@@ -267,6 +267,22 @@ describe("a wiped squad's respawn", () => {
     expect(actorState()?.incarnation).toBe(2);
   });
 
+  it("reads an actor bound only once it stands under the epoch sent", () => {
+    const { actor, client } = makeSquad();
+    actor("place");
+    expect(actor("is_bound")).toBe(true);
+    client.bound = { flag7: false, flag8: true };
+    client.standing = { epoch: 0, standing: false };
+    expect(actor("is_bound")).toBe(false);
+    client.standing = { epoch: 0, standing: true };
+    expect(actor("is_bound")).toBe(true);
+    // placed again: the epoch 0 sense says nothing about incarnation 2
+    actor("place");
+    expect(actor("is_bound")).toBe(true);
+    client.standing = { epoch: 2, standing: false };
+    expect(actor("is_bound")).toBe(false);
+  });
+
   it("leaves a spent actor alone", () => {
     const { actor, actorState, advanceActor, client } = makeSquad();
     actor("place");

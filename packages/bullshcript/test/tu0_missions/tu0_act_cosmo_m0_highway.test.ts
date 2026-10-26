@@ -331,9 +331,30 @@ describe("TU0 act_cosmo_m0_highway scripts", () => {
     h.ticks(3);
     expect(h.said("mission act_cosmo_m0_highway_mission5 starting")).toBe(true);
 
-    // Fight Through the Fallen: the six graveyard squads die.
+    // Fight Through the Fallen: the dropships wait for the player to come
+    // down (the first on pt_ketch_dropship, the other three on
+    // pt_ketch_dropship_2), then the six graveyard squads die.
+    const pilotsPlaced = () =>
+      [1, 2, 3, 4].filter((n) => {
+        const pilot = h.rowOf("", `sq_fallen_dropship_${n}__pilot`);
+        const last = h.changes
+          .filter(
+            (change) =>
+              change.kind === "actor" &&
+              change.item.typeIndex === pilot.typeIndex
+          )
+          .at(-1);
+        return last?.kind === "actor" && last.state.placed;
+      });
     fire("pt_ketch");
     h.ticks(15);
+    expect(pilotsPlaced()).toEqual([]);
+    fire("pt_ketch_dropship");
+    h.ticks(2);
+    expect(pilotsPlaced()).toEqual([1]);
+    fire("pt_ketch_dropship_2");
+    h.ticks(4);
+    expect(pilotsPlaced()).toEqual([1, 2, 3, 4]);
     fire("pt_exit_shanks");
     h.ticks(2);
     const graveyard = [

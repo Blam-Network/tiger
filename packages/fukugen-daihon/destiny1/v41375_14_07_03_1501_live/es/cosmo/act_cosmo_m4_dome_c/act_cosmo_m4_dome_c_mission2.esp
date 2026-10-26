@@ -2,7 +2,7 @@
 #
 # Mission 2, dome_c: find the console and use it. The music's dome_c section
 # and the Ghost's lines on the way in play while the objective is up; the
-# music moves on when a player first reaches the control room. The
+# music moves on once the guards at the control room entrance are dead. The
 # Fallen on the way belong to enc_dome_c_m4.
 
 @hard_wipe()
@@ -12,7 +12,7 @@ sequence seq_d_o2_s01
 sequence seq_d_o2_s014
 sequence seq_d_o2_s016
 sequence seq_d_o2_s02
-encounter_handle unknown_f9e600a7
+squad sq_fallen_controlentrance_guards
 
 script init(): pass
 
@@ -30,9 +30,10 @@ script main():
         line.stop()
     seq_d_o2_s02.start()
     obj_m4_o2.objective_end_silent()
-    # the Ghost's line before the Hive arrive (one run)
+    # the Ghost's line before the console starts working
     sleep(6)
 
 script sc_control_room():
-    sleep_until(unknown_f9e600a7.pm_trigger_volume.test_any_inside())
+    sleep_until(sq_fallen_controlentrance_guards.alive_count() > 0)
+    sleep_until(sq_fallen_controlentrance_guards.alive_count() == 0)
     seq_m_cue1.set_switch_mask(15)

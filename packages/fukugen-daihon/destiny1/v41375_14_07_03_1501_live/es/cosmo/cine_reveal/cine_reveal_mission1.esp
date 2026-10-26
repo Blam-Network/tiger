@@ -1,7 +1,9 @@
 # es\cosmo\cine_reveal\cine_reveal_mission1.esp
 #
-# Mission 1, the Traveler cinematic. The phase ends shortly after it
-# finishes.
+# Mission 1, the Traveler cinematic. The phase ends as soon as the cinematic
+# has finished: in all five retail runs that saw it end, the lifetime moves
+# to cine_107_twr_phase 1.4-2.2 s after the client's cinematic_finished,
+# 0.5-1.1 s after the cinematic row goes idle.
 
 cinematic_midmission cine_106_trv
 
@@ -12,4 +14,3 @@ script complete(): pass
 script main():
     cine_106_trv.start()
     sleep_until(cine_106_trv.is_complete())
-    sleep(2)

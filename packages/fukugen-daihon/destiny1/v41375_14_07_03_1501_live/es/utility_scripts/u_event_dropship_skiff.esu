@@ -1,0 +1,13 @@
+# es\utility_scripts\u_event_dropship_skiff.esu
+#
+# A Fallen skiff flying over at the start of a Walker drop (one of a
+# pf_event_tank_drop's pf_skiffs). Retail's graveyard Walker drop (2.3.1, the
+# Cosmodrome patrol) started three of its seven together and each sequence
+# ran out on its own about 10s later (two in one tick, the third 0.3s after),
+# so nothing stops it.
+
+nav_point ap_dropship_skiff
+sequence seq_dropship_skiff
+
+def fly_past():
+    seq_dropship_skiff.start()

@@ -1,9 +1,11 @@
 # es\cosmo\act_cosmo_m1_dome_a\unknown_8bd80dbe.es
 #
-# Dome A's music and Ghost lines (bundle 8BD80DBE; file name unknown). The
-# lines tied to an objective are started by its mission; the rest play off
-# the dome's point triggers, and the music cue moves through its sections as
-# the fights begin. From one retail capture.
+# The Dark Within's music and Ghost lines (bundle 8BD80DBE, name unknown).
+# The approach lines and the music start with the activity; most lines play
+# off their own volumes once started. The lines tied to an objective are
+# started and stopped by its mission, the outro music by the last one; the
+# rest follow the dome's triggers, and the music cue moves up a section as
+# each fight begins. From one retail 2.3.1 capture (unconfirmed).
 
 @activity_bundle(0x8BD80DBE)
 
@@ -13,16 +15,14 @@ sequence seq_d_o2_s015
 sequence seq_d_o2_s04
 sequence seq_m_intro
 sequence seq_m_cue1
-sequence seq_d_o3_s01
-sequence seq_d_o3_s016
-sequence seq_m_outro
-sequence seq_d_o3_s05
 player_trigger pt_spawn_hive_intro01
 player_trigger pt_spawn_hive_intro02
+sequence seq_d_o3_s01
 player_trigger pt_thrall_unfreeze
-player_trigger pt_upper_rush01_spawn
+squad sq_hive_upper_rush01
+sequence seq_d_o3_s016
 player_trigger pt_upper_rush02_spawn
-player_trigger pt_upper_wizard_fallback_disable
+sequence seq_d_o3_s05
 
 @startup()
 script sc_intro():
@@ -51,16 +51,16 @@ script sc_pt_thrall_unfreeze():
     seq_m_cue1.set_switch_mask(15)
 
 @startup()
-script sc_pt_upper_rush01_spawn():
-    sleep_until(pt_upper_rush01_spawn.is_triggered())
+# the Ghost's line as the first thrall rush on the upper floor is nearly
+# done (one run: its third thrall died in the same frame)
+script sc_upper_rush01():
+    sleep_until(sq_hive_upper_rush01.alive_count() > 0)
+    sleep_until(sq_hive_upper_rush01.alive_count() <= 1)
     seq_d_o3_s016.start()
 
 @startup()
+# the Ghost's way-out line, once the wizard is dead and a player heads for
+# the far end (seq_d_o3_s05_alt never played)
 script sc_pt_upper_rush02_spawn():
     sleep_until(pt_upper_rush02_spawn.is_triggered())
-    seq_m_outro.start()
-
-@startup()
-script sc_pt_upper_wizard_fallback_disable():
-    sleep_until(pt_upper_wizard_fallback_disable.is_triggered())
     seq_d_o3_s05.start()

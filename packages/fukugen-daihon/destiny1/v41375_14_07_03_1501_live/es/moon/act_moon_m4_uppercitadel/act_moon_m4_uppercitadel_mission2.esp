@@ -1,0 +1,39 @@
+# es\moon\act_moon_m4_uppercitadel\act_moon_m4_uppercitadel_mission2.esp
+#
+# Mission 2, the henge. Get to it (its trigger volume), then kill the Hive
+# there. The Ghost's line for each objective plays as it goes active and is
+# cut off when it clears; a last line follows the kill, and the phase ends
+# once it has played. One run.
+#
+# The henge's Hive are the Hellmouth's own (enc_hellmouth_amb1's henge wave,
+# a public bubble's encounter), so no row of this mission sees them die and
+# the public host sends no squad sense. In the one run the objective cleared
+# 55 s after it went active, 10 s after the last kill there: that run's clock
+# stands in for the rule until a run shows what ends it.
+
+trigger_volume_objective pf_objective_hellmouth_henge_goto
+generic_objective pf_objective_hellmouth_henge_kill
+nav_point ap_hellmouth_hive_henge
+sequence seq_d_hellmouth_travel_s01
+sequence seq_d_hellmouth_henge_s01
+sequence seq_d_hellmouth_henge_s02
+
+script init(): pass
+
+script complete(): pass
+
+script main():
+    pf_objective_hellmouth_henge_goto.objective_begin()
+    seq_d_hellmouth_travel_s01.start()
+    sleep_until(pf_objective_hellmouth_henge_goto.is_complete())
+    pf_objective_hellmouth_henge_goto.objective_end_silent()
+    seq_d_hellmouth_travel_s01.stop()
+    pf_objective_hellmouth_henge_kill.objective_begin(ap_hellmouth_hive_henge)
+    seq_d_hellmouth_henge_s01.start()
+    sleep(55)
+    pf_objective_hellmouth_henge_kill.complete()
+    pf_objective_hellmouth_henge_kill.objective_end_silent()
+    seq_d_hellmouth_henge_s01.stop()
+    sleep(3)
+    seq_d_hellmouth_henge_s02.start()
+    sleep_until(seq_d_hellmouth_henge_s02.is_done())

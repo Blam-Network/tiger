@@ -40,7 +40,6 @@ c_command_script __cs
 control_point_set dropship_entry_path
 squad sq_dropship_tank
 squad_member sq_dropship_tank__dropship
-passenger skiff_passenger
 control_point_set dropship_exit_path
 
 @startup()
@@ -61,8 +60,9 @@ script sc_blast_main():
     hold_ground(sq_fallen_mid04, "mid_high")
     hold_ground(sq_fallen_mid05, "mid03")
 
-# The Walker rides in seated in its skiff and is let go once the skiff has
-# reached the drop; the skiff leaves 3s later.
+# The skiff drops the Walker as it reaches the drop, as its troops are
+# dropped, and leaves 3s later. This build cannot seat it in the skiff as
+# later builds do (skiff_passenger): its seat lookup by name finds nothing.
 script sc_walker():
     sleep(1)
     sq_tank.set_objective(obj_tank)
@@ -71,7 +71,7 @@ script sc_walker():
     sc_reinforcements.wake()
     sc_shanks.wake()
     sleep_until_timeout(sq_dropship_tank__dropship.get_command_script_state() != e_command_script_state.executing, 20)
-    skiff_passenger.release()
+    sq_dropship_tank__dropship.drop_squad(sq_tank)
     sleep(3)
     skiff_leave()
     sleep_until(sq_tank.alive_count() == 0)
@@ -102,8 +102,6 @@ def skiff_enter():
     __cs.move_to(dropship_entry_path, 1, false)
     __cs.move_to(dropship_entry_path, 2, true)
     sq_dropship_tank__dropship.place()
-    sq_tank.place()
-    skiff_passenger.seat(sq_tank__tank)
     sq_dropship_tank__dropship.execute(__cs)
 
 def skiff_leave():

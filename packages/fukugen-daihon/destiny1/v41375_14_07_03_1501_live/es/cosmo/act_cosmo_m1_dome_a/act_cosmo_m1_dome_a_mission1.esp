@@ -1,12 +1,14 @@
 # es\cosmo\act_cosmo_m1_dome_a\act_cosmo_m1_dome_a_mission1.esp
 #
-# Mission 1, into the dome: reach the dome (a trigger volume), scan the door
-# (the player uses it; the Ghost's scan runs on the placement, the objective
-# ends when it finishes), then go down into the basement. The Ghost's lines
-# stop and start as each objective changes hands. The gaps between objectives
-# are this run's waits.
+# Mission 1, into the dome: reach Dome A, scan the door (the player uses it;
+# the objective stays up until enc_dome_a_m1's scan finishes), then get down
+# to the basement. The phase ends as a player reaches the top of the stairs
+# on the far side, which wakes the upper floor. The Ghost's approach lines
+# stop when the scan objective comes up, the scan line cuts in while it
+# runs. From one retail 2.3.1 capture: the gaps are that run's waits.
 
 @hard_wipe()
+encounter_handle enc_dome_a_m1
 trigger_volume_objective obj_m1_o1a
 interactable_objective obj_m1_o1b bind("0x3EA60D3D")
 trigger_volume_objective obj_m1_o1c
@@ -26,34 +28,31 @@ script complete(): pass
 script main():
     sleep_until(c_player_script_utilities.all_players_are_ready())
     c_lifetime_script_utilities.get_lifetime_sensor().set_state(e_activity_lifetime_state.active)
-    sleep(1.5)
+    sleep(1.3)
     sc_first_line.wake()
     obj_m1_o1a.objective_begin()
     sleep_until(obj_m1_o1a.is_complete())
     seq_d_o2_s02.start()
-    sc_scan_line.wake()
-    obj_m1_o1a.objective_end()
+    obj_m1_o1a.objective_end_silent()
     sleep(5)
     seq_d_o1_s018.stop()
     seq_d_o1_s02.stop()
     seq_d_o2_s015.stop()
     obj_m1_o1b.objective_begin_immediate()
     sleep_until(obj_m1_o1b.is_complete())
-    # the objective stays up while the scan runs
-    sleep(6.9)
+    sleep(4.3)
+    seq_d_o2_s02.stop()
+    seq_d_o2_s03.start()
+    sleep_until(enc_dome_a_m1.scan_complete)
     obj_m1_o1b.objective_end_silent()
-    sleep(5)
+    sleep(5.3)
     obj_m1_o1c.objective_begin()
     sleep_until(obj_m1_o1c.is_complete())
     seq_d_o3_s01.stop()
     seq_d_o3_s012.start()
-    obj_m1_o1c.objective_end()
+    sleep_until(enc_dome_a_m1.pt_thrall_unfreeze.is_triggered())
+    obj_m1_o1c.objective_end_silent()
 
 script sc_first_line():
     sleep(1.3)
     seq_d_o1_s015.start()
-
-# the scan line follows the line that sent the player to the door
-script sc_scan_line():
-    sleep_until_timeout(seq_d_o2_s02.is_done(), 30)
-    seq_d_o2_s03.start()

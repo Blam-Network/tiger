@@ -2,9 +2,10 @@
 #
 # Mission 4, the Grave: the chamber's console comes alive once the guards are
 # dead; using it starts the Ghost's scan, and the player defends it until the
-# scan is done. enc_strength_m3 runs the scan and the Hive waves; the
-# objective clears when its console reports the scan finished. The console
-# itself is placed by the activity root.
+# scan is done. enc_strength_m3 runs the scan and the Hive waves (the scan
+# ends with the last wave, not on a timer: 77.6 and 96.6 s after the use in
+# the two runs); the objective clears when its console reports the scan
+# finished. The console itself is placed by the activity root.
 
 @hard_wipe()
 encounter_handle enc_strength_m3
@@ -16,7 +17,6 @@ trigger_group tg_moon_m3_climax_so
 sequence seq_wave_announce1
 sequence seq_strength_music
 sequence seq_d_o2_s03
-sequence seq_d_o2_s04
 
 script init(): pass
 
@@ -31,11 +31,11 @@ script main():
     pf_obj_strength_interact.objective_end_silent()
     pf_obj_strength_interact_place._object.set_device_position(0.3)
     enc.sc_defend.wake()
-    pf_obj_strength_defend.objective_begin(ap_defend)
+    # the waypoint comes with the first wave
+    pf_obj_strength_defend.objective_begin(nil)
     tg_moon_m3_climax_so.activate()
     seq_d_o2_s03.start()
     sc_wave_announce.wake()
-    sc_ghost_nag.wake()
     sleep_until(enc.o_m3_console_scan.get_device_position() >= 1)
     pf_obj_strength_defend.complete()
     pf_obj_strength_defend.objective_end_silent()
@@ -44,13 +44,10 @@ script main():
     sleep(1)
     pf_obj_strength_interact_place._object.set_device_position(1)
 
-# the first wave is called out once the chamber's spec ops marker is up
+# the first wave is called out, and the waypoint set on the console, a second
+# after the chamber's spec ops marker is up (both runs)
 script sc_wave_announce():
     sleep_until(enc_strength_m3.o_m3_spec_ops.is_alive())
     sleep(1)
     seq_wave_announce1.start()
-
-# the Ghost's line partway through the defence (one run)
-script sc_ghost_nag():
-    sleep(38)
-    seq_d_o2_s04.start()
+    pf_obj_strength_defend._player_objective.nav_point_activate(ap_defend)

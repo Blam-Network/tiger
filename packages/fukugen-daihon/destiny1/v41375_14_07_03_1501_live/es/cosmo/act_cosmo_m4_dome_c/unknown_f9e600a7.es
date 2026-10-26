@@ -2,8 +2,8 @@
 #
 # The Last Array's music and Ghost lines (bundle F9E600A7; file name
 # unknown). Each line plays off a trigger or a fight ending; the music cue
-# and the lines tied to an objective are its mission's. From one retail
-# capture, so the short gaps between lines are that run's.
+# and the lines tied to an objective are its mission's. From two retail
+# runs, which agree on every gap below to within a second.
 
 @activity_bundle(0xF9E600A7)
 
@@ -14,7 +14,6 @@ sequence seq_d_o1_s03
 sequence seq_d_o1_s04
 sequence seq_d_o2_s023
 sequence seq_d_o2_s032
-sequence seq_d_o3_s01
 sequence seq_d_o3_s08
 sequence seq_cosmo4_rasputin
 squad sq_fallen_upper_front01
@@ -22,7 +21,6 @@ squad sq_fallen_upper_back01
 squad sq_fallen_upper_sniper01
 squad sq_fallen_upper_anchors01
 object o_terminal_invis_device
-player_monitor pm_outdoor_enc_start
 player_monitor pm_trigger_volume
 squad sq_ds_hive_assault03
 
@@ -51,11 +49,9 @@ script sc_console():
     seq_d_o2_s023.start()
 
 @startup()
-# the Hive assault
+# the Hive ship that brings the waves arrives
 script sc_assault():
     sleep_until(o_terminal_invis_device.is_alive())
-    sleep_until(pm_outdoor_enc_start.test_any_inside())
-    seq_d_o3_s01.start()
     sleep_until(sq_ds_hive_assault03.alive_count() > 0)
     seq_d_o2_s032.start()
 
@@ -72,7 +68,3 @@ script sc_outro():
 
 def dome_a_fallen_alive_count():
     return sq_fallen_upper_front01.alive_count() + sq_fallen_upper_back01.alive_count() + sq_fallen_upper_sniper01.alive_count() + sq_fallen_upper_anchors01.alive_count()
-
-def sleep_until_dead(sq):
-    sleep_until(sq.alive_count() > 0)
-    sleep_until(sq.alive_count() == 0)

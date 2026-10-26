@@ -49,6 +49,7 @@ sequence seq_ambush_finalroom
 player_trigger pt_audio_drone_end
 squad sq_fallen_garage_exit
 sequence seq_d_o3_20
+player_trigger pt_trans_graveyard
 player_trigger pt_graveyard_reveal
 sequence seq_d_o4_30
 player_trigger pt_ketch
@@ -176,8 +177,11 @@ script sc_drone_end():
     seq_drone_3.stop()
 
 @startup()
+# the garage is clear, its last squad in, or a player ran on past it to the
+# graveyard
 script sc_garage_exit():
-    sleep_until_dead(sq_fallen_garage_exit)
+    sleep_until(sq_fallen_garage_exit.alive_count() > 0 or pt_trans_graveyard.is_triggered())
+    sleep_until(garage_alive_count() == 0 or pt_trans_graveyard.is_triggered())
     sleep(4)
     seq_d_o3_20.start()
 
@@ -213,6 +217,9 @@ script sc_ascent():
     sleep_until(pf_105_cto._cinematic.is_done())
     sleep(1)
     seq_m_ascent.start()
+
+def garage_alive_count():
+    return sq_fallen_garage_vandals_2.alive_count() + sq_fallen_garage_vandals_3.alive_count() + sq_fallen_garage_melee.alive_count() + sq_fallen_garage_exit.alive_count()
 
 def sleep_until_dead(sq):
     sleep_until(sq.alive_count() > 0)

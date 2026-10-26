@@ -1,10 +1,14 @@
 # es\moon\act_moon_m5_strength\act_moon_m5_strength_mission3.esp
 #
 # Mission 3, the launch tubes: get to the cinematic's trigger volume. The
-# objective went up three seconds into the phase in the one run (the launch
-# tubes' own Hive belong to the area's ambient bundle).
+# objective goes up three seconds into the phase (3.0 / 3.1 s in two runs;
+# the launch tubes' own Hive belong to the area's ambient bundle), and the
+# Ghost's launch tubes lines stop as it clears.
 
 trigger_volume_objective pf_obj_cine_trigger
+sequence seq_d_o2_s01
+sequence seq_d_o2_s012
+sequence seq_d_o2_s014
 
 script init(): pass
 
@@ -15,3 +19,5 @@ script main():
     pf_obj_cine_trigger.objective_begin()
     sleep_until(pf_obj_cine_trigger.is_complete())
     pf_obj_cine_trigger.objective_end_silent()
+    for line in [seq_d_o2_s01, seq_d_o2_s012, seq_d_o2_s014]:
+        line.stop()

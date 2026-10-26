@@ -1,27 +1,38 @@
 # es\moon\act_moon_m1_launchtubes\act_moon_m1_launchtubes_mission7.esp
 #
-# Mission 7, the gate: kill the Hive at the door. The launch tubes encounter
-# brings them in once the player is back from the cinematic; the objective
-# clears when a player pushes on into the court. One run: the waits at the
-# top are timed from the cinematic's end.
+# Mission 7, the gate: kill the Knight and his guard at the door. The phase
+# starts as the player is back from the cinematic, and again after a wipe
+# here: the music moves on and the Ghost speaks as the launch tubes
+# encounter opens the gate, the door fight starts five seconds later and the
+# objective comes up three seconds after that. It clears four seconds after
+# the last of the gate's Knights is dead; the Thrall don't count. Two runs
+# and one wipe agree to a second.
 
 @hard_wipe()
 trigger_group tg_moon_m1_door_so
 sequence seq_wave_announce
 generic_objective pf_gen_obj_kill_all
-player_trigger pt_spawn_court_interior
+squad sq_gate_knights
+sequence seq_music_launchtubes
+sequence seq_d_o2_s093
 
 script init(): pass
 
 script complete(): pass
 
 script main():
-    sleep(4)
+    c_lifetime_script_utilities.get_lifetime_sensor().set_state(e_activity_lifetime_state.active)
+    seq_music_launchtubes.set_switch_mask(15)
+    seq_d_o2_s093.start()
+    sleep(5)
     tg_moon_m1_door_so.activate()
     seq_wave_announce.start()
     sleep(3)
+    seq_music_launchtubes.set_switch_mask(31)
+    # The gate's squads are out by now (two seconds into the phase); a quick
+    # player has them dead before the objective is up.
     pf_gen_obj_kill_all.objective_begin()
-    sleep_until(pt_spawn_court_interior.is_triggered())
-    sleep(2)
+    sleep_until(sq_gate_knights.alive_count() == 0)
+    sleep(4)
     pf_gen_obj_kill_all.objective_end_silent()
     tg_moon_m1_door_so.deactivate()

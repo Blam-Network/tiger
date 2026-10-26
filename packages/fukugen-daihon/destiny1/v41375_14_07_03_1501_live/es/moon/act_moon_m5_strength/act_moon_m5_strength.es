@@ -17,12 +17,12 @@
 # itself is unknown_d53aaa20.es and the music and Ghost lines unknown_f385d0ca.es
 # beside this file (both bundle names uncracked).
 #
-# Authored from one capture run: every timing below is a single-run fact,
-# unconfirmed.
+# Authored from two capture runs by one player: every timing is unconfirmed
+# until a third run.
 
 @activity_bundle("act_moon_m5_strength")
 # The hellmouth (2) at its default spawn point, the launch tubes (3,
-# phase_cinematic owns 3.1) and the chamber (11). One 2.3.1 capture.
+# phase_cinematic owns 3.1) and the chamber (11). Two 2.3.1 captures.
 @activity("act_moon_m5_strength")
 @start_slice("hellmouth", "phase_2_hellmouth")
 @phase("phase_2_hellmouth", "hellmouth")

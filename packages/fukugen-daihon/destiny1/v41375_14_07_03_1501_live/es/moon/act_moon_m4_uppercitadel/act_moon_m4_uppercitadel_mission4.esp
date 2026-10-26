@@ -1,0 +1,55 @@
+# es\moon\act_moon_m4_uppercitadel\act_moon_m4_uppercitadel_mission4.esp
+#
+# Mission 4, the upper citadel: reach the chain room, clear it, take the
+# sword. The upper citadel encounter holds the room's Hive; the Wizard comes
+# in three seconds after "clear the room" goes up, and the objective clears
+# a second after the last of the room is dead, Wizard included. The climax
+# music starts with the sword's objective. One run.
+#
+# Taking the sword shows on the wire only as the sword's holder and the relic
+# container's count (o_sword's and om_relic_container's sense), which the
+# host does not read. In the one run the objective cleared four seconds after
+# it went active, 1.4 s after the pickup: that clock stands in for the pickup
+# until the host can see it.
+
+@hard_wipe()
+encounter_handle enc_uppercitadel_m4
+trigger_volume_objective pf_objective_uppercitadel_trigger
+generic_objective pf_objective_uppercitadel_clear
+generic_objective pf_objective_uppercitadel_relic
+nav_point ap_uppercitadel_sword
+sequence seq_d_upperc_travel_s01
+sequence seq_d_upperc_travel_s02
+sequence seq_d_upperc_sword_approach_s01
+sequence seq_d_upperc_sword_equip_s01
+sequence seq_m_climax_s01
+
+script init(): pass
+
+script complete(): pass
+
+script main():
+    enc = enc_uppercitadel_m4
+    pf_objective_uppercitadel_trigger.objective_begin()
+    seq_d_upperc_travel_s01.start()
+    sleep_until(pf_objective_uppercitadel_trigger.is_complete())
+    pf_objective_uppercitadel_trigger.objective_end_silent()
+    pf_objective_uppercitadel_clear.objective_begin(ap_uppercitadel_sword)
+    seq_d_upperc_travel_s01.stop()
+    seq_d_upperc_travel_s02.start()
+    enc.sc_chainroom_wizard.wake()
+    sleep_until(enc.sq_chainroom_anchor1.alive_count() > 0)
+    sleep_until(enc.chainroom_alive_count() == 0)
+    sleep(1)
+    pf_objective_uppercitadel_clear.complete()
+    pf_objective_uppercitadel_clear.objective_end_silent()
+    seq_m_climax_s01.start()
+    seq_m_climax_s01.set_switch_mask(1)
+    pf_objective_uppercitadel_relic.objective_begin(ap_uppercitadel_sword)
+    seq_d_upperc_travel_s02.stop()
+    seq_d_upperc_sword_approach_s01.start()
+    sleep(4)
+    pf_objective_uppercitadel_relic.complete()
+    pf_objective_uppercitadel_relic.objective_end_silent()
+    seq_d_upperc_sword_equip_s01.start()
+    sleep(4)

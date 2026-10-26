@@ -10,8 +10,8 @@ script init(): pass
 script complete(): pass
 
 script main():
-    # the capture starts it ten seconds after the script; what it waits for
-    # is not on the wire
-    sleep(10)
+    # retail starts it nine seconds after pregame; what it waits for is not
+    # on the wire
+    sleep(9)
     pf_112_vnr.start()
     sleep_until(pf_112_vnr.is_complete())

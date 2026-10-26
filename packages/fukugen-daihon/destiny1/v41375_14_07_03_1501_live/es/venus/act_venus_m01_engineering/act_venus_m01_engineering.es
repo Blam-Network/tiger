@@ -13,8 +13,9 @@
 #   act_venus_m01_engineering_mission6.esp  the outro: the Stranger
 #
 # The entrance encounter (enc_entrance_m01) and the music and Ghost lines
-# (unknown_529d4bdc) are scripts of their own. Authored from one capture:
-# every timing and wave rule in these files is unconfirmed.
+# (unknown_529d4bdc) are scripts of their own. From one retail 2.3.1 capture
+# (2026-10-25): every wait and wave rule in these files is that run's,
+# unconfirmed.
 
 @activity_bundle("act_venus_m01_engineering")
 # The shattered coast's intro state (20.1, phase_shattered_coast_intro's), an
@@ -44,5 +45,6 @@ player_trigger pt_in_baby_shat bind(baby_shat)
 script ss_venus_m01():
     print("script startup")
     c_lifetime_script_utilities.get_lifetime_sensor().set_state(e_activity_lifetime_state.pregame)
+    # active as the player lands at baby_shat, just before the spawn
     sleep_until(pt_in_baby_shat.is_triggered())
     c_lifetime_script_utilities.get_lifetime_sensor().set_state(e_activity_lifetime_state.active)

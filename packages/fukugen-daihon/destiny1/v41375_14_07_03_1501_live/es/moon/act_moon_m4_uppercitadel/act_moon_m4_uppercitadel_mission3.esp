@@ -1,0 +1,20 @@
+# es\moon\act_moon_m4_uppercitadel\act_moon_m4_uppercitadel_mission3.esp
+#
+# Mission 3, "Go to the upper citadel". Clears when a player enters the upper
+# citadel's bubble; the Ghost's line plays from the objective going active
+# and is cut off when it clears. One run.
+
+location uppercitadel
+trigger_bubble_objective pf_objective_uppercitadel_goto bind(uppercitadel)
+sequence seq_d_hellmouth_to_upperc_s01
+
+script init(): pass
+
+script complete(): pass
+
+script main():
+    pf_objective_uppercitadel_goto.objective_begin()
+    seq_d_hellmouth_to_upperc_s01.start()
+    sleep_until(pf_objective_uppercitadel_goto.is_complete())
+    pf_objective_uppercitadel_goto.objective_end_silent()
+    seq_d_hellmouth_to_upperc_s01.stop()

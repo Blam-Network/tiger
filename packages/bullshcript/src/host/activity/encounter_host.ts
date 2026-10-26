@@ -31,7 +31,12 @@ import {
 } from "../bound/bindings.ts";
 import * as instanceBuilding from "../build/instance_building.ts";
 import { Ownership } from "../build/ownership.ts";
-import { ENUM_OF, EnumDefinition, scriptName } from "../build/script_graph.ts";
+import {
+  ENUM_OF,
+  EnumDefinition,
+  isPhaseChunk,
+  scriptName,
+} from "../build/script_graph.ts";
 import {
   type CommandScriptIndex,
   commandScriptIndex,
@@ -322,6 +327,7 @@ export class EncounterScriptHost implements EncounterHostContext {
           record.tally = undefined;
         }
       },
+      lastSent: (kind, item) => this.journal.last(kind, item),
       log: options.log ?? (() => undefined),
       namedHandles: new Map(Object.entries(options.namedHandles ?? {})),
       objectStates: new Map(),
@@ -428,7 +434,7 @@ export class EncounterScriptHost implements EncounterHostContext {
     // A thread another script restarts or wakes is not started at activity
     // start; a child archetype's restart of its own `main` says nothing about
     // a root's `main`, so archetypes only name what their own Lua calls.
-    const archetypes = new Set(this.options.childScripts?.values());
+    const archetypes = this.archetypeChunks();
     for (const chunk of graph) {
       const archetype =
         archetypes.has(chunk) && !this.options.rootTags?.has(chunk.tagId);
@@ -447,23 +453,9 @@ export class EncounterScriptHost implements EncounterHostContext {
     // One bad chunk must not cost the activity its scripts.
     const built = this.built;
     // An archetype is built under the encounter that runs it, where its rows
-    // resolve. childScripts keeps one class per slot name, and rows of
-    // different classes can share one (pf_preset, pf_point), so the rows say
-    // which chunks are archetypes.
-    const childChunks = new Set(this.options.childScripts?.values());
-    const childNames = new Set<string>();
-    for (const bundle of this.options.bundles) {
-      for (const row of bundle.rows) {
-        if (row.typeId === this.types.Encounter && row.childScript) {
-          childNames.add(row.childScript);
-        }
-      }
-    }
+    // resolve.
     for (const chunk of this.options.chunks) {
-      if (
-        (childChunks.has(chunk) || childNames.has(scriptName(chunk))) &&
-        !this.options.rootTags?.has(chunk.tagId)
-      ) {
+      if (archetypes.has(chunk) && !this.options.rootTags?.has(chunk.tagId)) {
         continue;
       }
       try {
@@ -1374,6 +1366,44 @@ export class EncounterScriptHost implements EncounterHostContext {
     }
     lifetime.lifetime.state = LIFETIME_CINEMATIC_STATE;
     sequenceNatives.pushLifetime(lifetime, "cinematic hold");
+  }
+
+  // The chunks that are archetypes: childScripts' (one class per slot name),
+  // the ones an Encounter row names (rows of different classes can share a
+  // slot name: pf_preset, pf_point), and every class a script declares a
+  // member of, which covers a class whose slot names another class took first
+  // (act_venus_m01_engineering's interactable_objective pf_sensor01 under
+  // enc_shattered_amb1's interactable_placement pf_sensor01).
+  private archetypeChunks(): ReadonlySet<HksBytecode> {
+    const childNames = new Set<string>();
+    for (const bundle of this.options.bundles) {
+      for (const row of bundle.rows) {
+        if (row.typeId === this.types.Encounter && row.childScript) {
+          childNames.add(row.childScript);
+        }
+      }
+    }
+    const declared = new Set<string>();
+    for (const schema of this.options.schemas?.values() ?? []) {
+      for (const member of schema.members) {
+        if (member.kind === "class_instance") {
+          declared.add(member.type);
+        }
+      }
+    }
+    const archetypes = new Set(this.options.childScripts?.values());
+    for (const chunk of this.options.chunks) {
+      const schema = this.options.schemas?.get(chunk.tagId.toUpperCase());
+      if (
+        childNames.has(scriptName(chunk)) ||
+        (schema !== undefined &&
+          !isPhaseChunk(chunk) &&
+          declared.has(schema.name))
+      ) {
+        archetypes.add(chunk);
+      }
+    }
+    return archetypes;
   }
 
   // A bubble's scripts run only while it is loaded; undefined = not yet

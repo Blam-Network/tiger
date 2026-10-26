@@ -1,7 +1,8 @@
 # es\venus\act_venus_m01_engineering\act_venus_m01_engineering_mission3.esp
 #
-# Mission 3, on to the Academy entrance. The music comes in at its trigger or
-# after twenty seconds; the Ghost speaks at the entrance.
+# Mission 3, on to the Academy entrance. The music comes in at its trigger on
+# the way; the Ghost speaks on the steps (unknown_529d4bdc's trigger) and again
+# once the player is in.
 
 generic_objective pf_enter_academy
 trigger_volume tv_entrance
@@ -19,18 +20,15 @@ script complete(): pass
 script main():
     venus_m01_music_cue1.set_switch_mask(2)
     pt_vn01_020_30.enable()
-    venus_m01_cue1.wake()
+    pt_entrance.enable()
+    sc_music_cue1.wake()
     pf_enter_academy.objective_begin(ap_entrance)
     sleep_until(pt_entrance.is_triggered())
-    pf_enter_academy.objective_end_silent()
-    venus_m01_020_d50.wake()
+    pf_enter_academy.objective_end()
+    md_vn01_020_50.start()
     sleep_until(md_vn01_020_50.is_done())
 
-script venus_m01_cue1():
-    sleep_until_timeout(pt_venus_m01_cue1_start.is_triggered(), 20)
+script sc_music_cue1():
+    sleep_until(pt_venus_m01_cue1_start.is_triggered())
     venus_m01_music_cue1.start()
     venus_m01_music_cue1.set_switch_mask(3)
-
-script venus_m01_020_d50():
-    md_vn01_020_50.start()
-    print("md_vn01_020_50")

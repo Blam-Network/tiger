@@ -15,12 +15,15 @@
 #
 # The accelerator (unknown_2495f541) and the launch tubes (unknown_43f9e8c0)
 # are scripts of their own; unknown_d66ce681 holds the music and Ghost lines.
-# Written from one capture: every timing below is a single-run fact.
+# Written from two 2.3.1 runs (2026-10-03 and 2026-10-24, one player each):
+# every timing below held in both, nothing is confirmed past that. The
+# moonbase (6) is a public bubble: its public host session (the Moon's public
+# checksum 4776B394) carries the player's terminal use and kills there.
 
 @activity_bundle("act_moon_m1_launchtubes")
 # The accelerator's intro state (1.1, phase_intro_cin's) at spawn 87875158, the
-# moonbase (6) and the launch tubes (3, whose phase_4_launchtubes owns 3.1). One
-# 2.3.1 capture.
+# moonbase (6) and the launch tubes (3, whose phase_4_launchtubes owns 3.1). Both
+# 2.3.1 runs.
 @activity("act_moon_m1_launchtubes")
 @start_slice("accelerator", "phase_intro_cin")
 @phase("phase_intro_cin", "accelerator")

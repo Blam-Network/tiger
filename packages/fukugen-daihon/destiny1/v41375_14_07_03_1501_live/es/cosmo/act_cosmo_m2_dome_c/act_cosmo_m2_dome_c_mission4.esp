@@ -1,27 +1,29 @@
 # es\cosmo\act_cosmo_m2_dome_c\act_cosmo_m2_dome_c_mission4.esp
 #
-# Mission 4, the Fallen waves: after the console the waves come in at the
-# dome and the objective stays up until the third is dead. The music cue
-# moves on with it and stops when the objective ends. The waves are
-# enc_dome_c_m2's. The wait after the last kill is this run's.
+# Mission 4, the Fallen waves: with the console working the phase hands the
+# dome to enc_dome_c_m2's waves, then puts the objective up with the music's
+# second cue moving on. The objective stays up until the last of the third
+# wave is dead; the cue stops with it.
+#
+# One run: the four seconds before the objective are that run's.
 
 @hard_wipe()
 generic_objective obj_m2_o4a
+nav_point ap_m2_o4a
+encounter_handle enc_dome_c_m2
 sequence seq_m_cue2
-squad sq_fallen_wave03a
-squad sq_fallen_wave03b
 
 script init(): pass
 
 script complete(): pass
 
 script main():
+    insertion_point()
+    enc_dome_c_m2.sc_waves.wake()
     sleep(4)
-    obj_m2_o4a.objective_begin(nil)
     seq_m_cue2.set_switch_mask(3)
-    sleep_until(sq_fallen_wave03b.alive_count() > 0)
-    sleep_until(sq_fallen_wave03a.alive_count() + sq_fallen_wave03b.alive_count() == 0)
-    sleep(7.1)
+    obj_m2_o4a.objective_begin(ap_m2_o4a)
+    sleep_until(enc_dome_c_m2.waves_clear == true)
     seq_m_cue2.stop()
     obj_m2_o4a.objective_end_silent()
-    sleep(1.1)
+    sleep(1)

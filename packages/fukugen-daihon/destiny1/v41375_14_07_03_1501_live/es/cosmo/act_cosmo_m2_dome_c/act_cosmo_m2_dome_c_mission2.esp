@@ -1,13 +1,27 @@
 # es\cosmo\act_cosmo_m2_dome_c\act_cosmo_m2_dome_c_mission2.esp
 #
-# Mission 2, the Dry Sea: reach the sea (a trigger volume), then walk on to
-# the dome with the Ghost talking the whole way. The second objective has no
-# completion rule in the table; it ends a moment after the Ghost's long line
-# finishes (72 s after it begins in this run). The Ghost's lines tied to the walk run from
-# here. The gaps between lines are this run's waits.
+# Mission 2, the Dry Sea. The phase opens with the vehicle tutorial (the
+# client's inventory gains the Sparrow as it starts), then sends the player
+# to the sea (a trigger volume). Once there the objective moves on to the two
+# objects the player uses, one after the other (identifiers 0xC9A2CA78 and
+# 0x9742D95D), each with the Ghost's lines. The two-object objective has no
+# archetype on TU0 (its rows are an object set), so this phase drives its
+# rows itself; the activity flags are what let the player use the objects.
+# Its waypoint is the objective's own nav point, where retail marks each
+# object still to use.
+#
+# One run: the waits around the lines (three seconds to the sea objective,
+# four from the sea's line to the next objective, two before it clears and
+# the lines after it) are that run's.
 
 trigger_volume_objective obj_m2_o2a
-generic_objective obj_m2_o2b
+encounter_handle obj_m2_o2b
+activity_flag af_m2_o2b_a
+activity_flag af_m2_o2b_b
+interactable_incident_listener il_m2_o2b_a
+interactable_incident_listener il_m2_o2b_b
+string_hash sh_tutorial_vehicle = "tutorial_vehicle"
+sequence seq_d_o1_s017
 sequence seq_d_o1_s02
 sequence seq_d_o1_s032a
 sequence seq_d_o1_s032b
@@ -22,27 +36,60 @@ script init(): pass
 script complete(): pass
 
 script main():
-    sleep(1.7)
-    sc_walk_lines.wake()
+    insertion_point()
+    c_incident_utilities.submit_incident_hash(sh_tutorial_vehicle)
+    seq_d_o1_s017.start()
+    sleep(3)
     obj_m2_o2a.objective_begin()
     sleep_until(obj_m2_o2a.is_complete())
-    obj_m2_o2a.objective_end()
-    obj_m2_o2b.objective_begin(nil)
-    sleep(69.6)
-    seq_d_o1_s04a.start()
-    seq_d_o1_s04b.start()
-    sleep(0.4)
-    obj_m2_o2b.objective_end()
+    seq_d_o1_s02.start()
+    sleep(4)
+    obj_m2_o2a.objective_end_silent()
+    use_objects()
     sleep(4)
     seq_d_o1_s05.start()
+    sleep(1)
 
-# the long line starts as the sea loads and four more join it halfway; two
-# follow it when it ends, which main starts
-script sc_walk_lines():
-    sleep(52.8)
-    seq_d_o1_s02.start()
-    sleep(39.2)
+# the two-object objective, start to finish: the bar counts the objects used,
+# and the Ghost has lines for each
+def use_objects():
+    po = obj_m2_o2b._player_objective
+    po.set_incoming()
+    sleep(2)
+    obj_m2_o2b._incoming_sequence.start()
+    sleep_until_timeout(obj_m2_o2b._incoming_sequence.is_done(), 10)
+    po.set_active()
+    po.progress_activate(0, 2)
+    po.nav_point_activate(obj_m2_o2b._nav_point)
+    il_m2_o2b_a.import_only_bind("0xC9A2CA78")
+    il_m2_o2b_b.import_only_bind("0x9742D95D")
+    il_m2_o2b_a.reset()
+    il_m2_o2b_b.reset()
+    af_m2_o2b_a.import_only_bind("0xC9A2CA78")
+    af_m2_o2b_b.import_only_bind("0x9742D95D")
+    af_m2_o2b_a.activate()
+    af_m2_o2b_b.activate()
+    sleep_until(objects_used() >= 1)
+    po.progress_update(1)
     seq_d_o1_s032a.start()
     seq_d_o1_s032b.start()
     seq_d_o1_s036a.start()
     seq_d_o1_s036b.start()
+    sleep_until(objects_used() >= 2)
+    po.progress_update(2)
+    seq_d_o1_s02.stop()
+    seq_d_o1_s04a.start()
+    seq_d_o1_s04b.start()
+    sleep(2)
+    af_m2_o2b_a.clear()
+    af_m2_o2b_b.clear()
+    po.nav_point_clear()
+    po.clear()
+
+def objects_used():
+    used = 0
+    if il_m2_o2b_a.get_count() > 0:
+        used = used + 1
+    if il_m2_o2b_b.get_count() > 0:
+        used = used + 1
+    return used

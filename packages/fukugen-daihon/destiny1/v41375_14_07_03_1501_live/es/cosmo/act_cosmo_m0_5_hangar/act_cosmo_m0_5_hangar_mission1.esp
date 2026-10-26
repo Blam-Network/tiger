@@ -1,9 +1,15 @@
 # es\cosmo\act_cosmo_m0_5_hangar\act_cosmo_m0_5_hangar_mission1.esp
 #
-# Mission 1, delta_s: the player uses two things in turn, the flare from the
-# crash and then the next object (each ends on the player's interaction on the
-# wire, so they are interactable objectives). The flare goes out as the first
-# is used. The gap before the second is this run's wait.
+# Mission 1, delta_s: the crashed ship. The Ghost talks the player onto the
+# flare, which they use, then onto the next thing on the ship (identifiers
+# 0x6607D3FA and 0xDE0933DB, the interactable objectives' own objects). Each
+# objective waits on the Ghost's line before it: the first goes active as his
+# opening line ends, the second comes up as the long line after the flare
+# ends. The phase ends a few seconds into his last line.
+#
+# Two runs agree on every wait here. Retail showed the first objective from
+# a second into the phase in a state TU0 has no verb for (wire 1), so it goes
+# straight to active when the line is done.
 
 object o_crashed_ship_flare
 interactable_objective obj_m0_5_o1 bind("0x6607D3FA")
@@ -23,26 +29,27 @@ script main():
     sleep_until(c_player_script_utilities.all_players_are_ready())
     c_lifetime_script_utilities.get_lifetime_sensor().set_state(e_activity_lifetime_state.active)
     o_crashed_ship_flare.create()
-    sleep(1.3)
-    sc_first_line.wake()
-    obj_m0_5_o1.objective_begin()
+    sleep(2.5)
+    seq_d_o1_s01.start()
+    sleep_until(seq_d_o1_s01.is_done())
+    obj_m0_5_o1.objective_begin_immediate()
     sleep_until(obj_m0_5_o1.is_complete())
+    # the flare goes and the waypoint with it; the objective clears a second
+    # later, with no complete state on the wire
     o_crashed_ship_flare.delete_object()
-    obj_m0_5_o1.objective_end()
+    obj_m0_5_o1._player_objective.nav_point_clear()
+    sleep(1)
+    obj_m0_5_o1.objective_end_silent()
     seq_d_o1_s02.start()
-    sleep(27.4)
+    sleep_until(seq_d_o1_s02.is_done())
     seq_d_o2_s02.start()
     seq_d_o2_s04.start()
     obj_m0_5_o2.objective_begin()
     sleep_until(obj_m0_5_o2.is_complete())
-    seq_d_o2_s04.stop()
     obj_m0_5_o2.objective_end_silent()
+    seq_d_o2_s04.stop()
     seq_d_o2_s05.start()
-    sleep(7.8)
+    sleep_until(seq_d_o2_s05.is_done())
+    sleep(1.5)
     seq_d_o2_s06.start()
-    # the next phase follows the last line
-    sleep(2.9)
-
-script sc_first_line():
-    sleep(1.3)
-    seq_d_o1_s01.start()
+    sleep(3)

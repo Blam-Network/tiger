@@ -339,11 +339,23 @@ describe("TU0 cosmo_portal_1 scripts", () => {
     h.ticks(6);
     expect(squadTask("sq_objective_fallen01d")).toBe(0);
     const shankPushes = actorPushes("sq_objective_fallen01d__shank01");
-    expect(actorPushes("sq_objective_fallen01e__shank04")).toBeGreaterThan(0);
+    // one shank of each squad per update, the 01s first
+    expect(actorPushes("sq_objective_fallen01e__shank01")).toBeGreaterThan(0);
     h.ticks(30);
+    expect(actorPushes("sq_objective_fallen01e__shank04")).toBeGreaterThan(0);
     expect(webPresent("o_laserweb01")).toBe(true);
     alive("sq_objective_fallen01d", 0);
     alive("sq_objective_fallen01e", 0);
+    h.ticks(5);
+    // the web waits for wave 1's suppressors as well as its shanks
+    expect(webPresent("o_laserweb01")).toBe(true);
+    for (const squad of [
+      "sq_objective_suppressors01",
+      "sq_objective_suppressors02",
+      "sq_objective_suppressors03",
+    ]) {
+      alive(squad, 0);
+    }
     h.ticks(5);
     expect(webPresent("o_laserweb01")).toBe(false);
     h.ticks(2);
@@ -351,9 +363,12 @@ describe("TU0 cosmo_portal_1 scripts", () => {
     h.ticks(10);
     expect(squadTask("sq_objective_fallen02b")).toBe(8);
     expect(squadTask("sq_objective_suppressors05")).toBe(20);
-    // the rushers as the first two squads thin out
+    // 02b falls back once three of the eight are down, the rushers after
     alive("sq_objective_fallen02b", 4);
-    alive("sq_objective_fallen02c", 0);
+    alive("sq_objective_fallen02c", 2);
+    h.ticks(2);
+    expect(squadTask("sq_objective_fallen02b")).toBe(8);
+    alive("sq_objective_fallen02c", 1);
     h.ticks(6);
     expect(squadTask("sq_objective_fallen02b")).toBe(7);
     expect(squadTask("sq_objective_fallen02d")).toBe(10);
@@ -361,6 +376,7 @@ describe("TU0 cosmo_portal_1 scripts", () => {
     expect(webPresent("o_laserweb02")).toBe(true);
     for (const squad of [
       "sq_objective_fallen02b",
+      "sq_objective_fallen02c",
       "sq_objective_fallen02d",
       "sq_objective_fallen02e",
     ]) {
@@ -463,17 +479,39 @@ describe("TU0 cosmo_portal_1 scripts", () => {
       return change?.kind === "passenger" ? change.state : undefined;
     };
     expect(seat()).toEqual({ passenger: h.rowOf("sq_tank__tank"), state: 1 });
-    h.ticks(50);
+    // let go as the skiff's entry ends (10 s at most), which then flies its
+    // exit: it faces the exit path's first point before the exit ability
+    h.ticks(12);
     expect(seat()).toEqual({ state: 2 });
+    h.ticks(3);
+    const leaving = h.last("actor", "sq_dropship_tank__dropship");
+    const exit =
+      leaving?.kind === "actor" ? leaving.state.commandScript : undefined;
+    expect(exit?.cookie).toBe(2);
+    expect(exit?.atoms.map((atom) => atom.kind)).toEqual([3, 8, 3, 9]);
+    h.ticks(35);
     const walker = h.last("actor", "sq_tank__tank");
     expect(walker?.kind === "actor" && walker.state.drop?.squads.length).toBe(
       2
     );
     expect(squadTask("sq_fallen_rear01")).toBe(10);
+    // mid01 falls back to the pit on its second death
+    expect(squadTask("sq_fallen_mid01")).not.toBe(4);
+    alive("sq_fallen_mid01", 2);
+    h.ticks(2);
+    expect(squadTask("sq_fallen_mid01")).toBe(4);
+    // shanks01 takes the gate once shanks02 is down
+    alive("sq_fallen_shanks01", 2);
+    alive("sq_fallen_shanks02", 2);
+    h.ticks(2);
+    expect(squadTask("sq_fallen_shanks01")).toBe(1);
+    alive("sq_fallen_shanks02", 0);
+    h.ticks(2);
+    expect(squadTask("sq_fallen_shanks01")).toBe(0);
     alive("sq_tank", 1);
     h.ticks(1);
     alive("sq_tank", 0);
-    h.ticks(5);
+    h.ticks(7);
     const opened = h.last("object", "phase04.o_cosmo_strike01_door01");
     expect(opened?.kind === "object" && opened.state.device?.position).toBe(1);
     expect(squadTask("sq_fallen_door01")).toBe(14);

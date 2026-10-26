@@ -3,15 +3,18 @@
 # The Academy entrance in A Stranger's Call. Quiet until the player hacks the
 # Vex conflux; then the Vex come out of their clouds: the march, the mid group
 # and the anchor while mission 4 runs, and once mission 5 holds the entrance,
-# three defensive waves with a ledge sniper between them. The missions wake
-# the threads; the flags tell them when the entrance is quiet.
+# three defensive waves, a ledge sniper with each of the first two. The
+# missions wake the threads; the flags tell them when the entrance is quiet.
 #
-# From one capture. Which squads each cloud drops is the wire's; when the next
-# wave comes is our reading of it (the march cloud stays twelve seconds, the
-# rest seven; a defensive wave follows the ledge sniper's death). Never placed
-# in that run: sq_anchor_tier2, sq_mid_minotaur, sq_def_anchor_tier2,
-# sq_dummies. The task swaps the squads make on their own (the defensive front
-# refilling, the marchers spreading out) are the AI's, not the script's.
+# From one retail 2.3.1 capture (2026-10-25). Which squads each cloud drops,
+# and how many bodies (@member_counts), is the wire's; when the next wave
+# comes is that run's: the mid group with one marcher left, the anchor once
+# the mid group is dead, each defensive wave once the last one is dead. The
+# march cloud stays twelve seconds, the rest seven. sq_dummies stand for a
+# moment as the entrance comes in. Never placed in that run: sq_anchor_tier2,
+# sq_mid_minotaur, sq_def_anchor_tier2. The task swaps the squads make on
+# their own (the defensive front refilling, the marchers spreading out) are
+# the objective's tasks, not the script's.
 
 @activity_bundle("enc_entrance_m01")
 
@@ -28,18 +31,28 @@ player_monitor pm_top_left bind(tv_top_left)
 trigger_volume tv_top_right
 player_monitor pm_top_right bind(tv_top_right)
 action_point ps_enter
+@member_counts({hobgoblins: 2, minotaur: 1})
 squad sq_anchor
 squad sq_anchor_tier2
+@member_counts({goblins: 3})
 squad sq_center01
 squad sq_mid_minotaur
+@member_counts({hobgoblins: 2})
 squad sq_mid_snipers
+@member_counts({goblins: 3})
 squad sq_mid_goblins
+@member_counts({goblins: 3})
 squad sq_def_center01
+@member_counts({goblins: 3})
 squad sq_def_center02
+@member_counts({minotaur: 1, goblins: 2})
 squad sq_def_anchor01
+@member_counts({minotaur: 1, goblins: 2})
 squad sq_def_anchor02
 squad sq_def_anchor_tier2
+@member_counts({hobgoblins: 1, goblin: 2})
 squad sq_left_ledge_sniper
+@member_counts({hobgoblins: 1, goblin: 2})
 squad sq_right_ledge_sniper
 squad sq_cloud01
 squad_member sq_cloud01__cloud
@@ -131,9 +144,16 @@ script sc_entrance_main():
         candy.create()
     for candy in candy_explosive_objects:
         candy.create()
+    # the dummies stand a second after the entrance comes in, for a second
+    # and a half
+    sleep(1)
+    sq_dummies.place()
+    sleep(1.5)
+    sq_dummies.remove()
 
 # mission 4: the conflux is hacked. The network goes down, the marchers come
-# out of the first cloud, then the mid group and the anchor as each wave dies.
+# out of the first cloud, then the mid group with one marcher left and the
+# anchor once the mid group is dead.
 script sc_conflux_hacked():
     pf_vex_block._object.set_device_position(1)
     cloud_open(sq_cloud01, sq_cloud01__cloud)
@@ -142,30 +162,32 @@ script sc_conflux_hacked():
     cloud_drop(sq_cloud01__cloud, sq_march03, "0xE32043F4")
     sleep(1)
     o_vex_block_network_a.set_device_position(0)
-    sleep(5)
+    sleep(4)
     o_vex_block_network_a.delete_object()
     sleep(4)
     pf_vex_block._object.set_device_position(0)
-    sleep(2)
+    sleep(3)
     sq_cloud01__cloud.remove()
     sleep(2)
     pf_vex_block._object.set_device_position(0.1)
-    sleep_until(sqg_marching.alive_count() == 0)
-    sleep(1)
+    sleep_until(sqg_marching.alive_count() <= 1)
     cloud_open(sq_cloud05, sq_cloud05__cloud)
     cloud_drop(sq_cloud05__cloud, sq_mid_snipers, "0x23AC25CE")
     cloud_drop(sq_cloud05__cloud, sq_mid_goblins, "0x9ABA5A6D")
     cloud_close(sq_cloud05__cloud)
-    sleep_until(sqg_mid.alive_count() == 0)
+    # the minotaur and the tier2 squads were never placed: the waits count
+    # the squads the clouds dropped
+    sleep_until(sq_mid_snipers.alive_count() + sq_mid_goblins.alive_count() == 0)
     cloud_open(sq_cloud02, sq_cloud02__cloud)
     cloud_drop(sq_cloud02__cloud, sq_anchor, "anchor")
     cloud_drop(sq_cloud02__cloud, sq_center01, "0x18E267F1")
     cloud_close(sq_cloud02__cloud)
-    sleep_until(sqg_center.alive_count() == 0)
+    sleep_until(sq_anchor.alive_count() + sq_center01.alive_count() == 0)
     conflux_clear = true
 
-# mission 5: hold the entrance. The centre pair comes back with every wave;
-# the ledge snipers and the anchors join in turn.
+# mission 5: hold the entrance. The centre pair comes back with every wave
+# (trading sides after the first); a ledge sniper joins each of the first two,
+# the anchors the last. Each wave waits for the one before to die.
 script sc_resist():
     i_resist_wave = 1
     cloud_open(sq_cloud03, sq_cloud03__cloud)
@@ -176,29 +198,28 @@ script sc_resist():
     sleep(7)
     sq_cloud03__cloud.remove()
     sq_right_ledge_cloud__cloud.remove()
-    sleep_until(sq_right_ledge_sniper.alive_count() == 0)
-    sleep(1)
+    sleep_until(sqg_defensive_wave.alive_count() + sqg_wave02.alive_count() == 0)
     i_resist_wave = 2
     cloud_open(sq_cloud03, sq_cloud03__cloud)
     cloud_open(sq_left_ledge_cloud, sq_left_ledge_cloud__cloud)
-    cloud_drop(sq_cloud03__cloud, sq_def_center01, "0xCE91FA0C")
-    cloud_drop(sq_cloud03__cloud, sq_def_center02, "0xE19FB2F8")
+    cloud_drop(sq_cloud03__cloud, sq_def_center01, "0xE19FB2F8")
+    cloud_drop(sq_cloud03__cloud, sq_def_center02, "0xCE91FA0C")
     cloud_drop(sq_left_ledge_cloud__cloud, sq_left_ledge_sniper, "0xE150238E")
     sleep(7)
     sq_cloud03__cloud.remove()
     sq_left_ledge_cloud__cloud.remove()
-    sleep_until(sq_left_ledge_sniper.alive_count() == 0)
+    sleep_until(sqg_defensive_wave.alive_count() + sqg_wave02.alive_count() == 0)
     i_resist_wave = 3
     cloud_open(sq_cloud03, sq_cloud03__cloud)
     cloud_open(sq_cloud04, sq_cloud04__cloud)
-    cloud_drop(sq_cloud03__cloud, sq_def_center01, "0xCE91FA0C")
-    cloud_drop(sq_cloud03__cloud, sq_def_center02, "0xE19FB2F8")
+    cloud_drop(sq_cloud03__cloud, sq_def_center01, "0xE19FB2F8")
+    cloud_drop(sq_cloud03__cloud, sq_def_center02, "0xCE91FA0C")
     cloud_drop(sq_cloud04__cloud, sq_def_anchor01, "0x2F6F76C2")
     cloud_drop(sq_cloud04__cloud, sq_def_anchor02, "0x2F6F76C2")
     sleep(7)
     sq_cloud03__cloud.remove()
     sq_cloud04__cloud.remove()
-    sleep_until(sqg_defensive_wave.alive_count() + sqg_defensive_anchor.alive_count() + sqg_wave02.alive_count() == 0)
+    sleep_until(sqg_defensive_wave.alive_count() + sq_def_anchor01.alive_count() + sq_def_anchor02.alive_count() == 0)
     entrance_clear = true
 
 # mission 6: the loot goes with the fight

@@ -5,9 +5,9 @@
 # reinforcements come in, and its adds die with it.
 #
 # The servitor comes in blind and deaf under its shield and wakes as the last
-# guard dies, with the stim; the shield goes 8 s later. In the one capture
-# that moment is also 13 s after pt_arenaentry01, so the arena trigger could
-# be the real cue.
+# guard dies, with the stim; the shield goes 8 s later. Both 2.3.1 runs: the
+# stim 0.4 and 1.1 s after the last guard's death (13.7 and 15.9 s after
+# pt_arenaentry01, so not the arena trigger), the shield 7.7 and 7.5 s on.
 
 @activity_bundle("enc_ship_portal1")
 

@@ -1,0 +1,21 @@
+# es\moon\act_moon_m4_uppercitadel\act_moon_m4_uppercitadel_mission6.esp
+#
+# Mission 6, the end: the sword shatters (the upper citadel encounter), the
+# ascent music and the Ghost's last line start three seconds in, and the
+# activity completes a second later; the game ends half a minute after that.
+# One run.
+
+sequence seq_m_ascend_s01
+sequence seq_d_upperc_prince_killed_s01
+
+script init(): pass
+
+script complete():
+    c_lifetime_script_utilities.get_lifetime_sensor().end_game(30)
+
+script main():
+    sleep(3)
+    seq_m_ascend_s01.start()
+    seq_d_upperc_prince_killed_s01.start()
+    sleep(1)
+    set_activity_complete()

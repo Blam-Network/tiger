@@ -3,8 +3,9 @@
 # Mission 2, the Lower Citadel: into the arena, then take the key off the
 # Hive. The arena's ultra and its minions are the Lower Citadel's ambient
 # encounter; the loot objective is bound to its boss squad (sq_arena) and
-# clears on the pickup. The pause after it is the run's gap before the next
-# objective comes up.
+# clears on the pickup. Two runs: the waypoint clears on the pickup and the
+# objective 2.2-2.4 s later (objective_end; the complete state itself never
+# reaches the wire), and the next objective comes up 2 s after that.
 
 @hard_wipe()
 trigger_volume_objective pf_obj_ultra_trigger
@@ -19,7 +20,7 @@ script main():
     pf_obj_ultra_trigger.objective_begin()
     sleep_until(pf_obj_ultra_trigger.is_complete())
     pf_obj_ultra_trigger.objective_end_silent()
-    # the last of the wisdom hall's lines stops at the arena
+    # the last of the way down's lines stops at the arena
     seq_d_o1_s05.stop()
     pf_objective_loot.objective_begin()
     sleep_until(pf_objective_loot.is_complete())

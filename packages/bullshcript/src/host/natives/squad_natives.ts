@@ -476,24 +476,20 @@ export function rearmUnprimedScript(
 // one squad dropped together left the first of them so, and the wave waited
 // on it for good. The same actor goes again under the next epoch, which runs
 // the client's place test afresh, until it stands.
-export function placeDeferredActor(
-  self: BoundInstance,
-  seconds: number
-): void {
+export function placeDeferredActor(self: BoundInstance, seconds: number): void {
   if (self.row?.typeId !== self.types.Actor) {
     return;
   }
   const key = itemKey(self.row.bundle, self.row.typeIndex);
   const bound = self.context.reports.actorBound(key);
   const standing = self.context.reports.actorStanding(key);
-  const epoch = self.actor.incarnation > 1 ? self.actor.incarnation : 0;
   const deferred =
     (self.actor.placed ?? squadPlaced(self)) &&
     self.actor.killEpoch === undefined &&
     !carrierSeated(self) &&
     bound?.flag8 === true &&
     !bound.flag7 &&
-    standing?.epoch === epoch &&
+    standing?.epoch === sentEpoch(self) &&
     !standing.standing;
   if (!deferred) {
     self.actor.deferredFor = 0;
@@ -518,6 +514,16 @@ export function placeDeferredActor(
       `${MAX_DEFERRED_REPLACES})`
   );
   pushActor(self, `placed again, incarnation ${self.actor.incarnation}`);
+}
+
+// ActorAuth [0] as it last went out (pushActor): the kill epoch, else the
+// incarnation from the second placement on, else absent, which the client
+// reads as 0.
+function sentEpoch(self: BoundInstance): number {
+  return (
+    self.actor.killEpoch ??
+    (self.actor.incarnation > 1 ? self.actor.incarnation : 0)
+  );
 }
 
 // What the client reports for the command script (808006A2): f0 is the PC it
@@ -983,9 +989,7 @@ function notePlacement(self: BoundInstance, count: number): void {
     self.squad.deathsAtPlace = self.context.reports.squadDeaths?.(key) ?? 0;
     self.squad.incidentDeathsAtPlace =
       self.context.reports.squadIncidentDeaths?.(key) ?? 0;
-    self.squad.tallyAtPlace = tallySum(
-      self.context.reports.squadTally?.(key)
-    );
+    self.squad.tallyAtPlace = tallySum(self.context.reports.squadTally?.(key));
     placementKillsOf(self.context).set(key, self.squad.incidentDeathsAtPlace);
   }
 }
@@ -1310,17 +1314,25 @@ export function register(registry: NativeRegistry<BoundInstance>): void {
   });
 }
 
-// placed && flag 8 && !flag 7; before any sense report, placed alone.
+// placed && flag 8 && !flag 7, and where the build reports it, an actor under
+// the epoch last sent: [10] alone is the auth taken, which a deferred or
+// still-spawning placement has too. A sense from an older epoch says nothing
+// either way. Before any sense report, placed alone.
 function isBound(self: BoundInstance): boolean {
   if (self.row?.typeId !== self.types.Actor) {
     return self.unknownPredicate("is_bound");
   }
+  const key = itemKey(self.row.bundle, self.row.typeIndex);
   const placed = self.actor.placed ?? squadPlaced(self);
-  const sense = self.context.reports.actorBound(
-    itemKey(self.row.bundle, self.row.typeIndex)
-  );
+  const sense = self.context.reports.actorBound(key);
+  const standing = self.context.reports.actorStanding(key);
   const bound =
-    sense === undefined ? placed : placed && sense.flag8 && !sense.flag7;
+    sense === undefined
+      ? placed
+      : placed &&
+        sense.flag8 &&
+        !sense.flag7 &&
+        (standing?.epoch !== sentEpoch(self) || standing.standing);
   self.writer.notePoll(
     `${self.path}:is_bound`,
     `${self.path}:is_bound() -> ${bound}`

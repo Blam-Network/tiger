@@ -1,0 +1,51 @@
+# es\utility_scripts\interactable_placement_set.esu
+#
+# interactable_placement for a story objective with more than one thing to
+# use, set out in an ambient bubble ahead of its mission (the dry sea's
+# obj_m2_o2b_placement, act_cosmo_m2_dome_c's two antennas). Each object
+# goes out with the bubble under the identifier its objective listens on,
+# and only the players holding that identifier's activity flag, which the
+# mission raises, can use it. A used object is usable again a few seconds
+# later while its flag is still up, as interactable_placement's is. TU0's
+# rows are the objects and the filters; the flags and interactables are the
+# script's own.
+#
+# Neither the alpha nor day0 has it. From one 2.3.1 capture
+# (act_cosmo_m2_dome_c's public host, 2026-10-24): both objects were out
+# when the player reached the bubble, the first two filters held the player
+# from then on and the last two nobody, and each object was used once.
+
+dynamic_array<object> _objects
+dynamic_array<object_filter> _object_filters
+static_array<activity_flag, 2> _activity_flags
+static_array<interactable, 2> _interactables
+real _minimum_time_to_reset = 3
+
+def import_only_bind(identifier_0, identifier_1):
+    identifiers = [identifier_0, identifier_1]
+    for i, identifier in identifiers:
+        _objects[i].import_only_bind(identifier)
+        _activity_flags[i].import_only_bind(identifier)
+    return true
+
+def user_import():
+    for i, obj in _objects:
+        _interactables[i].import_only_bind(_objects[i])
+
+@startup()
+script main():
+    for i, obj in _objects:
+        obj.create()
+        _object_filters[i].add_players_with_activity_flag(_activity_flags[i])
+        _interactables[i].set_enabled_player_filter(_object_filters[i])
+
+    since_use = [0, 0]
+    while true:
+        sleep(1)
+        for i, obj in _objects:
+            if not _interactables[i].is_active():
+                since_use[i] = 0
+            else:
+                since_use[i] = since_use[i] + 1
+                if since_use[i] >= _minimum_time_to_reset and _activity_flags[i].is_active():
+                    _interactables[i].clear()

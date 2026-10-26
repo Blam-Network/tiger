@@ -1,0 +1,19 @@
+# es\venus\act_venus_m02_southern_tides\act_venus_m02_southern_tides_mission5.esp
+#
+# Mission 5, the outro: the outro music and the activity completes in the
+# frame the phase starts; the Ghost's last line follows two seconds later and
+# the results 30 seconds on. One run.
+
+sequence seq_act_venus_m2_outro_music
+sequence seq_vn02_020_s080
+
+script init(): pass
+
+script complete():
+    c_lifetime_script_utilities.get_lifetime_sensor().end_game(30)
+
+script main():
+    seq_act_venus_m2_outro_music.start()
+    set_activity_complete()
+    sleep(2)
+    seq_vn02_020_s080.start()

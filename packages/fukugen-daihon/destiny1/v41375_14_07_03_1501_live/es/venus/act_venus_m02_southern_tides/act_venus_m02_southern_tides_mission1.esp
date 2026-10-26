@@ -1,0 +1,42 @@
+# es\venus\act_venus_m02_southern_tides\act_venus_m02_southern_tides_mission1.esp
+#
+# Mission 1, the headlands: get there, then take the loot the Vex Cyclops
+# carries. The Cyclops and its waves are enc_headlands_amb1's (the headlands
+# are a public bubble): they come in for a player holding this objective's
+# flag. The Ghost's first line plays a few seconds after the player is in and
+# the objective comes up as it ends, with the next line; that line runs until
+# the loot is picked up. The loot objective clears two seconds after the
+# pickup (retail never shows it complete) and the Ghost sends the player on;
+# the next phase follows five seconds later. One run: the waits are that
+# run's. pt_vn02_010_s022 fired in it but its line never played.
+
+location headlands
+trigger_bubble_objective ch2m2_enter_bubble bind(headlands)
+collect_loot_objective ch2m2_collect_loot bind("0x8C52C41D", 1)
+sequence seq_vn02_010_s010
+sequence seq_vn02_010_s015
+sequence seq_vn02_010_s024
+
+script init(): pass
+
+script complete(): pass
+
+script main():
+    sleep_until(c_player_script_utilities.all_players_are_ready())
+    c_lifetime_script_utilities.get_lifetime_sensor().set_state(e_activity_lifetime_state.active)
+    sleep(4.7)
+    seq_vn02_010_s010.start()
+    sleep_until(seq_vn02_010_s010.is_done())
+    seq_vn02_010_s015.start()
+    # retail shows the objective (wire state 1) 3.8 s after the spawn; TU0
+    # has no verb for that state
+    ch2m2_enter_bubble.objective_begin_immediate()
+    sleep_until(ch2m2_enter_bubble.is_complete())
+    ch2m2_enter_bubble.objective_end_silent()
+    ch2m2_collect_loot.objective_begin()
+    sleep_until(ch2m2_collect_loot.is_complete())
+    seq_vn02_010_s015.stop()
+    sleep(2)
+    ch2m2_collect_loot.objective_end_silent()
+    seq_vn02_010_s024.start()
+    sleep(5)

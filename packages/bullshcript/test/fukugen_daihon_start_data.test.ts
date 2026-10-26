@@ -57,6 +57,7 @@ const TU0_STARTS: Readonly<Record<string, ExpectedStart>> = {
       ["cosmo_m0_5_phase01_hangar", "hangar"],
       ["cosmo_m0_5_phase02_hangar", "hangar"],
     ],
+    spawnTransition: 0x2e_a8_fb_98,
   },
   act_cosmo_m0_highway: {
     destination: "cosmo",
@@ -235,6 +236,20 @@ const TU0_STARTS: Readonly<Record<string, ExpectedStart>> = {
     ],
     spawnTransition: 0xff_ba_6f_9c,
   },
+  // Its 2.3.1 capture: baby_shat at the GAS's spawn, phase00 in the
+  // headlands and the rest in the southern tides.
+  act_venus_m02_southern_tides: {
+    destination: "venus",
+    startSlice: "baby_shat",
+    phases: [
+      ["phase00", "headlands"],
+      ["phase_goto_tides", "southern_tides"],
+      ["phase01", "southern_tides"],
+      ["phase02", "southern_tides"],
+      ["phase_southern_tides_outro", "southern_tides"],
+    ],
+    spawnTransition: 0xff_ba_6f_9c,
+  },
   act_venus_m09_tower: {
     destination: "venus",
     startSlice: "complex",
@@ -301,7 +316,6 @@ const TU0_STARTS: Readonly<Record<string, ExpectedStart>> = {
   venus_portal_2: startsIn("venus", "archive"),
   venus_raid_1: startsIn("venus", "archive"),
   venus_patrols_1: startsIn("venus", "archive"),
-  act_venus_m02_southern_tides: startsIn("venus", "archive"),
   act_venus_m03_thieves_den: startsIn("venus", "archive"),
   act_venus_m05_vault: startsIn("venus", "archive"),
   act_venus_m06_ketch: startsIn("venus", "archive"),
@@ -312,10 +326,30 @@ const TU0_STARTS: Readonly<Record<string, ExpectedStart>> = {
   act_cosmo_m7_command: startsIn("cosmo", "array"),
   moon_portal_1: startsIn("moon", "accelerator"),
   moon_patrols_1: startsIn("moon", "accelerator"),
-  act_moon_m4_uppercitadel: startsIn("moon", "accelerator"),
+  // Its 2.3.1 capture: the accelerator, the GAS's spawn, then the Hellmouth
+  // and the upper citadel.
+  act_moon_m4_uppercitadel: {
+    destination: "moon",
+    startSlice: "accelerator",
+    phases: [
+      ["phase_m4_hellmouth_goto", "hellmouth"],
+      ["phase_m4_hellmouth", "hellmouth"],
+      ["phase_m4_uppercitadel_goto", "uppercitadel"],
+      ["phase_m4_uppercitadel", "uppercitadel"],
+      ["phase_m4_uppercitadel_darkness", "uppercitadel"],
+      ["phase_m4_uppercitadel_close", "uppercitadel"],
+    ],
+    spawnTransition: 0x87_87_51_58,
+  },
   act_moon_m6_reactor: startsIn("moon", "accelerator"),
   act_moon_m7_selection: startsIn("moon", "accelerator"),
-  cine_speaker: startsIn("cinematic_trv", "boulevard"),
+  // Its 2.3.1 capture: bubble 0, state 1, which cine_108_spk_phase owns.
+  cine_speaker: {
+    destination: "cinematic_trv",
+    startSlice: "boulevard",
+    startPhase: "cine_108_spk_phase",
+    phases: [["cine_108_spk_phase", "boulevard"]],
+  },
   cine_end: startsIn("cinematic_trv", "boulevard"),
   act_cinematic_queen_101: startsIn("cinematic_queen", "queens_chamber"),
   // The one capture of a cinematic: bubble 0, state 1, which phase_cine owns.
@@ -343,6 +377,10 @@ const TU0_STARTS: Readonly<Record<string, ExpectedStart>> = {
 const TU0_REGION_SPAWN_TRANSITIONS: Readonly<
   Record<string, Readonly<Record<number, number>>>
 > = {
+  act_cosmo_m0_5_hangar: {
+    56: 0x2e_a8_fb_98,
+    104: 0xd2_fc_7d_b9,
+  },
   act_cosmo_m0_highway: {
     24: 0x68_93_54_72,
     96: 0x10_ff_4a_98,
@@ -351,9 +389,21 @@ const TU0_REGION_SPAWN_TRANSITIONS: Readonly<
     112: 0xea_ec_23_35,
     113: 0xea_ec_23_35,
   },
+  act_venus_m02_southern_tides: {
+    24: 0xff_ba_6f_9c,
+    80: 0xfe_ef_dc_44,
+    160: 0x36_8f_3b_79,
+    168: 0xf4_6b_e2_ba,
+    224: 0x03_85_bd_b2,
+  },
   act_venus_m09_tower: {
     96: fnv1("complex_to_tower"),
     192: 0xe4_81_4c_e5,
+  },
+  act_moon_m4_uppercitadel: {
+    8: 0x87_87_51_58,
+    16: 0xff_20_d5_87,
+    96: 0x76_75_53_f6,
   },
 };
 
@@ -385,6 +435,15 @@ const EVIL_STARTS: Readonly<Record<string, ExpectedStart>> = {
     ...TU0_STARTS.act_cosmo_m4_dome_c,
     spawnPoint: "default",
   },
+  // TU0's spawn from its captures is not carried to 1.33 yet.
+  act_cosmo_m0_5_hangar: {
+    ...TU0_STARTS.act_cosmo_m0_5_hangar,
+    spawnTransition: undefined,
+  },
+  // TU0's start from its capture is not carried to 1.33 yet.
+  cine_speaker: startsIn("cinematic_trv", "boulevard"),
+  act_venus_m02_southern_tides: startsIn("venus", "archive"),
+  act_moon_m4_uppercitadel: startsIn("moon", "accelerator"),
 };
 
 // The spawn transitions the captures show the GAS naming per region: the

@@ -59,7 +59,10 @@ script sc_blast_main():
     sc_walker.wake()
 
 # The Walker rides in seated in its skiff and is let go once the skiff has
-# reached the drop; the skiff leaves 3s later.
+# reached the drop; the skiff leaves 3s later. Both 2.3.1 runs: the skiff,
+# its entry script, the Walker and the seat in one update 1.2 s after the
+# trigger, the release as the skiff reached the entry path's end (9.2 and
+# 9.9 s on), the exit script 2.9 and 3.1 s after that.
 script sc_walker():
     sleep_until(pt_play_s01_x100_s01_x110.is_triggered())
     sleep(1)
@@ -68,20 +71,27 @@ script sc_walker():
     skiff_enter()
     sc_reinforcements.wake()
     sc_shanks.wake()
-    sleep_until_timeout(sq_dropship_tank__dropship.get_command_script_state() != e_command_script_state.executing, 20)
+    sleep_until_timeout(sq_dropship_tank__dropship.get_command_script_state() != e_command_script_state.executing, 10)
     skiff_passenger.release()
     sleep(3)
     skiff_leave()
     sleep_until(sq_tank.alive_count() == 0)
-    sleep(3)
+    # a second after the exit door opens (5.4 and 6.2 s after the Walker)
+    sleep(5)
     place_on_task(sq_fallen_door01, "task")
 
+# rear01 came in as the Walker fell under two thirds health in both runs
+# (42 s and 134 s in); the script reads no actor health, so it keeps the
+# first run's clock. mid01 falls back to the pit on its second death.
 script sc_reinforcements():
     sleep(42)
     place_on_task(sq_fallen_rear01, "mid04")
-    sleep(27)
+    sleep_until(sq_fallen_mid01.alive_count() <= 2)
     sq_fallen_mid01.set_task("mid_pit")
 
+# The Walker drops a pair of shank squads 45 s after it lands and again 45 s
+# after the last of each pair dies (45.3-46.1 s, three drops over two runs).
+# Once shanks02 is down, shanks01 takes its gate (five drops out of five).
 script sc_shanks():
     sleep(45)
     while sq_tank.alive_count() > 0:
@@ -89,9 +99,18 @@ script sc_shanks():
         sq_fallen_shanks02.set_task("shank_gate")
         sq_tank__tank.drop_squad(sq_fallen_shanks01)
         sq_tank__tank.drop_squad(sq_fallen_shanks02)
-        sleep(10)
-        sleep_until(sq_tank.alive_count() == 0 or sq_fallen_shanks01.alive_count() + sq_fallen_shanks02.alive_count() == 0)
-        sleep(40)
+        # a pair dropped again reads dead until the client reports it in,
+        # 21-71 s after the drop
+        sleep_until_timeout(sq_tank.alive_count() == 0 or sq_fallen_shanks01.alive_count() + sq_fallen_shanks02.alive_count() > 0, 90)
+        sleep_until(sq_tank.alive_count() == 0 or sq_fallen_shanks02.alive_count() == 0)
+        sq_fallen_shanks01.set_task("shank_gate")
+        # shanks01 reads 0 for a moment as it moves to the gate
+        while sq_tank.alive_count() > 0:
+            sleep_until(sq_tank.alive_count() == 0 or sq_fallen_shanks01.alive_count() == 0)
+            sleep(3)
+            if sq_fallen_shanks01.alive_count() == 0:
+                break
+        sleep(42)
 
 def skiff_enter():
     __cs.clear()
@@ -100,13 +119,18 @@ def skiff_enter():
     __cs.move_to(dropship_entry_path, 1, false)
     __cs.move_to(dropship_entry_path, 2, true)
     sq_dropship_tank__dropship.place()
+    sq_dropship_tank__dropship.execute(__cs)
+    # the seat is looked up on the skiff's actor as the passenger takes the
+    # Walker, and a skiff not yet standing has none ("couldn't find a seat or
+    # marker named skiff_spider_seat", ff)
+    sleep_until_timeout(sq_dropship_tank__dropship.is_bound(), 10)
     sq_tank.place()
     skiff_passenger.seat(sq_tank__tank)
-    sq_dropship_tank__dropship.execute(__cs)
 
 def skiff_leave():
     __cs.clear()
     __cs.move_to(dropship_exit_path, 0, false)
+    __cs.face(dropship_exit_path, 0)
     __cs.move_to(dropship_exit_path, 1, false)
     __cs.ability("dropship", "exit_45")
     sq_dropship_tank__dropship.execute(__cs)

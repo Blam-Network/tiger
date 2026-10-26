@@ -1,8 +1,8 @@
 # es\venus\act_venus_m01_engineering\act_venus_m01_engineering_mission6.esp
 #
 # Mission 6, the outro: the entrance loot goes and the music stops, the
-# activity completes and the Stranger's cinematic (113_str) plays. Then the
-# game ends.
+# activity completes and the Stranger's cinematic (113_str) plays. The game
+# ends as it finishes.
 
 cinematic_midmission pf_113_str
 encounter_handle enc_entrance_m01
@@ -16,7 +16,7 @@ script complete():
 script main():
     venus_m01_music_cue1.stop()
     enc_entrance_m01.sc_cleanup.wake()
-    sleep(4)
+    sleep(4.5)
     set_activity_complete()
     pf_113_str.start()
     sleep_until(pf_113_str.is_complete())

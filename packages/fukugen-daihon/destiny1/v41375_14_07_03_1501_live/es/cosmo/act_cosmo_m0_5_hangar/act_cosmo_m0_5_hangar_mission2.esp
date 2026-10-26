@@ -1,10 +1,13 @@
 # es\cosmo\act_cosmo_m0_5_hangar\act_cosmo_m0_5_hangar_mission2.esp
 #
-# Mission 2, back to the hangar: reach it, kill its Fallen, and the ultra
-# comes in (enc_hangar_m0_5). The objective clears as the ultra lands; its
-# Vandals follow, and the loot is picked up off the ultra. The music cue
-# steps up on reaching the hangar and again when the ultra lands. From one
-# retail capture.
+# Mission 2, back to the hangar: the music starts with the phase and steps up
+# as the player gets there. The hangar's Fallen and the ultra are
+# enc_hangar_m0_5's (and the ambient enc_hangar_amb1's); this phase waits on
+# them. The bubble objective stays up until the ultra lands, then the loot
+# objective comes up with its Vandals and clears as its loot is picked up
+# (on 2.3.1 the ultra's kill and the quest pickup come in one packet).
+#
+# Two runs: every wait below held in both, within half a second.
 
 @hard_wipe()
 location hangar
@@ -25,19 +28,15 @@ script main():
     seq_m_cue1.set_switch_mask(3)
     seq_d_o4_s01.start()
     seq_d_o4_s02.start()
-    sc_hangar_music.wake()
     obj_m0_5_goto_hangar.objective_begin()
-    # the ultra lands once the hangar's Fallen are down
+    sleep_until(obj_m0_5_goto_hangar.is_complete())
+    seq_m_cue1.set_switch_mask(7)
     sleep_until(sq_amb_fallen_ultra.alive_count() > 0)
     obj_m0_5_goto_hangar.objective_end_silent()
-    sleep(2.1)
+    sleep(2)
     seq_m_cue1.set_switch_mask(15)
     seq_d_o4_s03.start()
-    sleep(2.9)
+    sleep(3)
     obj_m0_5_loot.objective_begin()
     sleep_until(obj_m0_5_loot.is_complete())
     obj_m0_5_loot.objective_end_silent()
-
-script sc_hangar_music():
-    sleep_until(obj_m0_5_goto_hangar.is_complete())
-    seq_m_cue1.set_switch_mask(7)

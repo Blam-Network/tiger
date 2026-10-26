@@ -1,10 +1,19 @@
 # es\cosmo\act_cosmo_m2_dome_c\act_cosmo_m2_dome_c_mission1.esp
 #
-# Mission 1, delta_n: the table has an interactable objective here but the
-# capture never moved it, so this phase only opens the activity once the
-# players are ready and hands over.
+# Mission 1, delta_n: the activity opens with the Ghost's first lines, then
+# the objective on the thing in delta_n the player uses (identifier
+# 0xEAA339A4). Using it clears the objective and its line at once; the phase
+# ends when the Ghost's line about it is over.
+#
+# One run: the objective came up twelve seconds into the Ghost's second
+# line. Retail showed it in a state TU0 has no verb for (wire 1) from the
+# start until then, so it goes straight to active here.
 
 interactable_objective obj_m2_o1 bind("0xEAA339A4")
+sequence seq_d_o1_s011
+sequence seq_d_o1_s014
+sequence seq_d_o1_s01
+sequence seq_d_o1_s016
 
 script init(): pass
 
@@ -13,3 +22,15 @@ script complete(): pass
 script main():
     sleep_until(c_player_script_utilities.all_players_are_ready())
     c_lifetime_script_utilities.get_lifetime_sensor().set_state(e_activity_lifetime_state.active)
+    seq_d_o1_s011.start()
+    seq_d_o1_s014.start()
+    sleep(3)
+    seq_d_o1_s01.start()
+    sleep(12)
+    obj_m2_o1.objective_begin_immediate()
+    sleep_until(obj_m2_o1.is_complete())
+    obj_m2_o1.objective_end_silent()
+    seq_d_o1_s014.stop()
+    sleep(2)
+    seq_d_o1_s016.start()
+    sleep_until(seq_d_o1_s016.is_done())

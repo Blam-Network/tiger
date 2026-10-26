@@ -1,11 +1,13 @@
 # es\moon\act_moon_m3_lowercitadel\unknown_e2388efa.es
 #
 # The World's Grave's music and Ghost lines (bundle E2388EFA; file name
-# unknown). The intro music and the wisdom hall's lines play once the players
-# are in; the lines tied to an objective are their mission's (they stop there too), as is the chamber's music start. The chamber's
-# music steps through its sections as the fight goes on and gives way to the
-# ascent once the scan is done. From one retail capture, so the gaps are that
-# run's.
+# unknown). The intro music and the way down's lines play once the players
+# are in; the lines tied to an objective are their mission's (they stop
+# there too), as is the chamber's music start, and the defence's Ghost line
+# is enc_strength_m3's. The chamber's music steps through its sections as the
+# fight goes on and gives way to the ascent once the scan is done. Two runs
+# (2026-10-03 and 2026-10-25): every wait below held in both to a few tenths
+# of a second.
 
 @activity_bundle(0xE2388EFA)
 
@@ -42,10 +44,12 @@ script sc_wave_announce():
     seq_wis_wave_announce1.start()
 
 @startup()
-# the guards nearly down
+# two of the rear guards down (1.2 s after, both runs; the kill objective's
+# progress reads 2 in the same frame)
 script sc_strength_music_guards():
-    sleep_until(sq_m3_guard_rear.alive_count() > 1)
-    sleep_until(sq_m3_guard_rear.alive_count() <= 1)
+    sleep_until(sq_m3_guard_rear.alive_count() > 2)
+    sleep_until(sq_m3_guard_rear.alive_count() <= 2)
+    sleep(1)
     seq_strength_music.set_switch_mask(7)
 
 @startup()

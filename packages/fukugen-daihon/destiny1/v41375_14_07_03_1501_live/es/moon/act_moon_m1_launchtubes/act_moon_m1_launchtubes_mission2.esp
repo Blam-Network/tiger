@@ -2,13 +2,13 @@
 #
 # Mission 2, the accelerator. Explore, then hit the button: it false-starts
 # and the Fallen come in by dropship (the accelerator encounter runs that).
-# The defend objective holds until the last of them is dead. One run: the
-# explore line showed an earlier state (1) at the bubble entry that nothing
-# here writes.
+# The defend objective holds until the last of them is dead. Two runs: the
+# explore objective went active 12 s after the player spawned in both, before
+# or after the player reached pt_accel_obj; it also showed a state 1 at the
+# bubble entry that nothing here writes.
 
 generic_objective pf_gen_obj_explore
 nav_point ap_obj_1
-player_trigger pt_accel_obj
 player_trigger pt_accel_enter
 interactable_objective pf_objective_button_a bind("0x0F93E94C")
 interactable_placement pf_placement_button_a bind("0x0F93E94C")
@@ -31,14 +31,21 @@ script complete(): pass
 script main():
     sleep_until(c_player_script_utilities.all_players_are_ready())
     c_lifetime_script_utilities.get_lifetime_sensor().set_state(e_activity_lifetime_state.active)
-    sleep_until(pt_accel_obj.is_triggered())
-    sleep(2)
-    pf_gen_obj_explore.objective_begin_immediate(ap_obj_1)
-    sleep_until(pt_accel_enter.is_triggered())
+    sleep_until_timeout(pt_accel_enter.is_triggered(), 12)
+    if not pt_accel_enter.is_triggered():
+        pf_gen_obj_explore.objective_begin_immediate(ap_obj_1)
+        sleep_until(pt_accel_enter.is_triggered())
     sleep(1)
     pf_gen_obj_explore.objective_end_silent()
     pf_objective_button_a.objective_begin()
     sleep_until(pf_objective_button_a.is_complete())
+    # The button sinks in as the accelerator charges, and comes back up as
+    # it dies.
+    pf_placement_button_a._object.set_device_position(0.1)
+    sleep(4)
+    pf_placement_button_a._object.set_device_position(1)
+    sleep(6)
+    pf_placement_button_a._object.set_device_position(0)
     sleep_until(sq_dropship_west.alive_count() > 0)
     sleep(2)
     pf_objective_button_a.objective_end_silent()

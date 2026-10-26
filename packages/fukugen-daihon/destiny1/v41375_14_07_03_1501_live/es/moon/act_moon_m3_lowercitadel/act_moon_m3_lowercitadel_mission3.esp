@@ -3,12 +3,14 @@
 # Mission 3, the strength chamber: reach it, then kill the eight Hive guarding
 # the library (enc_strength_m3's two guard squads share the kill identifier).
 # The Ghost's lines for both objectives play while they are up and stop with
-# the kill.
+# the kill. Two runs.
 
 @hard_wipe()
 location strength
 trigger_bubble_objective pf_objective_goto bind(strength)
 kill_squad_objective pf_objective_kill bind("0xD04758E3", 8)
+squad sq_m3_guard_front
+squad sq_m3_guard_rear
 sequence seq_d_o1_s07
 sequence seq_d_o2_s01
 sequence seq_d_o2_s02
@@ -28,14 +30,23 @@ script main():
     pf_objective_goto.objective_end_silent()
     pf_objective_kill.objective_begin()
     seq_d_o2_s02.start()
-    sleep_until(pf_objective_kill.is_complete())
+    # The objective's listener counts kills that name the guards' identifier
+    # (0xD04758E3); no kill in either run named it (retail counted all eight,
+    # its progress stepping a second after each), so the guards' own deaths
+    # end it as well, once they are in. Cleared 1.3 / 1.9 s after the eighth
+    # kill.
+    sleep_until(guards_alive_count() > 0)
+    sleep_until(pf_objective_kill.is_complete() or guards_alive_count() == 0)
     pf_objective_kill.objective_end_silent()
     seq_d_o2_s01.stop()
     seq_d_o2_s02.stop()
 
+def guards_alive_count():
+    return sq_m3_guard_front.alive_count() + sq_m3_guard_rear.alive_count()
+
 @startup()
-# the chamber's music starts as the players come in, then steps up once they
-# are further in (one run)
+# the chamber's music starts as the players come in (0.5 / 1.6 s after the
+# trigger), then steps up once they are further in (1.1 / 1.6 s)
 script sc_strength_music():
     sleep_until(pt_music_str_start.is_triggered())
     seq_strength_music.start()

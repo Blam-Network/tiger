@@ -1,10 +1,10 @@
 # es\moon\act_moon_m5_strength\act_moon_m5_strength_mission8.esp
 #
 # Mission 8, the shard: use the button. The Ghost's lines and the music's
-# end follow the press on this run's clock (the button's device runs
-# 0.1 to 1 over nine seconds on the host); the chamber takes the anomaly
-# down once the objective clears, and the activity completes 22 seconds
-# after it.
+# end follow the press (the phase runs the button's device to 0.1 at once
+# and to 1 ten seconds later, as the music ends); the chamber takes the anomaly down once the objective
+# clears, and the activity completes 22 seconds after it. Two runs agree to
+# within half a second of every step.
 
 encounter_handle unknown_d53aaa20
 interactable_objective pf_objective_button_a bind("0x0AA54CC0")
@@ -23,9 +23,11 @@ script main():
     enc = unknown_d53aaa20
     pf_objective_button_a.objective_begin()
     sleep_until(pf_objective_button_a.is_complete())
+    pf_placement_button_a._object.set_device_position(0.1)
     sleep(4)
     seq_d_o2_s06.start()
     sleep(6)
+    pf_placement_button_a._object.set_device_position(1)
     seq_strength_music.stop()
     seq_strength_music.set_switch_mask(255)
     sleep(1)

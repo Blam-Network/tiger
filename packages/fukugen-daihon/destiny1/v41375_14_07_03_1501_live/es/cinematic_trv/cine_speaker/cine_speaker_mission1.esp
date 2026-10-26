@@ -1,0 +1,18 @@
+# es\cinematic_trv\cine_speaker\cine_speaker_mission1.esp
+#
+# Mission 1, the Speaker cinematic. The activity is complete before the
+# cinematic plays: retail sends activity_complete in the same update that
+# starts it (0.7 s after pregame). The end comes 1.6 s after the client's
+# cinematic_finished.
+
+cinematic_midmission cine_108_spk
+
+script init(): pass
+
+script complete():
+    c_lifetime_script_utilities.get_lifetime_sensor().end_game()
+
+script main():
+    set_activity_complete()
+    cine_108_spk.start()
+    sleep_until(cine_108_spk.is_complete())

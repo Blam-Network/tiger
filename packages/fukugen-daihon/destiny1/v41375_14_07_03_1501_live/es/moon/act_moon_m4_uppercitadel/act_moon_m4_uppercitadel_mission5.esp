@@ -1,0 +1,38 @@
+# es\moon\act_moon_m4_uppercitadel\act_moon_m4_uppercitadel_mission5.esp
+#
+# Mission 5, the darkness: the Hive come at the chain room in waves, each of
+# the last three led by a Swordbearer, and the objective counts the three
+# Swordbearers (the squads sharing identifier 0xC2A5C155). The upper citadel
+# encounter runs the waves (started here) and the music's middle sections.
+# The objective clears a second after the third Swordbearer's death, and the
+# music ends with it. One run.
+#
+# The objective's listener counts kills that name 0xC2A5C155; none of the
+# run's kills did, so the phase follows the three Swordbearers itself, one
+# wave at a time.
+
+@hard_wipe()
+encounter_handle enc_uppercitadel_m4
+kill_squad_objective pf_objective_uppercitadel_kill bind("0xC2A5C155", 3)
+sequence seq_m_climax_s01
+
+script init(): pass
+
+script complete(): pass
+
+script main():
+    enc = enc_uppercitadel_m4
+    seq_m_climax_s01.set_switch_mask(3)
+    enc.sc_darkness.restart()
+    pf_objective_uppercitadel_kill.objective_begin()
+    sleep_until_slain(enc.sq_chainroom_wave1_major1__major_knight_cleaver)
+    sleep_until_slain(enc.sq_chainroom_wave2_major1__major_knight_cleaver)
+    sleep_until_slain(enc.sq_chainroom_wave3_major1__major_knight_cleaver)
+    sleep(1)
+    seq_m_climax_s01.set_switch_mask(63)
+    seq_m_climax_s01.stop()
+    pf_objective_uppercitadel_kill.objective_end_silent()
+
+def sleep_until_slain(swordbearer):
+    sleep_until(swordbearer.is_alive())
+    sleep_until(not swordbearer.is_alive())

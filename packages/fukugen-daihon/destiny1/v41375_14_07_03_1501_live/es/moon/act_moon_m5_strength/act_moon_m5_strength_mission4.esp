@@ -1,7 +1,9 @@
 # es\moon\act_moon_m5_strength\act_moon_m5_strength_mission4.esp
 #
 # Mission 4, the cinematic. It starts three seconds into the phase (the
-# lifetime holds while it plays); the phase ends with it.
+# lifetime holds while it plays), and the phase holds five seconds past its
+# end while the players are put back in the launch tubes. Two runs: 3.4 /
+# 3.3 s to the hold, 5.4 / 5.0 s to the next phase.
 
 cinematic_midmission pf_cine_110a_mrt
 
@@ -13,3 +15,4 @@ script main():
     sleep(3)
     pf_cine_110a_mrt.start()
     sleep_until(pf_cine_110a_mrt.is_complete())
+    sleep(5)

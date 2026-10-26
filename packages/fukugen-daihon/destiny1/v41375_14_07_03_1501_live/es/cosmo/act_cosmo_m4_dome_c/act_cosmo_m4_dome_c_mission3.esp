@@ -1,14 +1,16 @@
 # es\cosmo\act_cosmo_m4_dome_c\act_cosmo_m4_dome_c_mission3.esp
 #
 # Mission 3, the Hive assault: the console starts working and the Hive come
-# for it. The objective clears once the last wave dies; enc_dome_c_m4 runs
-# the waves.
+# for it. The objective clears once the last wave is dead and its ship gone;
+# enc_dome_c_m4 runs the waves.
 
 @hard_wipe()
 object o_terminal_invis_device
 sequence seq_m_cue1
+sequence seq_d_o3_s01
 sequence seq_d_o3_s03
 generic_objective obj_m4_o3a
+squad sq_ds_hive_assault01
 squad sq_hive_assault_trooper03a
 squad sq_hive_assault_trooper03b
 squad sq_hive_assault_trooper03c
@@ -23,9 +25,14 @@ script main():
     sleep(5)
     obj_m4_o3a.objective_begin_immediate(nil)
     seq_m_cue1.set_switch_mask(31)
-    # the Knight drops last: the wave is over once it is in and all four are dead
+    # the Ghost on the Hive coming, before their ships show
+    sleep(5)
+    seq_d_o3_s01.start()
+    # the Knight drops last: the wave is over once it is in, all four squads
+    # are dead and their ship has left
     sleep_until(sq_hive_assault_heavy03a.alive_count() > 0)
     sleep_until(last_wave_alive_count() == 0)
+    sleep(1)
     seq_m_cue1.set_switch_mask(63)
     sleep(2)
     seq_m_cue1.stop()
@@ -34,4 +41,4 @@ script main():
     obj_m4_o3a.objective_end_silent()
 
 def last_wave_alive_count():
-    return sq_hive_assault_trooper03a.alive_count() + sq_hive_assault_trooper03b.alive_count() + sq_hive_assault_trooper03c.alive_count() + sq_hive_assault_heavy03a.alive_count()
+    return sq_hive_assault_trooper03a.alive_count() + sq_hive_assault_trooper03b.alive_count() + sq_hive_assault_trooper03c.alive_count() + sq_hive_assault_heavy03a.alive_count() + sq_ds_hive_assault01.alive_count()

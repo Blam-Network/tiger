@@ -1,0 +1,7 @@
+# es\utility_scripts\loot_baby_shat.esu
+#
+# The loose candy around Venus' baby shat (the private bubble between the
+# shattered coast and the academy). Ported from the alpha's, which was the
+# array alone; the bubble's script puts the candy out.
+
+static_array<object, 20> dynamic_object_candy

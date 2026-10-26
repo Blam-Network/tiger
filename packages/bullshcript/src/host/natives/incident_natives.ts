@@ -11,6 +11,7 @@ import {
   resolveStringHash,
 } from "../bound/bound_object.ts";
 import type { IncidentWatch } from "../bound/bound_slices.ts";
+import { itemRef } from "../state/items.ts";
 import { itemKey } from "../tags/item_key.ts";
 import { FNV1_EMPTY, fnv1, parseHashLiteral } from "../tags/name_hash.ts";
 import type { NativeRegistry } from "./native_registry.ts";
@@ -259,17 +260,23 @@ export function armTrigger(self: BoundInstance, method: string): boolean {
   return true;
 }
 
-// disable(): the handler stops counting and the trigger goes out disarmed;
+// disable(): the handler stops counting and the trigger goes out disarmed,
+// its arm stamp left as it was (retail's: act_venus_m01_engineering's dialog
+// triggers, disabled at startup, are in the snapshot disabled at stamp 0);
 // enable()/reset() arm it again.
 export function disarmTrigger(self: BoundInstance, row: BoundRow): boolean {
   if (self.incident.watch) {
     self.incident.watch.disabled = true;
   }
+  const last = self.context.lastSent?.("playerTrigger", itemRef(row));
   self.writer.set(
     row,
     {
       kind: "playerTrigger",
-      state: { armedAt: self.context.clock.activityTicks(), enabled: false },
+      state: {
+        armedAt: last?.kind === "playerTrigger" ? last.state.armedAt : 0,
+        enabled: false,
+      },
     },
     "trigger disarmed"
   );

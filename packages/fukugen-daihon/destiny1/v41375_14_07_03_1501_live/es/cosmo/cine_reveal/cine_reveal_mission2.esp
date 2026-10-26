@@ -1,7 +1,9 @@
 # es\cosmo\cine_reveal\cine_reveal_mission2.esp
 #
-# Mission 2, the Tower cinematic. The activity ends shortly after it
-# finishes.
+# Mission 2, the Tower cinematic. Retail sends activity_complete 3.6-4.0 s
+# after the phase starts (five runs) and starts the cinematic 0.4-0.5 s
+# after that; the activity ends 1.5-2.3 s after the client's
+# cinematic_finished.
 
 cinematic_midmission cine_107_twr
 

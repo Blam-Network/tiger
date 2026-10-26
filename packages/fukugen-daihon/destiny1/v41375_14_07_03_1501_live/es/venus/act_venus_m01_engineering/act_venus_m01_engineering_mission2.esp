@@ -1,11 +1,13 @@
 # es\venus\act_venus_m01_engineering\act_venus_m01_engineering_mission2.esp
 #
-# Mission 2, the Shattered Coast: the Ghost scans two sensors. Each scan ends
-# with a Ghost line; the way to the second sensor is nagged after twenty
-# seconds. The lines live in unknown_529d4bdc's bundle.
+# Mission 2, the Shattered Coast: the Ghost scans two sensors. The player
+# uses each one; the Ghost's line follows and the objective goes when it is
+# over. The first sensor's objective just goes, the second's completes. A
+# trigger on the way to the second sensor plays the Ghost's nag. The lines
+# live in unknown_529d4bdc's bundle.
 
-countdown_objective pf_sensor01
-countdown_objective pf_sensor02
+interactable_objective pf_sensor01 bind("sensor01")
+interactable_objective pf_sensor02 bind("sensor02")
 nav_point ap_shattered
 sequence md_vn01_010_60
 player_trigger pt_vn01_010_70
@@ -19,39 +21,26 @@ script complete(): pass
 
 script main():
     sleep_until(c_player_script_utilities.all_players_are_ready())
-    sleep(1)
-    pf_sensor01.objective_begin()
-    # the scan runs its course; nothing on the wire ends it (single run)
-    sleep(54)
-    pf_sensor01.complete()
-    venus_m01_010_d60.wake()
+    # retail brings the objective in 1.8 s after the spawn and sets it active
+    # ten seconds later (a stage TU0 has no verb for); it starts active here
+    sleep(11)
+    pf_sensor01.objective_begin_immediate()
+    sleep_until(pf_sensor01.is_complete())
+    md_vn01_010_60.start()
     sleep_until(md_vn01_010_60.is_done())
     pf_sensor01.objective_end_silent()
+    sc_second_sensor_nag.wake()
     pf_sensor02.objective_begin()
-    venus_m01_010_d70.wake()
-    sleep(40)
-    pf_sensor02.complete()
-    venus_m01_010_d80.wake()
+    sleep_until(pf_sensor02.is_complete())
+    md_vn01_010_80.start()
     sleep_until(md_vn01_010_80.is_done())
     pf_sensor02.objective_end()
-    venus_m01_010_d90.wake()
+    sleep(1)
+    md_vn01_010_90.start()
     sleep_until(md_vn01_010_90.is_done())
 
-script venus_m01_010_d60():
-    md_vn01_010_60.start()
-    print("md_vn01_010_60")
-
-# the nag on the way to the second sensor
-script venus_m01_010_d70():
+# the trigger is armed with the second sensor's objective
+script sc_second_sensor_nag():
     pt_vn01_010_70.enable()
-    sleep_until_timeout(pt_vn01_010_70.is_triggered(), 20)
+    sleep_until(pt_vn01_010_70.is_triggered())
     md_vn01_010_70.start()
-    print("md_vn01_010_70")
-
-script venus_m01_010_d80():
-    md_vn01_010_80.start()
-    print("md_vn01_010_80")
-
-script venus_m01_010_d90():
-    md_vn01_010_90.start()
-    print("md_vn01_010_90")

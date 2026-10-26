@@ -1,18 +1,23 @@
 # es\moon\act_moon_m5_strength\act_moon_m5_strength_mission5.esp
 #
-# Mission 5, on to the Chamber of Night. The players respawn after the
-# cinematic; the objective goes up once they are in, and clears when a
-# player reaches the chamber's bubble.
+# Mission 5, on to the Chamber of Night. The activity goes active again
+# after the cinematic and the players respawn; the objective and the Ghost's
+# line go up once they are in, and both end when a player reaches the
+# chamber's bubble. Two runs.
 
 location strength
 trigger_bubble_objective pf_objective_goto bind(strength)
+sequence seq_d_o2_s03
 
 script init(): pass
 
 script complete(): pass
 
 script main():
+    c_lifetime_script_utilities.get_lifetime_sensor().set_state(e_activity_lifetime_state.active)
     sleep_until(c_player_script_utilities.all_players_are_ready())
+    seq_d_o2_s03.start()
     pf_objective_goto.objective_begin()
     sleep_until(pf_objective_goto.is_complete())
     pf_objective_goto.objective_end_silent()
+    seq_d_o2_s03.stop()

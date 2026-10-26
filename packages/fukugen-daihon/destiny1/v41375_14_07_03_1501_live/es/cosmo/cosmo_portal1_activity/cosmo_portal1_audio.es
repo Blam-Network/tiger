@@ -71,7 +71,7 @@ script sc_scan():
     cue1.set_switch_mask(1)
     sleep(3)
     s01_xx50.start()
-    sleep_until_shanks_dead()
+    sleep_until_wave01_dead()
     s01_xx60.start()
     sleep(3)
     m02_alarm.start()
@@ -107,6 +107,10 @@ script sc_ship():
     cue2.start()
     sleep_until(guards_alive_count() > 0)
     sleep_until(guards_alive_count() == 0)
+    # cue2 holds while the shield comes down and stops with the soul
+    # effects, cue3 comes in with the boss phase (9.6 and 10.1 s after the
+    # last guard in the two 2.3.1 runs)
+    sleep(9)
     cue2.stop()
     sleep(1)
     cue3.start()
@@ -127,15 +131,21 @@ def playfight_alive_count():
 def guards_alive_count():
     return sq_bossbattle_fallen01.alive_count() + sq_bossbattle_fallen02.alive_count() + sq_bossbattle_fallen03.alive_count() + sq_bossbattle_fallen04.alive_count()
 
-# wave 1 ends with its two flights of shanks, whichever falls last, and stays
-# down for a moment (a squad reads 0 before its next member is in)
-def sleep_until_shanks_dead():
+# wave 1 ends with its two flights of shanks and its suppressors, whichever
+# falls last, and stays down for a moment (a squad reads 0 before its next
+# member is in); the line comes a second before the web falls in all three
+# hacks of the two 2.3.1 runs
+def sleep_until_wave01_dead():
     sleep_until(shanks_alive_count() > 0)
     while true:
-        sleep_until(shanks_alive_count() == 0)
+        sleep_until(wave01_alive_count() == 0)
         sleep(2)
-        if shanks_alive_count() == 0:
+        if wave01_alive_count() == 0:
             break
+
+def wave01_alive_count():
+    enc = enc_refinery_portal1
+    return shanks_alive_count() + enc.sq_objective_suppressors01.alive_count() + enc.sq_objective_suppressors02.alive_count() + enc.sq_objective_suppressors03.alive_count()
 
 def shanks_alive_count():
     return sq_objective_fallen01d.alive_count() + sq_objective_fallen01e.alive_count()

@@ -1,0 +1,31 @@
+# es\utility_scripts\u_event_tank_drop_preset.esu
+#
+# The Walker drop's presentation (a pf_event_tank_drop's pf_preset): the
+# public event objective, the engagement hop-on, the pre-engage volume, and
+# the lines and music the event plays, each with a generic take. Bound as
+# the countdown preset binds its own: the specific takes to the objective,
+# the generic ones left alone. Retail played the generic announce and the
+# silver ending; the rest are declared for the endings and lines no run has
+# shown.
+
+player_objective po_event_tank
+hop_on ho_engagement
+trigger_volume tv_drill_pre_engage
+player_trigger pt_drill_pre_engage bind(tv_drill_pre_engage)
+sequence seq_intro_behavior
+sequence seq_tank_announce bind(po_event_tank, e_sequence_suppression_behavior.postpone)
+sequence seq_tank_announce_generic
+sequence seq_tank_engage bind(po_event_tank, e_sequence_suppression_behavior.skip)
+sequence seq_tank_engage_generic
+sequence seq_tank_update_health bind(po_event_tank, e_sequence_suppression_behavior.skip)
+sequence seq_tank_ending_time bind(po_event_tank, e_sequence_suppression_behavior.skip)
+sequence seq_tank_ending_health bind(po_event_tank, e_sequence_suppression_behavior.skip)
+sequence seq_tank_complete_gold bind(po_event_tank, e_sequence_suppression_behavior.skip)
+sequence seq_tank_complete_gold_generic
+sequence seq_tank_complete_silver bind(po_event_tank, e_sequence_suppression_behavior.skip)
+sequence seq_tank_complete_silver_generic
+sequence seq_tank_complete_bronze bind(po_event_tank, e_sequence_suppression_behavior.skip)
+sequence seq_tank_complete_bronze_generic
+sequence seq_tank_complete_failure bind(po_event_tank, e_sequence_suppression_behavior.skip)
+sequence seq_tank_complete_failure_generic
+sequence seq_tank_music1 bind(po_event_tank, e_sequence_suppression_behavior.postpone)

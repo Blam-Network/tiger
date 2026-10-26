@@ -1,0 +1,23 @@
+# es\venus\act_venus_m02_southern_tides\act_venus_m02_southern_tides_mission2.esp
+#
+# Mission 2, on to the southern tides: the bubble objective, and two Ghost
+# lines that start with it and stop when the player gets there (both play
+# off their own volumes once started). One run.
+
+location southern_tides
+trigger_bubble_objective southern_tides_objective bind(southern_tides)
+sequence seq_vn02_010_s040
+sequence seq_vn02_020_s010
+
+script init(): pass
+
+script complete(): pass
+
+script main():
+    southern_tides_objective.objective_begin()
+    seq_vn02_010_s040.start()
+    seq_vn02_020_s010.start()
+    sleep_until(southern_tides_objective.is_complete())
+    seq_vn02_010_s040.stop()
+    seq_vn02_020_s010.stop()
+    southern_tides_objective.objective_end_silent()

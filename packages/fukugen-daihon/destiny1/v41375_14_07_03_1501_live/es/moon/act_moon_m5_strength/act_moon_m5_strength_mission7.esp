@@ -4,10 +4,16 @@
 # through the Hive waves until the ogre falls. The chamber script runs the
 # ritual and the waves; this phase runs the objectives and the climax's
 # trigger group around them.
+#
+# Two runs: the kill objective's bar steps a second after each wizard dies
+# and it clears 0.8 / 0.6 s after the last, with the waves' objective
+# incoming in the same frame. No kill names the squad's identifier
+# (0x27C686D5), so the phase also ends it when the wizards are all dead.
 
 @hard_wipe()
 encounter_handle unknown_d53aaa20
 kill_squad_objective pf_objective_kill bind("0x27C686D5", 3)
+squad sq_dark_ritual
 trigger_group tg_moon_m5_climax_so
 generic_objective pf_gen_obj_jammer
 nav_point ap_obj_4_damage
@@ -21,11 +27,11 @@ script main():
     enc.sc_ritual.wake()
     pf_objective_kill.objective_begin()
     tg_moon_m5_climax_so.activate()
-    sleep_until(pf_objective_kill.is_complete())
+    sleep_until(sq_dark_ritual.alive_count() > 0)
+    sleep_until(pf_objective_kill.is_complete() or sq_dark_ritual.alive_count() == 0)
     pf_objective_kill.objective_end_silent()
     enc.sc_waves.wake()
     pf_gen_obj_jammer.objective_begin(ap_obj_4_damage)
     sleep_until(enc.waves_complete)
-    sleep(1)
     pf_gen_obj_jammer.objective_end_silent()
     tg_moon_m5_climax_so.deactivate()

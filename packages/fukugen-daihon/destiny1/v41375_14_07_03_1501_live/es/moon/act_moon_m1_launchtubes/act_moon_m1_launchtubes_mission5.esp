@@ -1,8 +1,9 @@
 # es\moon\act_moon_m1_launchtubes\act_moon_m1_launchtubes_mission5.esp
 #
 # Mission 5, the launch tubes: find the fallen Guardian, then hit the button
-# he died at. The button does nothing (the Hive are waiting); the phase ends
-# a few seconds after the press and the Ghost's lines stop with it.
+# he died at. The button does nothing (the Hive are waiting): it sinks in,
+# the music moves on and the phase ends a few seconds after the press, with
+# the Ghost's lines. Two runs agree on every delay here to a second.
 
 generic_objective pf_gen_obj_find_guardian
 nav_point ap_find_guardian
@@ -28,7 +29,9 @@ script main():
     sleep_until(pf_objective_button_false.is_complete())
     sleep(1)
     seq_music_launchtubes.set_switch_mask(7)
-    sleep(6)
+    sleep(3)
+    pf_placement_button_false._object.set_device_position(1)
+    sleep(3)
     seq_d_o2_s06.stop()
     seq_d_o2_s07.stop()
     seq_d_o2_s08.stop()

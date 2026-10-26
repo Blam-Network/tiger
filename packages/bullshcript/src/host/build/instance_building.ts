@@ -215,12 +215,15 @@ class LazyArrayTable extends LuaTable {
   }
 }
 // A squad some chunk places starts empty: bodies before the spawn definition
-// is live leave the client retrying "no spawn points or volumes".
+// is live leave the client retrying "no spawn points or volumes". The field
+// resolves as the chunk's own instance does, its bundle first: two bundles
+// can both have a sq_cutter (enc_wisdom_amb1, enc_strength_m5).
 export function reserveScriptPlacedSquads(
   self: EncounterHostContext,
   built: readonly { chunk: HksBytecode; declName: string }[]
 ): void {
   for (const { chunk, declName } of built) {
+    const bundles = topLevelBundles(self, chunk);
     const namespaces = namespacesOf(self, declName);
     const placed = new Set<string>();
     for (const [field, methods] of fieldMethodCalls(chunk)) {
@@ -232,12 +235,7 @@ export function reserveScriptPlacedSquads(
       placed.add(child);
     }
     for (const field of placed) {
-      const row = resolveInstanceField(
-        self.options.bundles,
-        "",
-        field,
-        namespaces
-      );
+      const row = resolveInstanceField(bundles, "", field, namespaces);
       if (row === undefined || row.typeId !== self.types.Squad) {
         continue;
       }

@@ -2,6 +2,8 @@
 
 A native is a function the Destiny engine provides instead of one written in a script, like spawning a squad or reading a timer. This page lists every native that BungieScript scripts call, grouped by what they are called on: builtins first, then the calls every script class has, then one section for each kind of engine object, then libraries, lists and the sandbox classes. The names come from Bungie's compiled scripts and schemas; the explanations are ours, worked out from how the scripts use each call, and the ones inferred from the name alone start with "Likely".
 
+A member's type is written short: `squad`, `object`, `trigger_volume`. Each section below gives that name and, beside it, the engine's class name for the type (`c_squad_sensor_host`); [Type names](#type-names) lists them all and says which of the class names are Bungie's and which are our guess. The rule is to drop the `c_` and the `_sensor_host`, `_slot_host` or `_host` ending. The evidence is Bungie's own scripts: the members of their utility scripts are named after the type they hold (`_squad`, `_trigger_volume`, `_player_objective`, `_device`, `_object_filter`, `_nav_point`, `_player_trigger`, `_incident_listener`, `_activity_flag`, `_interactable`, `_incoming_sequence`), and the Destiny 2 slides of their script editor write types short too (`bool`, `audio_event`, `music_section`). A class that compiled scripts import by name, like `c_player_script_iterator` and the `c_*_utilities` libraries, keeps its name, as do the sandbox classes and `c_command_script` (`command_script` is a keyword).
+
 How to read the tables:
 
 - **Called as** shows what a call looks like, with parameter names guessed from the scripts. A name on the left of the dot (`sq`, `po`) stands for any member of that type.
@@ -56,6 +58,7 @@ How to read the tables:
 - [Libraries](#libraries)
 - [Lists and containers](#lists-and-containers)
 - [Sandbox classes](#sandbox-classes)
+- [Type names](#type-names)
 
 ## Builtins
 
@@ -161,7 +164,7 @@ An encounter also has everything in "Every script class".
 
 ## Encounter manager
 
-`c_encounter_manager` keeps ambient encounters running in the background without using up more AI than the level can take. The budget is set by assigning `encounters.actor_budget = 11`, which is a field and not a call. Each encounter has a cost counted against the budget.
+`encounter_manager` (engine class `c_encounter_manager`) keeps ambient encounters running in the background without using up more AI than the level can take. The budget is set by assigning `encounters.actor_budget = 11`, which is a field and not a call. Each encounter has a cost counted against the budget.
 
 | Native | Called as | What it does |
 |---|---|---|
@@ -172,7 +175,7 @@ An encounter also has everything in "Every script class".
 
 ## Squads
 
-`c_squad_sensor_host` is one squad of AI. Placing it spawns its members.
+`squad` (engine class `c_squad_sensor_host`) is one squad of AI. Placing it spawns its members.
 
 | Native | Called as | What it does |
 |---|---|---|
@@ -189,7 +192,7 @@ An encounter also has everything in "Every script class".
 
 ## Squad groups
 
-`c_squad_group_sensor_host` is a set of squads that can be placed, counted and removed together.
+`squad_group` (engine class `c_squad_group_sensor_host`) is a set of squads that can be placed, counted and removed together.
 
 | Native | Called as | What it does |
 |---|---|---|
@@ -206,7 +209,7 @@ An encounter also has everything in "Every script class".
 
 ## Squad members
 
-`c_squad_member_sensor_host` is one named AI in a squad. A squad's members are declared as `<squad>__<member>`. Dropship pilots are members too.
+`squad_member` (engine class `c_squad_member_sensor_host`) is one named AI in a squad. A squad's members are declared as `<squad>__<member>`. Dropship pilots are members too.
 
 | Native | Called as | What it does |
 |---|---|---|
@@ -221,10 +224,12 @@ An encounter also has everything in "Every script class".
 | `is_dropping` | `pilot.is_dropping()` | True while a drop is under way. |
 | `activate_temperament` | `member.activate_temperament(name)` | Turns on a named temperament for the member. |
 | `set_channel_scalar` | `member.set_channel_scalar(channel, value)` | Sets a named channel, such as a warp gate's `"activate"`, to a value. |
+| `set_blind` | `member.set_blind(true)` | Stops the member seeing players until set back to `false`, as Sepiks Prime while his guards stand. |
+| `set_deaf` | `member.set_deaf(true)` | Stops the member reacting to sounds and shots until set back to `false`. |
 
 ## Objects
 
-`c_object_sensor_host` is a placed object, such as a console, a door or a capture zone.
+`object` (engine class `c_object_sensor_host`) is a placed object, such as a console, a door or a capture zone.
 
 | Native | Called as | What it does |
 |---|---|---|
@@ -240,7 +245,7 @@ An encounter also has everything in "Every script class".
 
 ## Object filters
 
-`c_object_filter_sensor_host` is a set of objects or players that triggers, zones and interactables use to decide who counts.
+`object_filter` (engine class `c_object_filter_sensor_host`) is a set of objects or players that triggers, zones and interactables use to decide who counts.
 
 | Native | Called as | What it does |
 |---|---|---|
@@ -253,7 +258,7 @@ An encounter also has everything in "Every script class".
 
 ## Devices
 
-`c_device_host` is a moving object, like a door or a gate.
+`device` (engine class `c_device_host`) is a moving object, like a door or a gate.
 
 | Native | Called as | What it does |
 |---|---|---|
@@ -263,7 +268,7 @@ An encounter also has everything in "Every script class".
 
 ## Interactables
 
-`c_interactable_host` is an object players can use. By default nobody can until you enable it.
+`interactable` (engine class `c_interactable_host`) is an object players can use. By default nobody can until you enable it.
 
 | Native | Called as | What it does |
 |---|---|---|
@@ -277,7 +282,7 @@ An encounter also has everything in "Every script class".
 
 ## Capturables
 
-`c_capturable_host` is a capture zone, such as a PvP Dominion point.
+`capturable` (engine class `c_capturable_host`) is a capture zone, such as a PvP Dominion point.
 
 | Native | Called as | What it does |
 |---|---|---|
@@ -293,7 +298,7 @@ An encounter also has everything in "Every script class".
 
 ## Trigger groups
 
-`c_trigger_group_host` switches a set of triggers on and off together.
+`trigger_group` (engine class `c_trigger_group_host`) switches a set of triggers on and off together.
 
 | Native | Called as | What it does |
 |---|---|---|
@@ -302,7 +307,7 @@ An encounter also has everything in "Every script class".
 
 ## Player triggers
 
-`c_player_trigger_sensor_host` fires when a player walks into a trigger volume. It fires once each time it is armed.
+`player_trigger` (engine class `c_player_trigger_sensor_host`) fires when a player walks into a trigger volume. It fires once each time it is armed.
 
 | Native | Called as | What it does |
 |---|---|---|
@@ -315,7 +320,7 @@ An encounter also has everything in "Every script class".
 
 ## Player monitors
 
-`c_player_monitor_sensor_host` counts the players inside a volume.
+`player_monitor` (engine class `c_player_monitor_sensor_host`) counts the players inside a volume.
 
 | Native | Called as | What it does |
 |---|---|---|
@@ -325,7 +330,7 @@ An encounter also has everything in "Every script class".
 
 ## Safe zones
 
-`c_safe_zone_sensor_host` watches for objects, such as the ball in the City Tower, inside a volume.
+`safe_zone` (engine class `c_safe_zone_sensor_host`) watches for objects, such as the ball in the City Tower, inside a volume.
 
 | Native | Called as | What it does |
 |---|---|---|
@@ -334,7 +339,7 @@ An encounter also has everything in "Every script class".
 
 ## Location sensors
 
-`c_location_sensor_host` is a named area of the level, such as `engineering` or `lobby`.
+`location` (engine class `c_location_sensor_host`) is a named area of the level, such as `engineering` or `lobby`.
 
 | Native | Called as | What it does |
 |---|---|---|
@@ -342,7 +347,7 @@ An encounter also has everything in "Every script class".
 
 ## Trigger volumes
 
-`c_trigger_volume_slot_host` is a volume a trigger or sensor can be bound to.
+`trigger_volume` (engine class `c_trigger_volume_slot_host`) is a volume a trigger or sensor can be bound to.
 
 | Native | Called as | What it does |
 |---|---|---|
@@ -353,7 +358,7 @@ An encounter also has everything in "Every script class".
 Likely an effect attached to an object. The scripts use them for an overshield and for a Vex death effect.
 
 
-### Hop-on sensors (`c_hop_on_sensor_host`)
+### Hop-on sensors (`hop_on`, engine class `c_hop_on_sensor_host`)
 
 | Native | Called as | What it does |
 |---|---|---|
@@ -369,7 +374,7 @@ Likely an effect attached to an object. The scripts use them for an overshield a
 
 ## Player objectives
 
-`c_player_objective_sensor_host` is a line in the player's objective list, with an optional progress bar, countdown and waypoint. It moves through stages: incoming, active, then complete or failed. Nav points (`c_nav_point_host`) have no natives of their own and are only handed to the calls below.
+`player_objective` (engine class `c_player_objective_sensor_host`) is a line in the player's objective list, with an optional progress bar, countdown and waypoint. It moves through stages: incoming, active, then complete or failed. Nav points (`nav_point`, engine class `c_nav_point_host`) have no natives of their own and are only handed to the calls below.
 
 | Native | Called as | What it does |
 |---|---|---|
@@ -399,7 +404,7 @@ Likely an effect attached to an object. The scripts use them for an overshield a
 
 ## Objectives
 
-`c_objective_sensor_host` is an AI objective: a place or goal squads are sent to. It is not the same as a player objective.
+`objective` (engine class `c_objective_sensor_host`) is an AI objective: a place or goal squads are sent to. It is not the same as a player objective.
 
 | Native | Called as | What it does |
 |---|---|---|
@@ -408,7 +413,7 @@ Likely an effect attached to an object. The scripts use them for an overshield a
 
 ## Common references
 
-`c_common_reference` holds any script or row, so a list of them can mix kinds. The calls below are not engine natives: they go on to the script the reference points at, which defines them (the objective scripts define `objective_begin` and friends, a squad reference answers `respawn`).
+`common_reference` (engine class `c_common_reference`) holds any script or row, so a list of them can mix kinds. The calls below are not engine natives: they go on to the script the reference points at, which defines them (the objective scripts define `objective_begin` and friends, a squad reference answers `respawn`).
 
 | Native | Called as | What it does |
 |---|---|---|
@@ -422,7 +427,7 @@ Likely an effect attached to an object. The scripts use them for an overshield a
 
 ## Sequences
 
-`c_sequence_host` is a piece of audio, dialogue or music that can be started and stopped.
+`sequence` (engine class `c_sequence_host`) is a piece of audio, dialogue or music that can be started and stopped.
 
 | Native | Called as | What it does |
 |---|---|---|
@@ -435,7 +440,7 @@ Likely an effect attached to an object. The scripts use them for an overshield a
 
 ## Timers
 
-`c_timer_sensor_host` is a countdown timer. The lifetime timer of an activity is one of these.
+`timer` (engine class `c_timer_sensor_host`) is a countdown timer. The lifetime timer of an activity is one of these.
 
 | Native | Called as | What it does |
 |---|---|---|
@@ -448,7 +453,7 @@ Likely an effect attached to an object. The scripts use them for an overshield a
 
 ## Objective timers
 
-`c_objective_timer_host` is a timer attached to an object, such as a capture pillar.
+`objective_timer` (engine class `c_objective_timer_host`) is a timer attached to an object, such as a capture pillar.
 
 | Native | Called as | What it does |
 |---|---|---|
@@ -462,7 +467,7 @@ Likely an effect attached to an object. The scripts use them for an overshield a
 
 ## Lifetime
 
-`c_lifetime_sensor_host` is the activity's own lifecycle: countdown, play, results. Get it with `c_lifetime_script_utilities.get_lifetime_sensor()`.
+`lifetime` (engine class `c_lifetime_sensor_host`) is the activity's own lifecycle: countdown, play, results. Get it with `c_lifetime_script_utilities.get_lifetime_sensor()`.
 
 | Native | Called as | What it does |
 |---|---|---|
@@ -474,7 +479,7 @@ Likely an effect attached to an object. The scripts use them for an overshield a
 
 ## Cinematics
 
-`c_cinematic_sensor_host` is a cutscene.
+`cinematic` (engine class `c_cinematic_sensor_host`) is a cutscene.
 
 | Native | Called as | What it does |
 |---|---|---|
@@ -483,7 +488,7 @@ Likely an effect attached to an object. The scripts use them for an overshield a
 
 ## Loot
 
-`c_loot_host` counts the loot players pick up.
+`loot` (engine class `c_loot_host`) counts the loot players pick up.
 
 | Native | Called as | What it does |
 |---|---|---|
@@ -495,6 +500,8 @@ Likely an effect attached to an object. The scripts use them for an overshield a
 
 ## Fireteams
 
+`fireteam` (engine class `c_fireteam_sensor_host`) stands for the players' fireteam.
+
 | Native | Called as | What it does |
 |---|---|---|
 | `nav_point_clear_all` | `fireteam.nav_point_clear_all()` | Removes every waypoint shown to the fireteam. |
@@ -502,7 +509,7 @@ Likely an effect attached to an object. The scripts use them for an overshield a
 
 ## Activity flags
 
-`c_activity_flag` is a named flag set on players, which filters can then test.
+`activity_flag` (engine class `c_activity_flag`) is a named flag set on players, which filters can then test.
 
 | Native | Called as | What it does |
 |---|---|---|
@@ -513,7 +520,7 @@ Likely an effect attached to an object. The scripts use them for an overshield a
 
 ## Factions
 
-`c_faction_host` says which side an object is on.
+`faction` (engine class `c_faction_host`) says which side an object is on.
 
 | Native | Called as | What it does |
 |---|---|---|
@@ -524,7 +531,7 @@ Likely an effect attached to an object. The scripts use them for an overshield a
 
 ## Encounter bindings
 
-`c_encounter_binding_host` connects a member to a row of the encounter's bundle.
+`encounter_binding` (engine class `c_encounter_binding_host`) connects a member to a row of the encounter's bundle.
 
 | Native | Called as | What it does |
 |---|---|---|
@@ -534,7 +541,7 @@ Likely an effect attached to an object. The scripts use them for an overshield a
 
 ## Health sensors
 
-`c_health_sensor_host` follows the health of one combatant, such as a boss.
+`health` (engine class `c_health_sensor_host`) follows the health of one combatant, such as a boss.
 
 | Native | Called as | What it does |
 |---|---|---|
@@ -544,13 +551,15 @@ Likely an effect attached to an object. The scripts use them for an overshield a
 
 ## New mission notices
 
+`new_mission` (engine class `c_new_mission_sensor_host`) is the notice that a new mission is available.
+
 | Native | Called as | What it does |
 |---|---|---|
 | `display` | `notice.display(mission)` | Likely shows the new-mission notice for the given mission. |
 
 ## Performances
 
-`c_performance_host` runs a scripted performance on an actor, such as the Ghost's scan.
+`performance` (engine class `c_performance_host`) runs a scripted performance on an actor, such as the Ghost's scan.
 
 | Native | Called as | What it does |
 |---|---|---|
@@ -562,7 +571,7 @@ Likely an effect attached to an object. The scripts use them for an overshield a
 An incident is a named event, such as a kill or a capture. A listener counts matching incidents or runs a handler when one happens. Incidents and audiences are named by string hash; see [INCIDENTS.md](INCIDENTS.md). Call `reset` before binding a listener again.
 
 
-### Generic listeners (`c_incident_listener`)
+### Generic listeners (`incident_listener`, engine class `c_incident_listener`)
 
 | Native | Called as | What it does |
 |---|---|---|
@@ -572,7 +581,7 @@ An incident is a named event, such as a kill or a capture. A listener counts mat
 | `reset` | `listener.reset()` | Sets the count back to zero. |
 | `set_handler` | `listener.set_handler(handler)` | Runs the given method each time a matching incident happens. |
 
-### Kill listeners (`c_kill_incident_listener`)
+### Kill listeners (`kill_incident_listener`, engine class `c_kill_incident_listener`)
 
 A kill listener counts kills. Each `bind_` call narrows what it counts; anything left unbound matches every kill.
 
@@ -592,7 +601,7 @@ A kill listener counts kills. Each `bind_` call narrows what it counts; anything
 | `reset` | `listener.reset()` | Sets the count back to zero. |
 | `set_handler` | `listener.set_handler(handler)` | Runs the given method for each matching kill. |
 
-### Engagement listeners (`c_engagement_incident_listener`)
+### Engagement listeners (`engagement_incident_listener`, engine class `c_engagement_incident_listener`)
 
 Used by public events to notice when a player starts fighting the event's enemies.
 
@@ -601,7 +610,7 @@ Used by public events to notice when a player starts fighting the event's enemie
 | `bind_squad_identifier` | `listener.bind_squad_identifier(identifier)` | Watches the squad or squads with that identifier. |
 | `set_handler` | `listener.set_handler(handler)` | Runs the given method when someone engages. Public events pass their `d_handle_engagement_incident`. |
 
-### Interactable listeners (`c_interactable_incident_listener`)
+### Interactable listeners (`interactable_incident_listener`, engine class `c_interactable_incident_listener`)
 
 | Native | Called as | What it does |
 |---|---|---|
@@ -609,7 +618,7 @@ Used by public events to notice when a player starts fighting the event's enemie
 | `reset` | `listener.reset()` | Sets the count back to zero. |
 | `import_only_bind` | `listener.import_only_bind(identifier)` | Connects the listener to an interactable. This is load-time wiring. |
 
-### Capturable listeners (`c_capturable_incident_listener`)
+### Capturable listeners (`capturable_incident_listener`, engine class `c_capturable_incident_listener`)
 
 | Native | Called as | What it does |
 |---|---|---|
@@ -619,7 +628,7 @@ Used by public events to notice when a player starts fighting the event's enemie
 
 ## Incident player iterators
 
-An iterator walks the players an incident involves. Call `begin`, then loop while `is_valid` is true, and call `next` at the end of every pass. Forgetting `next` makes the loop run forever.
+An `incident_player_iterator` (engine class `c_incident_player_iterator`) walks the players an incident involves. Call `begin`, then loop while `is_valid` is true, and call `next` at the end of every pass. Forgetting `next` makes the loop run forever.
 
 | Native | Called as | What it does |
 |---|---|---|
@@ -647,7 +656,7 @@ A player sensor is what `get_player_sensor(character_id)` and a player iterator'
 
 ## Scoreboard
 
-`c_scoreboard_host` holds the scores of a PvP match. Get it with `c_scoreboard_script_utilities.get_scoreboard()`. Most scoring happens through scoreboard rules in the bundle, which turn incidents into points without any script.
+`scoreboard` (engine class `c_scoreboard_host`) holds the scores of a PvP match. Get it with `c_scoreboard_script_utilities.get_scoreboard()`. Most scoring happens through scoreboard rules in the bundle, which turn incidents into points without any script.
 
 | Native | Called as | What it does |
 |---|---|---|
@@ -1189,3 +1198,58 @@ One saved loadout: the abilities and perks a player has chosen. The sandbox buil
 | `set_ability_mod_with_configuration` | `settings.set_ability_mod_with_configuration(configuration, slot, mod, ...)` | Puts an ability modifier, such as `"faster_recharge"`, on an ability slot using the ability's configuration. |
 | `clear_all_ability_mods` | `settings.clear_all_ability_mods()` | Removes every ability modifier. |
 | `clear_all_character_perks` | `settings.clear_all_character_perks()` | Removes every character perk. |
+
+## Type names
+
+The types whose script spelling differs from the engine's class name. Every other type is written as the engine names it.
+
+| Script writes | Engine class | Engine class name |
+|---|---|---|
+| `action_point` | `c_action_point_host` | our guess |
+| `activity_flag` | `c_activity_flag` | our guess |
+| `activity_player` | `c_activity_player_sensor_host` | Bungie's |
+| `capturable` | `c_capturable_host` | Bungie's |
+| `capturable_incident_listener` | `c_capturable_incident_listener` | our guess |
+| `cinematic` | `c_cinematic_sensor_host` | Bungie's |
+| `common_reference` | `c_common_reference` | Bungie's |
+| `control_point` | `c_control_point_sensor_host` | our guess |
+| `control_point_set` | `c_control_point_set_sensor_host` | our guess |
+| `device` | `c_device_host` | Bungie's |
+| `encounter_binding` | `c_encounter_binding_host` | our guess |
+| `encounter_handle` | `c_encounter_handle` | our guess |
+| `encounter_manager` | `c_encounter_manager` | our guess |
+| `engagement_incident_listener` | `c_engagement_incident_listener` | our guess |
+| `faction` | `c_faction_host` | our guess |
+| `fireteam` | `c_fireteam_sensor_host` | Bungie's |
+| `hard_wipe_globals` | `c_hard_wipe_globals_host` | our guess |
+| `health` | `c_health_sensor_host` | our guess |
+| `hop_on` | `c_hop_on_sensor_host` | our guess |
+| `incident_listener` | `c_incident_listener` | Bungie's |
+| `incident_player_iterator` | `c_incident_player_iterator` | our guess |
+| `interactable` | `c_interactable_host` | our guess |
+| `interactable_incident_listener` | `c_interactable_incident_listener` | our guess |
+| `kill_incident_listener` | `c_kill_incident_listener` | our guess |
+| `lifetime` | `c_lifetime_sensor_host` | our guess |
+| `location` | `c_location_sensor_host` | our guess |
+| `loot` | `c_loot_host` | our guess |
+| `nav_point` | `c_nav_point_host` | our guess |
+| `new_mission` | `c_new_mission_sensor_host` | our guess |
+| `object` | `c_object_sensor_host` | Bungie's |
+| `object_filter` | `c_object_filter_sensor_host` | Bungie's |
+| `objective` | `c_objective_sensor_host` | our guess |
+| `objective_timer` | `c_objective_timer_host` | our guess |
+| `passenger` | `c_passenger_sensor_host` | our guess |
+| `performance` | `c_performance_host` | our guess |
+| `player_monitor` | `c_player_monitor_sensor_host` | our guess |
+| `player_objective` | `c_player_objective_sensor_host` | Bungie's |
+| `player_trigger` | `c_player_trigger_sensor_host` | our guess |
+| `safe_zone` | `c_safe_zone_sensor_host` | our guess |
+| `scoreboard` | `c_scoreboard_host` | our guess |
+| `sequence` | `c_sequence_host` | our guess |
+| `squad` | `c_squad_sensor_host` | Bungie's |
+| `squad_group` | `c_squad_group_sensor_host` | our guess |
+| `squad_member` | `c_squad_member_sensor_host` | our guess |
+| `team_picker` | `c_team_picker_host` | our guess |
+| `timer` | `c_timer_sensor_host` | our guess |
+| `trigger_group` | `c_trigger_group_host` | our guess |
+| `trigger_volume` | `c_trigger_volume_slot_host` | Bungie's |

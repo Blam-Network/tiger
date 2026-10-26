@@ -4,7 +4,10 @@
 # arena to the Hive library in the strength chamber, where the Ghost reads
 # the Grave while the Hive come for it. The root starts nothing; the phases
 # are the missions beside it, run in order. Mission file names are ours.
-# From one retail capture, so every wait in these files is that run's.
+# Written from two 2.3.1 runs (2026-10-03 and 2026-10-25, one player each,
+# no wipe): every wait in these files held in both, nothing is confirmed past
+# that. The accelerator (1) is a public bubble: the player spawns there, on
+# the Moon's public host (checksum 4776B394), and walks down.
 #
 #   act_moon_m3_lowercitadel_mission1.esp  phase_wisdom: reach the Lower Citadel
 #   act_moon_m3_lowercitadel_mission2.esp  phase_lowercitadel: the arena, take the key
@@ -20,7 +23,7 @@
 
 @activity_bundle("act_moon_m3_lowercitadel")
 # The accelerator (1) at the same spawn, the wisdom and citadel phases in 5, the
-# strength phases in 11. One 2.3.1 capture.
+# strength phases in 11. Both 2.3.1 runs.
 @activity("act_moon_m3_lowercitadel")
 @start_slice("accelerator")
 @phase("phase_wisdom", "lowercitadel")

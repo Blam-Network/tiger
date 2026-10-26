@@ -1,0 +1,35 @@
+# es\venus\act_venus_m02_southern_tides\act_venus_m02_southern_tides_mission3.esp
+#
+# Mission 3, the tides: down to the water, where the Fallen camp comes up as
+# the objective does (enc_southern_tides_m02 places it), then secure the
+# area. The secure objective clears once the last Fallen is dead and the
+# dome's music starts with it. On retail the phase moved on only as the
+# player walked into the dome; that trigger is phase02's, so mission 4 waits
+# on it instead. One run: the two seconds before the secure objective are
+# that run's.
+
+@hard_wipe()
+trigger_volume_objective southern_tides_objective01
+generic_objective pf_po_secure
+nav_point ap_secure_a01
+encounter_handle enc_southern_tides_m02
+sequence seq_vn02_020_s020
+sequence seq_act_venus_m2_cue1_music
+
+script init(): pass
+
+script complete(): pass
+
+script main():
+    southern_tides_objective01.objective_begin()
+    enc_southern_tides_m02.sc_fallen.wake()
+    sleep_until(southern_tides_objective01.is_complete())
+    southern_tides_objective01.objective_end_silent()
+    seq_vn02_020_s020.start()
+    sleep(2)
+    pf_po_secure.objective_begin(ap_secure_a01)
+    sleep_until(enc_southern_tides_m02.fallen_clear == true)
+    sleep(2)
+    pf_po_secure.objective_end_silent()
+    seq_act_venus_m2_cue1_music.start()
+    seq_act_venus_m2_cue1_music.set_switch_mask(1)

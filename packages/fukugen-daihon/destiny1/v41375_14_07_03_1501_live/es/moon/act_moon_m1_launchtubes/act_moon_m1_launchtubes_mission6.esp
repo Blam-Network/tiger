@@ -1,7 +1,10 @@
 # es\moon\act_moon_m1_launchtubes\act_moon_m1_launchtubes_mission6.esp
 #
-# Mission 6, the Hive emerge: the cinematic at the launch tube gate. The
-# player is put back at the gate once it has played.
+# Mission 6, the Hive emerge: the cinematic at the launch tube gate. It
+# starts four seconds into the phase (the client has swapped the tubes to
+# the phase's state by then) and the phase holds five seconds past its end,
+# while the player is put back at the gate. Two runs: 3.9 and 4.1 s, 5.3
+# and 5.8 s.
 
 cinematic_midmission pf_cine_110_mst
 
@@ -10,6 +13,7 @@ script init(): pass
 script complete(): pass
 
 script main():
+    sleep(4)
     pf_cine_110_mst.start()
     sleep_until(pf_cine_110_mst.is_complete())
-    c_lifetime_script_utilities.get_lifetime_sensor().set_state(e_activity_lifetime_state.active)
+    sleep(5)

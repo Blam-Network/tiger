@@ -1,0 +1,130 @@
+# es\moon\accelerator\enc_accelerator_amb1.es
+#
+# The accelerator's ambient layer (the Moon's public bubble 1, where the
+# Moon's story missions and patrol land): the patrol beacons, the dynamic
+# props and the Hive around the accelerator, its interior, the north dome,
+# the crater ridge and the way to the Hall of Wisdom. Six encounters are up
+# as soon as the bubble loads; the rest wait for room under the actor budget.
+#
+# Pooled over two 2.3.1 fresh starts of the bubble, act_moon_m3_lowercitadel's
+# public host (the player in it for 115 s) and act_moon_m4_uppercitadel's
+# (62 s):
+# - Up at load in both: accel_hco, int_back_a, loiter_stealth and
+#   north_ridge, with two more, north_dome_a and west in one run, crater_ridge
+#   and int_front in the other. Both sets came to 22 bodies. The costs here
+#   are the bodies the server placed, the order the longer run's.
+# - wisdom_bouncers went in 51 s after the load with the others still up, so
+#   the budget has room for it (24); it waits out the first placement.
+# - north_ridge was placed again 18 s after it was wiped; crater_ridge went
+#   in once wisdom_bouncers had been wiped. Both from the longer run only.
+# - int_back_b and the two loiters never went in. Their costs are TU0's
+#   default bodies.
+# Left out: the two wave encounters (pf_waves_int, pf_waves_dome), whose
+# respawn timers ran from the load and stopped 32-43 s later with nothing
+# placed, and the music, which never played.
+
+@activity_bundle("enc_accelerator_amb1")
+
+static_array<object, 3> patrol_beacons
+static_array<object, 10> dynamics
+encounter_manager encounters
+@member_counts({_squad: [{anchor: 1, 0x3715BE01: 2, 0x4B2A2736: 2}]})
+simple_encounter pf_simple_accel_hco
+@member_counts({_squad: [{anchor: 1, 0x3715BE01: 2, 0x4B2A2736: 1}]})
+simple_encounter pf_simple_int_back_a
+simple_encounter pf_simple_loiter_stealth
+simple_encounter pf_simple_north_ridge
+@member_counts({_squad: [{anchor: 1, 0x3715BE01: 2, 0x4B2A2736: 2}]})
+simple_encounter pf_simple_north_dome_a
+@member_counts({_squad: [{vandal: 1, 0xA2D60243: 3}]})
+simple_encounter pf_simple_west
+simple_encounter pf_simple_wisdom_bouncers
+@member_counts({_squad: [{anchor: 1, dregs: 3, 0x4B2A2736: 1}]})
+simple_encounter pf_simple_crater_ridge
+simple_encounter pf_simple_int_front
+simple_encounter pf_simple_int_back_b
+simple_encounter pf_simple_loiter_left
+simple_encounter pf_simple_loiter_right
+
+@startup()
+script sc_accelerator_props():
+    for beacon in patrol_beacons:
+        beacon.create()
+    for prop in dynamics:
+        prop.create()
+
+@startup()
+script ss_encounter_controller_thread():
+    encounters.actor_budget = 24
+    encounters.add_ambient_encounter(pf_simple_accel_hco, 5, 100, 20, 18, 0)
+    encounters.add_ambient_encounter(pf_simple_int_back_a, 4, 100, 20, 18, 0)
+    encounters.add_ambient_encounter(pf_simple_loiter_stealth, 2, 100, 20, 18, 0)
+    encounters.add_ambient_encounter(pf_simple_north_ridge, 2, 100, 20, 18, 0)
+    encounters.add_ambient_encounter(pf_simple_north_dome_a, 5, 100, 20, 18, 0)
+    encounters.add_ambient_encounter(pf_simple_west, 4, 100, 20, 18, 0)
+    # the one that came in later waits out the first placement
+    encounters.add_ambient_encounter(pf_simple_wisdom_bouncers, 2, 100, 20, 18, 30)
+    encounters.add_ambient_encounter(pf_simple_crater_ridge, 5, 100, 20, 18, 0)
+    encounters.add_ambient_encounter(pf_simple_int_front, 4, 100, 20, 18, 0)
+    # never placed on the wire: TU0's default bodies
+    encounters.add_ambient_encounter(pf_simple_int_back_b, 3, 100, 20, 18, 30)
+    encounters.add_ambient_encounter(pf_simple_loiter_left, 2, 100, 20, 18, 30)
+    encounters.add_ambient_encounter(pf_simple_loiter_right, 2, 100, 20, 18, 30)
+
+@startup()
+# TU0's squads carry no objective of their own, so each takes its encounter's
+# objective and task once the encounter has placed it: the tasks retail gave
+# them (crater_ridge's by its influencer, 2.3.1 added a task ahead of it), and
+# the first task for the three never seen up.
+script sc_accel_hco_tasks():
+    assign_tasks(pf_simple_accel_hco, ["0xDBDAB8FE"])
+
+@startup()
+script sc_int_back_a_tasks():
+    assign_tasks(pf_simple_int_back_a, ["0x51396A96"])
+
+@startup()
+script sc_loiter_stealth_tasks():
+    assign_tasks(pf_simple_loiter_stealth, ["task"])
+
+@startup()
+script sc_north_ridge_tasks():
+    assign_tasks(pf_simple_north_ridge, ["0x717605F5"])
+
+@startup()
+script sc_north_dome_a_tasks():
+    assign_tasks(pf_simple_north_dome_a, ["0xA5194401"])
+
+@startup()
+script sc_west_tasks():
+    assign_tasks(pf_simple_west, ["0x9FC6097A"])
+
+@startup()
+script sc_wisdom_bouncers_tasks():
+    assign_tasks(pf_simple_wisdom_bouncers, ["0x904EC313"])
+
+@startup()
+script sc_crater_ridge_tasks():
+    assign_tasks(pf_simple_crater_ridge, ["0xF294B65B"])
+
+@startup()
+script sc_int_front_tasks():
+    assign_tasks(pf_simple_int_front, ["0xB82C7EB0", "0xB82C7EB0"])
+
+@startup()
+script sc_int_back_b_tasks():
+    assign_tasks(pf_simple_int_back_b, ["0xB67BD312"])
+
+@startup()
+script sc_loiter_left_tasks():
+    assign_tasks(pf_simple_loiter_left, ["task"])
+
+@startup()
+script sc_loiter_right_tasks():
+    assign_tasks(pf_simple_loiter_right, ["task"])
+
+def assign_tasks(enc, tasks):
+    sleep_until(enc._squad_group.alive_count() > 0)
+    for i in range(len(tasks)):
+        enc._squad[i].set_objective(enc._objective)
+        enc._squad[i].set_task(tasks[i])

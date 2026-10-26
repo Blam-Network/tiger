@@ -126,6 +126,7 @@ squad_member sq_fallen_garage_melee__dreg1
 squad_member sq_fallen_garage_melee__dreg2
 squad_member sq_fallen_garage_melee__dreg3
 player_trigger pt_fallen_3_spawn
+player_trigger pt_exit
 c_command_script __cs  # true name unknown
 
 @startup()
@@ -326,6 +327,11 @@ script sc_fallen_arena():
     enter(sq_fallen_2__dreg_b, "fallen_drop")
     sq_fallen_first_vandal.set_task("first_vandal")
     o_breach_cables.create()
+    # the first of the three to die sends the other two on
+    sleep_until(arena_alive_count() == 3)
+    sleep_until(arena_alive_count() < 3)
+    sq_fallen_1c.set_task("0xAB777E04")
+    sq_fallen_2.set_task("0xAB777E04")
 
 script sc_fallen_corridor_b():
     sleep_until(pt_corr_spawn_b.is_triggered())
@@ -372,10 +378,33 @@ script sc_fallen_garage():
     enter(sq_fallen_garage_melee__dreg3, "fallen_drop")
     sleep(1)
     c_lifetime_script_utilities.get_lifetime_sensor().set_time_of_day(0.025)
+    sc_garage_vandals.wake()
+    sc_garage_melee.wake()
+    # the exit squad comes in when one of the five is left, or when a player
+    # runs for the exit
     sleep_until(pt_fallen_3_spawn.is_triggered())
-    sleep_until(sq_fallen_garage_vandals_2.alive_count() + sq_fallen_garage_vandals_3.alive_count() + sq_fallen_garage_melee.alive_count() == 0)
+    sleep_until(garage_alive_count() > 1)
+    sleep_until(garage_alive_count() <= 1 or pt_exit.is_triggered())
     sq_fallen_garage_exit.set_task("garage_exit")
     sq_fallen_garage_exit.place()
+
+# either vandal dying brings the other one forward with it
+script sc_garage_vandals():
+    sleep_until(sq_fallen_garage_vandals_2.alive_count() + sq_fallen_garage_vandals_3.alive_count() == 2)
+    sleep_until(sq_fallen_garage_vandals_2.alive_count() + sq_fallen_garage_vandals_3.alive_count() < 2)
+    sq_fallen_garage_vandals_2.set_task("garage_vandals")
+    sq_fallen_garage_vandals_3.set_task("garage_vandals")
+
+script sc_garage_melee():
+    sleep_until(sq_fallen_garage_melee.alive_count() > 1)
+    sleep_until(sq_fallen_garage_melee.alive_count() <= 1)
+    sq_fallen_garage_melee.set_task("garage_melee")
+
+def arena_alive_count():
+    return sq_fallen_1c.alive_count() + sq_fallen_2.alive_count()
+
+def garage_alive_count():
+    return sq_fallen_garage_vandals_2.alive_count() + sq_fallen_garage_vandals_3.alive_count() + sq_fallen_garage_melee.alive_count()
 
 script sc_chest_primary_weapon():
     delete_when_destroyed(o_chest_primary_weapon)

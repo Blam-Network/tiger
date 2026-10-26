@@ -9,7 +9,7 @@
 #   act_cosmo_m4_dome_c_mission4.esp  back to the control room, the outro
 #
 # The area encounters (dome_a, dome_c) are scripts of their own.
-# unknown_f9e600a7 holds the music and Ghost lines. From one retail capture
+# unknown_f9e600a7 holds the music and Ghost lines. From two retail runs.
 
 @activity_bundle("act_cosmo_m4_dome_c")
 # The 2.3.1 capture starts it in bubble 6 (slice 48); its lifetime runs the array

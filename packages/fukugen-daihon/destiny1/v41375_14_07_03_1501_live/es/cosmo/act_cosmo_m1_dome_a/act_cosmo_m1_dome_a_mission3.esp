@@ -1,10 +1,11 @@
 # es\cosmo\act_cosmo_m1_dome_a\act_cosmo_m1_dome_a_mission3.esp
 #
-# Mission 3, the way out: no objective. The activity ends a moment after
-# the player reaches the far end of the upper floor (the outro plays off the
-# same trigger, unknown_8bd80dbe's).
+# Mission 3, the end: no objective. The fight music stops, the outro starts,
+# and the activity completes a moment later; the results follow 30 seconds
+# after that. From one retail 2.3.1 capture: the gaps are that run's.
 
-player_trigger pt_upper_rush02_spawn
+sequence seq_m_cue1
+sequence seq_m_outro
 
 script init(): pass
 
@@ -12,6 +13,8 @@ script complete():
     c_lifetime_script_utilities.get_lifetime_sensor().end_game(30)
 
 script main():
-    sleep_until(pt_upper_rush02_spawn.is_triggered())
-    sleep(1.7)
+    seq_m_cue1.stop()
+    sleep(0.6)
+    seq_m_outro.start()
+    sleep(1.6)
     set_activity_complete()

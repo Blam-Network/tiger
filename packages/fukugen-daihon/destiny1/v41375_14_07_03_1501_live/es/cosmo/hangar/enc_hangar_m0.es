@@ -72,13 +72,19 @@ script sc_fallen_on_playership():
     sq_ch1_fallen_on_playership_2.place()
     sq_ch1_fallen_on_playership_3.place()
 
+# the main room comes alive when a player reaches it, or once the captain on
+# the ship is dead (a player who stays at the ship); its squad falls back to
+# the room's last task when one dreg is left
 script sc_fallen_main_room():
-    sleep_until(pt_main_room.is_triggered())
+    sleep_until(pt_main_room.is_triggered() or sq_ch1_fallen_on_playership_1.alive_count() > 0)
+    sleep_until(pt_main_room.is_triggered() or sq_ch1_fallen_on_playership_1.alive_count() == 0)
     sq_m0_fallen_1.set_task("task_1")
     sq_m0_fallen_1.place()
     sq_ch1_fallen_on_playership_1.set_task("objective_1")
     sq_ch1_fallen_on_playership_2.set_task("objective_1")
     sq_ch1_fallen_on_playership_3.set_task("objective_1")
+    sleep_until(sq_m0_fallen_1.alive_count() <= 1)
+    sq_m0_fallen_1.set_task("task")
 
 script sc_fallen_backup():
     sleep_until(pt_fallen_backup.is_triggered())

@@ -1,26 +1,26 @@
 # es\cosmo\act_cosmo_m1_dome_a\act_cosmo_m1_dome_a_mission2.esp
 #
-# Mission 2, the upper floor: the objective stays up until the Hive wizard
-# is dead, and the Ghost's lines and the music cue stop with it. The wizard
-# and the rest of the upper floor are enc_dome_a_m1's.
+# Mission 2, the upper floor: kill the wizard. The objective comes up as the
+# phase starts and ends with the wizard's death, and the upper floor's Ghost
+# lines stop with it. The wizard and the rest of the floor are
+# enc_dome_a_m1's. Retail points the waypoint at the wizard's squad, falling
+# back to ap_o2_fallback; ours points at the fallback.
 
 @hard_wipe()
+encounter_handle enc_dome_a_m1
 generic_objective obj_m1_o2
-squad sq_hive_upper_wizard01
+nav_point ap_o2_fallback
 sequence seq_d_o3_s012
 sequence seq_d_o3_s016
-sequence seq_m_cue1
 
 script init(): pass
 
 script complete(): pass
 
 script main():
-    obj_m1_o2.objective_begin(nil)
-    sleep_until(sq_hive_upper_wizard01.alive_count() > 0)
-    sleep_until(sq_hive_upper_wizard01.alive_count() == 0)
-    sleep(0.8)
+    obj_m1_o2.objective_begin(ap_o2_fallback)
+    sleep_until(enc_dome_a_m1.sq_hive_upper_wizard01.alive_count() > 0)
+    sleep_until(enc_dome_a_m1.sq_hive_upper_wizard01.alive_count() == 0)
     seq_d_o3_s012.stop()
     seq_d_o3_s016.stop()
-    seq_m_cue1.stop()
     obj_m1_o2.objective_end_silent()

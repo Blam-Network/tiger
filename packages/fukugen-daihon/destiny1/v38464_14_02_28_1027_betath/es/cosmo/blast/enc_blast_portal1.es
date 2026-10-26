@@ -102,9 +102,13 @@ def skiff_enter():
     __cs.move_to(dropship_entry_path, 1, false)
     __cs.move_to(dropship_entry_path, 2, true)
     sq_dropship_tank__dropship.place()
+    sq_dropship_tank__dropship.execute(__cs)
+    # the seat is looked up on the skiff's actor as the passenger takes the
+    # Walker, and a skiff not yet standing has none ("couldn't find a seat or
+    # marker named skiff_spider_seat", ff)
+    sleep_until_timeout(sq_dropship_tank__dropship.is_bound(), 10)
     sq_tank.place()
     skiff_passenger.seat(sq_tank__tank)
-    sq_dropship_tank__dropship.execute(__cs)
 
 def skiff_leave():
     __cs.clear()

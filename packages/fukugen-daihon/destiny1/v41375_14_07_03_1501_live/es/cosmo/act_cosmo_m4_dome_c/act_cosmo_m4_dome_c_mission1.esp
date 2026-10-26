@@ -2,10 +2,13 @@
 #
 # Mission 1, the Array: get there, then take the codes from the Fallen
 # captain. The Array is a public bubble; its Fallen belong to enc_array_amb1.
+# Three codes complete it: in both retail runs the objective clears about 2 s
+# after the third pickup (the public host's ED639013 incident), and the
+# pickups after it change nothing.
 
 location array
 trigger_bubble_objective obj_m4_o1a bind(array)
-collect_loot_objective obj_m4_o1b bind("0xDA728072", 5)
+collect_loot_objective obj_m4_o1b bind("0xDA728072", 3)
 sequence seq_d_o1_s03
 sequence seq_d_o1_s04
 sequence seq_d_o1_s045
@@ -33,5 +36,5 @@ script main():
     seq_d_o1_s04.stop()
     seq_d_o1_s05.start()
     obj_m4_o1b.objective_end_silent()
-    # the Ghost's line about the codes before the next phase (one run)
+    # the Ghost's line about the codes before the next phase
     sleep(3)

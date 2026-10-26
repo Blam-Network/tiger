@@ -2,15 +2,17 @@
 #
 # The Last Array's dome_c. On the way to the console the Fallen hold the
 # corridors, the landing and the control room entrance, each group coming on
-# as the player reaches it. Once the console is working the Hive land in
-# three waves outside. From one retail capture: where a step has no trigger
-# on the wire, the wait is that run's. The console is usable only by players
-# carrying its activity flag, which mission 2's objective sets. The Fallen
-# skiff at the landing flies in on its entry path, drops its squad when the
-# player comes outside and leaves on the landing's path five seconds later.
-# Once the console works two Hive ships pass over the dome while a third
-# brings each wave in, drops it and leaves. The ships' command scripts are
-# retail's atom for atom.
+# as the player reaches it or as the group before it dies. Once the console
+# is working the Hive land in three waves outside. From two retail runs:
+# where a step has no trigger on the wire, the wait is the one both runs
+# share. The console is usable only by players carrying its activity flag,
+# which mission 2's objective sets. The Fallen skiff at the landing flies in
+# on its entry path, drops its squad when the player comes outside and leaves
+# on the landing's path five seconds later. Once the console works two Hive
+# ships pass over the dome while a third brings each wave in, drops it and
+# leaves. The ships' command scripts are retail's atom for atom. The console
+# and the terminal flicker while they work and come to rest when the player
+# is back in the control room at the end.
 
 @activity_bundle("enc_dome_c_m4")
 
@@ -19,8 +21,8 @@ objective obj_dome_c_m4_hive
 player_monitor pm_refresh_corridor01
 player_monitor pm_corridor01c_spawn
 player_monitor pm_refresh_outdoor_enc01
-player_monitor pm_refresh_guards01
-player_monitor pm_outdoor_enc_wave02
+player_monitor pm_spawn_guards01
+player_monitor pm_trigger_volume
 object o_terminal_invis_device
 object o_auto_door02
 object o_hei_satellite_event_a01
@@ -88,6 +90,7 @@ squad sq_hive_assault_trooper03b
 squad sq_hive_assault_trooper03c
 @member_counts({knight_major: 1})
 squad sq_hive_assault_heavy03a
+bool b_devices_at_rest = false
 
 @startup()
 script sc_dome_c():
@@ -107,6 +110,7 @@ script sc_dome_c():
     sc_corridors.wake()
     sc_console.wake()
     sc_assault.wake()
+    sc_devices_at_rest.wake()
 
 # the console shows it is working once used, and so does the terminal once
 # mission 3 makes it
@@ -122,7 +126,19 @@ script sc_terminal():
     sleep_until(o_terminal_invis_device.is_alive())
     device_working(o_terminal_invis_device)
 
-# the Fallen, corridor by corridor to the control room
+# back in the control room with the Hive gone: the terminal comes to rest,
+# then the console a second later
+script sc_devices_at_rest():
+    sleep_until(o_terminal_invis_device.is_alive())
+    sleep_until(not pm_trigger_volume.test_any_inside())
+    sleep_until(pm_trigger_volume.test_any_inside())
+    sleep(2)
+    b_devices_at_rest = true
+    o_terminal_invis_device.set_device_position(1)
+    sleep(1)
+    obj_placement_m4_o2._object.set_device_position(1)
+
+# the Fallen, corridor by corridor to the outside
 script sc_corridors():
     sleep(3)
     sq_ds_fallen_landing01__dropship.place()
@@ -144,26 +160,39 @@ script sc_corridors():
     place_on_task(sq_fallen_raised01, "0x3FB06BC8")
     sq_fallen_landing01.set_task("task")
     sq_ds_fallen_landing01__dropship.drop_squad(sq_fallen_landing01)
+    sc_landing.wake()
     sleep(5)
     sq_ds_fallen_landing01__dropship.execute(cs_skiff_exit(cps_ds_fallen_landing01))
-    sleep_until(sq_fallen_flank01.alive_count() <= 1)
-    sq_fallen_landing01.set_task("t_flank01")
-    sq_fallen_flank01.set_task("t_flank01")
-    sleep_until(sq_fallen_flank01.alive_count() == 0)
-    sleep(6)
-    sq_fallen_landing01.set_task("t_landing01")
-    sq_fallen_flank01.set_task("t_landing01")
-    sq_fallen_raised01.set_task("t_landing01")
+    # two of the three outside squads dead: the control room entrance is manned
+    sleep_until(outside_squads_wiped() >= 2)
     place_on_task(sq_fallen_controlentrance01, "t_controlentrance01_1")
     place_on_task(sq_fallen_controlentrance_shanks, "t_controlentrance01b")
     place_on_task(sq_fallen_controlentrance_guards, "t_controlentrance01")
-    sleep_until(pm_refresh_guards01.test_any_inside())
+    sc_control_entrance.wake()
+    sc_control_ambush.wake()
+
+# the landing squad and the flankers fall back together as they thin out
+script sc_landing():
+    sleep_until(sq_fallen_landing01.alive_count() > 0)
+    sleep_until(sq_fallen_landing01.alive_count() == 0 and sq_fallen_flank01.alive_count() <= 1)
+    sq_fallen_landing01.set_task("t_flank01")
+    sq_fallen_flank01.set_task("t_flank01")
+    sleep_until(sq_fallen_landing01.alive_count() + sq_fallen_flank01.alive_count() == 0)
+    sq_fallen_landing01.set_task("t_landing01")
+    sq_fallen_flank01.set_task("t_landing01")
+    sq_fallen_raised01.set_task("t_landing01")
+
+script sc_control_entrance():
+    sleep_until(sq_fallen_controlentrance01.alive_count() <= 2)
     sq_fallen_controlentrance01.set_task("task_3")
+    sleep_until(sq_fallen_controlentrance01.alive_count() == 0)
+    sq_fallen_controlentrance01.set_task("t_controlentrance01")
+
+script sc_control_ambush():
+    sleep_until(pm_spawn_guards01.test_any_inside())
     place_on_task(sq_fallen_ctrlambush01, "t_ctrlambush")
     place_on_task(sq_fallen_ctrlambush03, "t_ctrlambush")
     place_on_task(sq_fallen_ctrlambush02, "t_ctrlambush")
-    sleep(5)
-    sq_fallen_controlentrance01.set_task("t_controlentrance01")
 
 # the Hive, once the console is working: two ships pass over the dome, the
 # third brings in three waves
@@ -172,7 +201,7 @@ script sc_assault():
     o_hei_satellite_event_a01.set_device_position(1)
     sleep(3)
     o_hei_satellite_event_a02.set_device_position(1)
-    sleep_until(pm_outdoor_enc_wave02.test_any_inside())
+    sleep(11)
     hive_ship_pass(sq_ds_hive_assault02__dropship, cps_ds_hive_assault02)
     sleep(1)
     hive_ship_pass(sq_ds_hive_assault03__dropship, cps_ds_hive_assault03)
@@ -227,6 +256,13 @@ script sc_assault():
     sq_hive_assault_trooper03b.set_task("task_4")
     sq_hive_assault_trooper03c.set_task("task_4")
 
+def outside_squads_wiped():
+    wiped = 0
+    for sq in [sq_fallen_flank01, sq_fallen_raised01, sq_fallen_landing01]:
+        if sq.alive_count() == 0:
+            wiped = wiped + 1
+    return wiped
+
 def hive_ship_enter(pilot, path):
     pilot.place()
     pilot.execute(cs_hive_ship_enter(path))
@@ -239,11 +275,13 @@ def hive_ship_leave(pilot, path):
     pilot.execute(cs_hive_ship_exit(path))
 
 # a working device: nudged between 0.29 and 0.28 at random, quick pairs with
-# longer rests between, for as long as the activity runs
+# longer rests between, until the activity's end puts it at rest
 def device_working(device):
-    while true:
+    while not b_devices_at_rest:
         device.set_device_position(0.29)
         sleep(0.3 + mathlib.random_real(0.4))
+        if b_devices_at_rest:
+            return
         device.set_device_position(0.28)
         if mathlib.random_real(1) <= 0.5:
             sleep(1.7 + mathlib.random_real(1.3))
