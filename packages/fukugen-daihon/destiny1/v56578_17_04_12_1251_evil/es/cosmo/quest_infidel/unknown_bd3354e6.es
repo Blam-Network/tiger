@@ -11,7 +11,11 @@
 # the bounce ship's squad to die; the last wave is the third ship's squads.
 # Each ship's squads take their tasks in squad order as they are dropped.
 # Names that were never cracked are written as "0x" literals. From one retail
-# capture, so every wait here is that run's.
+# capture, so every wait here is that run's. A second run disagrees with the
+# second and third ships' waits and the captain: it fits counting each ship's
+# kills (seven of the first, three of the second, seven of the third) and
+# ending the captain's objective as the second ship drops, which the replay
+# cannot check until it feeds the ships' command script progress.
 
 @activity_bundle(0xBD3354E6)
 

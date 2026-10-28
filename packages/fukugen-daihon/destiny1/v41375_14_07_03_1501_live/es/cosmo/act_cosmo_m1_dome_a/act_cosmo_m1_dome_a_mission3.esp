@@ -3,7 +3,7 @@
 # Mission 3, the end: no objective. The fight music stops, the outro starts,
 # and the activity completes a moment later, with the Ghost's way-out line a
 # second after (seq_d_o3_s05_alt never played); the results follow 30
-# seconds after that. Two runs: the gaps held in both.
+# seconds after that. The gaps held in all three full runs.
 
 sequence seq_m_cue1
 sequence seq_m_outro

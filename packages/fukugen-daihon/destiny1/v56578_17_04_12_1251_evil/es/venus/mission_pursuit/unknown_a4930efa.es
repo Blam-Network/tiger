@@ -5,18 +5,19 @@
 # shows himself with the ledge's dregs and the ledge skiff; three seconds on
 # he flees in his performance, and the skiff leaves five seconds after that.
 # Once the mesa's captain is dead the wave announcement plays and the pit's
-# Fallen come in three waves: some of each wave's squads push in once its
-# melee squads are dead (the third, which has none, once it is down to its
-# last few), and the next wave comes two seconds after the last one is
-# dead. The pit is clear once the third wave is.
+# Fallen come in three waves: once a wave is down to its last four the
+# squads still standing push in, and the next wave comes two seconds after
+# the last one is dead. The pit is clear once the third wave is.
 #
-# From one retail 2.3.1 capture (2026-10-27 20-30-51, unconfirmed). Rosters
+# From two retail 2.3.1 captures (2026-10-27 20-30-51, 2026-10-29 02-33-01);
+# the pit's pushes hold in both, every other wait is one run's. Rosters
 # (@member_counts) are the wire's squad rosters: the pit's dregs, anchors
 # and servitor come back to full strength (respawn) in each later wave they
 # fight in, as their rosters grow on the wire. The ledge skiff's command
 # scripts are retail's atom for atom, its exit ability and Skolas'
-# performance uncracked. What sets off the push (0x517E93DC) is that run's
-# reading: the wire shows which squads took it, not why.
+# performance uncracked. Each push (0x517E93DC) came 0.6-1.0 s after the
+# kill that left four of the wave (17 of 21, 14 of 18, 18 of 22 bodies, all
+# three waves of both runs) and took exactly the squads with members left.
 
 @activity_bundle(0xA4930EFA)
 
@@ -104,8 +105,8 @@ script sc_pit():
     for sq in pit_captain_major_squads:
         place_on_task(sq, "pit_anchor_task")
     wave = [pit_shank_sniper_squads[0], pit_shank_sniper_squads[1], pit_dreg_squads[0], pit_dreg_squads[1], pit_vandal_squads[0], pit_vandal_squads[1], pit_captain_blade_squads[0], pit_captain_major_squads[0], pit_captain_major_squads[1]]
-    sleep_until(wave_alive([pit_captain_blade_squads[0]]) == 0)
-    push([pit_shank_sniper_squads[1], pit_vandal_squads[1]])
+    sleep_until(wave_alive(wave) <= 4)
+    push(wave)
     sleep_until(wave_alive(wave) == 0)
     sleep(2)
     # wave 2: exploders and the stealth vandals, the dregs, the servitor and
@@ -119,8 +120,8 @@ script sc_pit():
     for sq in pit_captain_major_squads:
         respawn_on_task(sq, "pit_anchor_task")
     wave = [pit_shank_exploder_squads[0], pit_shank_exploder_squads[1], pit_dreg_squads[0], pit_dreg_squads[1], pit_vandal_stealth_squads[0], pit_servitor_major_squads[0], pit_captain_major_squads[0], pit_captain_major_squads[1]]
-    sleep_until(wave_alive([pit_shank_exploder_squads[0], pit_shank_exploder_squads[1], pit_vandal_stealth_squads[0]]) == 0)
-    push([pit_dreg_squads[1], pit_servitor_major_squads[0], pit_captain_major_squads[1]])
+    sleep_until(wave_alive(wave) <= 4)
+    push(wave)
     sleep_until(wave_alive(wave) == 0)
     sleep(2)
     # wave 3: the turret shanks, dregs and major vandals, the servitor, the
@@ -133,8 +134,8 @@ script sc_pit():
         respawn_on_task(sq, "pit_anchor_task")
     place_on_task(pit_captain_spear_squads[0], "pit_anchor_task")
     wave = [pit_shank_turret_squads[0], pit_shank_turret_squads[1], pit_dreg_squads[0], pit_dreg_squads[1], pit_vandal_major_squads[0], pit_vandal_major_squads[1], pit_servitor_major_squads[0], pit_captain_major_squads[0], pit_captain_major_squads[1], pit_captain_spear_squads[0]]
-    sleep_until(wave_alive(wave) <= 3)
-    push([pit_shank_turret_squads[1], pit_dreg_squads[1], pit_servitor_major_squads[0], pit_captain_spear_squads[0]])
+    sleep_until(wave_alive(wave) <= 4)
+    push(wave)
     sleep_until(wave_alive(wave) == 0)
     pit_clear = true
 
@@ -144,9 +145,11 @@ def wave_alive(wave):
         n = n + sq.alive_count()
     return n
 
-def push(squads):
-    for sq in squads:
-        sq.set_task("0x517E93DC")
+# the wave's squads that still stand push in
+def push(wave):
+    for sq in wave:
+        if sq.alive_count() > 0:
+            sq.set_task("0x517E93DC")
 
 def place_on_task(sq, task):
     sq.set_task(task)

@@ -1,0 +1,26 @@
+# es\utility_scripts\specops_lures.esu
+#
+# The lights that lead the players through an area (The Taken King): lure
+# objects that stand from the start and strobes that flash, each with the
+# volume and player monitor that set it off. The encounter that owns the
+# area decides what each one does when its monitor counts a player. From
+# mission_darksnow's base, the one capture that has it.
+
+object o_lure_first
+trigger_volume tv_lure_first
+player_monitor pm_lure_first bind(tv_lure_first)
+object o_lure_second
+trigger_volume tv_lure_second
+player_monitor pm_lure_second bind(tv_lure_second)
+object o_first_strobe
+trigger_volume tv_first_strobe
+player_monitor pm_first_strobe bind(tv_first_strobe)
+object o_second_strobe
+trigger_volume tv_second_strobe
+player_monitor pm_second_strobe bind(tv_second_strobe)
+object o_enc_room_strobe
+trigger_volume tv_enc_room_strobe
+player_monitor pm_enc_room_strobe bind(tv_enc_room_strobe)
+object o_elevator_strobe
+trigger_volume tv_elevator_strobe
+player_monitor pm_elevator_strobe bind(tv_elevator_strobe)

@@ -1,0 +1,15 @@
+# es\impactsite\mission_darksnow\unknown_c07cc82c_mission1.esp
+#
+# Mission 1, the arrival cinematic, played from world entry in the
+# stronghold's cinematic state; the players spawn in the stronghold once it
+# ends. One run (the player skipped it).
+
+cinematic_midmission bookend_154_cop_cinematic
+
+script init(): pass
+
+script complete(): pass
+
+script main():
+    bookend_154_cop_cinematic.start()
+    sleep_until(bookend_154_cop_cinematic.is_complete())

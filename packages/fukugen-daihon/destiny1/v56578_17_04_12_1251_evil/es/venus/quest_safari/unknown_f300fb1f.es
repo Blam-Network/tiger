@@ -9,15 +9,19 @@
 # - The oracles: mission 3 wakes sc_oracles. Six Vex security nodes come in
 #   one at a time, each with its tone; Fallen guards land beside them, one
 #   squad as the node before is destroyed and one as the tone ends. The
-#   Ghost speaks at the first, second, third and last.
+#   Ghost speaks at the first, second, third and last. A node the players
+#   let go burns every player for five seconds.
 # - The captains: mission 4 wakes sc_captains. Four captains in turn, each
 #   with a rush squad as the one before dies, and three pairs of adds, each
 #   once two of the pair before are killed. Once the last captain is dead the
 #   rest despawn.
 #
-# One retail 2.3.1 run, with two wipes in the oracles (the encounter starts
-# over with the phase): every wait is that run's, unconfirmed. The rosters
-# are the run's squad auths; the task names are the 1.33 tables'.
+# Two retail 2.3.1 runs, with three wipes in the oracles between them (the
+# encounter starts over with the phase). The captains' chain and the despawn
+# hold in both; the node delays and the guards are the same shape in both;
+# what a node let go does to the count is one run each (see oracle_done).
+# The rosters are the first run's squad auths; the task names are the 1.33
+# tables'.
 
 @activity_bundle(0xF300FB1F)
 
@@ -77,6 +81,9 @@ kill_incident_listener kil_cap_adds_1
 kill_incident_listener kil_cap_adds_2
 kill_incident_listener kil_captain
 encounter_handle quest_safari
+hop_on ho_safari_damage
+object_filter of_all_players
+object_filter of_clear
 bool b_intro_broken = false
 int i_oracles_destroyed = 0
 bool b_captains_dead = false
@@ -129,7 +136,7 @@ script sc_oracles():
     vex_security_fa.appear()
     vex_security_fa.sleep_until_sounded()
     place_squad(sq_or_1_guard_b, "task_4")
-    oracle_destroyed(vex_security_fa)
+    oracle_done(vex_security_fa, false)
     place_squad(sq_or_2_guard_a, "task_5")
     sleep(1)
     quest_safari.oracle_2_dialog.start()
@@ -137,33 +144,49 @@ script sc_oracles():
     vex_security_re.appear()
     vex_security_re.sleep_until_sounded()
     place_squad(sq_or_2_guard_b, "task_6")
-    oracle_destroyed(vex_security_re)
+    oracle_done(vex_security_re, false)
     place_squad(sq_or_3_guard_a, "task_7")
     sleep(4)
     vex_security_do.appear()
     quest_safari.oracle_3_dialog.start()
     vex_security_do.sleep_until_sounded()
     place_squad(sq_or_3_guard_b, "task_8")
-    oracle_destroyed(vex_security_do)
+    oracle_done(vex_security_do, false)
     sleep(4)
     vex_security_mi.appear()
-    oracle_destroyed(vex_security_mi)
+    oracle_done(vex_security_mi, false)
     place_squad(sq_or_4_guard_a, "task_9")
     sleep(4)
     vex_security_ti.appear()
-    oracle_destroyed(vex_security_ti)
+    oracle_done(vex_security_ti, false)
     sleep(4)
     vex_security_so.appear()
     sleep(1)
     quest_safari.oracle_last_dialog.start()
-    oracle_destroyed(vex_security_so)
+    oracle_done(vex_security_so, true)
 
-def oracle_destroyed(node):
-    node.sleep_until_destroyed()
-    i_oracles_destroyed = i_oracles_destroyed + 1
+# A node let go burns every player for five seconds (the hop-on on
+# of_all_players, then of_clear: 5.1 s in both runs) while the encounter goes
+# on. The first run let its first node go and the bar still counted it; the
+# second let its last one go and the bar never filled, so the oracles stood
+# unfinished until the wipe.
+def oracle_done(node, last):
+    if node.sleep_until_destroyed():
+        i_oracles_destroyed = i_oracles_destroyed + 1
+        return
+    if not last:
+        i_oracles_destroyed = i_oracles_destroyed + 1
+    sc_safari_damage.restart()
+
+script sc_safari_damage():
+    ho_safari_damage.set_filter(of_all_players)
+    sleep(5)
+    ho_safari_damage.set_filter(of_clear)
 
 # The spear captain and the first adds go in with the objective; the rush
-# squads and the next captains come 0.7 s after a captain is killed.
+# squads and the next captains come a moment after a captain is killed
+# (0.8-0.9 s in both runs), the last captain four seconds after (4.4 and
+# 4.1 s). The rest despawn a second after the last is killed (1.5, 0.8 s).
 script sc_captains():
     kil_captain.bind_incident_name_hash("0xA9FEA575")
     place_squad(sq_spear_cap, "task_5")
@@ -178,6 +201,7 @@ script sc_captains():
     place_squad(sq_cap_add_2_rush, "task_16")
     place_squad(sq_cap_right, "task_1")
     sleep_until_killed(sq_cap_right)
+    sleep(3.5)
     place_squad(sq_cap_add_3_rush, "task_16")
     place_squad(sq_intro_cap, "task_2")
     sleep_until_killed(sq_intro_cap)
@@ -193,25 +217,30 @@ script sc_captains():
     b_captains_dead = true
 
 # Each pair of adds a second after two of the pair before (six bodies) are
-# killed. The kills, not the counts the client reports: those come in as the
-# squads come into view.
+# killed (both runs; the second never got its third pair: the last captain
+# fell first). The kills, not the counts the client reports: those come in
+# as the squads come into view.
 script sc_captain_adds():
     kil_cap_adds_1.bind_squad(sq_cap_add_1_a)
     kil_cap_adds_2.bind_squad(sq_cap_add_1_b)
-    sleep_until(kil_cap_adds_1.get_count() + kil_cap_adds_2.get_count() >= 2)
+    sleep_until(kil_cap_adds_1.get_count() + kil_cap_adds_2.get_count() >= 2 or b_captains_dead)
+    if b_captains_dead:
+        return
     place_squad(sq_cap_add_2_a, "task_7")
     place_squad(sq_cap_add_2_b, "task_14")
     kil_cap_adds_1.reset()
     kil_cap_adds_1.bind_squad(sq_cap_add_2_a)
     kil_cap_adds_2.reset()
     kil_cap_adds_2.bind_squad(sq_cap_add_2_b)
-    sleep_until(kil_cap_adds_1.get_count() + kil_cap_adds_2.get_count() >= 2)
+    sleep_until(kil_cap_adds_1.get_count() + kil_cap_adds_2.get_count() >= 2 or b_captains_dead)
+    if b_captains_dead:
+        return
     place_squad(sq_cap_add_3_a, "task_13")
     place_squad(sq_cap_add_3_b, "task_15")
 
 # Retail's kills of the four captains are of incident 0xA9FEA575 (name not
 # cracked; the strike bosses' kills carry it too), and no other kill in the
-# activity is. The captains stand one at a time, so the next such kill is
+# activity is (both runs: four such kills each, each the captain's own). The captains stand one at a time, so the next such kill is
 # this one's: the third captain's squad reported no counts to go by.
 def sleep_until_killed(captain):
     kil_captain.reset()

@@ -1,0 +1,15 @@
+# es\utility_scripts\taken_blight.esu
+#
+# A Taken blight (The Taken King): the rift the Taken come through. The
+# encounter opens it, brings its squads in while it is up and closes it a few
+# seconds later. The blight's own squad never moved in the one capture
+# (mission_elevator's blast), so the squads are the encounter's.
+
+object blight
+squad sq_taken
+
+def open():
+    blight.create()
+
+def close():
+    blight.delete_object()

@@ -4,8 +4,7 @@
 # the blast, where Omnigul and the Fallen fight, through the refinery's Hive
 # ritual to the hive shore's grotto and the knight. The root starts nothing;
 # the phases are the missions beside it, run in order. Mission file names are
-# ours. From one retail capture (with a wipe in the knight's fight), so every
-# rule and wait here is unconfirmed.
+# ours. From two retail captures, each with a wipe in the knight's fight.
 #
 #   quest_bonzo_dlc01_mission1.esp  goto_bonzo_phase00: on to the grotto
 #   quest_bonzo_dlc01_mission2.esp  kill_bonzo_phase01: the knight

@@ -2,14 +2,14 @@
 #
 # The blast in quest_bonzo_dlc01 (The Taken King): Omnigul and her Hive hold
 # it against the Fallen as the bubble loads, a Fallen dropship already
-# hovering. Omnigul laughs, the first Hive spawn opens, and the ship drops two
-# squads and leaves; the start trigger brings a second ship with two more.
-# Omnigul's leave trigger opens the three far spawns and is armed again; the
-# second time it sends their spare squads, the third time Omnigul withdraws
-# and turns invulnerable. Each ship flies the command scripts retail sent,
-# atom for atom. Names that were never cracked are written as "0x" literals.
-# From one retail capture, so every wait here is that run's (the second and
-# third reactions came 22 and 20 s after their triggers).
+# hovering; the ship drops two squads and leaves. The start trigger brings a
+# second ship with two more, and Omnigul laughs and opens the first Hive
+# spawn. Omnigul's leave trigger opens the three far spawns and is armed
+# again; the second time it sends their spare squads, the third time Omnigul
+# withdraws and turns invulnerable. Each ship flies the command scripts
+# retail sent, atom for atom. Names that were never cracked are written as
+# "0x" literals. From two retail captures of quest_bonzo_dlc01; the ships'
+# waits and the leave trigger's agree across both.
 
 @activity_bundle("enc_blast_dlc01")
 
@@ -92,8 +92,13 @@ script sc_dropship02():
     sleep(1)
     dropship_leave(dropship_squad02__pilot, dropship02_exit_path)
 
+# Omnigul laughs and opens the first Hive spawn as the player sets her off
+# (the second run: 2.8 s after the start trigger, with the second ship). The
+# first run's laugh came 7.5 s after the bubble loaded, before the player had
+# spawned and 22 s before the trigger; nothing on the wire says why.
 script sc_omnigul():
-    sleep(7.5)
+    sleep_until(pt_omnigul_start.is_triggered())
+    sleep(2.8)
     seq_sfx_omnigul_laugh.start()
     __cs.clear()
     __cs.scripted_sequence("0xC1D2964B")
@@ -106,16 +111,22 @@ script sc_omnigul():
     sc_far_spawn_2.wake()
     sc_far_spawn_3.wake()
     pt_omnigul_leave.reset()
+    # The second fire: 22 s later the far spawns open for their spare squads
+    # and the trigger is armed again (both runs, to 0.1 s).
     sleep_until(pt_omnigul_leave.is_triggered())
     sleep(22)
     sc_far_extra_1.wake()
     sc_far_extra_2.wake()
     sc_far_extra_3.wake()
     pt_omnigul_leave.reset()
+    # The third: Omnigul withdraws once she is down to half health, or 20 s
+    # on if the player leaves her be (the first run), and turns invulnerable
+    # as her health drops below half (the second run's shots; the first's
+    # when she was gone).
     sleep_until(pt_omnigul_leave.is_triggered())
-    sleep(20)
+    sleep_until_timeout(sq_omnigul__wizard.get_health_fraction() < 0.5, 20)
     sq_omnigul.set_task("0x281ADF3F")
-    sleep(9.3)
+    sleep_until(sq_omnigul__wizard.get_health_fraction() < 0.5)
     of_omnigul_invulnerable.add(sq_omnigul__wizard)
     ho_invulnerable.set_filter(of_omnigul_invulnerable)
 

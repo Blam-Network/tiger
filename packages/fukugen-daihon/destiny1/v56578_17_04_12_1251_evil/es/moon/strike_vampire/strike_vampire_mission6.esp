@@ -1,0 +1,40 @@
+# es\moon\strike_vampire\strike_vampire_mission6.esp
+#
+# Mission 6, the chase: six seconds after the player reaches the overlook,
+# the depot's door comes up shut with the objective to get to the depot and
+# the cue's chase section, and the baron's tank comes (unknown_9f24395b's
+# sc_chase); the Ghost speaks four seconds later. The door opens once the
+# chase vandals are down, and the objective clears as the player reaches the
+# depot. One run.
+
+@hard_wipe()
+object depot_entrance_door_object
+trigger_volume_objective depot_trigger_volume_objective
+encounter_handle strike_vampire
+encounter_handle unknown_9f24395b
+
+script init(): pass
+
+script complete(): pass
+
+script main():
+    strike_vampire.phase_start(5)
+    # after a wipe, until the players are back
+    sleep_until(c_player_script_utilities.all_players_are_ready())
+    sleep_until(unknown_9f24395b.overlook_player_trigger.is_triggered())
+    sleep(6)
+    depot_entrance_door_object.create()
+    depot_entrance_door_object.set_device_position(0)
+    strike_vampire.cue(512)
+    unknown_9f24395b.sc_chase.wake()
+    sc_chase_line.wake()
+    depot_trigger_volume_objective.objective_begin()
+    sleep_until(unknown_9f24395b.b_chase_done)
+    sleep(1)
+    depot_entrance_door_object.set_device_position(1)
+    sleep_until(depot_trigger_volume_objective.is_complete())
+    depot_trigger_volume_objective.objective_end_silent()
+
+script sc_chase_line():
+    sleep(4)
+    strike_vampire.mns02_100_100.start()

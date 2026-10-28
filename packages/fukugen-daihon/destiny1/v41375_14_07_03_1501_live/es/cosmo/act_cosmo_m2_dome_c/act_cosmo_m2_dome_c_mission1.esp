@@ -3,17 +3,19 @@
 # Mission 1, delta_n: the activity opens with the Ghost's first lines, then
 # the objective on the thing in delta_n the player uses (identifier
 # 0xEAA339A4). Using it clears the objective and its line at once; the phase
-# ends when the Ghost's line about it is over.
+# ends when the Ghost's line about it is over, and the vehicle tutorial
+# goes with it (a run relaunched at the Dry Sea had none).
 #
-# One run: the objective came up twelve seconds into the Ghost's second
-# line. Retail showed it in a state TU0 has no verb for (wire 1) from the
-# start until then, so it goes straight to active here.
+# The objective came up twelve seconds into the Ghost's second line in all
+# three runs. Retail showed it in a state TU0 has no verb for (wire 1) from
+# the start until then, so it goes straight to active here.
 
 interactable_objective obj_m2_o1 bind("0xEAA339A4")
 sequence seq_d_o1_s011
 sequence seq_d_o1_s014
 sequence seq_d_o1_s01
 sequence seq_d_o1_s016
+string_hash sh_tutorial_vehicle = "tutorial_vehicle"
 
 script init(): pass
 
@@ -21,7 +23,6 @@ script complete(): pass
 
 script main():
     sleep_until(c_player_script_utilities.all_players_are_ready())
-    c_lifetime_script_utilities.get_lifetime_sensor().set_state(e_activity_lifetime_state.active)
     seq_d_o1_s011.start()
     seq_d_o1_s014.start()
     sleep(3)
@@ -34,3 +35,4 @@ script main():
     sleep(2)
     seq_d_o1_s016.start()
     sleep_until(seq_d_o1_s016.is_done())
+    c_incident_utilities.submit_incident_hash(sh_tutorial_vehicle)

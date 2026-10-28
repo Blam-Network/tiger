@@ -1,0 +1,20 @@
+# es\mars\mars_portal3_activity\mars_portal3_activity_mission4.esp
+#
+# Mission 4, down to the Hypogeum's gate: the door down is made again
+# (enc_uppergarden_portal3), the objective comes up with the phase and
+# clears as a player reaches the gate's volume, which ends the phase. One
+# run.
+
+@hard_wipe()
+trigger_volume_objective pf_objective_gate
+encounter_handle enc_uppergarden_portal3
+
+script init(): pass
+
+script complete(): pass
+
+script main():
+    enc_uppergarden_portal3.sc_hypogeum_door.wake()
+    pf_objective_gate.objective_begin()
+    sleep_until(pf_objective_gate.is_complete())
+    pf_objective_gate.objective_end_silent()

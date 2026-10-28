@@ -4,14 +4,15 @@
 # performance behind the laser web, with the flat's dregs, the cliff's
 # snipers and the summit's vandals and captain. Mission 2 wakes sc_skolas
 # once a player has found him: the web's two pushers drop and Skolas is cued
-# three seconds on; once the flat's third dreg pack is dead he flees in a
-# second performance, and once he is gone mission 2 moves on. The cliff's exploder
+# three seconds on; some ten seconds after that he flees in a second
+# performance, and once he is gone mission 2 moves on. The cliff's exploder
 # shanks come out at their trigger, and the cliff skiff comes in at its own,
 # drops the cliff's dregs and servitors over twenty seconds and leaves. Once
 # the summit's captain is dead the web opens: its light comes up and every
 # block of it goes.
 #
-# From one retail 2.3.1 capture (2026-10-27 20-30-51, unconfirmed). Rosters
+# From two retail 2.3.1 captures (2026-10-27 20-30-51, 2026-10-29 02-33-01;
+# Skolas' cue and flee hold in both, the skiff's gaps are the first's). Rosters
 # (@member_counts) are the wire's squad rosters; the skiff's command scripts
 # are retail's atom for atom, its abilities and Skolas' performances
 # uncracked.
@@ -91,10 +92,11 @@ script sc_skolas():
     laserweb_pusher_2_object.delete_object()
     sleep(3)
     skolas_flee_performance.cue_performance("0x62D7D596")
-    # he flees once the flat's last dreg pack is dead (the run's: the other
-    # two were still up)
-    sleep_until(flat_dreg_squads[2].alive_count() > 0)
-    sleep_until(flat_dreg_squads[2].alive_count() == 0)
+    # he flees 9.9 and 11.3 s after the cue in the two runs (10.5 and 10.4 s
+    # after he is first hit, which the host is not told); not on his health
+    # (61% and 32% left) nor on the flat's dregs (all three packs still up in
+    # the second run)
+    sleep(10.5)
     skolas_flee_performance.start_performance("0xD5B8056C")
     sleep_until(skolas_squad.alive_count() == 0)
     skolas_fled = true

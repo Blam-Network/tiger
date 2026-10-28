@@ -241,8 +241,11 @@ describe("TU0 act_cosmo_m1_dome_a scripts", () => {
     }
     expect(h.said("seq_m_cue1 t5#13 set_switch_mask(3)")).toBe(true);
     expect(playing("seq_d_o1_s015")).toBeDefined();
+    // the first objective goes straight to active 12.1 s in
     const o1a = "cosmo_m1_phase00_dome_a.obj_m1_o1a._player_objective";
-    expect(objective(o1a)).toBeGreaterThan(0);
+    expect(objective(o1a)).toBeUndefined();
+    h.ticks(8);
+    expect(objective(o1a)).toBe(2);
 
     // At the dome: the scan objective comes up 5 s after the first one ends,
     // and the approach lines stop with it.
@@ -328,7 +331,7 @@ describe("TU0 act_cosmo_m1_dome_a scripts", () => {
 
     // The ledge thralls are let loose 4 s after the wizard steps forward;
     // the front troopers move up as the two squads lose two, then five, of
-    // their seven.
+    // their seven; the second count waits 3 s for the first move to settle.
     expect(squad("sq_hive_upper_front01")?.task).toBe(14);
     const front02 = h.rowOf("sq_hive_upper_front02");
     const front03 = h.rowOf("sq_hive_upper_front03");
@@ -342,6 +345,8 @@ describe("TU0 act_cosmo_m1_dome_a scripts", () => {
     expect(squad("sq_hive_upper_front03")?.task).toBe(19);
     h.runtime.reportSquadTally(front02, [2]);
     h.runtime.reportSquadTally(front03, [3]);
+    h.ticks(1);
+    expect(squad("sq_hive_upper_front02")?.task).toBe(19);
     h.ticks(2);
     expect(squad("sq_hive_upper_front02")?.task).toBe(20);
     // the first rush when the ledge thralls are dead too, its line when it

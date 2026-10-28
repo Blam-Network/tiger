@@ -1,0 +1,47 @@
+# es\moon\strike_vampire\strike_vampire_mission5.esp
+#
+# Mission 5, the spider tank: the tank room's doors come up, the entrance
+# open, with the Ghost's line and the tank's section of the cue; the right
+# flank goes in and the shield drops (unknown_9f24395b's sc_tank_right).
+# Four seconds on the objective to kill the tank comes up and the entrance
+# shuts as it goes active; the tank's fight runs from there
+# (sc_tank_fight). Once the tank is dead (and its exit squads are in) the
+# objective clears, the cue moves on and both doors open. The bay's own
+# entrance (mission 4's) follows each of the tank room's a second later. A
+# wipe resets the phase (once in the run, as a second player joined). One
+# run.
+
+@hard_wipe()
+object bay_entrance_door_object
+object bay_exit_door_object
+generic_objective kill_tank_generic_objective
+encounter_handle strike_vampire
+encounter_handle unknown_9f24395b
+
+script init(): pass
+
+script complete(): pass
+
+script main():
+    strike_vampire.phase_start(4)
+    # after a wipe, until the players are back
+    sleep_until(c_player_script_utilities.all_players_are_ready())
+    bay_entrance_door_object.create()
+    bay_entrance_door_object.set_device_position(1)
+    bay_exit_door_object.create()
+    strike_vampire.mns02_100_90.start()
+    strike_vampire.cue(128)
+    unknown_9f24395b.sc_tank_right.wake()
+    sleep(4)
+    kill_tank_generic_objective.objective_begin(nil)
+    bay_entrance_door_object.set_device_position(0)
+    unknown_9f24395b.sc_tank_fight.wake()
+    sleep(1)
+    strike_vampire.phase_moonbay_pretank.bay_entrance_door_object.set_device_position(0)
+    sleep_until(unknown_9f24395b.b_tank_dead)
+    kill_tank_generic_objective.objective_end_silent()
+    strike_vampire.cue(256)
+    bay_entrance_door_object.set_device_position(1)
+    bay_exit_door_object.set_device_position(1)
+    sleep(1)
+    strike_vampire.phase_moonbay_pretank.bay_entrance_door_object.set_device_position(1)

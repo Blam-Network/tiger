@@ -3,7 +3,7 @@
 # Mission 1, on to the grotto: once the player is in, the activity goes live,
 # the Ghost's lines for the way there and the intro music start, and the
 # objective points at the hive shore; it clears as the player gets there.
-# From one retail capture.
+# From two retail captures.
 
 location hive_shore
 trigger_bubble_objective pf_goto_grotto bind(hive_shore)

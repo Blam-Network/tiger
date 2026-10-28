@@ -4,8 +4,9 @@
 # the steppes into the Hive's dome, a Ghost scan at the door, the thralls and
 # troopers in the basement, then the upper floor and the wizard. The root
 # starts nothing; the phases are the missions beside it, run in order.
-# Mission file names are ours (true names unknown). From one retail capture,
-# so every rule and wait here is unconfirmed.
+# Mission file names are ours. From four retail 2.3.1 runs (2026-10-24,
+# 2026-10-27 and two on 2026-10-21, the first of those backed out to orbit
+# after the door scan).
 #
 #   act_cosmo_m1_dome_a_mission1.esp  into the dome, the scan, the basement
 #   act_cosmo_m1_dome_a_mission2.esp  the upper floor, kill the wizard

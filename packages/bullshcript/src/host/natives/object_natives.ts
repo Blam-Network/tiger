@@ -503,7 +503,9 @@ export function deleteObject(self: BoundInstance): boolean {
 // and it is live" bit, when a report has arrived.
 export function isAlive(self: BoundInstance): boolean {
   if (self.row?.typeId === self.types.Actor) {
-    const alive = squadNatives.aliveCount(self) > 0;
+    const alive =
+      squadNatives.aliveCount(self) > 0 ||
+      squadNatives.namedMemberStanding(self);
     self.writer.notePoll(
       `${self.path}:is_alive`,
       `${self.path}:is_alive() -> ${alive} (squad)`

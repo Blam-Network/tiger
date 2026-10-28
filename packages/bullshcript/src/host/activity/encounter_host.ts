@@ -285,6 +285,7 @@ export class EncounterScriptHost implements EncounterHostContext {
       squadCombatCount: (key) => this.world.at(key)?.combatCount,
       squadTally: (key) => this.world.at(key)?.tally,
       actorBound: (key) => this.world.at(key)?.actorBound,
+      actorHealth: (key) => this.world.at(key)?.actorHealth,
       squadDeaths: (key) => this.squadDeathsOf(key),
       scopeKills: (keys) => this.scopeKills(keys),
       scopeDeaths: (keys) => this.scopeDeaths(keys),
@@ -805,6 +806,11 @@ export class EncounterScriptHost implements EncounterHostContext {
       flag7,
       flag8,
     };
+  }
+
+  reportActorHealth(item: ItemKey, fraction: number): void {
+    this.world.record(itemKey(item.bundle, item.typeIndex)).actorHealth =
+      fraction;
   }
 
   reportSafeZone(item: ItemKey, inside: number): void {
@@ -1360,9 +1366,15 @@ export class EncounterScriptHost implements EncounterHostContext {
     };
   }
 
-  // A phase's own cinematic holds the players; an encounter's leaves the
-  // lifetime alone.
+  // A phase's own cinematic encounter (phase.pf_x._cinematic) holds the
+  // players; an area encounter's, or a Cinematic row straight on the phase
+  // (an in-world scene played during play: mission_darksnow's ci_154a_sto
+  // and ci_159_sep_entry, mission_touchdown's lz_dustoff_cinematic), leaves
+  // the lifetime alone.
   holdLifetimeForCinematic(row: BoundRow): void {
+    if (row.name.split(".").length < 3) {
+      return;
+    }
     const dot = row.name.indexOf(".");
     const phase = dot > 0 ? fnv1(row.name.slice(0, dot)) : undefined;
     const tag = this.options.bundles.find(

@@ -23,6 +23,8 @@ export interface ItemWorldRecord {
     pcReached?: number;
   };
   actorDropAck?: { dropId?: number; inProgress: boolean };
+  // The client's health fraction for the actor (2.3.1 ActorSense [8]).
+  actorHealth?: number;
   // Where the build's sense says: the epoch the client's combatant last took
   // (ActorSense [0]) and whether it has had an actor since.
   actorStanding?: { epoch: number; standing: boolean };

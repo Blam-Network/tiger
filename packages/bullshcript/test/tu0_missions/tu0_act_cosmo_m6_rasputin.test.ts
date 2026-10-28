@@ -220,10 +220,13 @@ describe("TU0 act_cosmo_m6_rasputin scripts", () => {
     ticks(6);
     expect(said("mission act_cosmo_m6_rasputin_mission2 starting")).toBe(true);
 
-    // The hall and the control room on the way to the controls.
+    // The hall and the control room on the way to the controls; the
+    // console goes dark as a player comes into the hall.
     ticks(4);
+    expect(deviceOf("CORE", "sp_placement_console._object")).toBeUndefined();
     fire("CORE", "pt_hall");
     ticks(2);
+    expect(deviceOf("CORE", "sp_placement_console._object")).toBe(0);
     expect(said("sq_hall_thrall_a t1#16 bodies=2")).toBe(true);
     expect(said("sq_hall_trooper_a t1#8 bodies")).toBe(false);
     ticks(5);

@@ -4,13 +4,15 @@
 # the ambient encounter (enc_hangar_amb1) sends at the player on the way in
 # are down, the ultra roars in and lands in the second wave's task, its three
 # Vandals drop in behind it, and it moves on to the third wave's. Task names
-# are the cracked hashes of obj_hangar_m0_5_fallen's tasks. From two retail
-# 2.3.1 runs; every wait held in both within half a second, the ultra's
-# arrival the loosest (2.6 and 3.0 s after the last kill).
+# are the cracked hashes of obj_hangar_m0_5_fallen's tasks. From four retail
+# 2.3.1 runs; every wait held in all of them within half a second, the
+# ultra's arrival the loosest (1.4 to 3.0 s after the last kill), and its
+# third wave 1.3 to 1.8 s after the last Vandal lands in three (the fourth,
+# 26 s, most likely went on its health).
 #
-# Left to the AI: the ultra's last task ("ultra", 0.1 s after the third
-# wave's in one run, 20 s in the other, a few seconds before it dies in
-# both) and the second Vandal standing again once it is there.
+# Left to the AI: the ultra's last task ("ultra", 0.1, 3.3, 20 and 27 s
+# after the third wave's, a few seconds before it dies in each) and the
+# second Vandal standing again once it is there.
 
 @activity_bundle("enc_hangar_m0_5")
 

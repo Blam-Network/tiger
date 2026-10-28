@@ -1,0 +1,33 @@
+# es\moon\strike_vampire\strike_vampire_mission4.esp
+#
+# Mission 4, to the bay: the bay's three doors come up, its entrance open,
+# with the objective to get into the bay. As the objective goes active the
+# spider tank comes off the Ketch with the left flank (unknown_9f24395b's
+# sc_tank). The objective clears a second after the left flank is down, the
+# player having been in the bay long before. One run.
+
+@hard_wipe()
+object bay_exit_door_object
+object bay_entrance_door_object
+object depot_entrance_door_object
+trigger_volume_objective bay_trigger_volume_objective
+encounter_handle strike_vampire
+encounter_handle unknown_9f24395b
+
+script init(): pass
+
+script complete(): pass
+
+script main():
+    strike_vampire.phase_start(3)
+    # after a wipe, until the players are back
+    sleep_until(c_player_script_utilities.all_players_are_ready())
+    bay_exit_door_object.create()
+    bay_entrance_door_object.create()
+    bay_entrance_door_object.set_device_position(1)
+    depot_entrance_door_object.create()
+    bay_trigger_volume_objective.objective_begin()
+    unknown_9f24395b.sc_tank.wake()
+    sleep_until(bay_trigger_volume_objective.is_complete() and unknown_9f24395b.b_left_flank_down)
+    sleep(1)
+    bay_trigger_volume_objective.objective_end_silent()

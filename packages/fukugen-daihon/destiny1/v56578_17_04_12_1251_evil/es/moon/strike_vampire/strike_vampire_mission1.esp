@@ -1,0 +1,61 @@
+# es\moon\strike_vampire\strike_vampire_mission1.esp
+#
+# Mission 1, the launch tubes. Once the players are in, the lifetime goes
+# active with the intro music, the cue's first section and the Ghost's first
+# line, and the intro gate comes up. Two seconds on the objective is active,
+# the intro gate opens and the exit gates come up shut behind their blocker.
+# The exit gates open as the player reaches the far end of the arena
+# (unknown_d733da5c's pt_arena_end), and the objective clears silently as the
+# player reaches the throne room's start (unknown_b4046ff3's pt_start), with
+# the Ghost's line for it. The lines on the way are the launch tubes'
+# triggers. One run.
+
+@hard_wipe()
+generic_objective kill_bowl_generic_objective
+object o_gate_intro
+object o_gate_exit_screen
+object o_gate_exit
+object o_gate_exit_ketch
+object o_gate_blocker
+encounter_handle strike_vampire
+encounter_handle unknown_d733da5c
+encounter_handle unknown_b4046ff3
+
+script init(): pass
+
+script complete(): pass
+
+script main():
+    strike_vampire.phase_start(0)
+    sleep_until(c_player_script_utilities.all_players_are_ready())
+    c_lifetime_script_utilities.get_lifetime_sensor().set_state(e_activity_lifetime_state.active)
+    strike_vampire.mns02_100_20.start()
+    strike_vampire.music_intro.start()
+    strike_vampire.cue(1)
+    o_gate_intro.create()
+    o_gate_intro.set_device_position(0)
+    kill_bowl_generic_objective.objective_begin(nil)
+    o_gate_intro.set_device_position(1)
+    o_gate_exit_screen.create()
+    o_gate_exit.create()
+    o_gate_exit.set_device_position(0)
+    o_gate_exit_ketch.create()
+    o_gate_exit_ketch.set_device_position(0)
+    o_gate_blocker.create()
+    o_gate_blocker.set_device_position(1)
+    sc_lines.wake()
+    sleep_until(unknown_d733da5c.pt_arena_end.is_triggered())
+    o_gate_exit.set_device_position(1)
+    o_gate_exit_ketch.set_device_position(1)
+    sleep_until(unknown_b4046ff3.pt_start.is_triggered())
+    kill_bowl_generic_objective.objective_end_silent()
+    strike_vampire.mns02_100_50.start()
+
+# the Ghost's lines along the tubes, each a second after its trigger
+script sc_lines():
+    sleep_until(unknown_d733da5c.pt_tube.is_triggered())
+    sleep(1)
+    strike_vampire.mns02_100_30.start()
+    sleep_until(unknown_d733da5c.pt_exit_launchtubes.is_triggered())
+    sleep(1)
+    strike_vampire.mns02_100_40.start()

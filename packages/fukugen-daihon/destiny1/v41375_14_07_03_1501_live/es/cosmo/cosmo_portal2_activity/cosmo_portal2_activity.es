@@ -13,8 +13,9 @@
 #   cosmo_portal2_activity_mission7.esp  the end of the strike
 #
 # dome_c's and dome_hive's encounters, and cosmo_portal2_audio, are scripts
-# of their own. From one retail 2.3.1 run (tiger-packet-analysis
-# docs/missions/cosmo_portal_2.md): every wait is a single-run fact.
+# of their own. From two retail 2.3.1 runs, the second with ten wipes
+# (tiger-packet-analysis docs/missions/cosmo_portal_2.md): every wait is
+# unconfirmed.
 
 @activity_bundle("cosmo_portal2_activity")
 # The 2.3.1 capture starts it in dry_sea (11, public) and the lifetime runs
@@ -39,6 +40,10 @@ cosmo_portal2_activity_mission4 phase03
 cosmo_portal2_activity_mission5 phase04
 cosmo_portal2_activity_mission6 phase05
 cosmo_portal2_activity_mission7 phase06
+
+# mission 6's hillside, once taken: a wipe in the fight after it starts the
+# fight over, not the hillside
+bool b_hillside_secured = false
 
 @startup()
 script ss_cosmo_portal2():

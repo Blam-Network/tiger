@@ -1,0 +1,27 @@
+# es\cosmo\mission_elevator\mission_elevator_mission1.esp
+#
+# Mission 1, the blast: once the player is in, the activity goes live; a few
+# seconds on the door to the ship opens, the objective points at the ship and
+# the Ghost's first line plays until the player gets there. From one retail
+# capture.
+
+trigger_volume_objective goto_ship_trigger_volume_objective
+object door_controller_object
+sequence cdm_ele_010_020_dialogue_sequence
+
+script init(): pass
+
+script complete(): pass
+
+script main():
+    sleep_until(c_player_script_utilities.all_players_are_ready())
+    c_lifetime_script_utilities.get_lifetime_sensor().set_state(e_activity_lifetime_state.active)
+    # 3.4 s after the spawn in the one run
+    sleep(3)
+    door_controller_object.create()
+    door_controller_object.set_device_position(1)
+    goto_ship_trigger_volume_objective.objective_begin()
+    cdm_ele_010_020_dialogue_sequence.start()
+    sleep_until(goto_ship_trigger_volume_objective.is_complete())
+    goto_ship_trigger_volume_objective.objective_end_silent()
+    cdm_ele_010_020_dialogue_sequence.stop()

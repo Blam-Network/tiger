@@ -1,0 +1,19 @@
+# es\moon\strike_vampire\strike_vampire_mission8.esp
+#
+# Mission 8, the outro: the Ghost's last line and the outro music as the
+# phase starts, the activity's completion a second later and the results 30
+# seconds on. One run.
+
+encounter_handle strike_vampire
+
+script init(): pass
+
+script complete():
+    c_lifetime_script_utilities.get_lifetime_sensor().end_game(30)
+
+script main():
+    strike_vampire.phase_start(7)
+    strike_vampire.mns02_100_120.start()
+    strike_vampire.music_outro.start()
+    sleep(1)
+    set_activity_complete()

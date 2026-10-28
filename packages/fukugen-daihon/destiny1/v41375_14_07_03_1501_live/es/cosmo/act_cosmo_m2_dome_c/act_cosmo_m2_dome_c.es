@@ -5,9 +5,10 @@
 # fight through the dome's pipe room and guards' hall to the console, hold
 # off the Fallen waves, then destroy the beacon. The root starts nothing;
 # the phases are the missions beside it, run in order. Mission file names
-# are ours. From one retail run (2026-10-24_22-20-53, with the public host
-# sessions of delta_n and the Dry Sea), so every rule and wait is
-# unconfirmed.
+# are ours. From three retail runs (2026-10-24_22-20-53, 2026-10-27_20-47-38
+# and 2026-10-21_01-08-40, each with the public host sessions of delta_n and
+# the Dry Sea); the third was relaunched at the Dry Sea's checkpoint. The
+# missions' waits held in all three within half a second.
 #
 #   act_cosmo_m2_dome_c_mission1.esp  delta_n: the opening lines, use obj_m2_o1
 #   act_cosmo_m2_dome_c_mission2.esp  dry_sea: reach the sea, use its two objects
@@ -37,7 +38,12 @@ act_cosmo_m2_dome_c_mission3 cosmo_m2_phase02_dome_c
 act_cosmo_m2_dome_c_mission4 cosmo_m2_phase03_dome_c
 act_cosmo_m2_dome_c_mission5 cosmo_m2_phase04_dome_c
 
+# The lifetime goes active with the players ready, whichever phase the
+# activity starts at: a run relaunched at its Dry Sea checkpoint went active
+# at the spawn with phase01 already running.
 @startup()
 script ss_cosmo_m2_dome_c():
     print("script startup")
     c_lifetime_script_utilities.get_lifetime_sensor().set_state(e_activity_lifetime_state.pregame)
+    sleep_until(c_player_script_utilities.all_players_are_ready())
+    c_lifetime_script_utilities.get_lifetime_sensor().set_state(e_activity_lifetime_state.active)

@@ -7,7 +7,7 @@
 # objective comes up with its Vandals and clears as its loot is picked up
 # (on 2.3.1 the ultra's kill and the quest pickup come in one packet).
 #
-# Two runs: every wait below held in both, within half a second.
+# Four runs: every wait below held in all of them, within half a second.
 
 @hard_wipe()
 location hangar

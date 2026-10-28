@@ -12,10 +12,12 @@
 # player uses) and the beacon (one the player destroys) are the missions'
 # objectives; their devices start at rest and come on as mission 5 starts.
 #
-# From the first retail run (2026-10-24): each threshold and wait is that
-# run's; the second (2026-10-27) moved the captain's squad on its own losses,
-# not the wave's. Body counts are the first run's deaths per member (a
-# member none of whom died is 0). The servitors are named members of squads
+# From three retail runs (2026-10-24, 2026-10-27, 2026-10-21): the
+# thresholds and waits held in all three as far as the clients' counts show
+# (a squad's count reads 0 for a moment as it takes a new task, so steps
+# that follow a move can come a few seconds early); the second moved the
+# captain's squad on its own losses, not the wave's. Body counts are the
+# first run's deaths per member (a member none of whom died is 0). The servitors are named members of squads
 # that also have dregs, so they are placed with their squads by hand. The t2
 # squads only get their objective: neither run placed them. The squads whose
 # task the runs moved to none (some of the second and third waves at the
@@ -196,8 +198,14 @@ script sc_waves():
     place_on_task(sq_fallen_wave03b, "0x2C9B98FD")
     sq_fallen_wave03b__servitor.place()
     sleep(4)
-    sleep_until(wave03_alive() <= 1)
-    sq_fallen_wave03b.set_task("0x91058B27")
+    # once one squad of the third wave is down the other makes its charge
+    # (03b 4.7 s after 03a fell in the first run, 03a 1.4 s after 03b in the
+    # third; the second run's never did)
+    sleep_until(sq_fallen_wave03a.alive_count() == 0 or sq_fallen_wave03b.alive_count() == 0)
+    if sq_fallen_wave03a.alive_count() > 0:
+        sq_fallen_wave03a.set_task("0x91058B27")
+    else:
+        sq_fallen_wave03b.set_task("0x91058B27")
     sleep_until(wave03_alive() == 0)
     waves_clear = true
 

@@ -1,0 +1,40 @@
+# es\mars\mars_portal3_activity\mars_portal3_activity_mission1.esp
+#
+# Mission 1, the lower garden: hold it. The door out of the lower garden
+# stands open from the start; the lifetime, the music and the Ghost's first
+# line come up once the players are in, with the objective to go on. At the
+# gate (enc_lowergarden_portal3's pt_gate) the garden's door opens behind
+# them and the objective turns to holding the garden, which clears, with the
+# door shut again, once the garden's Vex waves are all dead.
+#
+# One 2.3.1 run, which cleared the garden 53 s after its last wave came.
+
+@hard_wipe()
+location uppergarden
+generic_objective pf_objective_lower
+generic_objective pf_objective_lower_gate
+trigger_bubble_objective pf_objective_upper bind(uppergarden)  # WARNING: unused - no run armed it
+object o_lowergarden_door
+encounter_handle enc_lowergarden_portal3
+encounter_handle mars_portal3_audio
+
+script init(): pass
+
+script complete(): pass
+
+script main():
+    enc = enc_lowergarden_portal3
+    o_lowergarden_door.create()
+    o_lowergarden_door.set_device_position(1)
+    sleep_until(c_player_script_utilities.all_players_are_ready())
+    c_lifetime_script_utilities.get_lifetime_sensor().set_state(e_activity_lifetime_state.active)
+    mars_portal3_audio.sc_intro.wake()
+    pf_objective_lower.objective_begin()
+    sleep_until(enc.pt_gate.is_triggered())
+    enc.sc_gate.wake()
+    sleep(2.5)
+    pf_objective_lower.objective_end_silent()
+    pf_objective_lower_gate.objective_begin_immediate()
+    sleep_until(enc.b_waves_cleared)
+    enc.o_lowergarden_door.set_device_position(0)
+    pf_objective_lower_gate.objective_end_silent()

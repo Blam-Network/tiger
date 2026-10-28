@@ -2,8 +2,9 @@
 #
 # Mission 4, the captains: the fight starts (unknown_66c01eb9 breaks the
 # captains off), the music steps up with it and again once two of the three
-# captains are gone; the objective clears with the last. From one retail
-# capture.
+# captains are gone; the objective clears with the last. From two retail
+# captures: the fight started 2.8 s after the captains' room trigger in the
+# first and 5.0 s after in the second; the 3 s wait is the first run's.
 
 @hard_wipe()
 generic_objective kill_generic_objective

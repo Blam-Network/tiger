@@ -170,6 +170,19 @@ export function isReady(self: BoundInstance): boolean {
 
 // A health item unk0 / unk1 (current/max); FULL_HEALTH while unresolved.
 export function healthFraction(self: BoundInstance): number {
+  // A named member answers with the health its client reports.
+  if (self.row?.typeId === self.types.Actor) {
+    const reported = self.context.reports.actorHealth?.(
+      itemKey(self.row.bundle, self.row.typeIndex)
+    );
+    if (reported !== undefined) {
+      self.writer.notePoll(
+        `${self.path}:get_health_fraction`,
+        `${self.path}:get_health_fraction() -> ${reported}`
+      );
+      return reported;
+    }
+  }
   if (self.row?.typeId !== self.types.Health) {
     self.writer.notePoll(
       `${self.path}:get_health_fraction`,
@@ -1214,6 +1227,25 @@ function namedMemberPlaced(
     holder?.actor.placed ??
     (self.context.placeActors || squadBodies(self, squad) > 0)
   );
+}
+
+// A placed named member with no death against it, neither its own spent
+// edge nor a kill or tally on its squad: standing even while its squad's
+// reported count dips to 0 (a boss teleporting, the 2.3.1 grotto knight).
+export function namedMemberStanding(self: BoundInstance): boolean {
+  const squad = self.row ? self.rows.owningSquad(self.row) : undefined;
+  if (!(self.row && squad) || squad === self.row) {
+    return false;
+  }
+  const reports = self.context.reports;
+  const squadKey = itemKey(squad.bundle, squad.typeIndex);
+  const spent =
+    reports.actorBound(itemKey(self.row.bundle, self.row.typeIndex))?.flag7 ??
+    false;
+  const deaths =
+    (reports.squadIncidentDeaths?.(squadKey) ?? 0) +
+    tallySum(reports.squadTally?.(squadKey));
+  return !spent && deaths === 0 && namedMemberPlaced(self, squad, self.row);
 }
 
 // Placed and not spent: ActorSense f7 (TU0 [9]) is the member's own death

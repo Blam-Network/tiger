@@ -5,8 +5,8 @@
 # the Hive thralls, the cave trigger the Servitor and the cave's Fallen and
 # Hive, and a trigger deeper in the last two Fallen squads. The grotto is
 # clear once all of the cave's squads are dead. Names that were never cracked
-# are written as "0x" literals. From one retail capture: the road squads, the
-# pike guards and the entrance dropship never went in.
+# are written as "0x" literals. From two retail captures: in neither did the
+# road squads, the pike guards or the entrance dropship go in.
 
 @activity_bundle(0x99F4FBFA)
 

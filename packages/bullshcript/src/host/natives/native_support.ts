@@ -73,6 +73,8 @@ export interface HostReports {
   actorDropAck(
     key: string
   ): { dropId: number; inProgress: boolean } | undefined;
+  // The client's health fraction for an Actor row.
+  actorHealth?(key: string): number | undefined;
   actorStanding(key: string): { epoch: number; standing: boolean } | undefined;
   bubbleOccupied(bundle: number): boolean | undefined;
   // Capturable sense 0x80802E50: owner (engine faction), echoed stamps, progress in tenths.

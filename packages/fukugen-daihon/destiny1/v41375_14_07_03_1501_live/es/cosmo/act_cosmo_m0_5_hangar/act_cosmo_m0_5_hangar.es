@@ -11,11 +11,11 @@
 #   act_cosmo_m0_5_hangar_mission3.esp  clear out the Vandals, the ascent
 #
 # The hangar's own encounter is es\cosmo\hangar\enc_hangar_m0_5.es; the music
-# and the Ghost's lines are unknown_0de80b0d. From two retail 2.3.1 runs
+# and the Ghost's lines are unknown_0de80b0d. From four retail 2.3.1 runs
 # (tiger-packet-analysis docs/missions/act_cosmo_m0_5_hangar.md).
 
 @activity_bundle("act_cosmo_m0_5_hangar")
-# Both runs start in delta_s (56, bubble 7 state 0) at the spawn the client
+# All four runs start in delta_s (56, bubble 7 state 0) at the spawn the client
 # names beside that region in its own transition (class 21), and the lifetime
 # runs the three phases in this order, the last two in the hangar (13).
 @activity("act_cosmo_m0_5_hangar")

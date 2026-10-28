@@ -1,0 +1,21 @@
+# es\cosmo\mission_elevator\mission_elevator_mission4.esp
+#
+# Mission 4, the boss: the boss's line plays, the boss spawns in
+# (unknown_9d6d5f70) and the objective holds until it is dead. A wipe resets
+# the fight. From one retail capture.
+
+@hard_wipe()
+generic_objective pf_gen_obj_boss
+sequence cdm_ele_010_140_dialogue_sequence
+encounter_handle unknown_9d6d5f70
+
+script init(): pass
+
+script complete(): pass
+
+script main():
+    cdm_ele_010_140_dialogue_sequence.start()
+    unknown_9d6d5f70.sc_boss_spawn_in.wake()
+    pf_gen_obj_boss.objective_begin(nil)
+    sleep_until(unknown_9d6d5f70.boss_is_dead())
+    pf_gen_obj_boss.objective_end_silent()

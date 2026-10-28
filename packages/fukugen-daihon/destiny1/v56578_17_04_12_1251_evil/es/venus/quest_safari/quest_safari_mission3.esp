@@ -7,8 +7,11 @@
 # intro ambush to be broken (unknown_f300fb1f); then the oracles start, with
 # the Ghost's first line, and the objective's bar counts each one destroyed a
 # second after it goes. Two seconds after the last, the objective clears and
-# the Ghost sends the player on. A wipe resets the phase: twice in the run.
-# One run: the waits are that run's.
+# the Ghost sends the player on. A wipe resets the phase: twice in the first
+# run, once in the second. Two runs: the vault, the bar's one-second count
+# and the two seconds to the clear hold in both; the trough's wait on the
+# ambush is the first run's reading (the second run's restart cleared 10 s
+# after the replay's alive counts say it should).
 
 @hard_wipe()
 trigger_volume_objective vault_trigger_volume_objective

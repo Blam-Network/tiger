@@ -1,8 +1,8 @@
 # es\cosmo\mission_pact\mission_pact_mission5.esp
 #
 # Mission 5, the end: the lines still playing stop, the Ghost's last line and
-# the outro music start, and the activity is complete. From one retail
-# capture.
+# the outro music start, and the activity is complete. From two retail
+# captures.
 
 @hard_wipe()
 sequence refinery_exit_dialog

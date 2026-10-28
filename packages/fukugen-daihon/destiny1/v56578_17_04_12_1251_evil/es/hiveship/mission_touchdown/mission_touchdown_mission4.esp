@@ -1,0 +1,52 @@
+# es\hiveship\mission_touchdown\mission_touchdown_mission4.esp
+#
+# Mission 4, "go to the breech": the Ghost's line on leaving the core, the
+# core's Taken fall back (unknown_9e7d3c02), and the investigate objective
+# comes up eleven seconds in. Once a player looks out over the breech the
+# objective clears, the Cabal and Hive there start their fight
+# (unknown_0c6ea3a4) and the deploy link objective comes up with its
+# interact zone; the link is down once the players have held the zone (the
+# placement's capture, 9.5 s in that run). Its line plays a second after,
+# and the breech's Cabal bring in their next wave (unknown_0c6ea3a4's
+# sc_link_deployed). The phase holds 28 s more.
+#
+# One run: the 11 s and 28 s holds and the 3 s after the view trigger are
+# that run's gaps. The capture is host-side and nothing of it is on the
+# wire, so a replay stops at the link.
+
+player_trigger view_trigger
+player_trigger breech_trigger
+trigger_volume_objective investigate_cabal
+interactable_objective deploy_link bind("0xA89BE1E7")
+countdown_placement deploy_link_placement bind("0xA89BE1E7")
+object interact_zone
+encounter_handle unknown_9e7d3c02
+encounter_handle unknown_0c6ea3a4
+encounter_handle unknown_5476e5b1
+
+script init(): pass
+
+script complete(): pass
+
+script main():
+    insertion_point()
+    view_trigger.reset()
+    breech_trigger.reset()
+    unknown_5476e5b1.tch0101_ghost_dialogue.start()
+    unknown_9e7d3c02.sc_retreat.wake()
+    sleep(11)
+    investigate_cabal.objective_begin()
+    sleep_until(view_trigger.is_triggered())
+    sleep(3)
+    investigate_cabal.objective_end_silent()
+    unknown_0c6ea3a4.sc_assault.wake()
+    sleep(1)
+    deploy_link.objective_begin()
+    interact_zone.create()
+    sleep_until(deploy_link_placement.is_captured())
+    deploy_link.objective_end_silent()
+    interact_zone.delete_object()
+    sleep(1)
+    unknown_5476e5b1.tch0135_ghost_dialogue.start()
+    unknown_0c6ea3a4.sc_link_deployed.wake()
+    sleep(28)

@@ -1,8 +1,10 @@
 # es\utility_scripts\vex_security.esu
 #
 # A Vex security node the players shoot (quest_safari's oracles on the raid
-# bridge): it comes in with its tone, and is cleaned up once destroyed. Its
-# hop-on rows never moved in the one retail run that has it, and no earlier
+# bridge): it comes in with its tone, and is cleaned up once destroyed. A node
+# left standing goes by itself some 17 s after it came in (17.5 and 17.3 s, the
+# one node each of two retail runs let go); what that costs the players is
+# the encounter's. Its hop-on rows never moved in either run, and no earlier
 # build has the archetype, so the hop-on is left alone here.
 
 object _destruct
@@ -10,15 +12,18 @@ sequence _sound
 object _hop_on
 hop_on ho_tier
 object_filter of_tier
+bool b_timed_out = false
 
 def appear():
+    b_timed_out = false
     _destruct.create()
+    sc_fuse.restart()
     sleep(0.5)
     _sound.start()
     sc_tone.restart()
 
 def sleep_until_sounded():
-    sleep_until(not sc_tone.is_running())
+    sleep_until(_sound.is_done())
 
 # the tone is stopped once it has played (retail sends its stop about two
 # seconds on)
@@ -26,6 +31,16 @@ script sc_tone():
     sleep_until(_sound.is_done())
     _sound.stop()
 
+script sc_fuse():
+    sleep_until_timeout(not _destruct.is_alive(), 17)
+    if _destruct.is_alive():
+        b_timed_out = true
+        _destruct.delete_object()
+
+# True once the players destroy it, false if it went by itself first.
 def sleep_until_destroyed():
-    sleep_until(not _destruct.is_alive())
+    sleep_until(b_timed_out or not _destruct.is_alive())
+    if b_timed_out:
+        return false
     _destruct.delete_object()
+    return true

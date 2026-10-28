@@ -165,6 +165,8 @@ describe("TU0 cosmo_portal_2 scripts", () => {
       }
     };
     const said = (text: string) => log.some((line) => line.includes(text));
+    const count = (text: string) =>
+      log.filter((line) => line.includes(text)).length;
     const fire = (key: string, name: string) =>
       runtime.reportTriggerFired(rowOf(key, name));
     const use = (identifier: number) =>
@@ -314,6 +316,29 @@ describe("TU0 cosmo_portal_2 scripts", () => {
       )
     ).toBe(true);
     expect(completed).toBe(0);
+
+    // A wipe in the fight starts the fight over, not the hillside: the kill
+    // objective again at once, the witch back at her last post.
+    runtime.reportPlayerDied("c0");
+    ticks(1);
+    expect(runtime.hardWipeArmed && runtime.allPlayersDead).toBe(true);
+    runtime.resetCurrentPhase();
+    runtime.reportPlayerRespawned("c0");
+    ticks(4);
+    expect(count("mission cosmo_portal2_activity_mission6 starting")).toBe(2);
+    expect(
+      count(
+        "phase05.obj_r1_s2_strike2_phase05_m1._player_objective t32#24 player objective active"
+      )
+    ).toBe(1);
+    expect(
+      count(
+        "phase05.obj_r1_s2_strike2_phase05_m2._player_objective t32#27 player objective active"
+      )
+    ).toBe(2);
+    expect(count("sq_bossbattle_boss01:set_task(0xDB85920E)")).toBe(2);
+    expect(said("thread sc_witch_return start")).toBe(true);
+    expect(deviceOf("ROOT", "phase05.o_dome_hive_gate01")).toBe(1);
     spent("DOME_HIVE", "sq_bossbattle_boss01__wizard01");
     runtime.reportSquadAlive(rowOf("DOME_HIVE", "sq_bossbattle_boss01"), 0);
     ticks(3);

@@ -1,8 +1,8 @@
 # es\cosmo\act_cosmo_m2_dome_c\act_cosmo_m2_dome_c_mission2.esp
 #
-# Mission 2, the Dry Sea. The phase opens with the vehicle tutorial (the
-# client's inventory gains the Sparrow as it starts), then sends the player
-# to the sea (a trigger volume). Once there the objective moves on to the two
+# Mission 2, the Dry Sea. The phase opens as mission 1's vehicle tutorial
+# ends (the client's inventory gains the Sparrow), then sends the player to
+# the sea (a trigger volume). Once there the objective moves on to the two
 # objects the player uses, one after the other (identifiers 0xC9A2CA78 and
 # 0x9742D95D), each with the Ghost's lines. The two-object objective has no
 # archetype on TU0 (its rows are an object set), so this phase drives its
@@ -10,9 +10,10 @@
 # Its waypoint is the objective's own nav point, where retail marks each
 # object still to use.
 #
-# One run: the waits around the lines (three seconds to the sea objective,
-# four from the sea's line to the next objective, two before it clears and
-# the lines after it) are that run's.
+# The waits around the lines (three seconds to the sea objective, four from
+# the sea's line to the next objective, two before it clears and the lines
+# after it) held in all three runs. The third was relaunched here: the phase
+# ran from the start and waited for the players, the checkpoint at the spawn.
 
 trigger_volume_objective obj_m2_o2a
 encounter_handle obj_m2_o2b
@@ -20,7 +21,6 @@ activity_flag af_m2_o2b_a
 activity_flag af_m2_o2b_b
 interactable_incident_listener il_m2_o2b_a
 interactable_incident_listener il_m2_o2b_b
-string_hash sh_tutorial_vehicle = "tutorial_vehicle"
 sequence seq_d_o1_s017
 sequence seq_d_o1_s02
 sequence seq_d_o1_s032a
@@ -36,8 +36,8 @@ script init(): pass
 script complete(): pass
 
 script main():
+    sleep_until(c_player_script_utilities.all_players_are_ready())
     insertion_point()
-    c_incident_utilities.submit_incident_hash(sh_tutorial_vehicle)
     seq_d_o1_s017.start()
     sleep(3)
     obj_m2_o2a.objective_begin()

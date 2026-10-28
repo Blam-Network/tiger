@@ -3,7 +3,7 @@
 # Dome C's music and Ghost lines (bundle 82945A01; file name unknown). The
 # lines tied to an objective, and the music's second cue, are started by
 # their missions; the opening music plays as the players are ready. From
-# one retail run. The trigger volumes beside the lines (tv_d_o1_s014,
+# three retail runs. The trigger volumes beside the lines (tv_d_o1_s014,
 # tv_d_o1_s02, tv_d_o1_s032a/b, tv_d_o2_s005, tv_d_o2_s01, tv_m_cue2) have no
 # sensor, so the wire never shows a player in them; the lines play where
 # the run's objectives and fights had them. seq_d_o1_s018, seq_d_o1_s034

@@ -1,0 +1,47 @@
+# es\hiveship\mission_touchdown\mission_touchdown_mission5.esp
+#
+# Mission 5, "secure the breech" (the only phase retail armed for a hard
+# wipe): the Cabal counterattack (unknown_0c6ea3a4's sc_counterattack) with
+# their tank, the dust-off cinematic over the landing zone two seconds in,
+# and the eliminate objective 15 s after. Once it is up the tank is no
+# longer immune; heavy ammo crates come in as the fight goes on. The
+# objective clears when the breech's Cabal are all dead.
+#
+# One run, with one death (the player died at 539.3 and was revived): the
+# holds are that run's gaps. The Cabal kills are not on the wire as
+# anything the run's squads report, so the clear is the authored rule.
+# Retail took the first crate away ten seconds into the outro; a phase
+# names only its own rows, so it stays.
+
+@hard_wipe()
+generic_objective eliminate_cabal
+cinematic lz_dustoff_cinematic
+object heavy_cache1
+object heavy_cache2
+encounter_handle unknown_0c6ea3a4
+encounter_handle unknown_5476e5b1
+
+script init(): pass
+
+script complete(): pass
+
+script main():
+    insertion_point()
+    unknown_5476e5b1.tch0140_ghost_dialogue.start()
+    unknown_0c6ea3a4.sc_counterattack.wake()
+    sleep(2)
+    lz_dustoff_cinematic.start()
+    sleep(15)
+    eliminate_cabal.objective_begin()
+    unknown_0c6ea3a4.goliath_immune_filter.clear()
+    sleep(8)
+    unknown_5476e5b1.tch0153_ghost_dialogue.start()
+    sleep(5)
+    heavy_cache1.create()
+    sleep(5)
+    unknown_5476e5b1.tch0155_ghost_dialogue.start()
+    sleep_until(lz_dustoff_cinematic.is_done())
+    sleep(4)
+    heavy_cache2.create()
+    sleep_until(unknown_0c6ea3a4.cabal_defeated())
+    eliminate_cabal.objective_end_silent()

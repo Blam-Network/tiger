@@ -1,0 +1,47 @@
+# es\utility_scripts\specops_carrier.esu
+#
+# A Taken-held Cabal carrier the players run through (The Taken King): the
+# schisms that open along the way (and their looping ones), the bridge
+# panels and their explosion, the harvester that crashes into it and the
+# tower it hits, with the triggers along the route. The encounter that owns
+# the area runs it. From mission_darksnow's airfield, the one capture that
+# has it.
+
+object schism_a_object
+object schism_b_object
+object schism_c_object
+object schism_d_object
+object schism_e_object
+object schism_f_object
+object schism_g_object
+object schism_h_object
+object schism_i_object
+object schism_loop_a_object
+object schism_loop_b_object
+object schism_loop_c_object
+object schism_loop_d_object
+object schism_loop_e_object
+object schism_loop_f_object
+object schism_loop_g_object
+object schism_loop_h_object
+object buzzby_object
+object panel_bridge_a_object
+object panel_bridge_b_object
+nav_point ap_bridge_explode
+sequence seq_bridge_explode
+nav_point ap_bridge_smoke
+sequence seq_bridge_smoke
+object tower_object
+object harvester_crash_object
+trigger_volume hall_volume
+player_trigger hall_trigger bind(hall_volume)
+trigger_volume at_door_volume
+player_trigger at_door_trigger bind(at_door_volume)
+trigger_volume explosion_volume
+player_trigger explosion_trigger bind(explosion_volume)
+trigger_volume schism_loop_volume
+player_trigger schism_loop_trigger bind(schism_loop_volume)
+trigger_volume panel_bridge_volume
+player_trigger panel_bridge_trigger bind(panel_bridge_volume)
+trigger_volume exit_volume
+player_trigger exit_trigger bind(exit_volume)

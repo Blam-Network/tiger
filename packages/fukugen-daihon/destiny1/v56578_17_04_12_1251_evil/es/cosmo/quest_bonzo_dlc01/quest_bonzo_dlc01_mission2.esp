@@ -4,9 +4,9 @@
 # (unknown_02136f70's) starts the fight, and the music steps up. Once the
 # knight is dead the objective completes, the music stops, and the Ghost's
 # line and the outro play before the activity is complete. The host may wipe
-# this phase (retail's hard wipe flag is up from its start to the end; the
-# capture has a wipe, after which the phase ran again from its start). From
-# one retail capture.
+# this phase (retail's hard wipe flag is up from its start to the end; both
+# captures have a wipe, after which the phase ran again from its start). From
+# two retail captures; every wait agrees to 0.5 s.
 
 @hard_wipe()
 player_objective po_approach

@@ -4,11 +4,10 @@
 # charged as the hive shore loads. The intro trigger opens the grotto's
 # teleporters and lays the cloud traps; the spawn charges up and the knight
 # steps out of it. The Thrall in the hall, the boomers and the shooters, then
-# the lake's Thrall follow on the fight's clock; once the knight is dead the
-# traps go. Names that were never cracked are written as "0x" literals. From
-# one retail capture with a wipe: both tries opened the same way, and the
-# waves came 23 to 26 s after the knight (the shorter waits are the second
-# try's).
+# the lake's Thrall follow the knight's health down; once the knight is dead
+# the traps go. Names that were never cracked are written as "0x" literals.
+# From two retail captures, each with a wipe in the fight: all four tries
+# opened the same way.
 
 @activity_bundle(0x02136F70)
 
@@ -59,18 +58,22 @@ script sc_grotto_main():
     for trap in cloud_trap_on_players_placement:
         trap.delete_object()
 
+# The adds follow the knight's health down, not a clock: the hall's Thrall
+# below 60%, the boomers and shooters below 40%, the lake's Thrall below 20%
+# (two runs, two tries each; the second run's second try took 63 s to bring
+# him to 60% and the waves waited for it).
 script sc_waves():
-    sleep(23)
+    sleep_until(sq_knight_boss__boss.get_health_fraction() < 0.6)
     sq_hall_thrall.set_task("0x4E97284A")
     sq_hall_thrall.place()
-    sleep(1)
+    sleep_until(sq_knight_boss__boss.get_health_fraction() < 0.4)
     sq_boomer1.set_task("0xF2722D2A")
     sq_boomer2.set_task("0x7F5496CC")
     sq_shooters.set_task("0x3EED2415")
     sq_boomer1.place()
     sq_boomer2.place()
     sq_shooters.place()
-    sleep(2)
+    sleep_until(sq_knight_boss__boss.get_health_fraction() < 0.2)
     sq_lake_thrall.set_task("0x4E97284A")
     sq_lake_thrall.place()
 

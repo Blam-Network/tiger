@@ -1,0 +1,36 @@
+# es\moon\strike_vampire\strike_vampire_mission3.esp
+#
+# Mission 3, the eye: the cue takes the eye's section and the objective to
+# get past the eye comes up as the phase starts; the fight is
+# unknown_9f24395b's sc_eye. Two seconds after the player crosses the eye's
+# start the Ghost speaks and the cue moves on. The objective clears three
+# seconds after a player reaches the final teleport with the baron gone (its
+# own volume fired long before, the first time the player passed it). A wipe
+# resets the phase (once in the run). One run.
+
+@hard_wipe()
+trigger_volume_objective eye_trigger_volume_objective
+encounter_handle strike_vampire
+encounter_handle unknown_9f24395b
+
+script init(): pass
+
+script complete(): pass
+
+script main():
+    strike_vampire.phase_start(2)
+    # after a wipe, until the players are back
+    sleep_until(c_player_script_utilities.all_players_are_ready())
+    strike_vampire.cue(16)
+    unknown_9f24395b.sc_eye.wake()
+    sc_eye_line.wake()
+    eye_trigger_volume_objective.objective_begin()
+    sleep_until(eye_trigger_volume_objective.is_complete() and unknown_9f24395b.b_eye_boss_fled and unknown_9f24395b.pm_eye_final_teleport.test_any_inside())
+    sleep(3)
+    eye_trigger_volume_objective.objective_end_silent()
+
+script sc_eye_line():
+    sleep_until(unknown_9f24395b.pt_eye_start.is_triggered())
+    sleep(2)
+    strike_vampire.mns02_100_80.start()
+    strike_vampire.cue(32)

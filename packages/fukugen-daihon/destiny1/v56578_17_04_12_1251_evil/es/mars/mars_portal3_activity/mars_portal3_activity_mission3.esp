@@ -1,0 +1,25 @@
+# es\mars\mars_portal3_activity\mars_portal3_activity_mission3.esp
+#
+# Mission 3, the upper garden past the gate: kill the Cyclops. The Cyclops
+# (enc_uppergarden_portal3's sq_turret) is in at the phase's start; the
+# objective comes up as a player reaches the Ghost's line about it
+# (mars_portal3_audio's mss03_020_030_trigger), and clears four seconds
+# after the Cyclops dies, which ends the phase. The phase's kill objective
+# (pf_objective_kill) never came up. One run.
+
+@hard_wipe()
+generic_objective pf_objective_cyclops
+encounter_handle enc_uppergarden_portal3
+encounter_handle mars_portal3_audio
+
+script init(): pass
+
+script complete(): pass
+
+script main():
+    enc_uppergarden_portal3.sc_cyclops.wake()
+    sleep_until(mars_portal3_audio.mss03_020_030_trigger.is_triggered())
+    pf_objective_cyclops.objective_begin()
+    sleep_until(enc_uppergarden_portal3.b_cyclops_dead)
+    sleep(3.5)
+    pf_objective_cyclops.objective_end_silent()

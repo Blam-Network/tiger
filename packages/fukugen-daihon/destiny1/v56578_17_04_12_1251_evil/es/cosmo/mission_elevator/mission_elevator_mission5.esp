@@ -1,0 +1,35 @@
+# es\cosmo\mission_elevator\mission_elevator_mission5.esp
+#
+# Mission 5, the item: the Ghost's lines after the boss, then the objective
+# points at the item's button. Pressed, the button goes down,
+# the last lines play and the activity is complete. Every wait is the one
+# run's.
+
+interactable_objective pf_objective_button_loot bind("0xFF5D2B14")
+interactable_placement pf_placement_button_loot bind("0xFF5D2B14")
+sequence cdm_ele_010_150_dialogue_sequence
+sequence cdm_ele_010_160_dialogue_sequence
+sequence cdm_ele_010_170_dialogue_sequence
+sequence cdm_ele_010_180_dialogue_sequence
+
+script init(): pass
+
+script complete():
+    c_lifetime_script_utilities.get_lifetime_sensor().end_game(30)
+
+script main():
+    cdm_ele_010_150_dialogue_sequence.start()
+    sleep(13)
+    cdm_ele_010_160_dialogue_sequence.start()
+    sleep(8.5)
+    pf_objective_button_loot.objective_begin()
+    sleep_until(pf_objective_button_loot.is_complete())
+    pf_objective_button_loot.objective_end_silent()
+    sleep(2)
+    pf_placement_button_loot._object.set_device_position(1)
+    sleep(3.5)
+    cdm_ele_010_170_dialogue_sequence.start()
+    sleep(8.5)
+    cdm_ele_010_180_dialogue_sequence.start()
+    sleep(7.5)
+    set_activity_complete()

@@ -3,8 +3,10 @@
 # The refinery in quest_bonzo_dlc01: the Hive's ritual summons a Spawn of
 # Crota as the player comes up its first trigger, and the Hive waves come
 # down at the railyard and at the knights. Names that were never cracked are
-# written as "0x" literals. From one retail capture: the waves came 3 s after
-# the railyard trigger and 5 s after the knights'.
+# written as "0x" literals. From two retail captures: the waves came 3.0 and
+# 3.4 s after the railyard trigger; the knights' wave 5.0 and 1.5 s after
+# theirs (the first run's wait is kept), and the second run's first squad
+# came early, at the ramp, for no reason the wire shows.
 
 @activity_bundle(0x478EE338)
 

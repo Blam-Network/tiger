@@ -1,0 +1,34 @@
+# es\impactsite\mission_darksnow\unknown_c07cc82c_mission2.esp
+#
+# Mission 2, the stronghold: the lifetime goes active as the players spawn,
+# the take-off cinematic plays and the objective to the base comes up with
+# the Ghost's first line. The stronghold's Cabal are unknown_b38f4748's. The
+# phase ends three seconds after a player reaches the base.
+#
+# One run. Retail showed the objective in state 1 two seconds before it went
+# active; no verb sends state 1, so it goes straight to active. The three
+# seconds between the trigger and the next phase held in all three trigger
+# objectives of the run.
+
+trigger_volume_objective enter_base_trigger_volume_objective
+cinematic ci_154a_sto
+encounter_handle unknown_b38f4748
+encounter_handle unknown_1702136e
+
+script init(): pass
+
+script complete(): pass
+
+script main():
+    insertion_point()
+    sleep_until(c_player_script_utilities.all_players_are_ready())
+    c_lifetime_script_utilities.get_lifetime_sensor().set_state(e_activity_lifetime_state.active)
+    ci_154a_sto.start()
+    sleep(1)
+    unknown_b38f4748.takeoff()
+    sleep(1)
+    enter_base_trigger_volume_objective.objective_begin_immediate()
+    unknown_1702136e.phm_dks_990_050_dialogue_sequence.start()
+    sleep_until(enter_base_trigger_volume_objective.is_complete())
+    sleep(3)
+    enter_base_trigger_volume_objective.objective_end_silent()

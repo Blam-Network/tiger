@@ -1,0 +1,36 @@
+# es\impactsite\mission_darksnow\unknown_c07cc82c_mission4.esp
+#
+# Mission 4, the Taken reveal: a second after a player walks into the reveal
+# volume the Ghost's line plays and the base's Taken come (unknown_0e747941);
+# the objective to kill them comes up as their knight arrives and clears two
+# seconds after the last of them dies. The trip mine objective is left
+# alone: no run showed it. One run.
+
+@hard_wipe()
+generic_objective trip_mine_objective
+generic_objective kill_taken_objective
+trigger_volume reveal_volume
+player_trigger reveal_trigger bind(reveal_volume)
+encounter_handle unknown_0e747941
+encounter_handle unknown_1702136e
+
+script init(): pass
+
+script complete(): pass
+
+script main():
+    insertion_point()
+    unknown_1702136e.phm_dks_990_070_dialogue_sequence.stop()
+    unknown_1702136e.phm_dks_990_090_dialogue_sequence.stop()
+    unknown_1702136e.phm_dks_990_100_dialogue_sequence.stop()
+    sleep_until(reveal_trigger.is_triggered())
+    sleep(1)
+    unknown_1702136e.phm_dks_990_105_dialogue_sequence.start()
+    unknown_0e747941.taken_reveal()
+    sleep_until(unknown_0e747941.knight_arrived)
+    kill_taken_objective._player_objective.set_incoming()
+    sleep(2)
+    kill_taken_objective.objective_begin_immediate(nil)
+    sleep_until(unknown_0e747941.taken_are_dead())
+    sleep(2)
+    kill_taken_objective.objective_end_silent()

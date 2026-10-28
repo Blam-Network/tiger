@@ -1,0 +1,35 @@
+# es\moon\strike_vampire\strike_vampire_mission7.esp
+#
+# Mission 7, the baron's last stand: the depot's door comes up open with the
+# objective to kill him, and shuts as it goes active, the chase's door a
+# second after it. As the player crosses into the depot the baron comes
+# (unknown_9f24395b's sc_boss), and the Ghost speaks two seconds later. Three
+# seconds after the baron dies the objective clears. One run.
+
+@hard_wipe()
+object depot_entrance_door_object
+generic_objective kill_bay_generic_objective
+encounter_handle strike_vampire
+encounter_handle unknown_9f24395b
+
+script init(): pass
+
+script complete(): pass
+
+script main():
+    strike_vampire.phase_start(6)
+    # after a wipe, until the players are back
+    sleep_until(c_player_script_utilities.all_players_are_ready())
+    depot_entrance_door_object.create()
+    depot_entrance_door_object.set_device_position(1)
+    kill_bay_generic_objective.objective_begin(nil)
+    depot_entrance_door_object.set_device_position(0)
+    sleep(1)
+    strike_vampire.phase_moonbay_chase.depot_entrance_door_object.set_device_position(0)
+    sleep_until(unknown_9f24395b.pt_boss_trigger.is_triggered())
+    unknown_9f24395b.sc_boss.wake()
+    sleep(2)
+    strike_vampire.mns02_100_110.start()
+    sleep_until(unknown_9f24395b.b_boss_dead)
+    sleep(3)
+    kill_bay_generic_objective.objective_end_silent()

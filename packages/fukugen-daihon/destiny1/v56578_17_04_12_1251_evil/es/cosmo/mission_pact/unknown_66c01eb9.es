@@ -6,9 +6,11 @@
 # lunchroom, the tight room and the two levels. When the captains' fight
 # starts (mission 4 calls captains_fight) the captains break off; crossing
 # their room sends in the first adds, and the captains turn on the player one
-# after another. Once the Kings' captain is gone the second adds come. Names
-# that were never cracked are written as "0x" literals. From one retail
-# capture, so every wait here is that run's.
+# after another; each death sends the next wave. Names that were never
+# cracked are written as "0x" literals. From two retail captures: the rooms'
+# triggers and the captains' waves agree across both (the captains died in
+# another order in each); the lunchroom's rule and the waits inside each
+# wave are the first run's.
 
 @activity_bundle(0x66C01EB9)
 
@@ -51,6 +53,8 @@ sequence seq_fallen_wave_announce2
 sequence seq_fallen_wave_announce3
 sequence seq_fallen_wave_announce4
 sequence seq_fallen_wave_announce5
+player_trigger pt_lunchroom_spawn
+player_trigger pt_lunchroom_ambush_spawn
 player_trigger pt_tightroom_spawn
 player_trigger pt_2levels_lower_spawn
 player_trigger pt_2levels_upper_spawn
@@ -60,6 +64,7 @@ player_trigger captains_flee_player_trigger
 performance boss_devils_flee_performance
 performance boss_wolves_flee_performance
 performance boss_kings_flee_performance
+bool devils_joined = false
 
 @startup()
 script sc_command_main():
@@ -82,14 +87,17 @@ script sc_command_main():
     sc_2levels_lower.wake()
     sc_2levels_upper.wake()
 
-# The lunchroom's Fallen come out as the locker room's are nearly down.
+# The lunchroom's Fallen come out as the locker room's are nearly down, or
+# as the player walks into the lunchroom past them (the second run); the
+# other two squads 2 s later, or as the player reaches the ambush.
 script sc_lunchroom():
     sleep_until(sq_fallen_lockerroom01.alive_count() > 1)
-    sleep_until(sq_fallen_lockerroom01.alive_count() <= 1)
-    sq_fallen_lockerroom01.set_task("task_7")
+    sleep_until(sq_fallen_lockerroom01.alive_count() <= 1 or pt_lunchroom_spawn.is_triggered())
+    if sq_fallen_lockerroom01.alive_count() <= 1:
+        sq_fallen_lockerroom01.set_task("task_7")
     sq_fallen_lunchroom01.set_task("task_5")
     sq_fallen_lunchroom01.place()
-    sleep(2)
+    sleep_until_timeout(pt_lunchroom_ambush_spawn.is_triggered(), 2)
     sq_fallen_lunchroom02.set_task("0x8F0587D7")
     sq_fallen_lunchroom03.set_task("0x8F0587D9")
     sq_fallen_lunchroom02.place()
@@ -106,21 +114,35 @@ script sc_2levels_lower():
     sleep_until(pt_2levels_lower_spawn.is_triggered())
     sq_fallen_2levels_lower02.set_task("0x8F0587DF")
     sq_fallen_2levels_lower02.place()
-    sleep(2)
+    sc_2levels_lower01_fallback.wake()
+
+# The two levels' squads move on as each is wiped, not on a clock: the first
+# run's flipped 0.3 s after their last deaths, the second run's player ran
+# through without a kill and none of them moved.
+script sc_2levels_lower01_fallback():
+    sleep_until(sq_fallen_2levels_lower01.alive_count() > 0)
+    sleep_until(sq_fallen_2levels_lower01.alive_count() == 0)
     sq_fallen_2levels_lower01.set_task("0x8F0587DF")
 
-# The upper level's Fallen go in, the lower level's fall back up to them, and
-# the upper level's first squad presses once the player is up there.
+# The upper level's Fallen go in; once the lower level's second squad is
+# wiped, both lower squads fall back up to them.
 script sc_2levels_upper():
     sleep_until(pt_2levels_upper_spawn.is_triggered())
     sq_fallen_2levels_upper02.set_task("task")
     sq_fallen_2levels_upper03.set_task("0x8F0587DB")
     sq_fallen_2levels_upper02.place()
     sq_fallen_2levels_upper03.place()
-    sleep(3)
+    sc_2levels_upper01_press.wake()
+    sleep_until(sq_fallen_2levels_lower02.alive_count() > 0)
+    sleep_until(sq_fallen_2levels_lower02.alive_count() == 0)
     sq_fallen_2levels_lower01.set_task("0x8F0587DC")
     sq_fallen_2levels_lower02.set_task("0x8F0587DC")
-    sleep_until(pm_2levels_upper_suppress.test_any_inside())
+
+# The upper level's first squad presses once the player is up there and it
+# is wiped.
+script sc_2levels_upper01_press():
+    sleep_until(sq_fallen_2levels_upper01.alive_count() > 0)
+    sleep_until(pm_2levels_upper_suppress.test_any_inside() and sq_fallen_2levels_upper01.alive_count() == 0)
     sq_fallen_2levels_upper01.set_task("0x8F0587D8")
 
 def captains_fight():
@@ -130,7 +152,15 @@ def captains_fight():
     sq_fallen_servitor.set_task("0x8E05866A")
     sc_captains.wake()
 
+# The first adds go in once the captains have had 3 s to break off and the
+# player has crossed their room (both runs: 2.9 s after the cue; the first
+# run's player crossed 0.1 s before, the second's 3.8 s before). The captains
+# join 2.6 s later, a beat apart. Each captain's death sends the next wave:
+# the first the wolves' flankers, the second the Kings' reinforcements, and
+# the Kings' captain's own death pulls the wolves' adds back in. With the
+# third the adds fall back.
 script sc_captains():
+    sleep(2.9)
     sleep_until(captains_flee_player_trigger.is_triggered())
     sq_fallen_servitor.set_task("task_1")
     sq_adds_devils01.set_task("0x94058FF8")
@@ -139,8 +169,31 @@ script sc_captains():
     sq_adds_wolves_center01.set_task("0x8D0584F1")
     for sq in [sq_adds_devils01, sq_adds_kings_left01, sq_adds_kings_right01, sq_adds_wolves_center01]:
         sq.place()
-    sleep(1)
-    sq_boss_devils.set_objective(obj_fallen_command_lookout)
+    sc_first_captain_dead.wake()
+    sc_second_captain_dead.wake()
+    sc_kings_captain_dead.wake()
+    sc_last_captain_dead.wake()
+    sleep(2.6)
+    sq_boss_wolves.set_objective(obj_fallen_command_lookout)
+    sleep(0.4)
+    sq_boss_kings.set_objective(obj_fallen_command_lookout)
+    if captains_dead() == 0:
+        sq_boss_kings.set_task("task_2")
+    else:
+        sq_boss_kings.set_task("0x94058FF5")
+    sleep(0.4)
+    if not devils_joined:
+        devils_joined = true
+        sq_boss_devils.set_objective(obj_fallen_command_lookout)
+        sq_boss_devils.set_task("0x94058FF9")
+
+# A Devils' captain killed before he joins takes his squad onto the
+# lookout objective as he falls (the first run's, 0.5 s after his death).
+script sc_first_captain_dead():
+    sleep_until(captains_dead() >= 1)
+    if not devils_joined and not sq_boss_devils__captain.is_alive():
+        devils_joined = true
+        sq_boss_devils.set_objective(obj_fallen_command_lookout)
     sq_adds_kings_left01.set_task("0x94058FFE")
     sq_adds_kings_right01.set_task("0x94058FFE")
     sq_adds_wolves_left01.set_task("0x8E058668")
@@ -149,20 +202,28 @@ script sc_captains():
     sq_adds_wolves_right01.place()
     seq_fallen_wave_announce4.start()
     seq_fallen_wave_announce5.start()
-    sleep(1.4)
-    sq_boss_wolves.set_objective(obj_fallen_command_lookout)
-    sq_boss_kings.set_objective(obj_fallen_command_lookout)
     sq_boss_kings.set_task("0x94058FF5")
-    sleep_until(not sq_boss_kings__captain.is_alive())
+
+script sc_second_captain_dead():
+    sleep_until(captains_dead() >= 2)
     sq_adds_kings_left02.set_task("0x94058FFB")
     sq_adds_kings_right02.set_task("0x94058FFB")
     sq_adds_kings_left02.place()
     sq_adds_kings_right02.place()
     seq_fallen_wave_announce2.start()
     seq_fallen_wave_announce3.start()
+
+script sc_kings_captain_dead():
+    sleep_until(not sq_boss_kings__captain.is_alive())
     sq_adds_wolves_center01.set_task("0x8D0584FE")
     sq_adds_wolves_left01.set_task("0x8D0584FE")
     sq_adds_wolves_right01.set_task("0x8D0584FE")
+
+script sc_last_captain_dead():
+    sleep_until(captains_dead() == 3)
+    for sq in [sq_adds_devils01, sq_adds_kings_left01, sq_adds_kings_right01, sq_adds_wolves_center01, sq_adds_wolves_left01, sq_adds_wolves_right01, sq_adds_kings_left02, sq_adds_kings_right02]:
+        if sq.alive_count() > 0:
+            sq.set_task("0x8D0584F0")
 
 def captains_dead():
     dead = 0

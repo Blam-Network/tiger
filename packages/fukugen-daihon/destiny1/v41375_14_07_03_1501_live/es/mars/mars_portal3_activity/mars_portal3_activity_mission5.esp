@@ -1,0 +1,25 @@
+# es\mars\mars_portal3_activity\mars_portal3_activity_mission5.esp
+#
+# Mission 5, the ultra hydra: the kill objective comes up with the phase,
+# the intro music stops, and enc_hypogeum_portal3 brings the hydra in. The
+# objective clears three seconds after the hydra dies, which ends the phase.
+# One run.
+
+@hard_wipe()
+generic_objective pf_objective_kill_a
+nav_point np_kill
+encounter_handle enc_hypogeum_portal3
+encounter_handle mars_portal3_audio
+
+script init(): pass
+
+script complete(): pass
+
+script main():
+    mars_portal3_audio.seq_music_cue1.stop()
+    enc_hypogeum_portal3.sc_boss.wake()
+    pf_objective_kill_a.objective_begin(np_kill)
+    sleep_until(enc_hypogeum_portal3.b_boss_placed)
+    sleep_until(enc_hypogeum_portal3.sq_boss.alive_count() == 0)
+    sleep(3)
+    pf_objective_kill_a.objective_end_silent()

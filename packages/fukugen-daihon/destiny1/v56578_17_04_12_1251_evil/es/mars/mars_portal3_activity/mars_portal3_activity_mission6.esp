@@ -1,0 +1,18 @@
+# es\mars\mars_portal3_activity\mars_portal3_activity_mission6.esp
+#
+# Mission 6, the end of the strike: the hydra's cue stops at once, ten
+# seconds on the ascent music and the Ghost's last line come up
+# (mars_portal3_audio), the strike completes with the line, and the game
+# ends half a minute after. One run.
+
+encounter_handle mars_portal3_audio
+
+script init(): pass
+
+script complete():
+    c_lifetime_script_utilities.get_lifetime_sensor().end_game(30)
+
+script main():
+    mars_portal3_audio.sc_outro.wake()
+    sleep(11.5)
+    set_activity_complete()

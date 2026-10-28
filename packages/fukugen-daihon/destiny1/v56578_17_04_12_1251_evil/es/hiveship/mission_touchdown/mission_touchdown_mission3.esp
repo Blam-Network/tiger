@@ -1,0 +1,76 @@
+# es\hiveship\mission_touchdown\mission_touchdown_mission3.esp
+#
+# Mission 3, "disable the core": go to the core, then break the three shells
+# that hold the shroud up, one node at a time: the passage, the wall, then
+# the breech. The Taken guarding each node are the core's
+# (unknown_9e7d3c02), which this phase wakes as each node is reached. When
+# the last shell is down the core goes, the objective clears and the Ghost
+# says where to next.
+#
+# One run, so every hold here is that run's. Each node's Ghost scan (its
+# GhostLink row) and the fights around it are not on the wire as anything
+# a script reads: the passage shell came down 20 s after a player reached
+# its node, the wall's at once (its scan was done before the player stood
+# at the node), the breech's 47 s on. Retail cleared the go-to-core
+# objective as the player looked at the passage node (a look trigger,
+# which no native reads), half a second before the node's trigger.
+
+generic_objective goto_core
+generic_objective disable_shroud
+player_trigger view_trigger
+player_trigger fallback_trigger
+player_trigger passage_node_capture_trigger
+player_trigger wall_node_capture_trigger
+player_trigger breech_node_capture_trigger
+object passage_shell
+object wall_shell
+object breech_shell
+encounter_handle unknown_9e7d3c02
+encounter_handle unknown_5476e5b1
+
+script init(): pass
+
+script complete(): pass
+
+script main():
+    insertion_point()
+    for shell in [passage_shell, wall_shell, breech_shell]:
+        shell.create()
+    for trigger in [view_trigger, fallback_trigger, passage_node_capture_trigger, wall_node_capture_trigger, breech_node_capture_trigger]:
+        trigger.reset()
+    goto_core.objective_begin()
+    unknown_5476e5b1.tch0015_ghost_dialogue.start()
+    sleep_until(view_trigger.is_triggered())
+    unknown_9e7d3c02.sc_intro.wake()
+    # the passage node
+    sleep_until(passage_node_capture_trigger.is_triggered())
+    unknown_9e7d3c02.sc_passage_node.wake()
+    goto_core.objective_end_silent()
+    unknown_5476e5b1.tch0060_ghost_dialogue.start()
+    sleep(1)
+    disable_shroud.objective_begin()
+    sleep(9)
+    unknown_5476e5b1.tch0064_ghost_dialogue.start()
+    sleep(8)
+    passage_shell.delete_object()
+    sleep(3)
+    unknown_5476e5b1.tch0070_ghost_dialogue.start()
+    wall_node_capture_trigger.reset()
+    breech_node_capture_trigger.reset()
+    # the wall node
+    sleep_until(wall_node_capture_trigger.is_triggered())
+    wall_shell.delete_object()
+    sleep(3)
+    unknown_5476e5b1.tch0080_ghost_dialogue.start()
+    breech_node_capture_trigger.reset()
+    # the breech node, then the core
+    sleep_until(breech_node_capture_trigger.is_triggered())
+    unknown_9e7d3c02.sc_breech_node.wake()
+    sleep(47)
+    breech_shell.delete_object()
+    sleep(1)
+    unknown_9e7d3c02.sc_core_destroyed.wake()
+    sleep(3)
+    disable_shroud.objective_end_silent()
+    unknown_5476e5b1.tch0100_ghost_dialogue.start()
+    sleep(2)

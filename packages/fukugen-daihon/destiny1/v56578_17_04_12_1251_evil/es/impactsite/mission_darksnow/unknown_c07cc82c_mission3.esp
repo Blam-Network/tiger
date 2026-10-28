@@ -1,0 +1,28 @@
+# es\impactsite\mission_darksnow\unknown_c07cc82c_mission3.esp
+#
+# Mission 3, "investigate the base": the base's alarm drops and the Ghost's
+# lines for the way in play as the phase starts, with the objective two
+# seconds behind them. The base's rooms are unknown_0e747941's. The phase
+# ends three seconds after a player reaches the base's heart. One run.
+
+@hard_wipe()
+trigger_volume_objective investigate_base_trigger_volume_objective
+encounter_handle unknown_1702136e
+
+script init(): pass
+
+script complete(): pass
+
+script main():
+    insertion_point()
+    unknown_1702136e.phm_dks_990_050_dialogue_sequence.stop()
+    unknown_1702136e.phm_dks_990_070_dialogue_sequence.start()
+    unknown_1702136e.phm_dks_990_090_dialogue_sequence.start()
+    unknown_1702136e.phm_dks_990_100_dialogue_sequence.start()
+    unknown_1702136e.lower_alarm_vol.start()
+    investigate_base_trigger_volume_objective._player_objective.set_incoming()
+    sleep(2)
+    investigate_base_trigger_volume_objective.objective_begin_immediate()
+    sleep_until(investigate_base_trigger_volume_objective.is_complete())
+    sleep(3)
+    investigate_base_trigger_volume_objective.objective_end_silent()

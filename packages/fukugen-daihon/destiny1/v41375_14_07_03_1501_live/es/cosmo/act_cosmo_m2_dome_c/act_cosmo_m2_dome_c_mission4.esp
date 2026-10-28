@@ -5,7 +5,7 @@
 # second cue moving on. The objective stays up until the last of the third
 # wave is dead; the cue stops with it.
 #
-# One run: the four seconds before the objective are that run's.
+# The four seconds before the objective held in all three runs.
 
 @hard_wipe()
 generic_objective obj_m2_o4a

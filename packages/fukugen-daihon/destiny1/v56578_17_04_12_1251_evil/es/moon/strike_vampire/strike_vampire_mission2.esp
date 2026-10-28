@@ -1,0 +1,28 @@
+# es\moon\strike_vampire\strike_vampire_mission2.esp
+#
+# Mission 2, the throne room: the cue's second section and the objective to
+# reach the Ketch come up as the phase starts. The fight is
+# unknown_b4046ff3's: the baron's guards, his arrival once they are down and
+# his flight through the teleporter, with the Ghost's line for it. The
+# objective clears silently as the player reaches the Ketch, with the
+# Ghost's next line and the cue's fifth section. A wipe resets the phase
+# (once in the run). One run.
+
+@hard_wipe()
+trigger_volume_objective ketch_trigger_volume_objective
+encounter_handle strike_vampire
+
+script init(): pass
+
+script complete(): pass
+
+script main():
+    strike_vampire.phase_start(1)
+    # after a wipe, until the players are back
+    sleep_until(c_player_script_utilities.all_players_are_ready())
+    strike_vampire.cue(3)
+    ketch_trigger_volume_objective.objective_begin()
+    sleep_until(ketch_trigger_volume_objective.is_complete())
+    ketch_trigger_volume_objective.objective_end_silent()
+    strike_vampire.mns02_100_70.start()
+    strike_vampire.cue(31)

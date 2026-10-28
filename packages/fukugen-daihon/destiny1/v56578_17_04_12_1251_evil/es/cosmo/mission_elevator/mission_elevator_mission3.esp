@@ -1,0 +1,39 @@
+# es\cosmo\mission_elevator\mission_elevator_mission3.esp
+#
+# Mission 3, up the ball: the gantry's arm swings out, the gantry's fall
+# triggers are armed and the objective points at the top straight away, with
+# the climb's lines; the ball's squads are unknown_9d6d5f70's. From one retail
+# capture.
+#
+# The objective clears as the player reaches the boss's floor. In the one run
+# it cleared 10 s before its trigger fired, just after an item pickup the
+# replay does not feed (BD1FB418, loot_pickup_item at 489 s): a second run
+# settles which.
+
+object o_gantry_arm
+trigger_volume_objective goto_boss_trigger_volume_objective
+player_trigger pt_gantry_fall_a
+player_trigger pt_gantry_fall_b
+player_trigger pt_gantry_fall_c
+sequence cdm_ele_010_132_dialogue_sequence
+sequence cdm_ele_010_134_dialogue_sequence
+sequence cdm_ele_010_136_dialogue_sequence
+sequence cdm_ele_020_010_dialogue_sequence
+sequence cdm_ele_020_015_dialogue_sequence
+
+script init(): pass
+
+script complete(): pass
+
+script main():
+    o_gantry_arm.create()
+    o_gantry_arm.set_device_position(1)
+    for pt in [pt_gantry_fall_a, pt_gantry_fall_b, pt_gantry_fall_c]:
+        pt.reset()
+    for line in [cdm_ele_010_132_dialogue_sequence, cdm_ele_010_134_dialogue_sequence, cdm_ele_010_136_dialogue_sequence, cdm_ele_020_010_dialogue_sequence, cdm_ele_020_015_dialogue_sequence]:
+        line.start()
+    goto_boss_trigger_volume_objective.objective_begin_immediate()
+    sleep_until(goto_boss_trigger_volume_objective.is_complete())
+    goto_boss_trigger_volume_objective.objective_end_silent()
+    for line in [cdm_ele_010_132_dialogue_sequence, cdm_ele_010_134_dialogue_sequence, cdm_ele_020_010_dialogue_sequence, cdm_ele_020_015_dialogue_sequence]:
+        line.stop()

@@ -1,0 +1,23 @@
+# es\utility_scripts\specops_elevator.esu
+#
+# A lift between two floors: the car, its two doors with their devices and a
+# player monitor and volume at each end. In the one capture (mission_elevator's
+# ball) only the car and the doors moved, created with the area; nothing ever
+# rode it, so the lift's own rules are not known.
+
+object o_elevator
+device d_elevator bind(o_elevator)
+object o_door_bottom
+device d_door_bottom bind(o_door_bottom)
+object o_door_top
+device d_door_top bind(o_door_top)
+trigger_volume tv_bottom
+player_monitor pm_bottom
+trigger_volume tv_top
+player_monitor pm_top
+
+@startup()
+script main():
+    o_elevator.create()
+    o_door_top.create()
+    o_door_bottom.create()

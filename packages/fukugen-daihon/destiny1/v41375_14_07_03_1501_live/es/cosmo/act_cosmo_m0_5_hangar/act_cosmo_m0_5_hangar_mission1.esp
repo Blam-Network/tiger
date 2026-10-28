@@ -7,7 +7,7 @@
 # opening line ends, the second comes up as the long line after the flare
 # ends. The phase ends a few seconds into his last line.
 #
-# Two runs agree on every wait here. Retail showed the first objective from
+# Four runs agree on every wait here. Retail showed the first objective from
 # a second into the phase in a state TU0 has no verb for (wire 1), so it goes
 # straight to active when the line is done.
 

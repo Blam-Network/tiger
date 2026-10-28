@@ -1,0 +1,34 @@
+# es\impactsite\mission_darksnow\unknown_c07cc82c_mission5.esp
+#
+# Mission 5, to the airfield: the alarm comes back on with the Ghost's lines
+# and the hall opens (unknown_0e747941); the objective comes up ten seconds
+# into the phase. A player reaching the airfield sets off the harvester
+# crash there (unknown_15823806), and the phase ends three seconds later.
+# One run: the 0.4, 0.9 and 8.7 second holds are its gaps.
+
+@hard_wipe()
+trigger_volume_objective goto_airfield_trigger_volume_objective
+encounter_handle unknown_0e747941
+encounter_handle unknown_15823806
+encounter_handle unknown_1702136e
+
+script init(): pass
+
+script complete(): pass
+
+script main():
+    insertion_point()
+    sleep(0.4)
+    unknown_1702136e.phm_dks_990_180_dialogue_sequence.start()
+    unknown_1702136e.reset_alarm_vol.start()
+    unknown_0e747941.open_hall()
+    sleep(0.9)
+    unknown_1702136e.phm_dks_990_140_dialogue_sequence.start()
+    sleep(8.7)
+    goto_airfield_trigger_volume_objective._player_objective.set_incoming()
+    sleep(2)
+    goto_airfield_trigger_volume_objective.objective_begin_immediate()
+    sleep_until(goto_airfield_trigger_volume_objective.is_complete())
+    unknown_15823806.harvester_crash()
+    sleep(3)
+    goto_airfield_trigger_volume_objective.objective_end_silent()

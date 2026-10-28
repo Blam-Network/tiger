@@ -6,16 +6,18 @@
 # skiff volumes brings a Vex cloud with a Fallen pack, the second the
 # anchor as well. Mission 5 wakes sc_boss: the ultra captain comes out of a
 # cloud, the servitors lose their cover, two skiffs bring his adds and the
-# clouds his shanks; once he is beaten the Awoken escort takes him and
-# every squad stands down.
+# clouds his shanks; his stages follow his health, and once he is down to
+# his last sliver the Awoken escort takes him and every squad stands down.
 #
-# From one retail 2.3.1 capture (2026-10-27 22-53-09, unconfirmed). Rosters
-# (@member_counts) are the wire's squad rosters, the skiffs' command scripts
-# retail's atom for atom, task names fnv1 cracks where the hash fell. What
-# beats the boss is not on the wire (his health, most likely): his stages
-# and the capture are authored on the run's clock from his arrival, 40, 42
-# and 44 seconds. Never placed in that run: sq_captain, sq_cap_vandals,
-# sq_cap_reinf01, sq_shanks_btm, sq_skiff01-03 and the adds' tier 2 squads.
+# From two retail 2.3.1 captures (2026-10-27 22-53-09, 2026-10-29 03-38-43).
+# Rosters (@member_counts) are the first run's squad rosters, the skiffs'
+# command scripts retail's atom for atom, task names fnv1 cracks where the
+# hash fell. The boss's stages and capture follow his health in both runs
+# (his client reports it in 28ths): the first stage once he is down to
+# three quarters, the second under a quarter, the capture under a twentieth
+# (0.7 s after the report in both). Never placed in either run: sq_captain,
+# sq_cap_vandals, sq_cap_reinf01, sq_shanks_btm, sq_skiff01-03 and the adds'
+# tier 2 squads.
 
 @activity_bundle(0x8A595800)
 
@@ -69,6 +71,8 @@ vex_warp_gate warp_gate_f_prefab
 object_filter of_servitors
 object_filter of_clear
 hop_on ho_invincible_servitors
+trigger_volume tv_mid_monitor
+player_monitor pm_mid_shanks bind(tv_mid_monitor)
 trigger_volume tv_skiff01
 player_trigger pt_skiff01 bind(tv_skiff01)
 trigger_volume tv_skiff02
@@ -139,6 +143,7 @@ script sc_boss():
     captain_announce_sequence.start()
     cloud_open(cloud_end_squad__pilot)
     cloud_drop(cloud_end_squad__pilot, sq_boss, "0x7C9DA825")
+    sc_mid_shanks.wake()
     sleep(7)
     cloud_end_squad__pilot.remove()
     sq_boss.set_task("boss_health_low")
@@ -154,16 +159,12 @@ script sc_boss():
     cloud_drop(cloud_end_squad__pilot, sq_shanks_top, "0x3995B69E")
     sleep(8)
     cloud_end_squad__pilot.remove()
-    sleep(6)
-    cloud_open(cloud_mid_squad__pilot)
-    cloud_drop(cloud_mid_squad__pilot, sq_shanks_mid, "back_platform")
-    sleep(8)
-    cloud_mid_squad__pilot.remove()
-    sleep(4)
+    boss = sq_boss__ultra_captain
+    sleep_until(boss.get_health_fraction() <= 0.75)
     sq_boss.activate_temperament("0xA86437EF")
-    sleep(2)
+    sleep_until(boss.get_health_fraction() < 0.25)
     sq_boss.activate_temperament("0x61FF1F93")
-    sleep(2)
+    sleep_until(boss.get_health_fraction() < 0.05)
     # the capture: the Awoken take him, everyone else stands down
     boss_capture_performance.start_performance("0xEF912B79")
     awoken_escort_prefab.escort_begin()
@@ -176,6 +177,21 @@ script sc_boss():
     sq_boss.set_task("boss")
     sleep(12)
     boss_capture_performance.cue_performance("0xB6622307")
+
+# The mid cloud's blade vandals come for a player who holds the mid platform
+# through the fight: the first run's stood there 10.2 s before they came, the
+# second run's never more than 4.4 s and they never came.
+script sc_mid_shanks():
+    held = false
+    while not held and not boss_captured:
+        sleep_until(pm_mid_shanks.get_count() > 0 or boss_captured)
+        sleep_until_timeout(pm_mid_shanks.get_count() == 0 or boss_captured, 9)
+        held = pm_mid_shanks.get_count() > 0 and not boss_captured
+    if held:
+        cloud_open(cloud_mid_squad__pilot)
+        cloud_drop(cloud_mid_squad__pilot, sq_shanks_mid, "back_platform")
+        sleep(8)
+        cloud_mid_squad__pilot.remove()
 
 script sc_boss_skiff01():
     ship = sq_boss_skiff01__skiff

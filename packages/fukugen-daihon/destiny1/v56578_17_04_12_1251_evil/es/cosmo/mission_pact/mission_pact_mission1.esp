@@ -2,8 +2,8 @@
 #
 # Mission 1, the hive shore: once the player is in, the activity goes live
 # with the landing and grotto lines and the first music cue. Reach the
-# grotto, then kill the Servitor in it (unknown_99f4fbfa's). From one retail
-# capture.
+# grotto, then kill the Servitor in it (unknown_99f4fbfa's). From two retail
+# captures.
 
 trigger_volume_objective obj_m7_o1a
 generic_objective obj_m7_o1b

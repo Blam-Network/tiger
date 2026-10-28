@@ -7,8 +7,8 @@
 # line is cut. Using the console clears the objective; the Ghost speaks and
 # the phase ends a few seconds into the line.
 #
-# One run: the pause before the Ghost's line and the hold after it are that
-# run's.
+# The pause before the Ghost's line and the hold after it held in all three
+# runs.
 
 @hard_wipe()
 interactable_objective obj_m2_o3 bind("0x9DF3A02E")

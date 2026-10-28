@@ -1,14 +1,21 @@
 # es\cosmo\mission_pact\mission_pact_mission3.esp
 #
 # Mission 3, on to command: the second Servitor's line and the way through
-# the rocketyard, with the third music cue; the objective clears at the
-# captains' room (its volume). The command building's Fallen are
-# unknown_66c01eb9's. From here to the end the host may wipe the activity:
-# retail's hard wipe flag is up from this phase's start to the activity's end.
-# From one retail capture.
+# the rocketyard. While the refinery still stands, the first objective holds
+# until the player is out of it (pm_m7_o3a); with the refinery clear it is
+# skipped. Then the third music cue, and the objective clears at the captains'
+# room (its volume). The command building's Fallen are unknown_66c01eb9's.
+# From here to the end the host may wipe the activity: retail's hard wipe flag
+# is up from this phase's start to the activity's end. From two retail
+# captures: the first cleared the refinery and never showed obj_m7_o3a, the
+# second left it standing and held obj_m7_o3a until the monitor saw the
+# player (149.8 -> 150.7).
 
 @hard_wipe()
+generic_objective obj_m7_o3a
 trigger_volume_objective obj_m7_o3b
+trigger_volume tv_m7_o3a
+player_monitor pm_m7_o3a bind(tv_m7_o3a)
 sequence servitor_b_approach_dialog
 sequence servitor_b_done_dialog
 sequence refinery_exit_dialog
@@ -17,6 +24,7 @@ sequence rocketyard_exit_dialog
 sequence command_enter_dialog
 sequence seq_m_cue2
 sequence seq_m_cue3
+encounter_handle unknown_61b048de
 
 script init(): pass
 
@@ -30,6 +38,10 @@ script main():
     rocketyard_exit_dialog.start()
     command_enter_dialog.start()
     seq_m_cue2.stop()
+    if not unknown_61b048de.refinery_is_clear():
+        obj_m7_o3a.objective_begin()
+        sleep_until(unknown_61b048de.refinery_is_clear() or pm_m7_o3a.test_any_inside())
+        obj_m7_o3a.objective_end_silent()
     seq_m_cue3.start()
     seq_m_cue3.set_switch_mask(1)
     obj_m7_o3b.objective_begin()

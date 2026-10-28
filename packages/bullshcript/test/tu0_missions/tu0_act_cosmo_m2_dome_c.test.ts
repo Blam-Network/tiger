@@ -256,4 +256,39 @@ describe("TU0 act_cosmo_m2_dome_c scripts", () => {
     expect(said("lifetime end_game")).toBe(true);
     expect(said("activity ended - scripts stopped")).toBe(true);
   });
+
+  // A relaunch at the Dry Sea's checkpoint (2026-10-21 run): phase01 runs
+  // from the start, waits for the players, and the lifetime goes active.
+  it("resumes at the Dry Sea with the lifetime going active on ready", () => {
+    const log: string[] = [];
+    const players: ActivityPlayer[] = [];
+    const runtime = new ScriptRuntime({
+      bundles: TAGS,
+      clock: { activityTicks: () => 0 },
+      log: (line) => log.push(line),
+      phaseProgress: { read: () => 1, write: () => undefined },
+      players: () => players,
+      scriptFor: (bundleTag) => bundleTag,
+      scripts: tu0ScriptSource(TAGS, "cosmo"),
+      tickSeconds: 1,
+    });
+    runtime.start();
+    runtime.setActiveBundles(new Set(TAGS.map((tag) => tag.bundle)));
+    const said = (text: string) => log.some((line) => line.includes(text));
+    for (let i = 0; i < 5; i++) {
+      runtime.tick();
+    }
+    expect(said("mission act_cosmo_m2_dome_c_mission2 starting")).toBe(true);
+    expect(said("mission act_cosmo_m2_dome_c_mission1 starting")).toBe(false);
+    expect(said("lifetime set_state(active)")).toBe(false);
+    expect(said("seq_d_o1_s017")).toBe(false);
+    players.push({ characterKey: "c0", powerLevel: 1, ready: true });
+    runtime.reportPlayerSpawned();
+    for (let i = 0; i < 5; i++) {
+      runtime.tick();
+    }
+    expect(said("lifetime set_state(active)")).toBe(true);
+    expect(said("seq_d_o1_s017")).toBe(true);
+    expect(said("tutorial_vehicle")).toBe(false);
+  });
 });

@@ -1,0 +1,20 @@
+# es\hiveship\mission_touchdown\mission_touchdown_mission6.esp
+#
+# Mission 6, the outro: the Ghost's line six seconds in, its last line with
+# the activity's completion twelve seconds after that, and the results 30
+# seconds on. One run: the holds are its gaps.
+
+encounter_handle unknown_5476e5b1
+
+script init(): pass
+
+script complete():
+    c_lifetime_script_utilities.get_lifetime_sensor().end_game(30)
+
+script main():
+    insertion_point()
+    sleep(6)
+    unknown_5476e5b1.tch0170_ghost_dialogue.start()
+    sleep(12)
+    unknown_5476e5b1.tch0175_ghost_dialogue.start()
+    set_activity_complete()

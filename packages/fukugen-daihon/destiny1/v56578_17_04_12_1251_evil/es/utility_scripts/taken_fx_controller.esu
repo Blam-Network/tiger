@@ -1,0 +1,16 @@
+# es\utility_scripts\taken_fx_controller.esu
+#
+# The Taken's hold on an area (The Taken King): one object whose device
+# position is how strong the area's Taken effects are, 0 for none. The
+# encounter that owns the area creates it with the area and turns it up as
+# the Taken arrive and down as they go. From mission_elevator's one capture
+# (the blast, the ship and the ball, 0.9 when on).
+
+object taken_area_fx_object
+
+def create(intensity):
+    taken_area_fx_object.create()
+    taken_area_fx_object.set_device_position(intensity)
+
+def set_intensity(intensity):
+    taken_area_fx_object.set_device_position(intensity)

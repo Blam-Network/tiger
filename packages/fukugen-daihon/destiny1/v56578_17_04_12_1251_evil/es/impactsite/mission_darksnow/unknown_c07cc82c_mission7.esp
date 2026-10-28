@@ -1,0 +1,22 @@
+# es\impactsite\mission_darksnow\unknown_c07cc82c_mission7.esp
+#
+# Mission 7, the outro: the airfield line stops, the activity is complete
+# four seconds in and the exit cinematic plays; the results come as it
+# ends. One run: the four seconds are its gap.
+
+cinematic_midmission bookend_159_sep_exit_cinematic
+encounter_handle unknown_1702136e
+
+script init(): pass
+
+script complete():
+    c_lifetime_script_utilities.get_lifetime_sensor().end_game()
+
+script main():
+    insertion_point()
+    unknown_1702136e.phm_dks_010_210_dialogue_sequence.stop()
+    sleep(3.9)
+    set_activity_complete()
+    sleep(0.5)
+    bookend_159_sep_exit_cinematic.start()
+    sleep_until(bookend_159_sep_exit_cinematic.is_complete())

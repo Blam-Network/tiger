@@ -354,7 +354,6 @@ const TU0_STARTS: Readonly<Record<string, ExpectedStart>> = {
   // state, so its accelerator).
   mars_portal_1: startsIn("mars", "atrium"),
   mars_portal_2: startsIn("mars", "atrium"),
-  mars_portal_3: startsIn("mars", "atrium"),
   mars_patrols_1: startsIn("mars", "atrium"),
   act_mars_m03_penthouse: startsIn("mars", "atrium"),
   venus_portal_2: startsIn("venus", "archive"),
@@ -364,6 +363,22 @@ const TU0_STARTS: Readonly<Record<string, ExpectedStart>> = {
   act_venus_m05_vault: startsIn("venus", "archive"),
   cosmo_patrols_1: startsIn("cosmo", "array"),
   act_cosmo_m5_refinery: startsIn("cosmo", "array"),
+  // Its 2.3.1 capture: the lower garden, at the GAS's spawn; the upper
+  // garden, then the Hypogeum.
+  mars_portal_3: {
+    destination: "mars",
+    startSlice: "lowergarden",
+    startPhase: "phase_lowergarden",
+    phases: [
+      ["phase_lowergarden", "lowergarden"],
+      ["phase_uppergarden", "uppergarden"],
+      ["phase_upper_uppergarden", "uppergarden"],
+      ["phase_hypogeum", "hypogeum"],
+      ["phase_boss", "hypogeum"],
+      ["phase_end", "hypogeum"],
+    ],
+    spawnTransition: 0xfb_76_ec_c4,
+  },
   // Its 2.3.1 capture: delta_n, no phase there, at the GAS's spawn; the
   // vendor bunker, then the core.
   act_cosmo_m6_rasputin: {
@@ -455,6 +470,11 @@ const TU0_REGION_SPAWN_TRANSITIONS: Readonly<
     88: 0x86_30_8f_e4,
     136: 0x0c_de_83_b1,
     144: 0x8d_1b_57_00,
+  },
+  mars_portal_3: {
+    88: 0x14_d6_e8_21,
+    104: 0xfb_76_ec_c4,
+    200: 0xb7_2b_95_e3,
   },
   act_cosmo_m0_highway: {
     24: 0x68_93_54_72,
@@ -554,6 +574,46 @@ const EVIL_STARTS: Readonly<Record<string, ExpectedStart>> = {
     ],
     spawnTransition: 0x3e_85_c1_54,
   },
+  mission_elevator: {
+    destination: "cosmo",
+    startSlice: "blast",
+    startPhase: "goto_ship_phase",
+    phases: [
+      ["goto_ship_phase", "blast"],
+      ["gantry_ball_phase", "ball"],
+      ["climb_ball_phase", "ball"],
+      ["boss_ball_phase", "ball"],
+      ["get_item_ball_phase", "ball"],
+    ],
+    spawnTransition: 0x33_cb_2e_8e,
+  },
+  mission_darksnow: {
+    destination: "impactsite",
+    startSlice: "stronghold",
+    startPhase: "intro_cine_stronghold_phase",
+    phases: [
+      ["intro_cine_stronghold_phase", "stronghold"],
+      ["kill_cabal_stronghold_phase", "stronghold"],
+      ["enter_base_phase", "base"],
+      ["taken_reveal_base_phase", "base"],
+      ["goto_airfield_phase", "airfield"],
+      ["exfil_airfield_phase", "airfield"],
+      ["outro_cine_airfield_phase", "airfield"],
+    ],
+  },
+  mission_touchdown: {
+    destination: "hiveship",
+    startSlice: "shroud",
+    startPhase: "phase_touchdown_cinematic_landing",
+    phases: [
+      ["phase_touchdown_cinematic_landing", "shroud"],
+      ["phase_touchdown_infiltrate_shroud", "shroud"],
+      ["phase_touchdown_disable_core", "core"],
+      ["phase_touchdown_goto_breech", "breech"],
+      ["phase_touchdown_secure_breech", "breech"],
+      ["phase_touchdown_outro", "breech"],
+    ],
+  },
   mission_pursuit: {
     destination: "venus",
     startSlice: "baby_dock",
@@ -615,6 +675,22 @@ const EVIL_STARTS: Readonly<Record<string, ExpectedStart>> = {
     spawnTransition: 0x5f_17_fa_f0,
   },
   social_landing: startsIn("reef", "hangar"),
+  strike_vampire: {
+    destination: "moon",
+    startSlice: "launchtubes",
+    startPhase: "phase_launchtubes_main",
+    phases: [
+      ["phase_launchtubes_main", "launchtubes"],
+      ["phase_moonthrone_main", "moonthrone"],
+      ["phase_moonbay_eye", "moonbay"],
+      ["phase_moonbay_pretank", "moonbay"],
+      ["phase_moonbay_tank", "moonbay"],
+      ["phase_moonbay_chase", "moonbay"],
+      ["phase_moonbay_boss", "moonbay"],
+      ["phase_moonbay_end", "moonbay"],
+    ],
+    spawnTransition: 0x95_bb_61_1a,
+  },
 };
 
 // The spawn transitions the captures show the GAS naming per region: the
@@ -650,6 +726,26 @@ const EVIL_REGION_SPAWN_TRANSITIONS: Readonly<
     152: 0x3b_7e_f6_f6,
     168: 0x37_56_57_30,
   },
+  mars_portal_3: {
+    88: 0x14_d6_e8_21,
+    104: 0xfb_76_ec_c4,
+    200: 0xb7_2b_95_e3,
+  },
+  mission_darksnow: {
+    0: 0xad_82_cd_01,
+    1: EMPTY_NAME_HASH,
+    8: 0x9c_e8_fe_cb,
+    24: 0x60_ed_65_61,
+  },
+  mission_elevator: {
+    8: fnv1("ship_to_ball"),
+    168: fnv1("blast_to_ship"),
+  },
+  mission_touchdown: {
+    8: 0x76_9d_a2_14,
+    72: 0x60_63_12_60,
+    128: 0xe3_bc_12_6f,
+  },
   mission_pact: {
     32: 0x74_36_19_71,
     152: 0x69_fa_01_6a,
@@ -679,6 +775,11 @@ const EVIL_REGION_SPAWN_TRANSITIONS: Readonly<
     80: 0x5f_17_fa_f0,
     128: 0xd0_08_c7_2e,
     224: 0x03_85_bd_b2,
+  },
+  strike_vampire: {
+    24: 0x95_bb_61_1a,
+    56: 0xf3_07_19_4c,
+    64: 0xb5_85_79_07,
   },
 };
 

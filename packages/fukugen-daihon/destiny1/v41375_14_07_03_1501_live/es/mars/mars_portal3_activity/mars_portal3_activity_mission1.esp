@@ -1,0 +1,32 @@
+# es\mars\mars_portal3_activity\mars_portal3_activity_mission1.esp
+#
+# Mission 1, the lower garden: on up to the upper garden. The door out of
+# the lower garden stands open from the start; the lifetime, the music and
+# the Ghost's first line come up once the players are in, and the objective
+# clears as the first of them enters the upper garden's bubble.
+#
+# TU0's phase has this one objective. 2.3.1 put a fight in the lower garden
+# in front of it (two objectives TU0 does not have, pf_objective_lower and
+# pf_objective_lower_gate, the phase ending when the garden was clear) and
+# never showed this one; its trigger fired as the player came into the
+# upper garden, 24 s after that phase had ended. One run.
+
+@hard_wipe()
+location uppergarden
+trigger_bubble_objective pf_objective_upper bind(uppergarden)
+object o_lowergarden_door
+encounter_handle mars_portal3_audio
+
+script init(): pass
+
+script complete(): pass
+
+script main():
+    o_lowergarden_door.create()
+    o_lowergarden_door.set_device_position(1)
+    sleep_until(c_player_script_utilities.all_players_are_ready())
+    c_lifetime_script_utilities.get_lifetime_sensor().set_state(e_activity_lifetime_state.active)
+    mars_portal3_audio.sc_intro.wake()
+    pf_objective_upper.objective_begin()
+    sleep_until(pf_objective_upper.is_complete())
+    pf_objective_upper.objective_end_silent()

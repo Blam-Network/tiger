@@ -8,9 +8,9 @@
 #
 # The phase waits on the beacon's death as well as the objective's kill
 # listener: the destructible kill carries the beacon's identifier only in
-# its metadata, which the host's kill report does not pass on. One run: the
-# pauses before the objective, after the beacon and between the closing
-# lines are that run's.
+# its metadata, which the host's kill report does not pass on. The pauses
+# before the objective, after the beacon and between the closing lines held
+# in all three runs.
 
 destructible_objective obj_m2_o4b bind("0x365FAC19")
 encounter_handle enc_dome_c_m2

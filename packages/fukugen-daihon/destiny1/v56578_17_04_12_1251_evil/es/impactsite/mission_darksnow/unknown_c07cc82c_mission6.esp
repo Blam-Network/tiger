@@ -1,0 +1,34 @@
+# es\impactsite\mission_darksnow\unknown_c07cc82c_mission6.esp
+#
+# Mission 6, the exfil: the ship's 50 second entry cinematic starts with the
+# phase, the hall line stops and the airfield lines play; the Taken come
+# through the carrier (unknown_15823806) while the players hold out. The
+# exfil objective comes up three seconds in and clears when the cinematic
+# is done; the ship is in and the airfield's Taken and Cabal are wiped.
+# One run: nobody reached the exfil volume, so its trigger never fired; the
+# objective did not wait for it.
+
+@hard_wipe()
+trigger_volume_objective exfil_trigger_volume_objective
+cinematic ci_159_sep_entry
+encounter_handle unknown_15823806
+encounter_handle unknown_1702136e
+
+script init(): pass
+
+script complete(): pass
+
+script main():
+    insertion_point()
+    unknown_1702136e.phm_dks_990_180_dialogue_sequence.stop()
+    ci_159_sep_entry.start()
+    unknown_1702136e.phm_dks_010_190_dialogue_sequence.start()
+    unknown_1702136e.phm_dks_010_210_dialogue_sequence.start()
+    unknown_15823806.exfil()
+    sleep(0.8)
+    exfil_trigger_volume_objective._player_objective.set_incoming()
+    sleep(2)
+    exfil_trigger_volume_objective.objective_begin_immediate()
+    sleep_until(ci_159_sep_entry.is_done())
+    exfil_trigger_volume_objective.objective_end_silent()
+    unknown_15823806.ship_arrived()

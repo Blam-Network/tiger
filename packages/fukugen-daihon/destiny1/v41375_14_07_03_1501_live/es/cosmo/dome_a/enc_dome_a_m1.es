@@ -9,9 +9,10 @@
 # stairs; its squads move up as they take losses, and the wizard's death
 # ends the fight and clears what is left of it.
 #
-# From two retail 2.3.1 captures (2026-10-24 22-14-31, 2026-10-27
-# 20-33-53): the rules below hold in both. Waits without a trigger or a
-# death behind them are within a second in both runs.
+# From three full retail 2.3.1 runs (2026-10-24 22-14-31, 2026-10-27
+# 20-33-53, 2026-10-21 01-03-17; a fourth backed out after the scan): the
+# rules below hold in all three, and waits without a trigger or a death
+# behind them are within a second in each.
 
 @activity_bundle("enc_dome_a_m1")
 
@@ -59,6 +60,7 @@ squad sq_hive_upper_back01
 squad sq_hive_upper_back02
 squad sq_hive_upper_wizard01
 bool scan_complete = false
+bool upper_front_broken = false
 
 @startup()
 # the basement door stands closed; every squad but the ledge thralls is
@@ -171,19 +173,24 @@ script sc_upper():
     sq_hive_upper_front01.set_task("t_upper_main")
 
 # the front troopers move up as the two squads lose men between them (two,
-# then five of their seven)
+# then five of their seven). A squad's count reads 0 for a moment as it
+# takes a new task, so the second count waits for the move to settle (the
+# two steps were 4.5 to 9.3 s apart).
 script sc_upper_front():
     sleep_until(upper_front_alive_count() <= 5)
     sq_hive_upper_front02.set_task("task_22")
     sq_hive_upper_front03.set_task("task_22")
+    sleep(3)
     sleep_until(upper_front_alive_count() <= 2)
     sq_hive_upper_front02.set_task("task_13")
     sq_hive_upper_front03.set_task("task_13")
+    upper_front_broken = true
 
 # the first rush comes once the ledge thralls are dead and the front troopers
-# are nearly gone, or a player pushes on before that
+# are nearly gone (0 to 1.2 s after their last move), or a player pushes on
+# before that
 script sc_upper_rush01():
-    sleep_until((sq_hive_upper_front01.alive_count() == 0 and upper_front_alive_count() <= 2) or pt_upper_rush01_spawn.is_triggered())
+    sleep_until((sq_hive_upper_front01.alive_count() == 0 and upper_front_broken) or pt_upper_rush01_spawn.is_triggered())
     place_on_task(sq_hive_upper_rush01, "0x185D6C4D")
 
 # reaching the far end (or the wizard's death) brings the second rush and

@@ -5,7 +5,7 @@
 # off their own volumes once started. The lines tied to an objective are
 # started and stopped by its mission, the outro music by the last one; the
 # rest follow the dome's triggers, and the music cue moves up a section as
-# each fight begins. From one retail 2.3.1 capture (unconfirmed).
+# each fight begins. From three full retail 2.3.1 runs.
 
 @activity_bundle(0x8BD80DBE)
 
@@ -47,7 +47,9 @@ script sc_pt_thrall_unfreeze():
 
 @startup()
 # the Ghost's line as the first thrall rush on the upper floor is nearly
-# done (one run: its third thrall died in the same frame)
+# done (the first run: its third thrall died in the same frame; the second
+# played it on pt_upper_rush01_spawn, the third before the rush came, so
+# what starts it is not settled)
 script sc_upper_rush01():
     sleep_until(sq_hive_upper_rush01.alive_count() > 0)
     sleep_until(sq_hive_upper_rush01.alive_count() <= 1)

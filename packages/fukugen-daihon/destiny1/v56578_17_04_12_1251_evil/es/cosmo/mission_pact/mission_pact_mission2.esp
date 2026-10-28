@@ -1,8 +1,11 @@
 # es\cosmo\mission_pact\mission_pact_mission2.esp
 #
-# Mission 2, the refinery: finish off the grotto's Fallen and Hive, then cross
-# the refinery and kill its Servitor (unknown_61b048de's). The refinery lines
-# and the second music cue start with the phase. From one retail capture.
+# Mission 2, the refinery: finish off the grotto's Fallen and Hive, or leave
+# them and move on, then cross the refinery and kill its Servitor
+# (unknown_61b048de's). The refinery lines and the second music cue start with
+# the phase. From two retail captures: the first cleared the grotto before
+# leaving, the second walked out with its squads still standing and the
+# objective cleared as the refinery loaded.
 
 generic_objective obj_m7_o2a
 generic_objective obj_m7_o2b
@@ -24,7 +27,7 @@ script main():
     seq_m_cue2.start()
     seq_m_cue2.set_switch_mask(3)
     obj_m7_o2a.objective_begin()
-    sleep_until(unknown_99f4fbfa.grotto_is_clear())
+    sleep_until(unknown_99f4fbfa.grotto_is_clear() or unknown_61b048de.refinery_is_placed())
     obj_m7_o2a.objective_end_silent()
     obj_m7_o2b.objective_begin()
     sleep_until(unknown_61b048de.servitor_is_dead())

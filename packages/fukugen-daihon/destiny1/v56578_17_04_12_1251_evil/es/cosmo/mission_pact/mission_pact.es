@@ -4,8 +4,8 @@
 # hive shore's grotto to the first Servitor, across the refinery to the
 # second, then into the command building for the three captains. The root
 # starts nothing; the phases are the missions beside it, run in order. Mission
-# file names are ours. From one retail capture, so every rule and wait here
-# is unconfirmed.
+# file names are ours. From two retail captures, one slow and thorough, one
+# fast that left the grotto and the refinery standing.
 #
 #   mission_pact_mission1.esp  phase_hive_shore: the grotto, the first Servitor
 #   mission_pact_mission2.esp  phase_refinery: clear the grotto, the second Servitor

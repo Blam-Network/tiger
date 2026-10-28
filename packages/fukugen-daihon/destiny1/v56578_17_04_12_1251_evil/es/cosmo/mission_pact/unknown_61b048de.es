@@ -3,8 +3,9 @@
 # The refinery in the pact mission: its Fallen, their Servitor and the Hive
 # are already fighting as the player comes in, each squad on its own task.
 # Walking on sends in the Hive runners, and the Hive faction trigger their
-# guards. Names that were never cracked are written as "0x" literals. From
-# one retail capture.
+# guards. The refinery is clear once all of its squads are dead (mission 3's
+# first objective waits on it). Names that were never cracked are written as
+# "0x" literals. From two retail captures.
 
 @activity_bundle(0x61B048DE)
 
@@ -63,3 +64,15 @@ script sc_hive_guards():
 
 def servitor_is_dead():
     return placed and sq_fallen_servitor.alive_count() == 0
+
+# The refinery is placed as its bubble loads: the player has reached it.
+def refinery_is_placed():
+    return placed
+
+def refinery_is_clear():
+    if not placed:
+        return false
+    count = 0
+    for sq in [sq_fallen_strike01, sq_fallen_strike02, sq_fallen_pod01, sq_fallen_pod02, sq_fallen_guards01, sq_fallen_guards02, sq_fallen_servitor, sq_hive_strike01, sq_hive_strike02, sq_hive_pod01, sq_hive_pod02, sq_hive_runners01, sq_hive_guards01]:
+        count = count + sq.alive_count()
+    return count == 0

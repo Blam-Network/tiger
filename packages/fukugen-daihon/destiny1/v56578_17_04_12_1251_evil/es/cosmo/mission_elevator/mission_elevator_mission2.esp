@@ -1,0 +1,55 @@
+# es\cosmo\mission_elevator\mission_elevator_mission2.esp
+#
+# Mission 2, on to the ball: through the ship to the ball, out along the
+# bridge, then the Ghost links up with the gantry's circuit box. Each leg's
+# lines start with its objective and stop as it clears. From one retail
+# capture.
+#
+# The gantry clears when the Ghost link finishes, a GhostLink row the host
+# has no native for yet: in the one run the link was done 21 s after the
+# objective went live, and that wait stands in for it.
+
+trigger_volume_objective goto_ball
+trigger_volume_objective goto_bridge
+generic_objective gantry_objective
+nav_point circuit_box_nav_point
+sequence cdm_ele_010_030_dialogue_sequence
+sequence cdm_ele_010_050_dialogue_sequence
+sequence cdm_ele_010_052_dialogue_sequence
+sequence cdm_ele_010_070_dialogue_sequence
+sequence cdm_ele_010_080_dialogue_sequence
+sequence cdm_ele_010_090_dialogue_sequence
+sequence cdm_ele_010_100_dialogue_sequence
+sequence cdm_ele_010_110_dialogue_sequence
+sequence cdm_ele_010_120_dialogue_sequence
+sequence cdm_ele_010_130_dialogue_sequence
+
+script init(): pass
+
+script complete(): pass
+
+script main():
+    for line in [cdm_ele_010_030_dialogue_sequence, cdm_ele_010_050_dialogue_sequence, cdm_ele_010_052_dialogue_sequence, cdm_ele_010_070_dialogue_sequence]:
+        line.start()
+    goto_ball.objective_begin()
+    sleep_until(goto_ball.is_complete())
+    goto_ball.objective_end_silent()
+    for line in [cdm_ele_010_030_dialogue_sequence, cdm_ele_010_050_dialogue_sequence, cdm_ele_010_052_dialogue_sequence, cdm_ele_010_070_dialogue_sequence]:
+        line.stop()
+    for line in [cdm_ele_010_080_dialogue_sequence, cdm_ele_010_090_dialogue_sequence, cdm_ele_010_100_dialogue_sequence]:
+        line.start()
+    goto_bridge.objective_begin()
+    sleep_until(goto_bridge.is_complete())
+    goto_bridge.objective_end_silent()
+    for line in [cdm_ele_010_080_dialogue_sequence, cdm_ele_010_090_dialogue_sequence, cdm_ele_010_100_dialogue_sequence]:
+        line.stop()
+    cdm_ele_010_110_dialogue_sequence.start()
+    # 10 s on the bridge in the one run
+    sleep(10)
+    cdm_ele_010_120_dialogue_sequence.start()
+    cdm_ele_010_130_dialogue_sequence.start()
+    gantry_objective.objective_begin(circuit_box_nav_point)
+    sleep(21)
+    gantry_objective.complete()
+    gantry_objective.objective_end_silent()
+    cdm_ele_010_130_dialogue_sequence.stop()
