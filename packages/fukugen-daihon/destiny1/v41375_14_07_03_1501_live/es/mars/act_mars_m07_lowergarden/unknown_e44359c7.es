@@ -5,8 +5,7 @@
 # plays the ones that follow the fights: the catacombs music off the hall
 # trigger, the garden music's next section off the gulch, the glyph scans
 # off the Ghost's cages, the kiosk's line, and the heart's music as each
-# Sol Progeny wakes and dies. From one retail capture, so the short gaps
-# are that run's.
+# Sol Progeny wakes. The short gaps are the 2026-10-26 run's.
 
 @activity_bundle(0xE44359C7)
 
@@ -21,7 +20,6 @@ sequence seq_dialog_lowergarden_spire
 sequence seq_dialog_lowergarden_glyph_b_scan
 sequence seq_dialog_lowergarden_glyph_b_surge
 sequence seq_dialog_lowergarden_kiosk_complete
-sequence seq_dialog_lowergarden_kill_progress
 encounter_handle enc_catacombs_m07
 encounter_handle enc_uppergarden_m07
 encounter_handle enc_lowergarden_m07
@@ -43,21 +41,22 @@ script sc_gulch():
     seq_music_garden.set_switch_mask(15)
 
 @startup()
-# the glyph scans: the Ghost's cage, the glyph's surge, the spire between
+# the glyph scans, in the order the player takes them (the 2026-10-26 run
+# scanned east first, an earlier one west, and the lines kept their order):
+# the Ghost's cage, the glyph's surge, the spire between
 script sc_glyphs():
-    enc = enc_lowergarden_m07
-    sleep_until(enc.o_west_ghost_cage.is_alive())
+    sleep_until(cage_up())
     seq_dialog_lowergarden_arena.stop()
     seq_dialog_lowergarden_glyph_a_scan.start()
-    sleep_until(enc.o_glyph_a.is_alive())
+    sleep_until(surge_up())
     seq_dialog_lowergarden_glyph_a_surge.start()
-    sleep_until(not enc.o_west_ghost_cage.is_alive())
+    sleep_until(not cage_up())
     sleep(2)
     seq_dialog_lowergarden_spire.start()
-    sleep_until(enc.o_east_ghost_cage.is_alive())
+    sleep_until(cage_up())
     seq_dialog_lowergarden_spire.stop()
     seq_dialog_lowergarden_glyph_b_scan.start()
-    sleep_until(enc.o_glyph_b.is_alive())
+    sleep_until(surge_up())
     seq_dialog_lowergarden_glyph_b_surge.start()
 
 @startup()
@@ -69,19 +68,19 @@ script sc_kiosk():
     seq_dialog_lowergarden_kiosk_complete.start()
 
 @startup()
-# the heart's music follows the Sol Progeny
+# the heart's music follows the Sol Progeny as they stir; the darkness
+# mission moves it on as the first one falls
 script sc_heart():
     heart = enc_lowergarden_m07.sp_specops_heart
     sleep_until(heart.o_statue_a.get_device_position() > 0)
     seq_music_lowergarden.set_switch_mask(2)
-    sleep_until_dead(heart.sq_bg_mino_a)
-    sleep(1)
-    seq_music_lowergarden.set_switch_mask(16)
-    sleep(3)
-    seq_dialog_lowergarden_kill_progress.start()
     sleep_until(heart.o_statue_c.get_device_position() > 0)
     seq_music_lowergarden.set_switch_mask(4)
 
-def sleep_until_dead(sq):
-    sleep_until(sq.alive_count() > 0)
-    sleep_until(sq.alive_count() == 0)
+def cage_up():
+    enc = enc_lowergarden_m07
+    return enc.o_west_ghost_cage.is_alive() or enc.o_east_ghost_cage.is_alive()
+
+def surge_up():
+    enc = enc_lowergarden_m07
+    return enc.o_glyph_a.is_alive() or enc.o_glyph_b.is_alive()

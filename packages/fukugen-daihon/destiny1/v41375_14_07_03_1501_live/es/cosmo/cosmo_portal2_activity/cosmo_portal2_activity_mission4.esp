@@ -1,0 +1,28 @@
+# es\cosmo\cosmo_portal2_activity\cosmo_portal2_activity_mission4.esp
+#
+# Mission 4, out of dome_c to the Array. The lasers in dome_c go down with
+# the phase. 2.3.1 cleared it on a trigger at the Array's edge that TU0
+# does not have; TU0's scripts see no Array bubble of the strike's own, so
+# the objective holds until the player is in dome_hive, where the Ghost's
+# next scan point stands (72 s after the Array in the 2.3.1 run).
+
+@hard_wipe()
+generic_objective obj_r1_s2_strike2_phase03_m1
+nav_point ap_array_center01
+object o_fallen_laser01
+object o_fallen_laser02
+object o_fallen_laser03
+object o_fallen_laser_behavior01
+object o_fallen_laser_nutblock01
+encounter_handle enc_dome_hive_portal2
+
+script init(): pass
+
+script complete(): pass
+
+script main():
+    for laser in [o_fallen_laser01, o_fallen_laser02, o_fallen_laser03, o_fallen_laser_behavior01, o_fallen_laser_nutblock01]:
+        laser.delete_object()
+    obj_r1_s2_strike2_phase03_m1.objective_begin_immediate(ap_array_center01)
+    sleep_until(enc_dome_hive_portal2.pf_strike_ghost02._object.is_alive())
+    obj_r1_s2_strike2_phase03_m1.objective_end_silent()

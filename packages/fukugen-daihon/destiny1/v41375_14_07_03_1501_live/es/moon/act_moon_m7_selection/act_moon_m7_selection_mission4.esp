@@ -1,0 +1,21 @@
+# es\moon\act_moon_m7_selection\act_moon_m7_selection_mission4.esp
+#
+# Mission 4, "go to Selection": back through Strength and down to the
+# arena. The Ghost's line starts with the phase and the objective comes up
+# two seconds later (2.1 s in the one run); it clears on its volume. In
+# 2.3.1 the walk is two phases (the second ends in Selection's hall); TU0
+# has the one. The squads on the way are enc_selection_m7's.
+
+@hard_wipe()
+trigger_volume_objective sp_objective_goto
+sequence seq_dialog_strength_selection_transition
+
+script init(): pass
+
+script complete(): pass
+
+script main():
+    seq_dialog_strength_selection_transition.start()
+    sp_objective_goto.objective_begin()
+    sleep_until(sp_objective_goto.is_complete())
+    sp_objective_goto.objective_end_silent()

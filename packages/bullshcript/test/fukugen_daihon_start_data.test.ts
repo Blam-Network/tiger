@@ -236,6 +236,36 @@ const TU0_STARTS: Readonly<Record<string, ExpectedStart>> = {
     ],
     spawnTransition: 0xff_ba_6f_9c,
   },
+  // Its 2.3.1 capture: baby_shat at the GAS's spawn, the Thieves' Den, the
+  // dock and the ketch.
+  act_venus_m06_ketch: {
+    destination: "venus",
+    startSlice: "baby_shat",
+    phases: [
+      ["phase_thieves_den_hunt_kell", "thieves_den"],
+      ["phase_ketch_infiltrate", "dock"],
+      ["phase_ketch_goto_throne", "ketch"],
+      ["phase_ketch_kill_captain", "ketch"],
+      ["phase_ketch_outro", "ketch"],
+    ],
+    spawnTransition: 0xff_ba_6f_9c,
+  },
+  // Its 2.3.1 capture: the accelerator at the GAS's spawn, then the launch
+  // tubes and Selection (TU0's phases).
+  act_moon_m7_selection: {
+    destination: "moon",
+    startSlice: "accelerator",
+    startPhase: "phase_accelerator",
+    phases: [
+      ["phase_accelerator", "accelerator"],
+      ["phase_launchtubes", "launchtubes"],
+      ["phase_launchtubes_arena", "launchtubes"],
+      ["phase_selection", "selection"],
+      ["phase_selection_boss", "selection"],
+      ["phase_selection_final", "selection"],
+    ],
+    spawnTransition: 0x87_87_51_58,
+  },
   // Its 2.3.1 capture: baby_shat at the GAS's spawn, phase00 in the
   // headlands and the rest in the southern tides.
   act_venus_m02_southern_tides: {
@@ -289,6 +319,20 @@ const TU0_STARTS: Readonly<Record<string, ExpectedStart>> = {
     ],
     spawnPoint: "cosmo_portal_1_phase00",
   },
+  cosmo_portal_2: {
+    destination: "cosmo",
+    startSlice: "dry_sea",
+    startPhase: "phase00",
+    phases: [
+      ["phase00", "dry_sea"],
+      ["phase01", "dome_c"],
+      ["phase02", "dome_c"],
+      ["phase03", "array"],
+      ["phase04", "dome_hive"],
+      ["phase05", "dome_hive"],
+      ["phase06", "dome_hive"],
+    ],
+  },
   moon_portal_2: {
     destination: "moon",
     startSlice: "hellmouth",
@@ -318,11 +362,21 @@ const TU0_STARTS: Readonly<Record<string, ExpectedStart>> = {
   venus_patrols_1: startsIn("venus", "archive"),
   act_venus_m03_thieves_den: startsIn("venus", "archive"),
   act_venus_m05_vault: startsIn("venus", "archive"),
-  act_venus_m06_ketch: startsIn("venus", "archive"),
-  cosmo_portal_2: startsIn("cosmo", "array"),
   cosmo_patrols_1: startsIn("cosmo", "array"),
   act_cosmo_m5_refinery: startsIn("cosmo", "array"),
-  act_cosmo_m6_rasputin: startsIn("cosmo", "array"),
+  // Its 2.3.1 capture: delta_n, no phase there, at the GAS's spawn; the
+  // vendor bunker, then the core.
+  act_cosmo_m6_rasputin: {
+    destination: "cosmo",
+    startSlice: "delta_n",
+    phases: [
+      ["phase_rasputin_vendor_main", "rasputin_vendor"],
+      ["phase_rasputin_intro", "rasputin"],
+      ["phase_rasputin_boss", "rasputin"],
+      ["phase_rasputin_final", "rasputin"],
+    ],
+    spawnTransition: 0x2e_a8_fb_98,
+  },
   act_cosmo_m7_command: startsIn("cosmo", "array"),
   moon_portal_1: startsIn("moon", "accelerator"),
   moon_patrols_1: startsIn("moon", "accelerator"),
@@ -342,7 +396,6 @@ const TU0_STARTS: Readonly<Record<string, ExpectedStart>> = {
     spawnTransition: 0x87_87_51_58,
   },
   act_moon_m6_reactor: startsIn("moon", "accelerator"),
-  act_moon_m7_selection: startsIn("moon", "accelerator"),
   // Its 2.3.1 capture: bubble 0, state 1, which cine_108_spk_phase owns.
   cine_speaker: {
     destination: "cinematic_trv",
@@ -350,9 +403,25 @@ const TU0_STARTS: Readonly<Record<string, ExpectedStart>> = {
     startPhase: "cine_108_spk_phase",
     phases: [["cine_108_spk_phase", "boulevard"]],
   },
-  cine_end: startsIn("cinematic_trv", "boulevard"),
-  act_cinematic_queen_101: startsIn("cinematic_queen", "queens_chamber"),
-  // The one capture of a cinematic: bubble 0, state 1, which phase_cine owns.
+  // Its 2.3.1 capture: bubble 2, state 1, which cine_123a_end_phase owns.
+  cine_end: {
+    destination: "cinematic_trv",
+    startSlice: "military",
+    startPhase: "cine_123a_end_phase",
+    phases: [["cine_123a_end_phase", "military"]],
+  },
+  // Its 2.3.1 capture: bubble 2 (region never cracked), state 1, which
+  // phase_cine_1 owns; phase_cine_2 plays in queens_chamber.
+  act_cinematic_queen_101: {
+    destination: "cinematic_queen",
+    startSlice: "0x1A8DC399",
+    startPhase: "phase_cine_1",
+    phases: [
+      ["phase_cine_1", "0x1A8DC399"],
+      ["phase_cine_2", "queens_chamber"],
+    ],
+  },
+  // Both 2.3.1 captures: bubble 0, state 1, which phase_cine owns.
   act_cinematic_queen_102: {
     destination: "cinematic_queen",
     startSlice: "queens_chamber",
@@ -381,6 +450,12 @@ const TU0_REGION_SPAWN_TRANSITIONS: Readonly<
     56: 0x2e_a8_fb_98,
     104: 0xd2_fc_7d_b9,
   },
+  act_cosmo_m6_rasputin: {
+    48: 0x2e_a8_fb_98,
+    88: 0x86_30_8f_e4,
+    136: 0x0c_de_83_b1,
+    144: 0x8d_1b_57_00,
+  },
   act_cosmo_m0_highway: {
     24: 0x68_93_54_72,
     96: 0x10_ff_4a_98,
@@ -395,6 +470,20 @@ const TU0_REGION_SPAWN_TRANSITIONS: Readonly<
     160: 0x36_8f_3b_79,
     168: 0xf4_6b_e2_ba,
     224: 0x03_85_bd_b2,
+  },
+  act_venus_m06_ketch: {
+    24: 0xff_ba_6f_9c,
+    48: 0x23_f1_a6_d9,
+    72: 0xff_d8_e6_1d,
+    88: 0x4f_6a_4d_44,
+    184: 0x4e_5b_00_c1,
+  },
+  act_moon_m7_selection: {
+    8: 0x87_87_51_58,
+    24: 0x52_0a_0f_48,
+    48: 0x1f_69_d3_87,
+    80: 0xf4_7f_84_1d,
+    88: 0x5d_a8_69_0d,
   },
   act_venus_m09_tower: {
     96: fnv1("complex_to_tower"),
@@ -442,13 +531,95 @@ const EVIL_STARTS: Readonly<Record<string, ExpectedStart>> = {
   },
   // TU0's start from its capture is not carried to 1.33 yet.
   cine_speaker: startsIn("cinematic_trv", "boulevard"),
+  cine_end: startsIn("cinematic_trv", "boulevard"),
+  act_cinematic_queen_101: startsIn("cinematic_queen", "queens_chamber"),
   act_venus_m02_southern_tides: startsIn("venus", "archive"),
   act_moon_m4_uppercitadel: startsIn("moon", "accelerator"),
+  act_moon_m7_selection: startsIn("moon", "accelerator"),
+  act_venus_m06_ketch: startsIn("venus", "archive"),
+  cosmo_portal_2: startsIn("cosmo", "array"),
+  act_cosmo_m6_rasputin: startsIn("cosmo", "array"),
+  // The DLC missions, authored for 1.33 from their 2.3.1 captures (TU0 has
+  // none of them).
+  mission_pact: {
+    destination: "cosmo",
+    startSlice: "hive_shore",
+    startPhase: "phase_hive_shore",
+    phases: [
+      ["phase_hive_shore", "hive_shore"],
+      ["phase_refinery", "refinery"],
+      ["phase_command", "command"],
+      ["phase_command_boss", "command"],
+      ["phase_command_end", "command"],
+    ],
+    spawnTransition: 0x3e_85_c1_54,
+  },
+  mission_pursuit: {
+    destination: "venus",
+    startSlice: "baby_dock",
+    startPhase: "phase_baby_dock_main",
+    phases: [
+      ["phase_baby_dock_main", "baby_dock"],
+      ["phase_dock_main", "dock"],
+      ["phase_thieves_den_main", "thieves_den"],
+      ["phase_thieves_den_boss", "thieves_den"],
+      ["phase_thieves_den_end", "thieves_den"],
+    ],
+    spawnTransition: 0x7d_89_a6_cd,
+  },
+  mission_traitor: {
+    destination: "venus",
+    startSlice: "warp_ruins",
+    phases: [
+      ["phase_lower_tower_main", "lower_tower"],
+      ["phase_lower_tower_elevator", "lower_tower"],
+      ["phase_tower_cross", "tower"],
+      ["phase_tower_find", "tower"],
+      ["phase_tower_kill", "tower"],
+      ["phase_tower_outro", "tower"],
+    ],
+    spawnTransition: 0x2e_a8_fb_98,
+  },
+  quest_bonzo_dlc01: {
+    destination: "cosmo",
+    startSlice: "blast",
+    phases: [
+      ["goto_bonzo_phase00", "dry_sea"],
+      ["kill_bonzo_phase01", "hive_shore"],
+    ],
+    spawnTransition: 0xf6_34_92_84,
+  },
+  quest_infidel: {
+    destination: "cosmo",
+    startSlice: "graveyard",
+    startPhase: "phase_graveyard",
+    phases: [
+      ["phase_graveyard", "graveyard"],
+      ["phase_breach", "breach"],
+      ["phase_highway", "highway"],
+      ["phase_highway_end", "highway"],
+    ],
+    spawnTransition: 0x9e_de_08_74,
+  },
+  quest_safari: {
+    destination: "venus",
+    startSlice: "headlands",
+    startPhase: "phase_headlands",
+    phases: [
+      ["phase_headlands", "headlands"],
+      ["phase_baby_ruins", "baby_ruins"],
+      ["phase_raid_bridge", "raid_bridge"],
+      ["phase_raid_bridge_boss", "raid_bridge"],
+      ["phase_raid_bridge_end", "raid_bridge"],
+    ],
+    spawnTransition: 0x5f_17_fa_f0,
+  },
+  social_landing: startsIn("reef", "hangar"),
 };
 
 // The spawn transitions the captures show the GAS naming per region: the
 // highway's (96 and 104 differ from TU0's guesses), the strike's refinery,
-// blast and ship, the Last Array's and Northern Tides'.
+// blast and ship, the Last Array's, Northern Tides' and the DLC missions'.
 const EVIL_REGION_SPAWN_TRANSITIONS: Readonly<
   Record<string, Readonly<Record<number, number>>>
 > = {
@@ -478,6 +649,36 @@ const EVIL_REGION_SPAWN_TRANSITIONS: Readonly<
     16: 0xf7_0c_99_18,
     152: 0x3b_7e_f6_f6,
     168: 0x37_56_57_30,
+  },
+  mission_pact: {
+    32: 0x74_36_19_71,
+    152: 0x69_fa_01_6a,
+    160: 0x3b_7e_f6_f6,
+  },
+  mission_pursuit: {
+    8: 0x7d_89_a6_cd,
+    48: 0xa3_8c_a7_c3,
+    184: 0x23_f1_a6_d9,
+  },
+  mission_traitor: {
+    32: 0xee_9a_1f_90,
+    96: 0x66_14_a7_d5,
+    192: 0x1c_09_20_d0,
+    224: 0x2e_a8_fb_98,
+  },
+  quest_bonzo_dlc01: {
+    120: 0x69_fa_01_6a,
+    152: 0xf7_0c_99_18,
+  },
+  quest_infidel: {
+    24: 0x10_ff_74_18,
+    112: 0x68_93_54_72,
+  },
+  quest_safari: {
+    16: 0x57_5c_33_a4,
+    80: 0x5f_17_fa_f0,
+    128: 0xd0_08_c7_2e,
+    224: 0x03_85_bd_b2,
   },
 };
 

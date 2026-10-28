@@ -1,14 +1,18 @@
 # es\mars\checkpoint\enc_checkpoint_m01.es
 #
-# The Cabal checkpoint in Exclusion Zone. The road squads come up when a
-# player reaches the road, the bunker's when they reach it; using the
-# console calls the boss's dropship, which drops its phalanxes, then its
-# psions, then the boss himself, and leaves when he dies. The dropship flies
-# its own command script.
+# The Cabal checkpoint in Exclusion Zone. Its scenery cans are up from the
+# start. The road squads come up when a player reaches the road, the
+# bunker's when they reach it; using the console calls the boss's dropship,
+# which drops its phalanxes, then its psions, then the boss himself, and
+# leaves. The dropship flies its own command scripts.
 #
-# One run: the drop waits and the squads' first tasks are as captured; their
-# later tasks (the road and bunker squads falling back as they lose men)
-# are the task tree's, not this script's.
+# One run (2026-10-26): the console's device steps, the drop waits and the
+# squads' tasks are as captured (the road squads pulling back on the front
+# trigger, the first bunker squad when the second is down); the rest of
+# their moves are the task tree's, not this script's. The first run sent each wave once the last was down; this
+# one sent the psions and the boss on time with the earlier waves still up
+# (13 s, then 16 s), and the ship left 13 s after the boss's drop with him
+# alive, putting his two legionaries down as it went.
 
 @activity_bundle("enc_checkpoint_m01")
 
@@ -21,6 +25,7 @@ player_trigger pt_bunker bind(tv_bunker)
 objective obj_checkpoint_m01
 nav_point np_bunker
 object o_checkpoint_ghost_cage
+static_array<object, 10> can_objects_dynamic
 countdown_placement sp_placement_console bind("0x47DCE9B0")
 sequence seq_cabal_announce
 squad sq_road_front_legionary
@@ -52,6 +57,8 @@ squad_member sq_boss__boss
 
 @startup()
 script sc_checkpoint_main():
+    for can in can_objects_dynamic:
+        can.create()
     for sq in [sq_road_front_legionary, sq_road_front_phalanx, sq_road_overlook_legionary, sq_road_overlook_phalanx, sq_bunker_legionary_a, sq_bunker_legionary_b, sq_bunker_legionary_c, sq_bunker_legionary_d, sq_bunker_phalanx, sq_boss_phalanx_a, sq_boss_phalanx_b, sq_boss_phalanx_c, sq_boss_psion_a, sq_boss_psion_b, sq_boss_psion_c, sq_boss_legionary_a, sq_boss_legionary_b, sq_boss]:
         sq.set_objective(obj_checkpoint_m01)
     sc_road.wake()
@@ -67,10 +74,16 @@ script sc_road():
     place_on_task(sq_road_overlook_legionary, "road_legionaries")
     place_on_task(sq_bunker_legionary_a, "road_main")
     place_on_task(sq_bunker_legionary_b, "road_overlook_legionary")
+    sleep_until(sq_bunker_legionary_b.alive_count() == 0)
+    sq_bunker_legionary_a.set_task("road_overlook_legionary")
 
+# the road squads pull back to the overlook as a player comes up the front
 script sc_front():
     sleep_until(pt_front.is_triggered())
+    sq_road_front_legionary.set_task("0xC2BCBF22")
+    sq_road_front_phalanx.set_task("road_overlook_phalanx")
     sq_road_overlook_phalanx.set_task("road_overlook_phalanx")
+    sq_road_overlook_legionary.set_task("0xC2BCBF22")
 
 script sc_bunker():
     sleep_until(pt_bunker.is_triggered())
@@ -82,15 +95,18 @@ script sc_bunker():
 
 # using the console raises the Ghost's cage and calls the boss's ship
 script sc_console():
-    sleep(10)
-    sleep(1)
+    sleep_until(sp_placement_console._object.is_active())
+    sp_placement_console._object.set_device_position(0.45)
     o_checkpoint_ghost_cage.create()
     sleep(3)
     sc_dropship_boss.wake()
     sleep(1)
+    sp_placement_console._object.set_device_position(1)
     o_checkpoint_ghost_cage.set_device_position(1)
     sleep_until(not o_checkpoint_ghost_cage.is_alive())
     o_checkpoint_ghost_cage.delete_object()
+    sleep(2)
+    sp_placement_console._object.set_device_position(0)
 
 script sc_dropship_boss():
     sq_dropship_boss__pilot.place()
@@ -98,16 +114,19 @@ script sc_dropship_boss():
     sleep(13)
     for sq in [sq_boss_phalanx_a, sq_boss_phalanx_b, sq_boss_phalanx_c]:
         drop_on_task(sq, "boss_legionaries")
-    sleep_until(sq_boss_phalanx_a.alive_count() + sq_boss_phalanx_b.alive_count() + sq_boss_phalanx_c.alive_count() == 0)
+    sleep_until_timeout(sq_boss_phalanx_a.alive_count() + sq_boss_phalanx_b.alive_count() + sq_boss_phalanx_c.alive_count() == 0, 11)
     sleep(2)
     for sq in [sq_boss_psion_a, sq_boss_psion_b, sq_boss_psion_c]:
         drop_on_task(sq, "bunker_main")
-    sleep_until(sq_boss_psion_a.alive_count() + sq_boss_psion_b.alive_count() + sq_boss_psion_c.alive_count() <= 2)
+    sleep_until_timeout(sq_boss_psion_a.alive_count() + sq_boss_psion_b.alive_count() + sq_boss_psion_c.alive_count() <= 2, 13)
     sleep(3)
     drop_on_task(sq_boss, "0x05F280F0")
-    sleep_until(not sq_boss__boss.is_bound())
-    sq_dropship_boss__pilot.execute(cs_dropship_boss_exit(cps_dropship_boss_exit)); sleep_until(sq_dropship_boss__pilot.get_command_script_state() != e_command_script_state.executing)
-    sq_dropship_boss.remove()
+    sleep_until_timeout(not sq_boss__boss.is_bound(), 13)
+    sq_dropship_boss__pilot.execute(cs_dropship_boss_exit(cps_dropship_boss_exit))
+    sleep(12)
+    sq_dropship_boss__pilot.remove()
+    place_on_task(sq_boss_legionary_a, "0x9DC7DA06")
+    place_on_task(sq_boss_legionary_b, "0x9DC7DA06")
 
 def place_on_task(sq, task):
     sq.set_task(task)

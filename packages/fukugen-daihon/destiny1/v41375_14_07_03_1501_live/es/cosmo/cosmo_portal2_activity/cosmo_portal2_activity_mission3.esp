@@ -1,0 +1,32 @@
+# es\cosmo\cosmo_portal2_activity\cosmo_portal2_activity_mission3.esp
+#
+# Mission 3, dome_c: kill the major. The door to the major's floor comes
+# with the phase; the Fallen ship brings the major's men in three flights
+# (enc_dome_c_portal2). The door opens a moment after the major dies and
+# the objective clears five seconds after that.
+
+@hard_wipe()
+object o_auto_door02
+generic_objective obj_r1_s2_strike2_phase02_m1
+nav_point ap_kill_major01
+sequence md_010_60
+encounter_handle enc_dome_c_portal2
+
+script init(): pass
+
+script complete(): pass
+
+script main():
+    enc = enc_dome_c_portal2
+    o_auto_door02.create()
+    o_auto_door02.set_device_position(0)
+    enc.sc_major.wake()
+    obj_r1_s2_strike2_phase02_m1.objective_begin(ap_kill_major01)
+    sleep(1)
+    md_010_60.start()
+    sleep_until(enc.sq_objective_major00.alive_count() > 0)
+    sleep_until(enc.sq_objective_major00.alive_count() == 0)
+    sleep(1.5)
+    o_auto_door02.set_device_position(1)
+    sleep(5)
+    obj_r1_s2_strike2_phase02_m1.objective_end_silent()

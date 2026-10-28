@@ -1,0 +1,36 @@
+# es\venus\mission_traitor\mission_traitor_mission3.esp
+#
+# Mission 3, the tower: the music moves up a section, then "ascend the
+# tower" with the lift's lines, then "cross the chasm" on the timed blocks
+# (unknown_4c527387) with the jump lines. The chasm clears at its far
+# volume, and the music moves up again as it does. A wipe in the chasm puts
+# the players back at the top of the tower: retail then skipped the ascent
+# and went straight to the chasm (the run wiped once, at the first jump),
+# so the root remembers the climb. One run: unconfirmed.
+
+@hard_wipe()
+trigger_volume_objective pf_ascend_tower
+trigger_volume_objective pf_cross_chasm
+player_monitor pm_lower_tower
+encounter_handle mission_traitor
+
+script init(): pass
+
+script complete(): pass
+
+script main():
+    mission_traitor.music_cue1.start()
+    mission_traitor.music_cue1.set_switch_mask(7)
+    if not mission_traitor.tower_reached:
+        mission_traitor.grav_enter_dialog.start()
+        mission_traitor.jump_enter_dialog.start()
+        pf_ascend_tower.objective_begin()
+        sleep_until(pf_ascend_tower.is_complete())
+        mission_traitor.tower_reached = true
+        pf_ascend_tower.objective_end()
+    mission_traitor.jump_mid_dialog.start()
+    mission_traitor.jump_end_dialog.start()
+    pf_cross_chasm.objective_begin()
+    sleep_until(pf_cross_chasm.is_complete())
+    pf_cross_chasm.objective_end()
+    mission_traitor.music_cue1.set_switch_mask(15)

@@ -1,0 +1,25 @@
+# es\moon\act_moon_m7_selection\act_moon_m7_selection_mission3.esp
+#
+# Mission 3, the launch tubes floor: use the seeder's control. The control
+# is enc_launchtubes_m7's placement, bound by its object's TU0 import
+# identifier (0x34EAA816; 2.3.1's filter holds 0x34EA7F16); the objective's
+# flag is what lets the players use it. The Ghost's seeder line comes with the
+# objective and his control line once it is used.
+#
+# 2.3.1 has neither this phase nor its lines: the capture goes from the
+# floor straight on to Selection, so nothing here has a timing of its own.
+
+interactable_objective sp_objective_control bind("0x34EAA816")
+sequence seq_dialog_launchtubes_seeder
+sequence seq_dialog_launchtubes_control_complete
+
+script init(): pass
+
+script complete(): pass
+
+script main():
+    seq_dialog_launchtubes_seeder.start()
+    sp_objective_control.objective_begin()
+    sleep_until(sp_objective_control.is_complete())
+    sp_objective_control.objective_end()
+    seq_dialog_launchtubes_control_complete.start()

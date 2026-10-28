@@ -1,0 +1,20 @@
+# es\moon\act_moon_m7_selection\act_moon_m7_selection_mission6.esp
+#
+# Mission 6, the outro: the Ghost's last line twelve seconds in, the outro
+# music and the activity complete eighteen seconds after it, the results
+# half a minute later (12.1 / 18.3 / 29.4 s in the one run).
+
+sequence seq_dialog_selection_outro
+sequence seq_music_outro
+
+script init(): pass
+
+script complete():
+    c_lifetime_script_utilities.get_lifetime_sensor().end_game(30)
+
+script main():
+    sleep(12)
+    seq_dialog_selection_outro.start()
+    sleep(18)
+    seq_music_outro.start()
+    set_activity_complete()

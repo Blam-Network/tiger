@@ -1,0 +1,23 @@
+# es\venus\mission_traitor\mission_traitor_mission6.esp
+#
+# Mission 6, the outro: the jump line and the cue stop as the phase starts
+# and the Ghost's tower line plays; four seconds after it the outro music
+# and the last line come with the activity's completion, and the results
+# 30 seconds on. One run.
+
+encounter_handle mission_traitor
+
+script init(): pass
+
+script complete():
+    c_lifetime_script_utilities.get_lifetime_sensor().end_game(30)
+
+script main():
+    mission_traitor.jump_end_dialog.stop()
+    mission_traitor.music_cue1.stop()
+    mission_traitor.tower_done_dialog.start()
+    sleep_until(mission_traitor.tower_done_dialog.is_done())
+    sleep(4)
+    mission_traitor.music_outro.start()
+    mission_traitor.mission_done_dialog.start()
+    set_activity_complete()

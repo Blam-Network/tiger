@@ -198,10 +198,37 @@ export interface HostContext {
   runHandler(handler: LuaValue, args: readonly LuaValue[]): void;
   scoreboardDefinition?: ScoreboardDefinition;
   sink(change: ItemChange): void;
+  // The scripts' @objective by the squad's itemKey: its SquadAuth ref0 until
+  // a script sets another.
+  squadObjectives?: ReadonlyMap<string, { bundle: number; typeIndex: number }>;
   state: ScriptItemState;
   time(): number;
   trace: string[];
   types: ActivityBundleItemTypes;
+}
+
+// The Objective a script set on the squad, else its @objective.
+export function squadObjectiveOf(
+  context: HostContext,
+  row: ItemRef
+): ItemRef | undefined {
+  return context.state.squad(row).objective ?? authoredObjective(context, row);
+}
+
+function authoredObjective(
+  context: HostContext,
+  row: ItemRef
+): ItemRef | undefined {
+  const authored = context.squadObjectives?.get(
+    itemKey(row.bundle, row.typeIndex)
+  );
+  return (
+    authored && {
+      bundle: authored.bundle,
+      typeId: context.types.Objective,
+      typeIndex: authored.typeIndex,
+    }
+  );
 }
 
 export class ItemWriter {
@@ -243,6 +270,7 @@ export class ItemWriter {
   squad(row: ItemRef, change: Partial<SquadState>, initial = false): void {
     const previous = this.context.state.squad(row);
     const state: SquadState = { ...previous, ...change };
+    state.objective ??= authoredObjective(this.context, row);
     const authored = this.context.memberCounts?.get(
       itemKey(row.bundle, row.typeIndex)
     );
@@ -325,6 +353,9 @@ export interface KillFilterDetails {
   assists: readonly KillAssist[];
   bubbleHash?: number;
   deadCombatantHash?: number;
+  // The kill incident's names: its definition and every parent (any_kill,
+  // kill, ...). Unset, a listener's name is not checked.
+  incidentNames?: readonly number[];
   killer: KillParty;
   objectIdentifierHashes?: readonly number[];
   victim: KillParty;

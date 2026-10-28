@@ -1,0 +1,27 @@
+# es\venus\act_venus_m06_ketch\act_venus_m06_ketch_mission3.esp
+#
+# Mission 3, "go to the throne": through the ketch. The ketch's control
+# deck squads come on with the phase (enc_ketch_m06's sc_control); the
+# objective clears on the throne trigger and the ketch music moves to its
+# next section as it does. The throne room's door and the respawn swap are
+# the root's sc_throne_door. One run: unconfirmed.
+
+@hard_wipe()
+generic_objective pf_goto_throne
+nav_point ap_throne
+trigger_volume tv_goto_throne
+player_trigger pt_goto_throne bind(tv_goto_throne)
+encounter_handle enc_ketch_m06
+sequence venus_m06_music_cue2
+
+script init(): pass
+
+script complete(): pass
+
+script main():
+    enc_ketch_m06.sc_control.wake()
+    pf_goto_throne.objective_begin(ap_throne)
+    sleep_until(pt_goto_throne.is_triggered())
+    sleep(2)
+    pf_goto_throne.objective_end_silent()
+    venus_m06_music_cue2.set_switch_mask(7)

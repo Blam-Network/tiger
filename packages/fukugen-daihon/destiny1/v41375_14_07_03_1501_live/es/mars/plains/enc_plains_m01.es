@@ -3,14 +3,16 @@
 # The plains in Exclusion Zone: the tunnel into the Cabal base and the base
 # itself. Lets the player spawn once they are in the bubble, runs the
 # ambience, and works the base: the vent and the garage control are
-# placements the player holds on; using the control raises the terminal
-# cage, and once it is gone the garage opens, the alarm sounds and the
-# first dropship comes in. The second ship comes when a player reaches the
-# middle of the base. The dropships fly their own command scripts.
+# placements the player uses. The vent opens as it is used and the garage
+# control comes up; using the control raises the terminal cage, and once it
+# is gone the garage opens, the alarm sounds and the first dropship comes
+# in. The second ship comes after a player reaches the middle of the base.
+# The dropships fly their own command scripts.
 #
-# One run: the drop timings, the first ship leaving on the base's deaths,
-# the second on a timer, and the sand squads' change of task on the
-# centurion's death are single-run facts.
+# One run (2026-10-26): the device steps after each use, the drop timings,
+# the second ship 4 s after the middle of the base, the first ship leaving
+# on the base's deaths, the second on a timer, and the sand squads' change
+# of task on the centurion's death are single-run facts.
 
 @activity_bundle("enc_plains_m01")
 
@@ -71,16 +73,20 @@ script sc_ambience():
 
 # the vent, then the garage control; the base wakes when the control is used
 script sc_garage():
-    sleep(33)
-    sleep(6)
+    sleep_until(sp_placement_vent._object.is_active())
+    sp_placement_vent._object.set_device_position(0.1)
+    sleep(3)
+    sp_placement_vent._object.set_device_position(1)
+    sleep(2)
     o_garage_holo_control.create()
-    sleep(14)
+    sleep_until(sp_placement_control._object.is_active())
+    sp_placement_control._object.set_device_position(0.1)
     o_sparrow_terminal_cage.create()
     o_garage_holo_control.set_device_position(1)
     sleep(3)
     o_sparrow_terminal_cage.set_device_position(1)
     sleep_until(not o_sparrow_terminal_cage.is_alive())
-    o_sparrow_terminal_cage.delete_object()
+    sp_placement_vent._object.set_device_position(0)
     o_door.set_device_position(1)
     o_lights.set_device_position(1)
     seq_ambience_a.stop()
@@ -89,13 +95,17 @@ script sc_garage():
     seq_alarm.start()
     pt_base_mid.reset()
     sc_dropship_base.wake()
+    sp_placement_control._object.set_device_position(1)
+    o_sparrow_terminal_cage.delete_object()
     sleep_until(pt_base_mid.is_triggered())
+    sleep(4)
     sc_dropship_sand.wake()
     sleep_until(sq_sand_legionary_a.alive_count() + sq_sand_legionary_b.alive_count() + sq_sand_legionary_c.alive_count() > 0)
     sleep_until(base_alive_count() == 0)
     seq_alarm.stop()
 
-# the first ship lands in the garage and leaves once its troops are dead
+# the first ship lands in the garage and leaves once its troops are dead, or
+# 23 s after its last drop (this run's, with a backup legionary still up)
 script sc_dropship_base():
     dropship_enter(sq_dropship_base__pilot, cs_dropship_land(cps_dropship_base_entry))
     sleep(5)
@@ -106,8 +116,8 @@ script sc_dropship_base():
     sleep(3)
     drop_on_task(sq_dropship_base__pilot, sq_backup_legionary_a, "backup")
     drop_on_task(sq_dropship_base__pilot, sq_backup_legionary_b, "backup")
-    sleep_until(sq_base_phalanx.alive_count() + sq_base_legionary_a.alive_count() + sq_base_legionary_b.alive_count() + sq_base_legionary_c.alive_count() + sq_backup_legionary_a.alive_count() + sq_backup_legionary_b.alive_count() == 0)
-    dropship_leave(sq_dropship_base, sq_dropship_base__pilot, cps_dropship_base_exit)
+    sleep_until_timeout(sq_base_phalanx.alive_count() + sq_base_legionary_a.alive_count() + sq_base_legionary_b.alive_count() + sq_base_legionary_c.alive_count() + sq_backup_legionary_a.alive_count() + sq_backup_legionary_b.alive_count() == 0, 23)
+    dropship_leave(sq_dropship_base__pilot, cps_dropship_base_exit)
 
 # the second ship hovers over the sand: the centurion first, then his
 # legionaries, who go on the attack when he falls
@@ -120,7 +130,7 @@ script sc_dropship_sand():
         drop_on_task(sq_dropship_sand__pilot, sq, "backup_advance")
     sc_sand_attack.wake()
     sleep(14)
-    dropship_leave(sq_dropship_sand, sq_dropship_sand__pilot, cps_dropship_sand_exit)
+    dropship_leave(sq_dropship_sand__pilot, cps_dropship_sand_exit)
 
 script sc_sand_attack():
     sleep_until(sq_anchor_centurion.alive_count() == 0)
@@ -134,9 +144,11 @@ def dropship_enter(pilot, cs):
     pilot.place()
     pilot.execute(cs)
 
-def dropship_leave(ship, pilot, path):
-    pilot.execute(cs_dropship_exit(path)); sleep_until(pilot.get_command_script_state() != e_command_script_state.executing)
-    ship.remove()
+# both ships were gone 14 s after they set off
+def dropship_leave(pilot, path):
+    pilot.execute(cs_dropship_exit(path))
+    sleep(14)
+    pilot.remove()
 
 def drop_on_task(pilot, sq, task):
     sq.set_task(task)

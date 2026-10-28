@@ -1,0 +1,24 @@
+# es\venus\quest_safari\quest_safari_mission4.esp
+#
+# Mission 4, the captains: five seconds after the oracles the cue moves up
+# again and the kill objective comes up with the first captain
+# (unknown_f300fb1f's sc_captains). The objective clears five seconds after
+# the last captain's squads despawn. One run.
+
+@hard_wipe()
+generic_objective kill_all_generic_objective
+encounter_handle quest_safari
+encounter_handle unknown_f300fb1f
+
+script init(): pass
+
+script complete(): pass
+
+script main():
+    sleep(5)
+    quest_safari.music_cue1.set_switch_mask(7)
+    unknown_f300fb1f.sc_captains.wake()
+    kill_all_generic_objective.objective_begin(nil)
+    sleep_until(unknown_f300fb1f.b_captains_dead)
+    sleep(5)
+    kill_all_generic_objective.objective_end_silent()

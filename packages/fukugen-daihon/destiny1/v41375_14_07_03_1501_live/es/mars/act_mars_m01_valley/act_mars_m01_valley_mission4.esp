@@ -6,7 +6,8 @@
 # starts on pt_checkpoint_music_start (unknown_11b7a83e) and moves on with
 # the objectives. The road and bunker Cabal belong to enc_checkpoint_m01.
 #
-# One run: the 2 s after the console is the gap to the next phase.
+# One run (2026-10-26): the objective cleared 1.5 s after the console was
+# used; the 2 s after is the gap to the next phase.
 
 @hard_wipe()
 trigger_volume_objective sp_objective_goto
@@ -37,7 +38,8 @@ script main():
     seq_music_checkpoint.set_switch_mask(3)
     seq_dialog_checkpoint_console.start()
     sp_objective_console.objective_begin()
-    sleep(55)
+    sleep_until(sp_objective_console.is_complete())
+    sleep(1)
     sp_objective_console.objective_end_silent()
     seq_dialog_checkpoint_console_complete.start()
     sleep(2)

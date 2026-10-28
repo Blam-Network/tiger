@@ -1,0 +1,33 @@
+# es\venus\act_venus_m06_ketch\act_venus_m06_ketch_mission4.esp
+#
+# Mission 4, the captain. The kill objective comes up with the phase and
+# clears a second after the captain dies, with the music's last section; the
+# outro follows five seconds on. The throne room's door, the lock behind the
+# players and the respawn swap are this phase's rows, but they work through
+# the approach, before the phase starts: the root's sc_throne_door drives
+# them. One run: unconfirmed.
+
+@hard_wipe()
+object o_door
+trigger_volume tv_lock_door
+player_monitor pm_lock_door bind(tv_lock_door)
+trigger_volume sv_boss_fight_respawn
+trigger_group tg_boss_fight_respawn
+generic_objective pf_kill_captain
+nav_point ap_boss
+squad sq_throne_captain
+squad_member sq_throne_captain__captain
+sequence venus_m06_music_cue2
+
+script init(): pass
+
+script complete(): pass
+
+script main():
+    pf_kill_captain.objective_begin(ap_boss)
+    sleep_until(sq_throne_captain__captain.is_bound())
+    sleep_until(not sq_throne_captain__captain.is_bound())
+    sleep(1)
+    pf_kill_captain.objective_end_silent()
+    venus_m06_music_cue2.set_switch_mask(15)
+    sleep(5)

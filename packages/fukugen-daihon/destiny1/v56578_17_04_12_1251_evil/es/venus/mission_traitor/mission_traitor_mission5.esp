@@ -1,0 +1,27 @@
+# es\venus\mission_traitor\mission_traitor_mission5.esp
+#
+# Mission 5, the boss: three seconds in the music moves up its last
+# section and the ultra captain comes out of a cloud with his line (the
+# fight is the tower's, unknown_8a595800); "kill the boss" comes up with
+# him. Once the Awoken have him the objective clears without a line. One
+# run: unconfirmed.
+
+@hard_wipe()
+generic_objective pf_kill_boss
+nav_point ap_defend_ghost
+encounter_handle mission_traitor
+encounter_handle unknown_8a595800
+
+script init(): pass
+
+script complete(): pass
+
+script main():
+    sleep(3)
+    mission_traitor.music_cue1.set_switch_mask(31)
+    unknown_8a595800.sc_boss.wake()
+    mission_traitor.skolas_spawn_dialog.start()
+    pf_kill_boss.objective_begin(nil)
+    sleep_until(unknown_8a595800.boss_captured)
+    sleep(2)
+    pf_kill_boss.objective_end_silent()

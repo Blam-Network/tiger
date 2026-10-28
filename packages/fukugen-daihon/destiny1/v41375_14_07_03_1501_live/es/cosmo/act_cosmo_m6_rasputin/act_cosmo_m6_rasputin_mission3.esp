@@ -1,0 +1,33 @@
+# es\cosmo\act_cosmo_m6_rasputin\act_cosmo_m6_rasputin_mission3.esp
+#
+# Mission 3, the fight for the core. Reaching the controls starts it:
+# enc_rasputin_m6 lights the console and brings the boss in, the kill
+# objective comes up fifteen seconds in and the Ghost's Hive line
+# (unknown_ef78ad7a) four seconds after it is active. The phase ends ten
+# seconds after the ultra ogre dies. A wipe here starts it over, as both of
+# the run's wipes did.
+#
+# One 2.3.1 run, three tries at the fight (the boss phase's waits held to a
+# second in all three). Its boss is the Omnigul, with the ultra ogre late;
+# TU0's is the ogre, so the objective counts kills of sq_boss (its
+# identifier, which the ogre's kill carries), and it ends on the ogre's death
+# as 2.3.1's did.
+
+@hard_wipe()
+encounter_handle enc_rasputin_m6
+encounter_handle unknown_ef78ad7a
+kill_squad_objective sp_objective_kill bind("0x756493CB", 1)
+
+script init(): pass
+
+script complete(): pass
+
+script main():
+    c_lifetime_script_utilities.get_lifetime_sensor().set_state(e_activity_lifetime_state.active)
+    enc_rasputin_m6.sc_core.wake()
+    sleep(15)
+    sp_objective_kill.objective_begin()
+    unknown_ef78ad7a.sc_core_hive.wake()
+    sleep_until(sp_objective_kill.is_complete())
+    sleep(9.5)
+    sp_objective_kill.objective_end_silent()

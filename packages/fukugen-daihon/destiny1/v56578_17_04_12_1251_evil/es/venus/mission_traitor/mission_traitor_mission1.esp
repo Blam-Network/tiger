@@ -1,0 +1,22 @@
+# es\venus\mission_traitor\mission_traitor_mission1.esp
+#
+# Mission 1, "enter the lower tower": the lifetime goes active as the
+# players are all in, the objective comes up a moment later and clears
+# when a player reaches the lower tower. The
+# Fallen and Vex waiting there are the lower tower's (unknown_253d3c66).
+# Retail showed the objective in state 1 a second before it went active; no
+# verb sends state 1, so it goes straight to active. One run: unconfirmed.
+
+trigger_volume_objective pf_enter_lower_tower
+
+script init(): pass
+
+script complete(): pass
+
+script main():
+    sleep_until(c_player_script_utilities.all_players_are_ready())
+    c_lifetime_script_utilities.get_lifetime_sensor().set_state(e_activity_lifetime_state.active)
+    sleep(1)
+    pf_enter_lower_tower.objective_begin_immediate()
+    sleep_until(pf_enter_lower_tower.is_complete())
+    pf_enter_lower_tower.objective_end()

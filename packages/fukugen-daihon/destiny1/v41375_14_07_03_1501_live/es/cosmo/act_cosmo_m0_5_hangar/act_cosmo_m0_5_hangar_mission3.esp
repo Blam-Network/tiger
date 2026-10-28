@@ -2,9 +2,10 @@
 #
 # Mission 3, clear out the Vandals: the music cue stops as the phase starts,
 # and the objective clears a second after the last of the ultra's three
-# Vandals is down. Two seconds later the activity is complete: the ascent
-# music, the results (the lifetime timer runs 30 s on the wire) and the
-# Ghost's closing line. Two runs.
+# Vandals is down. With the Vandals already dead when the loot is taken (the
+# 2026-10-27 run) the objective never comes up. Two seconds later the
+# activity is complete: the ascent music, the results (the lifetime timer
+# runs 30 s on the wire) and the Ghost's closing line. Three runs.
 
 generic_objective obj_m0_5_generic
 squad sq_amb_fallen_vandal_1
@@ -22,9 +23,10 @@ script complete(): pass
 
 script main():
     seq_m_cue1.stop()
-    obj_m0_5_generic.objective_begin(nil)
-    sleep_until(vandals_alive_count() == 0)
-    obj_m0_5_generic.objective_end_silent()
+    if vandals_alive_count() > 0:
+        obj_m0_5_generic.objective_begin(nil)
+        sleep_until(vandals_alive_count() == 0)
+        obj_m0_5_generic.objective_end_silent()
     seq_d_o4_s01.stop()
     seq_d_o4_s02.stop()
     sleep(2)

@@ -12,14 +12,15 @@
 # player uses) and the beacon (one the player destroys) are the missions'
 # objectives; their devices start at rest and come on as mission 5 starts.
 #
-# From one retail run: each threshold and wait is that run's. Body counts
-# are that run's deaths per member (a member none of whom died is 0). The
-# servitors are named members of squads that also have dregs, so they are
-# placed with their squads by hand. The t2 squads only get their objective:
-# this run never placed them. The squads whose task the run moved to none
-# (the waves once the third is nearly done, some of the second and third at
-# the hall's first trigger) are left on theirs: TU0 has no verb to clear a
-# task.
+# From the first retail run (2026-10-24): each threshold and wait is that
+# run's; the second (2026-10-27) moved the captain's squad on its own losses,
+# not the wave's. Body counts are the first run's deaths per member (a
+# member none of whom died is 0). The servitors are named members of squads
+# that also have dregs, so they are placed with their squads by hand. The t2
+# squads only get their objective: neither run placed them. The squads whose
+# task the runs moved to none (some of the second and third waves at the
+# hall's first trigger in both, every wave once the third is nearly done in
+# the first) are left on theirs: TU0 has no verb to clear a task.
 
 @activity_bundle("enc_dome_c_m2")
 
@@ -182,9 +183,11 @@ script sc_waves():
     place_on_task(sq_fallen_wave02d, "0xB4CD5448")
     sleep(3)
     place_on_task(sq_fallen_wave02e, "0xB4CD5448")
-    sleep_until(wave02_alive() <= 2)
+    # the captain's squad falls back on its own losses, whatever the rest of
+    # the wave is doing (both runs: its last two, then its last one)
+    sleep_until(sq_fallen_wave02a.alive_count() <= 2)
     sq_fallen_wave02a.set_task("0x52670312")
-    sleep_until(wave02_alive() <= 1)
+    sleep_until(sq_fallen_wave02a.alive_count() <= 1)
     sq_fallen_wave02a.set_task("0x92058C93")
     sleep_until(wave02_alive() == 0)
     place_on_task(sq_fallen_wave03a, "0x91058B21")

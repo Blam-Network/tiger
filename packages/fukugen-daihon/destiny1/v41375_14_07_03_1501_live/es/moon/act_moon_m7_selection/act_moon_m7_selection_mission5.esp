@@ -1,0 +1,22 @@
+# es\moon\act_moon_m7_selection\act_moon_m7_selection_mission5.esp
+#
+# Mission 5, the arena: kill the witches. The objective comes up with the
+# phase (incoming, active 2.1 s later) and points at the arena; it clears
+# when enc_selection_m7's four wizards are dead, and the outro follows two
+# seconds on. In 2.3.1 the objective runs on through the Oversoul, rows TU0
+# does not have; the clear and the two seconds after it are that run's.
+
+@hard_wipe()
+generic_objective sp_objective_kill
+nav_point np_arena
+encounter_handle enc_selection_m7
+
+script init(): pass
+
+script complete(): pass
+
+script main():
+    sp_objective_kill.objective_begin(np_arena)
+    sleep_until(enc_selection_m7.witches_dead)
+    sp_objective_kill.objective_end_silent()
+    sleep(2)

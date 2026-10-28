@@ -500,6 +500,15 @@ function matchesKillFilters(
   watch: NonNullable<IncidentWatch>,
   kill: KillFilterDetails
 ): boolean {
+  // A listener bound to one kill incident (a boss kill, destructible_kill)
+  // counts only kills of that family.
+  if (
+    watch.nameHash !== undefined &&
+    kill.incidentNames !== undefined &&
+    !kill.incidentNames.includes(watch.nameHash)
+  ) {
+    return false;
+  }
   if (
     watch.bubbleHash !== undefined &&
     watch.bubbleHash !== FNV1_EMPTY &&

@@ -1,12 +1,15 @@
 # es\mars\act_mars_m07_lowergarden\act_mars_m07_lowergarden_mission8.esp
 #
-# Mission 8, the darkness: the first two Sol Progeny. When a player reaches
-# the boss volume the first statue stirs; the objective comes up as it
-# does. Each statue wakes over twenty-five seconds, its minotaur steps out
-# of it with a stim, and its minions warp in behind. The next wakes eleven
-# seconds after the last one dies. The objective clears two seconds after
-# the second minotaur falls, and both spent statues go a few seconds
-# later. Timings are one run's.
+# Mission 8, the darkness: the first two Sol Progeny. Once a player has
+# reached the boss volume the first statue stirs; the objective comes up as
+# it does. Each statue wakes over twenty-five seconds, its minotaur steps
+# out of it with a stim, and its minions warp in behind on the cloud; a
+# wave that falls while its minotaur lives warps in again eleven seconds
+# later. When the first minotaur is down and the cloud has gone the heart's
+# music moves on, and the next statue stirs ten seconds after. The
+# objective clears as the second minotaur falls, and both spent statues go
+# with the phase five seconds later. 2026-10-26 run for the waits (an
+# earlier run stirred the first statue seven seconds after the volume).
 
 @hard_wipe()
 generic_objective sp_objective_kill
@@ -14,7 +17,9 @@ trigger_volume tv_boss
 player_trigger pt_boss bind(tv_boss)
 encounter_handle enc_lowergarden_m07
 sequence seq_dialog_lowergarden_kill
+sequence seq_dialog_lowergarden_kill_progress
 sequence seq_music_lowergarden
+bool cloud_busy = false
 
 script init(): pass
 
@@ -24,21 +29,27 @@ script main():
     sleep_until(pt_boss.is_triggered())
     enc = enc_lowergarden_m07
     heart = enc.sp_specops_heart
-    sleep(7)
     sc_objective.wake()
     wake_statue(heart.o_statue_a, heart.sq_bg_mino_a, "0xB8CD41BF")
     for sq in [enc.sq_minions_a_harpy_a, enc.sq_minions_a_harpy_b, enc.sq_minions_a_harpy_c]:
         sq.set_task("0x3E260537")
     warp_in([enc.sq_minions_a_harpy_a, enc.sq_minions_a_harpy_b, enc.sq_minions_a_harpy_c])
+    sc_harpy_waves.wake()
     sleep_until(heart.sq_bg_mino_a.alive_count() == 0)
-    sleep(11)
+    sleep_until(not cloud_busy)
+    sleep(0.5)
+    seq_music_lowergarden.set_switch_mask(16)
+    sleep(3)
+    seq_dialog_lowergarden_kill_progress.start()
+    sleep(6.5)
     wake_statue(heart.o_statue_c, heart.sq_bg_mino_c, "0xCEDEE316")
     enc.sq_minions_b_hobgoblin_a.set_task("0xE96150DE")
     enc.sq_minions_b_goblin_a.set_task("0x9415820D")
     enc.sq_minions_b_goblin_b.set_task("0x9415820D")
     warp_in([enc.sq_minions_b_goblin_a, enc.sq_minions_b_goblin_b, enc.sq_minions_b_hobgoblin_a])
+    sc_goblin_waves.wake()
     sleep_until(heart.sq_bg_mino_c.alive_count() == 0)
-    sleep(2)
+    sleep(1)
     seq_music_lowergarden.set_switch_mask(16)
     sp_objective_kill.objective_end_silent()
     sleep(5)
@@ -50,6 +61,14 @@ script sc_objective():
     sleep(10)
     seq_dialog_lowergarden_kill.start()
     sp_objective_kill.objective_begin(nil)
+
+script sc_harpy_waves():
+    enc = enc_lowergarden_m07
+    respawn_waves(enc.sp_specops_heart.sq_bg_mino_a, [enc.sq_minions_a_harpy_a, enc.sq_minions_a_harpy_b, enc.sq_minions_a_harpy_c])
+
+script sc_goblin_waves():
+    enc = enc_lowergarden_m07
+    respawn_waves(enc.sp_specops_heart.sq_bg_mino_c, [enc.sq_minions_b_goblin_a, enc.sq_minions_b_goblin_b, enc.sq_minions_b_hobgoblin_a])
 
 def wake_statue(statue, boss, task):
     heart = enc_lowergarden_m07.sp_specops_heart
@@ -63,14 +82,31 @@ def wake_statue(statue, boss, task):
     heart.o_mino_stim.create()
     sleep(3)
     statue.set_device_position(0.3)
-    sleep(1)
+    sleep(0.5)
     heart.o_mino_stim.delete_object()
 
-# the minions warp in on the cloud, tasks set beforehand
+# a fallen wave comes back on the cloud while its minotaur lives
+def respawn_waves(boss, squads):
+    while boss.alive_count() > 0:
+        sleep_until(wave_alive_count(squads) == 0 or boss.alive_count() == 0)
+        sleep(11)
+        if boss.alive_count() > 0:
+            warp_in(squads)
+
+def wave_alive_count(squads):
+    n = 0
+    for sq in squads:
+        n = n + sq.alive_count()
+    return n
+
+# the minions warp in on the cloud, tasks set beforehand; every cloud on
+# the wire stays about seven seconds
 def warp_in(squads):
     enc = enc_lowergarden_m07
+    cloud_busy = true
     enc.sq_cloud_minions.place()
     for sq in squads:
         enc.sq_cloud_minions__pilot.drop_squad(sq)
-    sleep_until(not enc.sq_cloud_minions__pilot.is_dropping())
+    sleep(7)
     enc.sq_cloud_minions.remove()
+    cloud_busy = false

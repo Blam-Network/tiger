@@ -1,0 +1,47 @@
+# es\venus\quest_safari\quest_safari_mission3.esp
+#
+# Mission 3, the raid bridge: the cue moves up a section, then get to the
+# vault, then to the trough, then break the six oracles. The vault clears on
+# its volume, or as soon as a player stands on the bridge past it (a wipe
+# respawns the players there). The trough waits for its volume and for the
+# intro ambush to be broken (unknown_f300fb1f); then the oracles start, with
+# the Ghost's first line, and the objective's bar counts each one destroyed a
+# second after it goes. Two seconds after the last, the objective clears and
+# the Ghost sends the player on. A wipe resets the phase: twice in the run.
+# One run: the waits are that run's.
+
+@hard_wipe()
+trigger_volume_objective vault_trigger_volume_objective
+trigger_volume_objective trough_trigger_volume_objective
+generic_objective kill_captain_generic_objective
+trigger_volume tv_bridge_fallback
+player_monitor pm_fallback_obj bind(tv_bridge_fallback)
+encounter_handle quest_safari
+encounter_handle unknown_f300fb1f
+
+script init(): pass
+
+script complete(): pass
+
+script main():
+    quest_safari.music_cue1.start()
+    quest_safari.music_cue1.set_switch_mask(3)
+    vault_trigger_volume_objective.objective_begin()
+    sleep_until(vault_trigger_volume_objective.is_complete() or pm_fallback_obj.test_any_inside())
+    vault_trigger_volume_objective.objective_end_silent()
+    trough_trigger_volume_objective.objective_begin()
+    sleep_until(trough_trigger_volume_objective.is_complete() and unknown_f300fb1f.b_intro_broken)
+    trough_trigger_volume_objective.objective_end_silent()
+    unknown_f300fb1f.sc_oracles.wake()
+    quest_safari.oracle_1_dialog.start()
+    kill_captain_generic_objective.objective_begin(nil)
+    kill_captain_generic_objective._player_objective.progress_activate(0, 6)
+    destroyed = 0
+    while destroyed < 6:
+        sleep_until(unknown_f300fb1f.i_oracles_destroyed > destroyed)
+        destroyed = destroyed + 1
+        sleep(1)
+        kill_captain_generic_objective._player_objective.progress_update(destroyed)
+    sleep(2)
+    kill_captain_generic_objective.objective_end_silent()
+    quest_safari.fallen_kill_dialog.start()

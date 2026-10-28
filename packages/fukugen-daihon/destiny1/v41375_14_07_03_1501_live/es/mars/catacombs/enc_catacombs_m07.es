@@ -4,8 +4,8 @@
 # from the start, the anchors come in behind the player in the hall, the
 # harpies warp into the pit on its cloud, and the foyer's minotaur and
 # goblins come on at its door. The foyer hobgoblin comes back once after
-# it dies and the minotaur follows it. From one retail capture: where a
-# step has no trigger on the wire, the wait is that run's. Task names are
+# it dies and the minotaur moves up three seconds later. Where a step has
+# no trigger on the wire, the wait is the 2026-10-26 run's. Task names are
 # uncracked and written as hashes.
 
 @activity_bundle("enc_catacombs_m07")
@@ -72,8 +72,13 @@ script sc_pit():
     sq_pit_cloud.place()
     for sq in [sq_pit_harpy_a, sq_pit_harpy_b, sq_pit_harpy_c]:
         sq_pit_cloud__pilot.drop_squad(sq)
-    sleep_until(not sq_pit_cloud__pilot.is_dropping())
+    # the cloud stays about seven seconds, as every cloud on the wire does
+    sleep(7)
     sq_pit_cloud.remove()
+    # the second pair joins the first once it loses one
+    sleep_until(sq_pit_harpy_b.alive_count() < 2)
+    sleep(3)
+    sq_pit_harpy_b.set_task("0x60DAD4A7")
 
 script sc_foyer():
     sleep_until(pt_foyer.is_triggered())
@@ -84,8 +89,7 @@ script sc_foyer():
     sleep_until(sq_foyer_hobgoblin.alive_count() == 0)
     sleep(1)
     place_on_task(sq_foyer_hobgoblin, "0x189107E2")
-    sleep_until(sq_foyer_hobgoblin.alive_count() > 0)
-    sleep(1)
+    sleep(3)
     sq_foyer_minotaur_a.set_task("0x3B998BA4")
 
 def place_on_task(sq, task):

@@ -1,0 +1,40 @@
+# es\cosmo\quest_bonzo_dlc01\quest_bonzo_dlc01_mission2.esp
+#
+# Mission 2, the knight: approach the grotto; its intro trigger
+# (unknown_02136f70's) starts the fight, and the music steps up. Once the
+# knight is dead the objective completes, the music stops, and the Ghost's
+# line and the outro play before the activity is complete. The host may wipe
+# this phase (retail's hard wipe flag is up from its start to the end; the
+# capture has a wipe, after which the phase ran again from its start). From
+# one retail capture.
+
+@hard_wipe()
+player_objective po_approach
+player_objective po_fight
+sequence seq_music_bonzo
+sequence seq_bonzo_dialog_kill_knight
+sequence seq_music_outro
+encounter_handle unknown_02136f70
+
+script init(): pass
+
+script complete():
+    c_lifetime_script_utilities.get_lifetime_sensor().end_game(30)
+
+script main():
+    po_approach.set_active()
+    sleep_until(unknown_02136f70.fight_started())
+    po_approach.clear()
+    po_fight.set_active()
+    sleep(2)
+    seq_music_bonzo.set_switch_mask(3)
+    sleep_until(unknown_02136f70.knight_is_dead())
+    po_fight.set_complete()
+    seq_music_bonzo.stop()
+    sleep(6)
+    po_fight.clear()
+    seq_bonzo_dialog_kill_knight.start()
+    sleep(4.7)
+    seq_music_outro.start()
+    sleep(6.8)
+    set_activity_complete()

@@ -1,0 +1,19 @@
+# es\moon\act_moon_m7_selection\act_moon_m7_selection_mission2.esp
+#
+# Mission 2, "go to the launch tubes": through the moonbase and the tubes
+# to their floor. The objective comes up eight seconds into the phase with
+# no incoming stage (8.1 s in the one run; the wire shows a state TU0 has no
+# verb for at 1.7 s), and clears the moment a player reaches the floor's
+# volume. The fights on the way are enc_launchtubes_m7's.
+
+trigger_volume_objective sp_objective_goto
+
+script init(): pass
+
+script complete(): pass
+
+script main():
+    sleep(8)
+    sp_objective_goto.objective_begin_immediate()
+    sleep_until(sp_objective_goto.is_complete())
+    sp_objective_goto.objective_end_silent()

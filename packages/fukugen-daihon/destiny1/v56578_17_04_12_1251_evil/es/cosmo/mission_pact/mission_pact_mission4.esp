@@ -1,0 +1,25 @@
+# es\cosmo\mission_pact\mission_pact_mission4.esp
+#
+# Mission 4, the captains: the fight starts (unknown_66c01eb9 breaks the
+# captains off), the music steps up with it and again once two of the three
+# captains are gone; the objective clears with the last. From one retail
+# capture.
+
+@hard_wipe()
+generic_objective kill_generic_objective
+sequence seq_m_cue3
+encounter_handle unknown_66c01eb9
+
+script init(): pass
+
+script complete(): pass
+
+script main():
+    sleep(3)
+    seq_m_cue3.set_switch_mask(3)
+    unknown_66c01eb9.captains_fight()
+    kill_generic_objective.objective_begin()
+    sleep_until(unknown_66c01eb9.captains_dead() >= 2)
+    seq_m_cue3.set_switch_mask(7)
+    sleep_until(unknown_66c01eb9.captains_dead() == 3)
+    kill_generic_objective.objective_end_silent()

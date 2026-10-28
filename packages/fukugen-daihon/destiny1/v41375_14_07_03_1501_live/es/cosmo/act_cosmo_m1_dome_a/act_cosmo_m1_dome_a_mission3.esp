@@ -1,11 +1,13 @@
 # es\cosmo\act_cosmo_m1_dome_a\act_cosmo_m1_dome_a_mission3.esp
 #
 # Mission 3, the end: no objective. The fight music stops, the outro starts,
-# and the activity completes a moment later; the results follow 30 seconds
-# after that. From one retail 2.3.1 capture: the gaps are that run's.
+# and the activity completes a moment later, with the Ghost's way-out line a
+# second after (seq_d_o3_s05_alt never played); the results follow 30
+# seconds after that. Two runs: the gaps held in both.
 
 sequence seq_m_cue1
 sequence seq_m_outro
+sequence seq_d_o3_s05
 
 script init(): pass
 
@@ -18,3 +20,5 @@ script main():
     seq_m_outro.start()
     sleep(1.6)
     set_activity_complete()
+    sleep(1)
+    seq_d_o3_s05.start()

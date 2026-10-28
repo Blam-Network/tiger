@@ -131,7 +131,24 @@ describe("ScriptRuntime", () => {
     killAt(instance, 650);
     instance.reportSquadKill(0x2f41_bc62);
     expect(credits()[0]).toContain("credited to 517641f1:1 (position)");
-    expect(credits()[1]).toContain("credited to 517641f1:0 (table order)");
+    expect(credits()[1]).toContain(
+      "credited to 517641f1:0 (only one standing)"
+    );
+  });
+
+  // With no position and several squads standing, no squad is guessed at: the
+  // identifier's total still counts.
+  it("leaves a shared-identifier kill uncredited while several stand", () => {
+    const { credits, instance } = gates();
+    instance.reportSquadKill(0x2f41_bc62);
+    expect(credits()).toEqual([]);
+    const all = new Set(["517641f1:0", "517641f1:1"]);
+    // biome-ignore lint/complexity/useLiteralKeys: reaches a private member on purpose
+    expect(instance["scopeKills"](all)).toBe(1);
+    for (const key of all) {
+      // biome-ignore lint/complexity/useLiteralKeys: reaches a private member on purpose
+      expect(instance["squadIncidentDeaths"](key)).toBe(0);
+    }
   });
 
   // A second body dying on a gate's spot is that gate's, not the next one's

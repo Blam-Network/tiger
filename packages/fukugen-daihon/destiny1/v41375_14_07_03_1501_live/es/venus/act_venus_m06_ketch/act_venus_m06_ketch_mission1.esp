@@ -1,0 +1,36 @@
+# es\venus\act_venus_m06_ketch\act_venus_m06_ketch_mission1.esp
+#
+# Mission 1, the Thieves' Den. The activity goes active once the players are
+# in and "go to the Thieves' Den" comes up four seconds later, straight to
+# active (the wire shows a state 1 at two seconds first, which has no verb on
+# TU0). It clears seven seconds after a player reaches the den (the den
+# encounter's load) and "kill the majors" comes up in its place: the
+# phase's own volume, tv_kill_kell, has no trigger row, so the host's test of
+# it is what the seven seconds stand for. The kill objective clears once the
+# den's three major vandals are dead, with the Ghost's line, and the phase
+# moves on three seconds later. One run: unconfirmed.
+
+generic_objective pf_goto_thieves_den
+nav_point ap_thieves_den
+generic_objective pf_kill_kell
+encounter_handle enc_thieves_den_m06
+sequence md_vn06_010_36
+
+script init(): pass
+
+script complete(): pass
+
+script main():
+    sleep_until(c_player_script_utilities.all_players_are_ready())
+    c_lifetime_script_utilities.get_lifetime_sensor().set_state(e_activity_lifetime_state.active)
+    sleep(4)
+    pf_goto_thieves_den.objective_begin_immediate(ap_thieves_den)
+    sleep_until(enc_thieves_den_m06.den_entered)
+    sleep(7)
+    pf_goto_thieves_den.objective_end_silent()
+    pf_kill_kell.objective_begin(nil)
+    sleep_until(enc_thieves_den_m06.majors_dead)
+    sleep(3)
+    pf_kill_kell.objective_end_silent()
+    md_vn06_010_36.start()
+    sleep(3)

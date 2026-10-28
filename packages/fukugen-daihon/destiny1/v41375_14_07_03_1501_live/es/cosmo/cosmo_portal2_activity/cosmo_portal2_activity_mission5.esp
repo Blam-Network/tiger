@@ -1,0 +1,34 @@
+# es\cosmo\cosmo_portal2_activity\cosmo_portal2_activity_mission5.esp
+#
+# Mission 5, dome_hive: the Ghost's scan at the dome's gate (pf_strike_ghost02,
+# enc_dome_hive_portal2). A Ghost line 25 s into the objective; the scan
+# clears it, the scan point runs and another line follows, and the hillside
+# phase starts 6 s after the scan. TU0's first objective of the phase (kill
+# the Array's strike captain) and its gate never came in 2.3.1 and are left
+# out: the gate the strike opens is mission 6's.
+
+interactable_objective obj_r1_s2_strike2_phase04_m2 bind("0xAF65BC8D")
+sequence md_020_20
+sequence md_020_40
+encounter_handle enc_dome_hive_portal2
+
+script init(): pass
+
+script complete(): pass
+
+script main():
+    ghost = enc_dome_hive_portal2.pf_strike_ghost02._object
+    obj_r1_s2_strike2_phase04_m2.objective_begin()
+    sc_scan_line.wake()
+    sleep_until(obj_r1_s2_strike2_phase04_m2.is_complete())
+    obj_r1_s2_strike2_phase04_m2.objective_end_silent()
+    sleep(0.5)
+    ghost.set_device_position(0.1)
+    sleep(0.5)
+    ghost.set_device_position(1)
+    md_020_40.start()
+    sleep(5)
+
+script sc_scan_line():
+    sleep(25)
+    md_020_20.start()

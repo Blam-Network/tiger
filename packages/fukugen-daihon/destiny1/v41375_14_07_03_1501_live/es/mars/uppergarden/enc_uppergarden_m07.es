@@ -86,29 +86,23 @@ script sc_overlook():
     sq_overlook_hobgoblin.set_task("0x2F9FD614")
 
 # the gulch: the cyclops first, then two waves of goblins on the second
-# cloud, the second wave four seconds after the cyclops is down. The cloud
-# comes back as a new one for the second wave.
+# cloud, the second wave about as the cyclops falls (four seconds after in
+# one run, two before in the 2026-10-26 one). The cloud comes back as a new
+# one for the second wave.
 script sc_gulch():
     sleep_until(pt_gulch.is_triggered())
     sleep(1)
     cloud_drop(sq_cloud_gulch_cyclops, sq_cloud_gulch_cyclops__pilot, [sq_gulch_cyclops])
     sq_gulch_goblin_a_a.set_task("0x5BE4444B")
     sq_gulch_goblin_a_b.set_task("0x4FE0C811")
-    sq_cloud_gulch.place()
-    sq_cloud_gulch__pilot.drop_squad(sq_gulch_goblin_a_a)
-    sq_cloud_gulch__pilot.drop_squad(sq_gulch_goblin_a_b)
+    cloud_drop(sq_cloud_gulch, sq_cloud_gulch__pilot, [sq_gulch_goblin_a_a, sq_gulch_goblin_a_b])
     sleep_until(sq_gulch_cyclops.alive_count() == 0)
-    sleep(4)
-    sleep_until(not sq_cloud_gulch__pilot.is_dropping())
+    sleep(1)
     sq_gulch_goblin_b_a.set_task("0x5BE4444B")
     sq_cloud_gulch.place()
     sq_cloud_gulch__pilot.drop_squad(sq_gulch_goblin_b_a)
-    sleep(2)
-    sq_gulch_goblin_a_a.set_task("0x4FE0C811")
-    sleep_until(not sq_cloud_gulch__pilot.is_dropping())
+    sleep(7)
     sq_cloud_gulch.remove()
-    sleep(1)
-    sq_gulch_goblin_b_a.set_task("0x4FE0C811")
 
 # the pit: its goblins, then the hydra, which holds the door
 script sc_pit():
@@ -144,10 +138,11 @@ def place_on_task(sq, task):
     sq.set_task(task)
     sq.place()
 
-# a Vex cloud warps its squads in and fades
+# a Vex cloud warps its squads in and fades; every cloud on the wire stays
+# about seven seconds
 def cloud_drop(cloud, pilot, squads):
     cloud.place()
     for sq in squads:
         pilot.drop_squad(sq)
-    sleep_until(not pilot.is_dropping())
+    sleep(7)
     cloud.remove()

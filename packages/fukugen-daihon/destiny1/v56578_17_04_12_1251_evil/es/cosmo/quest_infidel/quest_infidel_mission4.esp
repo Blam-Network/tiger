@@ -1,0 +1,18 @@
+# es\cosmo\quest_infidel\quest_infidel_mission4.esp
+#
+# Mission 4, the end: the Ghost's last line and the outro music, then the
+# activity is complete. From one retail capture.
+
+sequence mission_done_dialog
+sequence music_outro
+
+script init(): pass
+
+script complete():
+    c_lifetime_script_utilities.get_lifetime_sensor().end_game(30)
+
+script main():
+    sleep(1.6)
+    mission_done_dialog.start()
+    music_outro.start()
+    set_activity_complete()

@@ -1,10 +1,13 @@
 # es\mars\act_mars_m07_lowergarden\act_mars_m07_lowergarden_mission7.esp
 #
 # Mission 7, the hop down: the player comes back from the cinematic at the
-# heart with Vex waiting below. The goblins are placed as the player
-# spawns, the later ones a few seconds apart; the objective clears two
-# seconds after the last of them dies. The door back closes behind the
-# player (one run for the spacing).
+# heart with Vex waiting below, all seven goblin squads placed as the
+# player spawns, two of them holding the stair. A third joins the stair
+# nine seconds in and another once one of the pair is down; when the other
+# falls too, the stair is given up. The objective clears as the last of
+# them dies, and the darkness phase follows ten seconds later. The door
+# back closes behind the player. One run (2026-10-26) for the spacing; an
+# earlier one brought the last two squads in late instead.
 
 @hard_wipe()
 generic_objective sp_objective_kill
@@ -24,22 +27,26 @@ script main():
     seq_music_lowergarden.set_switch_mask(1)
     enc.o_door_back.create()
     for sq in [enc.sq_minions_init_goblin_a, enc.sq_minions_init_goblin_b, enc.sq_minions_init_goblin_c, enc.sq_minions_init_goblin_d, enc.sq_minions_init_goblin_e]:
-        sq.set_task("0x07AA50F5")
+        place_on_task(sq, "0x07AA50F5")
     for sq in [enc.sq_minions_init_goblin_f, enc.sq_minions_init_goblin_g]:
-        sq.set_task("0x4E0EFB16")
-    for sq in [enc.sq_minions_init_goblin_a, enc.sq_minions_init_goblin_b, enc.sq_minions_init_goblin_d, enc.sq_minions_init_goblin_f, enc.sq_minions_init_goblin_g]:
-        sq.place()
+        place_on_task(sq, "0x4E0EFB16")
     sp_objective_kill.objective_begin(nil)
-    sleep(7)
-    place_on_task(enc.sq_minions_init_goblin_c, "0x4E0EFB16")
-    sleep(4)
-    place_on_task(enc.sq_minions_init_goblin_e, "0x4E0EFB16")
-    sleep(3)
-    enc.sq_minions_init_goblin_e.set_task("0x07AA50F5")
-    enc.sq_minions_init_goblin_f.set_task("0x07AA50F5")
+    sc_stair.wake()
     sleep_until(init_goblins_alive_count() == 0)
-    sleep(2)
+    sleep(1)
     sp_objective_kill.objective_end_silent()
+    sleep(10)
+
+script sc_stair():
+    enc = enc_lowergarden_m07
+    sleep(9)
+    enc.sq_minions_init_goblin_b.set_task("0x4E0EFB16")
+    sleep_until(enc.sq_minions_init_goblin_f.alive_count() == 0 or enc.sq_minions_init_goblin_g.alive_count() == 0)
+    sleep(4)
+    enc.sq_minions_init_goblin_e.set_task("0x4E0EFB16")
+    sleep_until(enc.sq_minions_init_goblin_f.alive_count() + enc.sq_minions_init_goblin_g.alive_count() == 0)
+    for sq in [enc.sq_minions_init_goblin_b, enc.sq_minions_init_goblin_e]:
+        sq.set_task("0x07AA50F5")
 
 def init_goblins_alive_count():
     enc = enc_lowergarden_m07

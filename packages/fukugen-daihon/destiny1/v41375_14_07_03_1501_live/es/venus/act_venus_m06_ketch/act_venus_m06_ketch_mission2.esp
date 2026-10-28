@@ -1,0 +1,62 @@
+# es\venus\act_venus_m06_ketch\act_venus_m06_ketch_mission2.esp
+#
+# Mission 2, the dock: "go to the dock", then "infiltrate the ketch". The
+# Ghost's two dock lines and the dock music start with the phase (the music
+# builds in unknown_9ed3bc2b). The goto clears on the dock trigger and the
+# infiltrate objective comes up in its place; it clears when a player gets
+# into the ketch, the first line stops and the ketch music starts.
+#
+# The ketch's door stands from the dock's load. On the wire it opened and
+# closed six times while the player fought along the dock, each a moment
+# after the client's report on the door, so it reads as the door following
+# the players; this phase opens it once the dock is clear (the last opening,
+# four seconds on) and shuts it behind them at the hatch. One run:
+# unconfirmed.
+
+@hard_wipe()
+object o_door
+generic_objective pf_goto_dock
+nav_point ap_dock
+trigger_volume tv_goto_dock
+player_trigger pt_goto_dock bind(tv_goto_dock)
+generic_objective pf_infiltrate_ketch
+nav_point ap_ketch
+location ketch
+player_trigger pt_ketch bind(ketch)
+trigger_volume tv_vn06_020_20
+player_trigger pt_vn06_020_20 bind(tv_vn06_020_20)
+encounter_handle enc_fallen_dock_m06
+sequence md_vn06_010_50
+sequence md_vn06_020_20
+sequence venus_m06_music_cue1
+sequence venus_m06_music_cue2
+
+script init(): pass
+
+script complete(): pass
+
+script main():
+    sc_door.wake()
+    md_vn06_010_50.start()
+    md_vn06_020_20.start()
+    venus_m06_music_cue1.start()
+    venus_m06_music_cue1.set_switch_mask(1)
+    pf_goto_dock.objective_begin(ap_dock)
+    sleep_until(pt_goto_dock.is_triggered())
+    pf_goto_dock.objective_end_silent()
+    pf_infiltrate_ketch.objective_begin(ap_ketch)
+    sleep_until(pt_ketch.is_triggered())
+    sleep(2)
+    pf_infiltrate_ketch.objective_end_silent()
+    md_vn06_010_50.stop()
+    venus_m06_music_cue2.start()
+    venus_m06_music_cue2.set_switch_mask(3)
+
+script sc_door():
+    sleep_until(enc_fallen_dock_m06.dock_entered)
+    o_door.create()
+    sleep_until(enc_fallen_dock_m06.dock_clear)
+    sleep(4)
+    o_door.set_device_position(1)
+    sleep_until(pt_vn06_020_20.is_triggered())
+    o_door.set_device_position(0)

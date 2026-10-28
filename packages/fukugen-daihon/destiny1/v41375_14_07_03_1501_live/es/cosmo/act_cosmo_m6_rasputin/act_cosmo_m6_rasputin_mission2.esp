@@ -1,0 +1,21 @@
+# es\cosmo\act_cosmo_m6_rasputin\act_cosmo_m6_rasputin_mission2.esp
+#
+# Mission 2, down the hall to the core: the objective comes up as the door
+# opens and clears as a player reaches Rasputin's controls (its waypoint is
+# at the console), which ends the phase. enc_rasputin_m6 runs the Hive in the
+# hall and the control room on the way.
+#
+# One 2.3.1 run, where this objective is sp_objective_goto_terminal at the
+# same nav point. Retail arms the hard wipe from this phase on.
+
+@hard_wipe()
+trigger_volume_objective sp_objective_goto
+
+script init(): pass
+
+script complete(): pass
+
+script main():
+    sp_objective_goto.objective_begin()
+    sleep_until(sp_objective_goto.is_complete())
+    sp_objective_goto.objective_end_silent()

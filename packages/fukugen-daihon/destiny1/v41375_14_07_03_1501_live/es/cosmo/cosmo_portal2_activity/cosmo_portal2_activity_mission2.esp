@@ -1,0 +1,20 @@
+# es\cosmo\cosmo_portal2_activity\cosmo_portal2_activity_mission2.esp
+#
+# Mission 2, dome_c: fight through to the dome's centre. The objective is
+# bound to the Ghost's scan point (pf_strike_ghost01, enc_dome_c_portal2),
+# but the 2.3.1 run never used it: the objective cleared half a second
+# after the player reached the centre's volume. The Fallen on the way are
+# enc_dome_c_portal2's.
+
+@hard_wipe()
+interactable_objective obj_r1_s2_strike2_phase01_m1 bind("0xAF65BC8E")
+player_trigger pt_dome_c_central01
+
+script init(): pass
+
+script complete(): pass
+
+script main():
+    obj_r1_s2_strike2_phase01_m1.objective_begin()
+    sleep_until(pt_dome_c_central01.is_triggered())
+    obj_r1_s2_strike2_phase01_m1.objective_end_silent()

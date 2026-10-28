@@ -1,0 +1,11 @@
+# es\cosmo\cosmo_portal2_activity\cosmo_portal2_activity_mission7.esp
+#
+# Mission 7, the end of the strike: the results show and the activity ends
+# half a minute after it was completed.
+
+script init(): pass
+
+script complete():
+    c_lifetime_script_utilities.get_lifetime_sensor().end_game(30)
+
+script main(): pass

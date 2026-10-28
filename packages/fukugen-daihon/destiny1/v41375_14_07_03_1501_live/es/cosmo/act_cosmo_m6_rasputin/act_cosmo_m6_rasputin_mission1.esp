@@ -1,0 +1,30 @@
+# es\cosmo\act_cosmo_m6_rasputin\act_cosmo_m6_rasputin_mission1.esp
+#
+# Mission 1, to the vendor bunker. The objective and the music come up at the
+# spawn, the Ghost's delta lines three seconds later (unknown_ef78ad7a).
+# Reaching the bunker plays the Ghost's door line five seconds on, the door
+# (enc_rasputin_vendor_m6's) opens five seconds into it, and the phase ends
+# five seconds after that.
+#
+# One 2.3.1 run. Retail showed the objective in a state TU0 has no verb for
+# (wire 1) for its first two seconds.
+
+encounter_handle unknown_ef78ad7a
+trigger_volume_objective sp_objective_goto
+object o_door
+
+script init(): pass
+
+script complete(): pass
+
+script main():
+    sleep_until(c_player_script_utilities.all_players_are_ready())
+    c_lifetime_script_utilities.get_lifetime_sensor().set_state(e_activity_lifetime_state.active)
+    unknown_ef78ad7a.sc_delta.wake()
+    sp_objective_goto.objective_begin()
+    sleep_until(sp_objective_goto.is_complete())
+    unknown_ef78ad7a.sc_vendor_door.wake()
+    sleep(10.5)
+    o_door.set_device_position(1)
+    sleep(5)
+    sp_objective_goto.objective_end_silent()

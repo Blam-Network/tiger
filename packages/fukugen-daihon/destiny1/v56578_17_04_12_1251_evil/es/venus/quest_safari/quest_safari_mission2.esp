@@ -1,0 +1,16 @@
+# es\venus\quest_safari\quest_safari_mission2.esp
+#
+# Mission 2, the baby ruins: through the warp ruins and the baby ruins to the
+# trough at their far end. The objective clears the moment its volume fires
+# and the raid bridge phase follows in the same frame. One run.
+
+trigger_volume_objective trough_trigger_volume_objective
+
+script init(): pass
+
+script complete(): pass
+
+script main():
+    trough_trigger_volume_objective.objective_begin()
+    sleep_until(trough_trigger_volume_objective.is_complete())
+    trough_trigger_volume_objective.objective_end_silent()

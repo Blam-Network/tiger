@@ -1,0 +1,52 @@
+# es\venus\mission_pursuit\mission_pursuit_mission2.esp
+#
+# Mission 2, the dock. "Find Skolas" is up as the phase starts and the dock's
+# door stands. Reaching him stops the music, opens the door and brings up
+# "damage Skolas"; the dock encounter (unknown_53a9d3d7) drops the laser
+# web's pushers and cues Skolas, and his line plays three seconds on. Once he
+# has fled the objective clears and "go to the summit" comes up; reaching it
+# brings up "kill the summit's Fallen", which clears once their captain is
+# dead and the laser web has opened, with the Ghost's dock exit and ambush
+# lines and the third music cue. One run: unconfirmed.
+
+trigger_volume_objective skolas_trigger_volume_objective
+generic_objective damage_skolas_generic_objective
+nav_point skolas_nav_point
+trigger_volume_objective summit_trigger_volume_objective
+generic_objective kill_summit_generic_objective
+nav_point summit_nav_point
+object fallen_door_object
+encounter_handle unknown_53a9d3d7
+sequence skolas_intro_dialog
+sequence dock_exit_dialog
+sequence skolas_ambush_dialog
+sequence music_cue2
+sequence music_cue3
+
+script init(): pass
+
+script complete(): pass
+
+script main():
+    fallen_door_object.create()
+    skolas_trigger_volume_objective.objective_begin()
+    sleep_until(skolas_trigger_volume_objective.is_complete())
+    skolas_trigger_volume_objective.objective_end_silent()
+    music_cue2.stop()
+    fallen_door_object.set_device_position(1)
+    damage_skolas_generic_objective.objective_begin(skolas_nav_point)
+    unknown_53a9d3d7.sc_skolas.wake()
+    sleep(3)
+    skolas_intro_dialog.start()
+    sleep_until(unknown_53a9d3d7.skolas_fled)
+    damage_skolas_generic_objective.objective_end_silent()
+    summit_trigger_volume_objective.objective_begin()
+    sleep_until(summit_trigger_volume_objective.is_complete())
+    summit_trigger_volume_objective.objective_end_silent()
+    kill_summit_generic_objective.objective_begin(summit_nav_point)
+    sleep_until(unknown_53a9d3d7.summit_clear)
+    kill_summit_generic_objective.objective_end_silent()
+    dock_exit_dialog.start()
+    skolas_ambush_dialog.start()
+    music_cue3.start()
+    music_cue3.set_switch_mask(1)

@@ -20,6 +20,7 @@ import {
   type ItemWriter,
   rowKind,
   show,
+  squadObjectiveOf,
 } from "./native_support.ts";
 
 // get_health_fraction answers this while the Health row is unresolved.
@@ -637,7 +638,7 @@ export function setTask(self: BoundInstance, value: LuaValue): boolean {
     );
     return true;
   }
-  const objective = self.context.state.squad(self.row).objective;
+  const objective = squadObjectiveOf(self.context, self.row);
   if (!objective) {
     self.writer.note(`${self.path}:set_task(${show(value)}) (no objective)`);
     return true;

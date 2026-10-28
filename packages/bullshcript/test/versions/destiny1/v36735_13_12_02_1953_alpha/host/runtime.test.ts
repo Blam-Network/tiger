@@ -147,7 +147,9 @@ describe("ScriptRuntime", () => {
     killAt(instance, 650);
     instance.reportSquadKill(0x2f41_bc62);
     expect(credits()[0]).toContain("credited to 517641f1:1 (position)");
-    expect(credits()[1]).toContain("credited to 517641f1:0 (table order)");
+    expect(credits()[1]).toContain(
+      "credited to 517641f1:0 (only one standing)"
+    );
   });
 
   // A second body dying on a gate's spot is that gate's, not the next one's

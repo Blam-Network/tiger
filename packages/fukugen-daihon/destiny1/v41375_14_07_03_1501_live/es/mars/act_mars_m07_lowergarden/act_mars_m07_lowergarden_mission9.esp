@@ -1,9 +1,12 @@
 # es\mars\act_mars_m07_lowergarden\act_mars_m07_lowergarden_mission9.esp
 #
 # Mission 9, the climax: the last Sol Progeny wakes five seconds into the
-# phase (ten after the darkness objective clears), with its minotaurs and
-# goblins behind it; the objective comes up as it starts to wake. The heart
-# dies with it; the objective clears two seconds later. One run.
+# phase, with its minotaur and goblins behind it on the cloud; the
+# objective comes up as it starts to wake. The minotaur goes in once the
+# cloud has gone and falls back ten seconds later, and a wave that falls
+# while the Sol Progeny lives warps in again eleven seconds later. The heart
+# dies with it and the objective clears at once. 2026-10-26 run for the
+# waits.
 
 @hard_wipe()
 generic_objective sp_objective_kill
@@ -21,24 +24,37 @@ script main():
     seq_music_lowergarden.set_switch_mask(8)
     sc_objective.wake()
     wake_statue(heart.o_statue_b, heart.sq_bg_mino_b, "0xA003D0D0")
-    enc.sq_minions_c_minotaur_a.set_task("0xA003D0D1")
     enc.sq_minions_c_goblin_a.set_task("0x4083042B")
     enc.sq_minions_c_goblin_b.set_task("0x4083042B")
-    enc.sq_cloud_minions.place()
-    for sq in [enc.sq_minions_c_goblin_a, enc.sq_minions_c_goblin_b, enc.sq_minions_c_minotaur_a]:
-        enc.sq_cloud_minions__pilot.drop_squad(sq)
-    sleep_until(not enc.sq_cloud_minions__pilot.is_dropping())
-    enc.sq_cloud_minions.remove()
-    enc.sq_minions_c_minotaur_a.set_task("0xAFCB5051")
+    sc_waves.wake()
     sleep_until(heart.sq_bg_mino_b.alive_count() == 0)
     sleep(1)
     heart.o_heart.set_device_position(1)
     seq_music_lowergarden.stop()
-    sleep(1)
     sp_objective_kill.objective_end_silent()
 
 script sc_objective():
     sp_objective_kill.objective_begin(nil)
+
+script sc_waves():
+    enc = enc_lowergarden_m07
+    boss = enc.sp_specops_heart.sq_bg_mino_b
+    squads = [enc.sq_minions_c_goblin_a, enc.sq_minions_c_goblin_b, enc.sq_minions_c_minotaur_a]
+    warp_in_with_minotaur(squads)
+    while boss.alive_count() > 0:
+        sleep_until(wave_alive_count(squads) == 0 or boss.alive_count() == 0)
+        sleep(11)
+        if boss.alive_count() > 0:
+            warp_in_with_minotaur(squads)
+
+def warp_in_with_minotaur(squads):
+    minotaur = enc_lowergarden_m07.sq_minions_c_minotaur_a
+    minotaur.set_task("0xA003D0D1")
+    warp_in(squads)
+    minotaur.set_task("0xAFCB5051")
+    sleep(10)
+    if minotaur.alive_count() > 0:
+        minotaur.set_task("0xA003D0D1")
 
 def wake_statue(statue, boss, task):
     heart = enc_lowergarden_m07.sp_specops_heart
@@ -52,5 +68,20 @@ def wake_statue(statue, boss, task):
     heart.o_mino_stim.create()
     sleep(3)
     statue.set_device_position(0.3)
-    sleep(1)
+    sleep(0.5)
     heart.o_mino_stim.delete_object()
+
+def wave_alive_count(squads):
+    n = 0
+    for sq in squads:
+        n = n + sq.alive_count()
+    return n
+
+# every cloud on the wire stays about seven seconds
+def warp_in(squads):
+    enc = enc_lowergarden_m07
+    enc.sq_cloud_minions.place()
+    for sq in squads:
+        enc.sq_cloud_minions__pilot.drop_squad(sq)
+    sleep(7)
+    enc.sq_cloud_minions.remove()

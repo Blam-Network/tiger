@@ -1,0 +1,31 @@
+# es\cosmo\quest_bonzo_dlc01\quest_bonzo_dlc01_mission1.esp
+#
+# Mission 1, on to the grotto: once the player is in, the activity goes live,
+# the Ghost's lines for the way there and the intro music start, and the
+# objective points at the hive shore; it clears as the player gets there.
+# From one retail capture.
+
+location hive_shore
+trigger_bubble_objective pf_goto_grotto bind(hive_shore)
+sequence seq_bonzo_dialog_init
+sequence seq_bonzo_dialog_trans_blast_refinery
+sequence seq_bonzo_dialog_trans_refinery_grotto
+sequence seq_music_intro
+sequence seq_music_bonzo
+
+script init(): pass
+
+script complete(): pass
+
+script main():
+    sleep_until(c_player_script_utilities.all_players_are_ready())
+    c_lifetime_script_utilities.get_lifetime_sensor().set_state(e_activity_lifetime_state.active)
+    seq_bonzo_dialog_init.start()
+    seq_bonzo_dialog_trans_blast_refinery.start()
+    seq_bonzo_dialog_trans_refinery_grotto.start()
+    seq_music_intro.start()
+    seq_music_bonzo.start()
+    seq_music_bonzo.set_switch_mask(1)
+    pf_goto_grotto.objective_begin()
+    sleep_until(pf_goto_grotto.is_complete())
+    pf_goto_grotto.objective_end_silent()

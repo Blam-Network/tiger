@@ -1,18 +1,20 @@
 # es\mars\act_mars_m01_valley\act_mars_m01_valley_mission2.esp
 #
 # Mission 2, the plains: open the vent into the Cabal base, then use the
-# garage control. The vent objective comes up once the player is past the
-# dunes; the control objective follows the vent at once. The Ghost's lines
-# for the objectives play here; the ones on the triggers are in
-# unknown_11b7a83e. The base's doors and alarm belong to enc_plains_m01.
+# garage control. The vent objective comes up while the Ghost's intro line
+# plays; using the vent brings up the control objective, using the control
+# ends the phase. The Ghost's lines for the objectives play here; the ones on
+# the triggers are in unknown_11b7a83e. The vent and control animations, the
+# base's doors and alarm belong to enc_plains_m01.
 #
-# One run: the 3 s hold after the control is the gap to the next phase on
-# the wire, nothing more. Retail showed the vent objective in a state TU0
-# has no verb for (wire 1) from the spawn until the dunes.
+# One run (2026-10-26): the vent came up 15.7 s after the spawn, long
+# before the player reached the dunes, so the dunes trigger is the line's
+# and not the objective's. Retail showed the vent objective in a state TU0
+# has no verb for (wire 1) from the spawn until then. Each objective cleared
+# a few seconds after its use (3.9 s, 1.8 s); the 3 s hold after the control
+# is the gap to the next phase.
 
 @hard_wipe()
-trigger_volume tv_dunes
-player_trigger pt_dunes bind(tv_dunes)
 interactable_objective sp_objective_vent bind("0x5F62CC37")
 interactable_objective sp_objective_control bind("0x8ED9F019")
 sequence seq_music_cabal_intro
@@ -26,15 +28,16 @@ script complete(): pass
 script main():
     insertion_point()
     sleep_until(c_player_script_utilities.all_players_are_ready())
-    sleep_until(pt_dunes.is_triggered())
-    sleep(2)
+    sleep(15)
     sp_objective_vent.objective_begin_immediate()
-    sleep(21)
+    sleep_until(sp_objective_vent.is_complete())
+    sleep(3)
     sp_objective_vent.objective_end_silent()
     seq_music_cabal_intro.set_switch_mask(3)
     seq_dialog_plains_vent_complete.start()
     sp_objective_control.objective_begin()
-    sleep(24)
+    sleep_until(sp_objective_control.is_complete())
+    sleep(1)
     sp_objective_control.objective_end_silent()
     seq_dialog_plains_control_complete.start()
     sleep(3)

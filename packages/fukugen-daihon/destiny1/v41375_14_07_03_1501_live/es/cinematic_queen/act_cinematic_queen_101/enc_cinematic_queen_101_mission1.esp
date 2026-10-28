@@ -1,0 +1,15 @@
+# es\cinematic_queen\act_cinematic_queen_101\enc_cinematic_queen_101_mission1.esp
+#
+# Mission 1, the first cinematic. Retail starts it in the update that takes
+# the lifetime to 4 and moves the lifetime to phase_cine_2 0.9 s after the
+# client's cinematic_finished, 0.2 s after the cinematic row goes idle.
+
+cinematic_midmission pf_115_rfr
+
+script init(): pass
+
+script complete(): pass
+
+script main():
+    pf_115_rfr.start()
+    sleep_until(pf_115_rfr.is_complete())

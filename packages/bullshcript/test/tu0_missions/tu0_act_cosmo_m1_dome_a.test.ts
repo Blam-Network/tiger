@@ -287,14 +287,15 @@ describe("TU0 act_cosmo_m1_dome_a scripts", () => {
     );
 
     // The basement thaws: the thralls charge and their seventh comes up,
-    // then the troopers; they push on once one of them falls.
+    // the troopers follow 1.5 s on with the Ghost's line; they push on once
+    // one of them falls, and the second troopers come as a player forces
+    // them (or 9 s on).
     fire("pt_spawn_hive_intro01");
     h.ticks(2);
     expect(squad("sq_hive_basement_thrall01")?.task).toBe(1);
     expect(placed("sq_hive_basement_thrall01__thrall6")).toBe(true);
     expect(playing("seq_hive_wave_announce")).toBeDefined();
     expect(h.said("set_switch_mask(7)")).toBe(true);
-    fire("pt_spawn_hive_intro02");
     h.ticks(2);
     expect(squad("sq_hive_basement_troopers01")?.task).toBe(3);
     expect(playing("seq_d_o3_s01")).toBeDefined();
@@ -325,20 +326,26 @@ describe("TU0 act_cosmo_m1_dome_a scripts", () => {
     const o2 = "cosmo_m1_phase01_dome_a.obj_m1_o2._player_objective";
     expect(objective(o2)).toBeGreaterThan(0);
 
-    // The front troopers move up as they lose men; the ledge thralls are
-    // let loose after the first push.
+    // The ledge thralls are let loose 4 s after the wizard steps forward;
+    // the front troopers move up as the two squads lose two, then five, of
+    // their seven.
+    expect(squad("sq_hive_upper_front01")?.task).toBe(14);
     const front02 = h.rowOf("sq_hive_upper_front02");
+    const front03 = h.rowOf("sq_hive_upper_front03");
     h.runtime.reportSquadAlive(front02, 1);
     h.runtime.reportSquadTally(front02, [1]);
     h.ticks(3);
+    expect(squad("sq_hive_upper_front02")?.task).toBe(16);
+    h.runtime.reportSquadTally(front03, [1]);
+    h.ticks(2);
     expect(squad("sq_hive_upper_front02")?.task).toBe(19);
     expect(squad("sq_hive_upper_front03")?.task).toBe(19);
-    expect(squad("sq_hive_upper_front01")?.task).toBe(14);
     h.runtime.reportSquadTally(front02, [2]);
+    h.runtime.reportSquadTally(front03, [3]);
     h.ticks(2);
     expect(squad("sq_hive_upper_front02")?.task).toBe(20);
-    // the first rush when the ledge thralls are dead, its line when it is
-    // nearly done
+    // the first rush when the ledge thralls are dead too, its line when it
+    // is nearly done
     const front01 = h.rowOf("sq_hive_upper_front01");
     h.runtime.reportSquadAlive(front01, 1);
     h.runtime.reportSquadTally(front01, [1, 1, 1]);
@@ -352,9 +359,9 @@ describe("TU0 act_cosmo_m1_dome_a scripts", () => {
     h.ticks(2);
     expect(playing("seq_d_o3_s016")).toBeDefined();
 
-    // Pushing on brings the second rush; the wizard's death ends the fight
-    // and the phase, and the last one completes the activity.
-    fire("pt_upper_rush01_spawn");
+    // The wizard's death (or the far end) brings the second rush; it ends
+    // the fight and the phase, and the last one completes the activity with
+    // the way-out line a second later.
     spent("sq_hive_upper_wizard01__wizard");
     h.runtime.reportSquadAlive(h.rowOf("sq_hive_upper_wizard01"), 0);
     h.ticks(2);
@@ -366,7 +373,6 @@ describe("TU0 act_cosmo_m1_dome_a scripts", () => {
     expect(h.said("mission act_cosmo_m1_dome_a_mission3 starting")).toBe(true);
     expect(playing("seq_m_outro")).toBeDefined();
     expect(h.completed()).toBe(1);
-    fire("pt_upper_rush02_spawn");
     h.ticks(2);
     expect(playing("seq_d_o3_s05")).toBeDefined();
     h.ticks(32);

@@ -1,0 +1,18 @@
+# es\cosmo\cosmo_portal2_activity\cosmo_portal2_activity_mission1.esp
+#
+# Mission 1, dry_sea: get to dome_c. The objective comes up with the
+# lifetime and clears silently a second after the player reaches its
+# volume (dry_sea is public: the trigger is on its public host's wire).
+
+trigger_volume_objective obj_r1_s2_strike2_phase00_m1
+
+script init(): pass
+
+script complete(): pass
+
+script main():
+    sleep_until(c_player_script_utilities.all_players_are_ready())
+    c_lifetime_script_utilities.get_lifetime_sensor().set_state(e_activity_lifetime_state.active)
+    obj_r1_s2_strike2_phase00_m1.objective_begin()
+    sleep_until(obj_r1_s2_strike2_phase00_m1.is_complete())
+    obj_r1_s2_strike2_phase00_m1.objective_end_silent()

@@ -1,0 +1,20 @@
+# es\venus\mission_pursuit\mission_pursuit_mission3.esp
+#
+# Mission 3, the ledge: "go to the ledge" comes up as the phase starts, with
+# the music's next section, and clears when a player reaches it. The Fallen
+# and Skolas waiting there are the den encounter's (unknown_a4930efa). The
+# wipe is armed from here to the end of the pit. One run: unconfirmed.
+
+@hard_wipe()
+trigger_volume_objective ledge_trigger_volume_objective
+sequence music_cue3
+
+script init(): pass
+
+script complete(): pass
+
+script main():
+    music_cue3.set_switch_mask(3)
+    ledge_trigger_volume_objective.objective_begin()
+    sleep_until(ledge_trigger_volume_objective.is_complete())
+    ledge_trigger_volume_objective.objective_end_silent()

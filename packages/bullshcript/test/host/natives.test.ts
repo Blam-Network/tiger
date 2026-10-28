@@ -2597,6 +2597,22 @@ describe("incident listeners: kill filters and dispatch", () => {
     expect(listener.call("get_count")).toBe(1);
   });
 
+  it("bind_incident_name_hash only counts kills of that family", () => {
+    const { bind } = makeRows();
+    const listener = bind("kil_captain");
+    listener.call("bind_incident_name_hash", "0xA9FEA575");
+    const plain = [fnv1("any_kill"), fnv1("kill")];
+    listener.bound.noteAnyKill(kill({ incidentNames: plain }));
+    expect(listener.call("get_count")).toBe(0);
+    listener.bound.noteAnyKill(
+      kill({ incidentNames: [...plain, 0xa9_fe_a5_75] })
+    );
+    expect(listener.call("get_count")).toBe(1);
+    // a kill whose names are not known still counts
+    listener.bound.noteAnyKill(kill());
+    expect(listener.call("get_count")).toBe(2);
+  });
+
   it("all_players counts every kill, AI-on-AI included", () => {
     const { bind } = makeRows();
     const listener = bind("kil_squad");

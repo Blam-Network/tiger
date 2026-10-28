@@ -34,7 +34,7 @@ objective obj_b
 
 @startup()
 script sc_owner():
-    sleep(2)
+${decorated ? '    sq_other.set_task("open")\n' : ""}    sleep(2)
     lane_open = false
 `,
 });
@@ -185,7 +185,7 @@ function start(decorated: boolean) {
       )
       .map((change) => (change.state as SquadState).influencer)
       .at(-1);
-  return { influencer, runtime };
+  return { changes, influencer, runtime };
 }
 
 describe("@objective and @task", () => {
@@ -230,6 +230,27 @@ describe("@objective and @task", () => {
     }
     expect(influencer(SQ_DIRECT)).toBe(2);
     expect(influencer(SQ_OTHER)).toBe(2);
+  });
+
+  it("carries the Objective in the squad's changes and set_task", () => {
+    const { changes, runtime } = start(true);
+    runtime.reportPlayerSpawned();
+    runtime.tick();
+    const other = changes
+      .filter(
+        (change) =>
+          change.kind === "squad" && change.item.typeIndex === SQ_OTHER
+      )
+      .map((change) => change.state as SquadState);
+    expect(other.length).toBeGreaterThan(0);
+    for (const state of other) {
+      expect(state.objective).toEqual({
+        bundle: BUNDLE,
+        typeId: Objective,
+        typeIndex: OBJ_A,
+      });
+    }
+    expect(other.some((state) => state.task === 2)).toBe(true);
   });
 
   it("leaves squads with no decorator out of the walk, and tasks open", () => {

@@ -1,0 +1,44 @@
+# es\cosmo\cosmo_portal2_activity\cosmo_portal2_activity_mission6.esp
+#
+# Mission 6, dome_hive: take the hillside, then kill the witch. The secure
+# objective is up from the phase's start; the arena doors come a second in
+# and the gate opens two seconds after that. It clears once the player has
+# been through its volume and the hillside Hive are all dead, and the kill
+# objective follows at once. The witch dying completes the strike.
+#
+# 2.3.1 split this into two phases and replaced the witch with another boss
+# once the hillside came in; TU0's witch (sq_bossbattle_boss01) is the boss,
+# so the strike ends on her death. The Hive come from enc_dome_hive_portal2.
+
+@hard_wipe()
+object o_arena_door01
+object o_arena_door02
+object o_dome_hive_gate01
+trigger_volume_objective obj_r1_s2_strike2_phase05_m1
+generic_objective obj_r1_s2_strike2_phase05_m2
+nav_point ap_kill_boss01
+encounter_handle enc_dome_hive_portal2
+
+script init(): pass
+
+script complete(): pass
+
+script main():
+    enc = enc_dome_hive_portal2
+    obj_r1_s2_strike2_phase05_m1.objective_begin_immediate()
+    o_dome_hive_gate01.create()
+    sleep(1)
+    for door in [o_arena_door01, o_arena_door02]:
+        door.create()
+        door.set_device_position(0.7)
+    sleep(2)
+    o_dome_hive_gate01.set_device_position(1)
+    sleep_until(obj_r1_s2_strike2_phase05_m1.is_complete())
+    sleep_until(enc.b_hillside_placed)
+    sleep_until(enc.hillside_alive_count() == 0)
+    obj_r1_s2_strike2_phase05_m1.objective_end_silent()
+    obj_r1_s2_strike2_phase05_m2.objective_begin(ap_kill_boss01)
+    sleep_until(enc.b_boss_placed)
+    sleep_until(enc.sq_bossbattle_boss01.alive_count() == 0)
+    obj_r1_s2_strike2_phase05_m2.objective_end_silent()
+    set_activity_complete()

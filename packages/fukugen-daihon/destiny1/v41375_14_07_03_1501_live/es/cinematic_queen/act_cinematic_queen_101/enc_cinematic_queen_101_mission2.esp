@@ -1,0 +1,19 @@
+# es\cinematic_queen\act_cinematic_queen_101\enc_cinematic_queen_101_mission2.esp
+#
+# Mission 2, the second cinematic, as cine_reveal's second phase plays its
+# own. Retail sends activity_complete 5.5 s after the phase starts (1.2 s
+# after the client reaches queens_chamber) and starts the cinematic 0.4 s
+# after that; the activity ends 0.8 s after the client's cinematic_finished.
+
+cinematic_midmission pf_116_cro
+
+script init(): pass
+
+script complete():
+    c_lifetime_script_utilities.get_lifetime_sensor().end_game()
+
+script main():
+    sleep(5)
+    set_activity_complete()
+    pf_116_cro.start()
+    sleep_until(pf_116_cro.is_complete())

@@ -1,0 +1,10 @@
+# es\utility_scripts\timed_block.esu
+#
+# A platform on a timer, one of a row the players jump across: the
+# encounter that holds the row cycles each block (it comes up, rises,
+# holds, sinks and is gone a while), so the blocks come up in turn. No
+# build has its source; its only row is the block. Written from the
+# Shattered Coast tower's chasm in one retail capture of mission_traitor
+# (unknown_4c527387).
+
+object o_block

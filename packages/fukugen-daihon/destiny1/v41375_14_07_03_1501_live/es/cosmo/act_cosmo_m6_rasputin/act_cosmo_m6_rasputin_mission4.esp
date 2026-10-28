@@ -1,0 +1,29 @@
+# es\cosmo\act_cosmo_m6_rasputin\act_cosmo_m6_rasputin_mission4.esp
+#
+# Mission 4, the end: the console goes dark, the core's lights come full up
+# six seconds later, Rasputin speaks six seconds after that, and the
+# activity completes with the outro music eighteen seconds into his line;
+# the game ends half a minute later.
+#
+# One 2.3.1 run. Its final objective (sp_objective_goto_terminal there, the
+# console here) never came up, so it is not begun.
+
+encounter_handle enc_rasputin_m6
+object o_core_lights
+sequence seq_dialog_rasputin_outro
+sequence seq_music_outro
+
+script init(): pass
+
+script complete():
+    c_lifetime_script_utilities.get_lifetime_sensor().end_game(30)
+
+script main():
+    enc_rasputin_m6.sp_placement_console._object.set_device_position(0)
+    sleep(6)
+    o_core_lights.set_device_position(1)
+    sleep(6)
+    seq_dialog_rasputin_outro.start()
+    sleep(18)
+    set_activity_complete()
+    seq_music_outro.start()

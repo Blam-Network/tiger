@@ -1,0 +1,40 @@
+# es\cosmo\quest_infidel\quest_infidel_mission3.esp
+#
+# Mission 3, the highway: reach the cliff over it, kill the captain, then the
+# last wave. The music steps up on the way in and again for the last wave,
+# with Fang's line. The skiffs, dropships and the captain are
+# unknown_bd3354e6's: the captain rides in with its bounce dropship, and the
+# last wave is its third dropship's squads. From one retail capture, so which
+# squad is the captain and which squads make the last wave are that run's.
+# The highway is the one phase the host may wipe: retail's hard wipe flag is
+# up from its start to its end.
+
+@hard_wipe()
+trigger_volume_objective cliff_trigger_volume_objective
+generic_objective kill_captain_generic_objective
+generic_objective final_wave
+sequence music_cue1
+sequence fang_dialog
+sequence highway_enter_dialog
+encounter_handle unknown_bd3354e6
+
+script init(): pass
+
+script complete(): pass
+
+script main():
+    music_cue1.set_switch_mask(3)
+    cliff_trigger_volume_objective.objective_begin()
+    sleep_until(cliff_trigger_volume_objective.is_complete())
+    cliff_trigger_volume_objective.objective_end_silent()
+    kill_captain_generic_objective.objective_begin()
+    sleep_until(unknown_bd3354e6.captain_is_dead())
+    kill_captain_generic_objective.objective_end_silent()
+    sleep(2)
+    final_wave.objective_begin()
+    fang_dialog.start()
+    music_cue1.set_switch_mask(7)
+    sleep_until(unknown_bd3354e6.final_wave_is_dead())
+    final_wave.objective_end_silent()
+    music_cue1.stop()
+    highway_enter_dialog.stop()

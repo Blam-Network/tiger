@@ -2,8 +2,10 @@
 #
 # Mission 10, the outro: the dead heart's collar lights up and the
 # spectacle plays, the Ghost has the last word, and the activity completes
-# once a player stands on the ledge again. The ending cinematic is its own
-# activity (cine_end). One run for the gaps.
+# seventeen seconds into the line. The ending cinematic is its own activity
+# (cine_end). 2026-10-26 run for the gaps: the player was off the ledge
+# when it completed, so the completion waits on time, not on the ledge's
+# monitor.
 
 encounter_handle enc_lowergarden_m07
 sequence seq_sound_lowergarden_darkness
@@ -21,9 +23,10 @@ script main():
     heart.o_collar_illum.set_device_position(1)
     heart.o_dumpling_control_notrans.set_device_position(0)
     heart.o_spectacle.set_device_position(1)
+    sleep(0.5)
     seq_sound_lowergarden_darkness.stop()
     sleep(4)
     seq_dialog_lowergarden_outro.start()
-    sleep_until(enc_lowergarden_m07.pm_ledge.test_any_inside())
+    sleep(17)
     seq_music_outro.start()
     set_activity_complete()

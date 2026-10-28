@@ -1,12 +1,17 @@
 # es\mars\act_mars_m05_warbase\act_mars_m05_warbase_mission8.esp
 #
 # Mission 8, phase_8_warbase: the spire. The warbase music starts with the
-# phase. Button B opens the Minotaur eye's cage: the cage comes up, opens
-# and goes away as the eye is taken (the eye, the laser, the Vex pillar and
-# the Garden key are unknown_f305afe6's). The boss comes out once the pillar
-# has gone; killing it is the next objective. Then button C: the cage comes
-# up again as the key is taken, and the mission is complete. The second
-# climax trigger group is up for the phase.
+# phase. Button B opens the Minotaur eye's cage: both buttons sink in, the
+# cage comes up, opens and goes away as the eye is taken (the eye, the
+# laser, the Vex pillar and the Garden key are unknown_f305afe6's, woken
+# here). The boss comes out once the pillar has gone; killing it is the
+# next objective. Then button C: the cage comes up again for a moment as the
+# key is taken, and the mission is complete. The second climax trigger
+# group is up for the phase.
+#
+# One run: the waits are the gaps on the wire. Both buttons sink in
+# whichever one is used, the used one first; B's come back up as its
+# objective clears, C's stay down.
 
 @hard_wipe()
 trigger_group tg_mars_m5_climax_2_so
@@ -17,6 +22,7 @@ kill_squad_objective pf_kill_boss bind("0xF6457E44", 1)
 squad sq_boss
 interactable_objective pf_objective_button_c bind("0x0882B95C")
 interactable_placement pf_placement_button_c bind("0x0882B95C")
+encounter_handle unknown_f305afe6
 sequence seq_music_warbase
 sequence seq_d_o3_s07
 sequence seq_d_o3_s08
@@ -26,6 +32,9 @@ script init(): pass
 script complete(): pass
 
 script main():
+    warbase = unknown_f305afe6
+    button_b = pf_placement_button_b._object
+    button_c = pf_placement_button_c._object
     tg_mars_m5_climax_2_so.activate()
     seq_music_warbase.start()
     seq_music_warbase.set_switch_mask(1)
@@ -37,14 +46,23 @@ script main():
     sleep(1)
     o_minoeye_cage.create()
     seq_music_warbase.set_switch_mask(3)
-    sleep(3)
+    warbase.sc_key.wake()
+    button_b.set_device_position(0.1)
+    sleep(1)
+    button_c.set_device_position(0.1)
+    sleep(2)
     seq_d_o3_s08.start()
     sleep(1)
+    button_b.set_device_position(1)
     o_minoeye_cage.set_device_position(1)
-    sleep(0.9)
+    sleep(1)
+    button_c.set_device_position(1)
     o_minoeye_cage.delete_object()
-    sleep(5.8)
+    sleep(5)
     pf_objective_button_b.objective_end_silent()
+    button_b.set_device_position(0)
+    sleep(1)
+    button_c.set_device_position(0)
 
     # the boss
     sleep_until(sq_boss.alive_count() > 0)
@@ -56,15 +74,22 @@ script main():
     seq_music_warbase.stop()
     seq_music_warbase.set_switch_mask(7)
 
-    # the Garden key
+    # the Garden key: this time C sinks in first
     sleep(3)
     pf_objective_button_c.objective_begin()
     sleep_until(pf_objective_button_c.is_complete())
     sleep(1)
     o_minoeye_cage.create()
+    button_c.set_device_position(0.1)
+    warbase.sc_key_taken.wake()
     sleep(1)
     o_minoeye_cage.delete_object()
-    sleep(5)
+    button_b.set_device_position(0.1)
+    sleep(3)
+    button_c.set_device_position(1)
+    sleep(1)
+    button_b.set_device_position(1)
+    sleep(1)
     tg_mars_m5_climax_2_so.deactivate()
-    sleep(2)
+    sleep(1)
     pf_objective_button_c.objective_end_silent()

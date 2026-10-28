@@ -4,10 +4,9 @@
 # the outro. The gate and overlook lines are started together and play off
 # their own volumes; the valley music comes in near the overlook.
 #
-# One run, and the capture changed hosts on the way into the valley: no
-# trigger or interaction reached the capture there, so the overlook trigger
-# and the monitor's completion are the shape of the phase, not wire facts.
-# The waits after the monitor are the gaps on the wire.
+# One run (2026-10-26). The capture changed hosts on the way into the
+# valley: the monitor's use is on the public host's wire. The waits after
+# the monitor are the gaps on the wire.
 
 interactable_objective sp_objective_monitor bind("0xBD366786")
 trigger_volume tv_overlook_near
@@ -33,7 +32,7 @@ script main():
     pt_overlook_near.reset()
     sc_overlook_music.wake()
     sp_objective_monitor.objective_begin()
-    sleep(75)
+    sleep_until(sp_objective_monitor.is_complete())
     sp_objective_monitor.objective_end_silent()
     seq_dialog_valley_overlook.stop()
     seq_dialog_valley_monitor_complete.start()

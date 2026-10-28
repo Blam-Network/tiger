@@ -43,7 +43,7 @@ describe("TU0 BungieScript sources", () => {
     // shared scripts (ambient, events, loot, materials) and the utility scripts only their
     // bundles use: their bundles' rows are not among the tests' tables
     const noRowTablePath =
-      /^es\/(mars|moon)\/|^es\/cosmo\/(act_cosmo_m(0_5_hangar|1_dome_a|2_dome_c)|dome_[ac])\/|^es\/cosmo\/hangar\/enc_hangar_m0_5\.es$|^es\/cosmo\/(array|delta_north|delta_south|dry_sea|graveyard|hangar|rocketyard)\/(enc_\w+_(amb1|events)|\w+_(loot|materials))\.es$|^es\/venus\/(academy_entrance|act_venus_m01_engineering|act_venus_m07_northern_tides|act_venus_m09_tower|lower_tower|north_tides|south_tides|tower)\/|^es\/venus\/(baby_shat|fallen_caldera|headlands|shattered_coast|vex_complex|warp_ruins)\/(enc_\w+_amb1?|\w+_(loot|materials))\.es$|^es\/utility_scripts\/(venus_raid_pillar_switch|vex_warp_gate|interactable_placement_set|loot_baby_shat)\.esu$/;
+      /^es\/(mars|moon)\/|^es\/cosmo\/(act_cosmo_m(0_5_hangar|1_dome_a|2_dome_c)|dome_[ac])\/|^es\/cosmo\/hangar\/enc_hangar_m0_5\.es$|^es\/cosmo\/(array|delta_north|delta_south|dry_sea|graveyard|hangar|rocketyard)\/(enc_\w+_(amb1|events)|\w+_(loot|materials))\.es$|^es\/venus\/(academy_entrance|act_venus_m01_engineering|act_venus_m06_ketch|act_venus_m07_northern_tides|act_venus_m09_tower|fallen_dock|ketch|lower_tower|north_tides|south_tides|thieves_den|tower)\/|^es\/venus\/(baby_shat|fallen_caldera|headlands|shattered_coast|vex_complex|warp_ruins)\/(enc_\w+_amb1?|\w+_(loot|materials))\.es$|^es\/utility_scripts\/(venus_raid_pillar_switch|vex_warp_gate|interactable_placement_set|loot_baby_shat)\.esu$/;
     for (const file of scriptFiles) {
       const decl = compiled.compiledDecl(file.path);
       if (noRowTable.test(decl.name) || noRowTablePath.test(file.path)) {

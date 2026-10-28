@@ -1,0 +1,36 @@
+# es\venus\mission_traitor\mission_traitor_mission2.esp
+#
+# Mission 2, the lower tower: "eliminate the vanguard" until the lower
+# tower's Fallen are dead (unknown_253d3c66 says when), then "take the grav
+# lift" with the music's next section. Using the lift's console wakes the
+# lift (the cage and the shield controller); once it is up the objective
+# clears without a line and mission 3 starts. The wipe is armed from here
+# to the boss. One run: unconfirmed.
+
+@hard_wipe()
+object invisible_device_networked
+generic_objective pf_eliminate_vanguard
+nav_point ap_kill_fallen
+interactable_objective pf_tower_elevator bind("0xCCE30769")
+encounter_handle mission_traitor
+encounter_handle unknown_253d3c66
+
+script init(): pass
+
+script complete(): pass
+
+script main():
+    invisible_device_networked.create()
+    invisible_device_networked.set_device_position(0)
+    mission_traitor.grav_view_dialog.start()
+    pf_eliminate_vanguard.objective_begin(ap_kill_fallen)
+    sleep_until(unknown_253d3c66.vanguard_dead)
+    pf_eliminate_vanguard.complete()
+    pf_eliminate_vanguard.objective_end()
+    mission_traitor.music_cue1.set_switch_mask(3)
+    pf_tower_elevator.objective_begin()
+    sleep_until(pf_tower_elevator.is_complete())
+    unknown_253d3c66.sc_grav_lift.wake()
+    sleep_until(unknown_253d3c66.grav_lift_up)
+    pf_tower_elevator.cleanup()
+    pf_tower_elevator.objective_end_silent()

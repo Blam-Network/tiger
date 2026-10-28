@@ -1,0 +1,35 @@
+# es\cosmo\mission_pact\mission_pact_mission1.esp
+#
+# Mission 1, the hive shore: once the player is in, the activity goes live
+# with the landing and grotto lines and the first music cue. Reach the
+# grotto, then kill the Servitor in it (unknown_99f4fbfa's). From one retail
+# capture.
+
+trigger_volume_objective obj_m7_o1a
+generic_objective obj_m7_o1b
+sequence landing_dialog
+sequence grotto_enter_dialog
+sequence servitor_a_done_dialog
+sequence seq_m_cue1
+encounter_handle unknown_99f4fbfa
+
+script init(): pass
+
+script complete(): pass
+
+script main():
+    sleep_until(c_player_script_utilities.all_players_are_ready())
+    c_lifetime_script_utilities.get_lifetime_sensor().set_state(e_activity_lifetime_state.active)
+    landing_dialog.start()
+    grotto_enter_dialog.start()
+    seq_m_cue1.start()
+    seq_m_cue1.set_switch_mask(3)
+    obj_m7_o1a.objective_begin()
+    sleep_until(obj_m7_o1a.is_complete())
+    obj_m7_o1a.objective_end_silent()
+    obj_m7_o1b.objective_begin()
+    sleep_until(unknown_99f4fbfa.servitor_is_dead())
+    obj_m7_o1b.objective_end_silent()
+    grotto_enter_dialog.stop()
+    servitor_a_done_dialog.start()
+    seq_m_cue1.stop()

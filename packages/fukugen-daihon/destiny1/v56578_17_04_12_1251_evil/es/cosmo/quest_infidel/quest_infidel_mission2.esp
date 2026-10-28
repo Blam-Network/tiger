@@ -1,0 +1,22 @@
+# es\cosmo\quest_infidel\quest_infidel_mission2.esp
+#
+# Mission 2, the breach: the way down to the cliff. The breach's lines start
+# with the objective; it clears as the player reaches the cliff's volume. The
+# Fallen on the way are unknown_bf1d6e1a's. From one retail capture.
+
+trigger_volume_objective cliff_trigger_volume_objective
+sequence traps_dialog
+sequence escape_dialog
+sequence highway_enter_dialog
+
+script init(): pass
+
+script complete(): pass
+
+script main():
+    traps_dialog.start()
+    escape_dialog.start()
+    highway_enter_dialog.start()
+    cliff_trigger_volume_objective.objective_begin()
+    sleep_until(cliff_trigger_volume_objective.is_complete())
+    cliff_trigger_volume_objective.objective_end_silent()

@@ -4,12 +4,11 @@
 # as the bubble loads. Mission 5 wakes the ambush when the player reaches
 # the wall: the alarm sounds, the side doors close the player in and three
 # waves of Cabal come through, each announced, the next one a few seconds
-# after the last of the one before is dead. A wave that has taken losses
-# falls back to its second task. Once the door button is used mission 5
-# wakes the miniboss, which comes out of the ambush door with its backup.
-# From one retail capture (2.3.1): every wait is that run's. Retail's
-# miniboss task (2.3.1's eighth) is not in TU0's list, so it takes the task
-# retail fell back to.
+# after the last of the one before is dead. A wave's first squad falls back
+# to its second task once the wave's other squad is down and it has lost
+# one. Once the door button is used mission 5 wakes the miniboss, which
+# comes out of the ambush door with its backup and falls back 13 s later.
+# From one retail capture (2.3.1): every wait is that run's.
 
 @activity_bundle("enc_gatehouse_m05")
 
@@ -58,6 +57,7 @@ script sc_waves():
     seq_alarm.start()
     seq_wave_announce1.start()
     sleep(2)
+    sleep_until(sq_wave_1_b.alive_count() == 0)
     sleep_until(sq_wave_1_a.alive_count() <= 1)
     sq_wave_1_a.set_task("0xFD3EEAFD")
     sleep_until(sq_wave_1_a.alive_count() + sq_wave_1_b.alive_count() == 0)
@@ -70,6 +70,7 @@ script sc_waves():
     mc_door_right.set_device_position(0)
     seq_wave_announce2.start()
     sleep(2)
+    sleep_until(sq_wave_2_b.alive_count() == 0)
     sleep_until(sq_wave_2_a.alive_count() <= 1)
     sq_wave_2_a.set_task("0x73A5C503")
     sleep_until(sq_wave_2_a.alive_count() + sq_wave_2_b.alive_count() == 0)
@@ -79,9 +80,10 @@ script sc_waves():
     place_on_task(sq_wave_3_a, "0x73A5C500")
     place_on_task(sq_wave_3_b, "0x73A5C500")
     seq_wave_announce3.start()
-    sleep(18)
+    sleep(2)
+    sleep_until(sq_wave_3_b.alive_count() == 0)
+    sleep_until(sq_wave_3_a.alive_count() <= 1)
     sq_wave_3_a.set_task("0xB9BB1408")
-    sq_wave_3_b.set_task("0xB9BB1408")
     sleep_until(sq_wave_3_a.alive_count() + sq_wave_3_b.alive_count() == 0)
     sleep(1.5)
     seq_alarm.stop()
@@ -91,11 +93,14 @@ script sc_waves():
 # the miniboss: woken by mission 5 once the door button has been used
 script sc_miniboss():
     sleep(0.7)
-    place_on_task(sq_miniboss, "0xFD3EEAFF")
-    place_on_task(sq_miniboss_backup, "0xFD3EEAFF")
+    place_on_task(sq_miniboss, "0xFC4BFE9B")
+    place_on_task(sq_miniboss_backup, "0xFC4BFE9B")
     ambush_door.set_device_position(1)
     mc_door_a.delete_object()
     mc_door_b.delete_object()
+    sleep(13)
+    sq_miniboss.set_task("0xFD3EEAFF")
+    sq_miniboss_backup.set_task("0xFD3EEAFF")
 
 def place_on_task(sq, task):
     sq.set_task(task)

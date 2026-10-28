@@ -1,0 +1,61 @@
+# es\utility_scripts\hive_thrall_spawn.esu
+#
+# A Hive spawn point that the Thrall pour out of (The Taken King's
+# quest_bonzo_dlc01, in the blast). Its owner calls spawn(): the portal effect
+# comes up, its sound plays, and a few seconds later the first count of its
+# squads climb out against the owner's objective; the effect goes away after
+# ten seconds. spawn_extra() sends the three spare squads. From one retail
+# capture: the waits are that run's, and only the first three squads ever
+# went in. Our name for it; Bungie's is unknown.
+
+object o_fx
+sequence seq
+nav_point np
+squad_group sqg_all
+squad t00
+squad_member t00__ai
+squad t01
+squad_member t01__ai
+squad t02
+squad_member t02__ai
+squad t03
+squad_member t03__ai
+squad t04
+squad_member t04__ai
+squad t05
+squad_member t05__ai
+squad t00_x
+squad_member t00_x__ai
+squad t01_x
+squad_member t01_x__ai
+squad t02_x
+squad_member t02_x__ai
+
+# The effect, then the sound, then the squads; task is "" to leave theirs.
+def spawn(count, objective, task):
+    o_fx.create()
+    o_fx.set_device_position(1)
+    sleep(4)
+    seq.start()
+    sleep(1)
+    squads = [t00, t01, t02, t03, t04, t05]
+    for i in range(0, count):
+        squads[i].set_objective(objective)
+        if task != "":
+            squads[i].set_task(task)
+        squads[i].place()
+    sleep(5)
+    o_fx.delete_object()
+
+# A second wave out of the same spawn: the effect, and five seconds later the
+# spare squads climb out, with no sound.
+def spawn_extra(objective, task):
+    o_fx.create()
+    o_fx.set_device_position(1)
+    sleep(5)
+    for s in [t00_x, t01_x, t02_x]:
+        s.set_objective(objective)
+        s.set_task(task)
+        s.place()
+    sleep(5)
+    o_fx.delete_object()

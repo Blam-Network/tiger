@@ -1,0 +1,57 @@
+# es\venus\mission_pursuit\mission_pursuit_mission1.esp
+#
+# Mission 1, the baby dock. The activity goes active once the players are
+# in, with the Ghost's landing and tank lines and the first music cue; "go to
+# the pike" comes up three seconds on. Reaching it brings up "go to the
+# pool", and reaching the pool wakes the baby dock's skiff and brings up
+# "kill the tank", the music moving on as it does. The spider tank stands at
+# the pool from the baby dock's load (unknown_6d57825c). Once it is dead the
+# objective clears, the tank line gives way to four more lines, the first
+# cue to the second, and the phase moves on. One run: unconfirmed. Retail
+# shows the pike objective at wire state 1 for a second first, which has no
+# verb here.
+
+trigger_volume_objective pike_trigger_volume_objective
+trigger_volume_objective pool_trigger_volume_objective
+generic_objective kill_tank_generic_objective
+encounter_handle unknown_6d57825c
+sequence landing_dialog
+sequence tank_dialog
+sequence tank_done_dialog
+sequence cove_dialog
+sequence block_dialog
+sequence baby_exit_dialog
+sequence music_cue1
+sequence music_cue2
+
+script init(): pass
+
+script complete(): pass
+
+script main():
+    sleep_until(c_player_script_utilities.all_players_are_ready())
+    c_lifetime_script_utilities.get_lifetime_sensor().set_state(e_activity_lifetime_state.active)
+    landing_dialog.start()
+    tank_dialog.start()
+    music_cue1.start()
+    music_cue1.set_switch_mask(1)
+    sleep(3)
+    pike_trigger_volume_objective.objective_begin_immediate()
+    sleep_until(pike_trigger_volume_objective.is_complete())
+    pike_trigger_volume_objective.objective_end_silent()
+    pool_trigger_volume_objective.objective_begin()
+    sleep_until(pool_trigger_volume_objective.is_complete())
+    pool_trigger_volume_objective.objective_end_silent()
+    unknown_6d57825c.sc_pool.wake()
+    kill_tank_generic_objective.objective_begin(nil)
+    music_cue1.set_switch_mask(3)
+    sleep_until(unknown_6d57825c.tank_dead)
+    kill_tank_generic_objective.objective_end_silent()
+    tank_dialog.stop()
+    tank_done_dialog.start()
+    cove_dialog.start()
+    block_dialog.start()
+    baby_exit_dialog.start()
+    music_cue1.stop()
+    music_cue2.start()
+    music_cue2.set_switch_mask(1)

@@ -333,6 +333,7 @@ export class EncounterScriptHost implements EncounterHostContext {
       objectStates: new Map(),
       machineStates: new Map(),
       memberCounts: this.memberCounts,
+      squadObjectives: this.squadObjectives,
       placeActors: options.placeActors ?? false,
       players: () =>
         (this.options.players?.() ?? []).map((player) => ({
@@ -972,7 +973,10 @@ export class EncounterScriptHost implements EncounterHostContext {
   }
 
   // A shared identifier names no squad alone: credit the squad spawned within a
-  // metre of the death with the most open bodies, else the first in table order.
+  // metre of the death with the most open bodies, else the one squad still
+  // standing. With several standing and no position the kill is left to their
+  // alive counts: a guess by table order marked a squad still fighting dead
+  // (the Breach garage's five squads share 0x3C947D55).
   creditSharedKill(ident: number, at?: WorldPosition): void {
     const keys = this.identSquads().get(ident);
     if (!keys || keys.size < 2) {
@@ -984,14 +988,26 @@ export class EncounterScriptHost implements EncounterHostContext {
       (key) => this.world.at(key)?.squadAlive !== undefined
     );
     const matched = sensed.length > 0 ? sensed : near;
-    let rule = matched.length > 0 ? "position" : "table order";
-    let best = this.mostOpenBodies(matched.length > 0 ? matched : keys);
+    let rule = "position";
+    let best = this.mostOpenBodies(matched);
     if (!best && matched.length > 0) {
       rule = "position, no body open";
       best = { key: matched[0], open: 0 };
     }
     if (!best) {
-      return;
+      const standing = [...keys].filter(
+        (key) =>
+          this.world.at(key)?.squadAlive !== 0 && this.openBodies(key) > 0
+      );
+      if (standing.length !== 1) {
+        this.writer.note(
+          `squad ident 0x${ident.toString(16)} kill not credited ` +
+            `(${standing.length} squads standing)`
+        );
+        return;
+      }
+      rule = "only one standing";
+      best = { key: standing[0], open: this.openBodies(standing[0]) };
     }
     const bestRecord = this.world.record(best.key);
     const credited = (bestRecord.creditedKills ?? 0) + 1;
@@ -1008,17 +1024,22 @@ export class EncounterScriptHost implements EncounterHostContext {
   ): { key: string; open: number } | undefined {
     let best: { key: string; open: number } | undefined;
     for (const key of keys) {
-      const [hex, typeIndex] = key.split(":");
-      const bundle = Number.parseInt(hex, 16);
-      const placed =
-        this.itemState.bodiesFor(bundle, Number(typeIndex)) ??
-        this.defaultBodies(bundle, Number(typeIndex));
-      const open = placed - (this.world.at(key)?.creditedKills ?? 0);
+      const open = this.openBodies(key);
       if (open > 0 && (best === undefined || open > best.open)) {
         best = { key, open };
       }
     }
     return best;
+  }
+
+  // Placed bodies no shared-identifier kill has been credited against.
+  openBodies(key: string): number {
+    const [hex, typeIndex] = key.split(":");
+    const bundle = Number.parseInt(hex, 16);
+    const placed =
+      this.itemState.bodiesFor(bundle, Number(typeIndex)) ??
+      this.defaultBodies(bundle, Number(typeIndex));
+    return placed - (this.world.at(key)?.creditedKills ?? 0);
   }
 
   spawnedNear(key: string, at: WorldPosition): boolean {

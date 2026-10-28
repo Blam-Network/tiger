@@ -1,0 +1,37 @@
+# es\cosmo\mission_pact\mission_pact_mission3.esp
+#
+# Mission 3, on to command: the second Servitor's line and the way through
+# the rocketyard, with the third music cue; the objective clears at the
+# captains' room (its volume). The command building's Fallen are
+# unknown_66c01eb9's. From here to the end the host may wipe the activity:
+# retail's hard wipe flag is up from this phase's start to the activity's end.
+# From one retail capture.
+
+@hard_wipe()
+trigger_volume_objective obj_m7_o3b
+sequence servitor_b_approach_dialog
+sequence servitor_b_done_dialog
+sequence refinery_exit_dialog
+sequence rocketyard_enter_dialog
+sequence rocketyard_exit_dialog
+sequence command_enter_dialog
+sequence seq_m_cue2
+sequence seq_m_cue3
+
+script init(): pass
+
+script complete(): pass
+
+script main():
+    servitor_b_approach_dialog.stop()
+    servitor_b_done_dialog.start()
+    refinery_exit_dialog.start()
+    rocketyard_enter_dialog.start()
+    rocketyard_exit_dialog.start()
+    command_enter_dialog.start()
+    seq_m_cue2.stop()
+    seq_m_cue3.start()
+    seq_m_cue3.set_switch_mask(1)
+    obj_m7_o3b.objective_begin()
+    sleep_until(obj_m7_o3b.is_complete())
+    obj_m7_o3b.objective_end_silent()

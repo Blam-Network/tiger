@@ -1,0 +1,49 @@
+# es\venus\mission_pursuit\mission_pursuit_mission4.esp
+#
+# Mission 4, the Thieves' Den. "Kill the mesa's Fallen" comes up as the phase
+# starts. Skolas flees the ledge (the den encounter's performance) and the
+# Ghost's ambush line gives way to his flee line; two seconds after the
+# ledge skiff is gone the mesa line plays. Once the mesa's spear captain is
+# dead the objective clears, the cannon line and the music's next section
+# start and "kill the pit's Fallen" comes up while the den encounter sends
+# its three waves. It clears once the pit is clear, with the Ghost's line,
+# and the music stops. One run: unconfirmed.
+
+@hard_wipe()
+generic_objective kill_mesa_generic_objective
+nav_point mesa_nav_point
+generic_objective kill_pit_generic_objective
+nav_point pit_nav_point
+encounter_handle unknown_a4930efa
+sequence skolas_ambush_dialog
+sequence skolas_flee_dialog
+sequence mesa_dialog
+sequence cannon_dialog
+sequence pit_complete_dialog
+sequence music_cue3
+
+script init(): pass
+
+script complete(): pass
+
+script main():
+    sc_ledge_lines.wake()
+    kill_mesa_generic_objective.objective_begin(mesa_nav_point)
+    sleep_until(unknown_a4930efa.mesa_captain_spear_squad.alive_count() == 0)
+    kill_mesa_generic_objective.objective_end_silent()
+    cannon_dialog.start()
+    music_cue3.set_switch_mask(7)
+    kill_pit_generic_objective.objective_begin(pit_nav_point)
+    sleep_until(unknown_a4930efa.pit_clear)
+    kill_pit_generic_objective.objective_end_silent()
+    pit_complete_dialog.start()
+    music_cue3.stop()
+
+# the Ghost's lines while the mesa is fought
+script sc_ledge_lines():
+    sleep_until(unknown_a4930efa.skolas_fled)
+    skolas_ambush_dialog.stop()
+    skolas_flee_dialog.start()
+    sleep_until(unknown_a4930efa.ledge_skiff_squad.alive_count() == 0)
+    sleep(2)
+    mesa_dialog.start()

@@ -1,0 +1,31 @@
+# es\utility_scripts\vex_security.esu
+#
+# A Vex security node the players shoot (quest_safari's oracles on the raid
+# bridge): it comes in with its tone, and is cleaned up once destroyed. Its
+# hop-on rows never moved in the one retail run that has it, and no earlier
+# build has the archetype, so the hop-on is left alone here.
+
+object _destruct
+sequence _sound
+object _hop_on
+hop_on ho_tier
+object_filter of_tier
+
+def appear():
+    _destruct.create()
+    sleep(0.5)
+    _sound.start()
+    sc_tone.restart()
+
+def sleep_until_sounded():
+    sleep_until(not sc_tone.is_running())
+
+# the tone is stopped once it has played (retail sends its stop about two
+# seconds on)
+script sc_tone():
+    sleep_until(_sound.is_done())
+    _sound.stop()
+
+def sleep_until_destroyed():
+    sleep_until(not _destruct.is_alive())
+    _destruct.delete_object()

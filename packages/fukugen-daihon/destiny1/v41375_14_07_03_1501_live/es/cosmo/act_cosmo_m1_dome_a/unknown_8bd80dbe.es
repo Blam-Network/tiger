@@ -16,13 +16,10 @@ sequence seq_d_o2_s04
 sequence seq_m_intro
 sequence seq_m_cue1
 player_trigger pt_spawn_hive_intro01
-player_trigger pt_spawn_hive_intro02
 sequence seq_d_o3_s01
 player_trigger pt_thrall_unfreeze
 squad sq_hive_upper_rush01
 sequence seq_d_o3_s016
-player_trigger pt_upper_rush02_spawn
-sequence seq_d_o3_s05
 
 @startup()
 script sc_intro():
@@ -36,13 +33,11 @@ script sc_intro():
     seq_m_cue1.set_switch_mask(3)
 
 @startup()
+# the basement fight: the music moves up, the Ghost's line 2 s after
 script sc_pt_spawn_hive_intro01():
     sleep_until(pt_spawn_hive_intro01.is_triggered())
     seq_m_cue1.set_switch_mask(7)
-
-@startup()
-script sc_pt_spawn_hive_intro02():
-    sleep_until(pt_spawn_hive_intro02.is_triggered())
+    sleep(2)
     seq_d_o3_s01.start()
 
 @startup()
@@ -57,10 +52,3 @@ script sc_upper_rush01():
     sleep_until(sq_hive_upper_rush01.alive_count() > 0)
     sleep_until(sq_hive_upper_rush01.alive_count() <= 1)
     seq_d_o3_s016.start()
-
-@startup()
-# the Ghost's way-out line, once the wizard is dead and a player heads for
-# the far end (seq_d_o3_s05_alt never played)
-script sc_pt_upper_rush02_spawn():
-    sleep_until(pt_upper_rush02_spawn.is_triggered())
-    seq_d_o3_s05.start()

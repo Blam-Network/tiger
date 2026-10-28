@@ -1,0 +1,50 @@
+# es\utility_scripts\ritual_spawn_of_crota.esu
+#
+# A Hive ritual that summons a Spawn of Crota (The Taken King's
+# quest_bonzo_dlc01, in the refinery). Its owner calls begin(): the acolytes
+# stand around the spawner and it charges up; halfway the knight steps out,
+# and the spawner is gone a few seconds later. Once the knight is dead the
+# ritual's timer runs. From one retail capture, so the waits are that run's.
+# Our name for it; Bungie's is unknown.
+
+trigger_volume _trigger_volume
+player_monitor _player_monitor bind(_trigger_volume)
+objective _objective
+timer _timer
+object spawner_object
+squad spawn_of_crota_squad
+squad_member spawn_of_crota_squad__knight
+squad ritual_acolytes_squad
+squad_member ritual_acolytes_squad__cell_1
+squad_member ritual_acolytes_squad__cell_2
+squad_member ritual_acolytes_squad__cell_3
+squad wave_spawns_squad
+squad_group _squad_group
+
+# Its squads are against its objective from the start.
+@startup()
+script ss_objectives():
+    for s in [spawn_of_crota_squad, ritual_acolytes_squad, wave_spawns_squad]:
+        s.set_objective(_objective)
+
+def begin():
+    ritual.restart()
+
+script ritual():
+    ritual_acolytes_squad.set_task("0xAF29B04F")
+    ritual_acolytes_squad.place()
+    spawner_object.create()
+    spawner_object.set_device_position(0.1)
+    sleep(6.8)
+    spawner_object.set_device_position(0.5)
+    sleep(1.7)
+    spawn_of_crota_squad.set_task("0xC87AA58F")
+    spawn_of_crota_squad.place()
+    sleep(5)
+    spawner_object.delete_object()
+    knight_done.restart()
+
+script knight_done():
+    sleep_until(spawn_of_crota_squad.alive_count() == 0)
+    sleep(1)
+    _timer.start()

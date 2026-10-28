@@ -5,7 +5,8 @@
 # waves), which the player holds out against until the last wave is dead.
 # Then the door button: using it opens the ambush door and lets the
 # gatehouse encounter send its miniboss out behind the player. The climax
-# trigger group is up from the wall objective to the door.
+# trigger group is up from the wall objective to the door. The button
+# sinks in as it is used and stays down.
 
 @hard_wipe()
 object o_m05_ghost
@@ -45,9 +46,12 @@ script main():
     pf_objective_button_door.objective_begin()
     seq_d_o2_s065.start()
     sleep_until(pf_objective_button_door.is_complete())
+    pf_placement_button_door._object.set_device_position(0.1)
     sleep(2)
     seq_d_o2_s07.start()
-    sleep(4)
+    sleep(1)
+    pf_placement_button_door._object.set_device_position(1)
+    sleep(3)
     pf_objective_button_door.objective_end_silent()
     tg_mars_m5_gatehouse_climax_so.deactivate()
     enc.sc_miniboss.wake()

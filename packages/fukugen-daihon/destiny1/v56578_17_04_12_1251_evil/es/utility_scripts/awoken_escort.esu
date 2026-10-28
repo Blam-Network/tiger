@@ -1,0 +1,20 @@
+# es\utility_scripts\awoken_escort.esu
+#
+# The Awoken's prison escort coming for a captured boss: the escort and its
+# scan line appear together, and the scan line sweeps over him a few seconds
+# later. No build has its source; written from the Shattered Coast tower's
+# boss capture in one retail capture of mission_traitor (unknown_8a595800).
+
+object o_escort_c
+object o_scanline
+
+def escort_begin():
+    o_escort_c.create()
+    o_escort_c.set_device_position(0.3)
+    o_scanline.create()
+    o_scanline.set_device_position(0)
+    sc_scan.wake()
+
+script sc_scan():
+    sleep(7)
+    o_scanline.set_device_position(1)
