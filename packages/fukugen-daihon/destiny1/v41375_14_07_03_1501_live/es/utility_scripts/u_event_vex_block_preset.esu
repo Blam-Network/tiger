@@ -1,0 +1,27 @@
+# es\utility_scripts\u_event_vex_block_preset.esu
+#
+# The Vex block event's presentation (pf_event_vex_block's pf_preset): the
+# public event objective and the lines and music it plays. Bound as the
+# countdown's and the target patrol's presets bind theirs: the specific
+# takes to the objective, the generic ones left alone. Retail's one run
+# (the vex complex, Patrol Venus of 2026-10-28) played the intro behaviour,
+# the announce, the engage line, the music and the gold ending; the rest are
+# declared for the endings no run has shown.
+
+player_objective po_event_vex_block
+sequence seq_intro_behavior
+sequence seq_vex_block_announce bind(po_event_vex_block, e_sequence_suppression_behavior.postpone)
+sequence seq_vex_block_announce_generic
+sequence seq_vex_block_engage
+sequence seq_vex_block_engage_generic
+sequence seq_vex_block_update_hostile bind(po_event_vex_block, e_sequence_suppression_behavior.skip)
+sequence seq_vex_block_update_hostile_generic
+sequence seq_vex_block_complete_gold bind(po_event_vex_block, e_sequence_suppression_behavior.skip)
+sequence seq_vex_block_complete_gold_generic
+sequence seq_vex_block_complete_silver bind(po_event_vex_block, e_sequence_suppression_behavior.skip)
+sequence seq_vex_block_complete_silver_generic
+sequence seq_vex_block_complete_bronze bind(po_event_vex_block, e_sequence_suppression_behavior.skip)
+sequence seq_vex_block_complete_bronze_generic
+sequence seq_vex_block_complete_failure bind(po_event_vex_block, e_sequence_suppression_behavior.skip)
+sequence seq_vex_block_complete_failure_generic
+sequence seq_vex_block_music1 bind(po_event_vex_block, e_sequence_suppression_behavior.postpone)

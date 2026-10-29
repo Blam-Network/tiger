@@ -1,0 +1,25 @@
+# es\utility_scripts\u_event_vex_block_point.esu
+#
+# One Vex cloud of the Vex block event (a pf_event_vex_block's pf_point):
+# the cloud comes in, drops one of the event's squads and fades. From
+# retail's one run (the vex complex, Patrol Venus of 2026-10-28), over its
+# forty drops: the cloud's pilot is placed, the squad comes out about a
+# second later, and the cloud is gone 8s after the drop. A cloud carries
+# one squad at a time.
+
+squad sq_vex_cloud
+squad_member sq_vex_cloud__pilot
+bool in_use
+
+def drop(sq, task):
+    in_use = true
+    sq_vex_cloud.place()
+    sleep(1)
+    sq.set_task(task)
+    sq_vex_cloud__pilot.drop_squad(sq); sleep_until(not sq_vex_cloud__pilot.is_dropping())
+    sc_fade.restart()
+
+script sc_fade():
+    sleep(8)
+    sq_vex_cloud.remove()
+    in_use = false

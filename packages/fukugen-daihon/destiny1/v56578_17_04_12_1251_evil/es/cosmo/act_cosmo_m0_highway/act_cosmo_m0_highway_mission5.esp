@@ -1,12 +1,15 @@
 # es\cosmo\act_cosmo_m0_highway\act_cosmo_m0_highway_mission5.esp
 #
-# Mission 5, "Fight Through the Fallen". Clears once the graveyard's Fallen
-# are dead, or when the player runs on past them.
+# Mission 5, "Fight Through the Fallen". Begins 4 s after the Ghost calls
+# out the first dropship (pt_ketch + 6 s at the earliest, all ten runs; the
+# run that kept out of the graveyard had it 33 s after pt_ketch). Clears once
+# the graveyard's Fallen are dead, or when the player runs on past them.
 
 player_trigger pt_ketch
 generic_objective obj_m0_m04
 trigger_volume tv_obj_backup_adv
 player_trigger pt_obj_backup_adv bind(tv_obj_backup_adv)
+squad sq_fallen_dropship_1
 squad sq_fallen_m0_upgrade
 squad sq_fallen_m0_drop_1
 squad sq_fallen_m0_drop_2
@@ -20,7 +23,9 @@ script complete(): pass
 
 script main():
     sleep_until(pt_ketch.is_triggered())
-    sleep(12)
+    sleep(6)
+    sleep_until(sq_fallen_dropship_1.alive_count() > 0)
+    sleep(6)
     obj_m0_m04.objective_begin(obj_m0_m04._nav_point)
     sleep_until(pt_obj_backup_adv.is_triggered() or sq_fallen_m0_upgrade.alive_count() > 0)
     sleep_until(pt_obj_backup_adv.is_triggered() or graveyard_alive_count() == 0)

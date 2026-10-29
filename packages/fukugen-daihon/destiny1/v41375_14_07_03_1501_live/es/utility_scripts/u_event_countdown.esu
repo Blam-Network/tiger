@@ -12,8 +12,24 @@
 # intro, its beacon 11s later, and the minute starts 2s after that with the
 # Ghost already on it. The engagement trigger is not reset at the start, as
 # the alpha's was. When the minute ran out the nav point went, and the
-# satellite was still there 7s later when the capture ended. Everything past
-# that (the capture, the waves, the tiers) is the alpha's and unseen.
+# satellite was still there 7s later when the capture ended.
+# The capture is from a second retail run, the Moon's accelerator
+# (pf_event_countdown_dropship[0] on the Moon patrol's public host, Patrol
+# Luna of 2026-10-28), whose start matched the Cosmodrome's to the tick. The
+# engagement trigger fired 9s into the minute with nothing on the wire; the
+# engage line, the music and the satellite to 0.2 came 7s later, as the
+# capture began, with the start line stopped. The objective went active
+# 1.2s on and the 240s clock started a second after that with the first
+# wave (wave 0) placed in the same tick; each later wave came as the last
+# was cleared. The capture was won with 50s left: complete at tier 3 and
+# every wave sent off at once, the gold ending and the satellite and its
+# cover to 0.3 a second later, the beacon dark 2s on and gone at 5s, the
+# satellite gone at 7.5s and the cover at 8.5s, and 20s after the ending the
+# music stopped and the event cleaned up, its trigger reset.
+# Not seen: the waves' dropships (the pf_points' pilots brought four of the
+# ten waves in that run, which ones by no rule one run shows; here every
+# wave is placed), silver, bronze and a failed capture, which are the
+# alpha's.
 
 u_event_globals event_globals
 u_event_countdown_preset pf_preset
@@ -61,37 +77,17 @@ script main():
     func_countdown_event_start(i_setup_timer)
 
     sleep_until(pt_engagement_volume.is_triggered() or pf_preset.po_event_countdown.timer_is_complete())
-
-    if pt_engagement_volume.is_triggered():
-        pf_preset.seq_warsat_engage.start()
     sc_capture_dialogue.restart()
 
     if func_test_countdown_engaged(i_main_timer):
         func_countdown_enemy_waves()
-
-        if cz_event_countdown.is_captured():
-            pf_preset.seq_warsat_complete_gold.start()
-            pf_preset.po_event_countdown.set_public_event_tier(3)
-            pf_preset.po_event_countdown.set_complete()
-        else:
-            cz_event_countdown.lock()
-            progress = cz_event_countdown.get_capture_progress()
-            if progress < 0.33:
-                pf_preset.seq_warsat_complete_failure.start()
-                pf_preset.po_event_countdown.set_failed()
-            elif progress < 0.66:
-                pf_preset.seq_warsat_complete_bronze.start()
-                pf_preset.po_event_countdown.set_public_event_tier(1)
-                pf_preset.po_event_countdown.set_complete()
-            else:
-                pf_preset.seq_warsat_complete_silver.start()
-                pf_preset.po_event_countdown.set_public_event_tier(2)
-                pf_preset.po_event_countdown.set_complete()
-
-        func_remove_warsat()
+        seq_ending = func_countdown_award()
+        func_countdown_waves_exit()
         sleep(1)
+        seq_ending.start()
+        func_power_down_warsat()
+        sleep(11.5)
         pf_preset.seq_warsat_music1.stop()
-        sleep(5)
     else:
         # nobody came: the nav point goes as the minute runs out, the
         # satellite stays a while longer (over 7s, how long is unseen)
@@ -107,6 +103,25 @@ script main():
 
 script complete():
     func_countdown_cleanup()
+
+# the tier is how much of the capture the players got
+def func_countdown_award():
+    if cz_event_countdown.is_captured():
+        pf_preset.po_event_countdown.set_public_event_tier(3)
+        pf_preset.po_event_countdown.set_complete()
+        return pf_preset.seq_warsat_complete_gold
+    cz_event_countdown.lock()
+    progress = cz_event_countdown.get_capture_progress()
+    if progress < 0.33:
+        pf_preset.po_event_countdown.set_failed()
+        return pf_preset.seq_warsat_complete_failure
+    if progress < 0.66:
+        pf_preset.po_event_countdown.set_public_event_tier(1)
+        pf_preset.po_event_countdown.set_complete()
+        return pf_preset.seq_warsat_complete_bronze
+    pf_preset.po_event_countdown.set_public_event_tier(2)
+    pf_preset.po_event_countdown.set_complete()
+    return pf_preset.seq_warsat_complete_silver
 
 def func_countdown_setup():
     i_event_countdown_setup_timer = roll_countdown_initiate_timer()
@@ -164,8 +179,11 @@ def func_test_countdown_engaged(i_main_timer):
     if pf_preset.po_event_countdown.timer_is_complete():
         return false
 
+    # the capture begins
     dev_event_countdown_object.set_device_position(0.2)
     b_event_initiated = true
+    pf_preset.seq_warsat_start.stop()
+    pf_preset.seq_warsat_engage.start()
     pf_preset.seq_warsat_music1.start()
 
     sleep(1)
@@ -179,8 +197,9 @@ def func_test_countdown_engaged(i_main_timer):
     pf_preset.po_event_countdown.timer_start()
     return true
 
+# wave 0 comes with the clock, each next as the last is cleared
 def func_countdown_enemy_waves():
-    i = 1
+    i = 0
     while not func_get_timer_complete() or func_in_zone():
         sq_event_countdown_wave[i].place()
         sg_countdown_total.add_child(sq_event_countdown_wave[i])
@@ -201,9 +220,7 @@ def func_countdown_enemy_waves():
 
         if b_zone_enemy_max_timeout == true:
             # a wave that sat out the zone too long goes home
-            for sq in sq_event_countdown_wave:
-                sq.activate_temperament("temper_despawn")
-                obj_event_enemy_exit.add_squad(sq)
+            func_countdown_waves_exit()
             i = 1
         else:
             i = i + 1
@@ -233,7 +250,7 @@ def func_in_zone():
 def func_get_timer_complete():
     return pf_preset.po_event_countdown.timer_is_complete()
 
-# the satellite powers down and goes
+# the satellite powers down and goes, at once
 def func_remove_warsat():
     dev_event_countdown_object.set_device_position(0.3)
     o_event_countdown_object_spawner.delete_object()
@@ -241,17 +258,36 @@ def func_remove_warsat():
         dev_warsat_cover[i].set_device_position(0.3)
         o_warsat_cover[i].delete_object()
 
-def func_countdown_cleanup():
+# after a capture: the satellite powers down, its beacon goes dark, then
+# the beacon, the satellite and its cover go
+def func_power_down_warsat():
+    dev_event_countdown_object.set_device_position(0.3)
+    for i in range(len(o_warsat_cover)):
+        dev_warsat_cover[i].set_device_position(0.3)
+    sleep(2)
+    dev_event_countdown_beacon.set_device_position(0)
+    sleep(3)
     o_event_countdown_beacon.delete_object()
-    o_event_countdown_ghost.delete_object()
+    sleep(2.5)
+    o_event_countdown_object_spawner.delete_object()
+    sleep(1)
+    for i in range(len(o_warsat_cover)):
+        o_warsat_cover[i].delete_object()
 
+def func_countdown_waves_exit():
     for sq in sq_event_countdown_wave:
         sq.activate_temperament("temper_despawn")
         obj_event_enemy_exit.add_squad(sq)
 
+def func_countdown_cleanup():
+    o_event_countdown_beacon.delete_object()
+    o_event_countdown_ghost.delete_object()
+
+    func_countdown_waves_exit()
+
     pf_preset.po_event_countdown.clear()
     cz_event_countdown.lock()
-    pt_engagement_volume.disable()
+    pt_engagement_volume.reset()
     int_event_countdown_object.clear()
 
     sleep_until_timeout(sg_countdown_total.count_at_firing_area() >= sg_countdown_total.alive_count(), 8)

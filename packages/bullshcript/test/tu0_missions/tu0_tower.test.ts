@@ -8,11 +8,12 @@ import { describe, expect, it } from "vitest";
 import { tu0Compiled, tu0ScriptSource, tu0Scripts } from "./tu0_source.ts";
 import { TOWER_ROWS, TOWER_VENDORS } from "./tu0_tower_rows.ts";
 
-// The TU0 Tower (city_tower_default1): its binder, its activity root and
-// the start bubble's ambient encounter.
+// The TU0 Tower (city_tower_default1): its binder, its activity root, the
+// start bubble's ambient encounter and the hangar's.
 const ROOT = 0xf2_d8_8b_d0;
 const BINDER = 0x40_ae_bf_90;
 const PLAZA = 0x8c_c3_14_36;
+const MILITARY = 0x19_d4_34_43;
 
 const TOWER = [
   {
@@ -32,6 +33,12 @@ const TOWER = [
     key: "PLAZA",
     path: "es/city_tower/enc_plaza_amb1.es",
     tag: 0x80_c8_82_cd,
+  },
+  {
+    bundle: MILITARY,
+    key: "MILITARY",
+    path: "es/city_tower/enc_military_amb1.es",
+    tag: 0x80_c8_81_68,
   },
 ];
 
@@ -75,7 +82,7 @@ describe("TU0 Tower scripts", () => {
     }
   });
 
-  it("runs on the TU0 host: binds the lifetime, waits for the fireteam, places the vendors", () => {
+  it("runs on the TU0 host: binds the lifetime, waits for the fireteam, places the vendors and workers", () => {
     // TU0 has no script tags; each bundle's script stands in under its
     // bundle's tag id.
     const scripts = tu0ScriptSource(BUNDLES, "city_tower");
@@ -93,7 +100,7 @@ describe("TU0 Tower scripts", () => {
       tickSeconds: 1,
     });
     runtime.start();
-    runtime.setActiveBundles(new Set([ROOT, BINDER, PLAZA]));
+    runtime.setActiveBundles(new Set([ROOT, BINDER, PLAZA, MILITARY]));
     const prints = () =>
       log
         .filter((line) => line.includes(" print "))
@@ -110,16 +117,32 @@ describe("TU0 Tower scripts", () => {
     }
     expect(prints()).toContain("CITY TOWER DEFAULT ACTIVITY");
 
-    const placed = new Set(
-      changes
-        .filter(
-          (change) => change.kind === "squad" && change.item.bundle === PLAZA
-        )
-        .map((change) => change.item.typeIndex)
-    );
-    expect([...placed].sort((a, b) => a - b)).toEqual(
-      TOWER_VENDORS.map(([, index]) => index).sort((a, b) => a - b)
-    );
+    const placed = (bundle: number) =>
+      new Set(
+        changes
+          .filter(
+            (change) =>
+              change.kind === "squad" &&
+              change.item.bundle === bundle &&
+              !change.initial
+          )
+          .map((change) => change.item.typeIndex)
+      );
+    // the vendors, the cannon, workstation and welder workers and the
+    // walkers (the crate workers are placed one member at a time)
+    const plaza = placed(PLAZA);
+    for (const [name, index] of TOWER_VENDORS) {
+      expect(plaza.has(index), name).toBe(true);
+    }
+    for (const index of [8, 11, 18, 25, 26]) {
+      expect(plaza.has(index), `plaza squad ${index}`).toBe(true);
+    }
+    // the hangar's four vendors and its people
+    const military = placed(MILITARY);
+    for (const index of [2, 4, 6, 8, 17, 19, 22, 26, 28, 31, 33, 36, 42]) {
+      expect(military.has(index), `hangar squad ${index}`).toBe(true);
+    }
+    expect(military.has(10) !== military.has(13)).toBe(true);
     expect(log).toContain(
       "lua lifetime:import_only_bind(lifetime_timer) -> lifetime t16#2"
     );

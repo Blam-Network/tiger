@@ -3,8 +3,10 @@
 # The graveyard in A Guardian Rises: the Ketch arrives, the Fallen dropships
 # drop their troops, then the sniper and the exit shanks come in. The
 # dropships wait for the player to come down into the graveyard: the first on
-# pt_ketch_dropship, the other three on pt_ketch_dropship_2 (eight retail
-# runs; the one that stood watching the Ketch had them 2 and 10 s late).
+# pt_ketch_dropship, the other three on pt_ketch_dropship_2 (nine retail
+# runs), or all four 22 s after the Ketch arrives (one run, which stayed up
+# on the ridge past both triggers). The sniper comes in on pt_drop_2, or once
+# two of the first drop's four are dead (three runs).
 
 @activity_bundle("enc_graveyard_m0")
 
@@ -76,7 +78,7 @@ script sc_signal_flare():
     o_signal_flare.delete_object()
 
 script sc_dropship_1():
-    sleep_until(pt_ketch_dropship.is_triggered())
+    sleep_until_timeout(pt_ketch_dropship.is_triggered(), 22)
     dropship_enter(sq_fallen_dropship_1__pilot, cp_dropship_enter_1, true)
     sleep(9)
     sq_fallen_m0_drop_1.set_task("drop_1")
@@ -86,16 +88,16 @@ script sc_dropship_1():
 
 # the other three come in a second apart: 3, 2, then 4
 script sc_dropship_2():
-    sleep_until(pt_ketch_dropship_2.is_triggered())
+    sleep_until_timeout(pt_ketch_dropship_2.is_triggered(), 22)
     sleep(1)
     dropship_enter(sq_fallen_dropship_2__pilot, cp_dropship_enter_2, false)
 
 script sc_dropship_3():
-    sleep_until(pt_ketch_dropship_2.is_triggered())
+    sleep_until_timeout(pt_ketch_dropship_2.is_triggered(), 22)
     dropship_enter(sq_fallen_dropship_3__pilot, cp_dropship_enter_3, false)
 
 script sc_dropship_4():
-    sleep_until(pt_ketch_dropship_2.is_triggered())
+    sleep_until_timeout(pt_ketch_dropship_2.is_triggered(), 22)
     sleep(2)
     dropship_enter(sq_fallen_dropship_4__pilot, cp_dropship_enter_4, true)
     sleep(9)
@@ -126,7 +128,8 @@ def dropship_leave(pilot, path):
     pilot.execute(__cs)
 
 script sc_sniper():
-    sleep_until_timeout(pt_drop_2.is_triggered(), 20)
+    sleep_until(pt_drop_2.is_triggered() or sq_fallen_m0_drop_1.alive_count() == 4)
+    sleep_until(pt_drop_2.is_triggered() or sq_fallen_m0_drop_1.alive_count() <= 2)
     sq_fallen_m0_sniper.set_task("sniper")
     sq_fallen_m0_sniper.place()
 

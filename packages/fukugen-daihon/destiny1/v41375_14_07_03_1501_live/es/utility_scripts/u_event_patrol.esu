@@ -1,0 +1,139 @@
+# es\utility_scripts\u_event_patrol.esu
+#
+# Target patrol, the high-value target public event (pf_event_patrol): a
+# target walks a route of hills (the pf_points, its objective's tasks in
+# route order: the first, then task_1, task_2 ...) towards its goal, and
+# the players have 300s to hunt it down.
+#
+# From two retail runs on the Moon (2.3.1, Patrol Luna of 2026-10-28), each
+# on a fresh public host: the moonbase's pf_event_patrol[0] (four hills,
+# 188s after the host came up) and the hellmouth's pf_event_patrol[1] (nine
+# hills, 95s in). Seconds from the start, the same in both: the intro
+# behaviour and the target put on its route's objective at 0; at 3.7 the
+# objective straight to active (no incoming step) with a 300s clock and its
+# waypoint on the target, the target placed on its first task, the goal out
+# and both hop-ons filtered to the target; the announce at 4.8; the intro
+# behaviour over at 15. The first engagement (the client's engaged incident,
+# 49s and 25s in) started the music a tick after the server took it, and
+# the engage line 1.2-1.3s after the music. The target set off for each
+# later hill 26-51s after the last; the progress update played as it set
+# off for the second, the ending progress 0.4s after it set off for the
+# last. Both were killed (on the moonbase's last leg with 174s left, on the
+# hellmouth's second with 253s left) and both went gold: the tier, complete
+# 0.5-0.8s later, the gold ending and the music stopped 1s after that, the
+# objective, the goal and the filters cleared 3s on, and 5s later the
+# engage line stopped and the goal was taken down again.
+# Not seen: the target reaching its goal or the clock running out, silver
+# and bronze. The clock running out is the alpha's events' failure: the
+# target gets away and despawns.
+
+u_event_globals event_globals
+u_event_patrol_preset pf_preset
+dynamic_array<u_event_patrol_point> pf_point
+squad sq_boss
+squad_member sq_boss__cell_boss
+objective obj_boss_path
+object o_goal
+hop_on ho_hopon
+object_filter of_hopon
+hop_on ho_engagement
+object_filter of_engagement
+incident_listener il_engaged
+int i_event_time = 300
+# the first task of the route; the hills after it are task_1, task_2 ...
+string_hash sh_first_task = "task"
+int g_i_current_point
+
+script main():
+    g_i_current_point = 0
+    func_patrol_start()
+    func_patrol_route()
+    func_patrol_award()
+
+script complete():
+    func_patrol_cleanup()
+
+def func_patrol_start():
+    pf_preset.seq_intro_behavior.start()
+    sq_boss.set_objective(obj_boss_path)
+    obj_boss_path.add_squad(sq_boss)
+    sleep(3.7)
+    pf_preset.po_event_patrol.set_active()
+    pf_preset.po_event_patrol.timer_activate(i_event_time)
+    pf_preset.po_event_patrol.timer_start()
+    pf_preset.po_event_patrol.nav_point_activate(sq_boss)
+    sq_boss.set_task(sh_first_task)
+    pf_point[0].sg_boss.add_child(sq_boss)
+    sq_boss.place()
+    o_goal.create()
+    of_hopon.add(sq_boss)
+    ho_hopon.set_filter(of_hopon)
+    of_engagement.add(sq_boss)
+    ho_engagement.set_filter(of_engagement)
+    event_globals.bind_squad_engagement(sq_boss, pf_preset.po_event_patrol)
+    il_engaged.bind_incident_name_hash("engaged")
+    il_engaged.set_handler(pf_preset.po_event_patrol.d_handle_engagement_incident)
+    sc_patrol_engage.restart()
+    sleep(1.1)
+    pf_preset.seq_patrol_announce.start()
+    sleep(10)
+    pf_preset.seq_intro_behavior.stop()
+
+# the music and the engage line, once a player takes the target on
+script sc_patrol_engage():
+    sleep_until(pf_preset.po_event_patrol.get_engaged_player_count() > 0 or sq_boss.alive_count() <= 0)
+    if sq_boss.alive_count() <= 0:
+        return
+    pf_preset.seq_patrol_music1.start()
+    sleep(1.2)
+    pf_preset.seq_patrol_engage.start()
+
+# one hill at a time; past the last it holds at its goal until it is dead
+# or out of time
+def func_patrol_route():
+    last = len(pf_point) - 1
+    for i in range(1, len(pf_point)):
+        sleep_until(pf_point[i - 1].has_arrived() or func_patrol_over())
+        if func_patrol_over():
+            return
+        g_i_current_point = i
+        pf_point[i].sg_boss.add_child(sq_boss)
+        sq_boss.set_task("task_" + i)
+        if i == 1:
+            pf_preset.seq_patrol_update_progress.start()
+        if i == last:
+            sleep(0.4)
+            pf_preset.seq_patrol_ending_progress.start()
+    sleep_until(func_patrol_over())
+
+def func_patrol_over():
+    return sq_boss.alive_count() <= 0 or pf_preset.po_event_patrol.timer_is_complete()
+
+def func_patrol_award():
+    sc_patrol_engage.kill()
+    if sq_boss.alive_count() <= 0:
+        pf_preset.po_event_patrol.set_public_event_tier(3)
+        sleep(0.5)
+        pf_preset.po_event_patrol.set_complete()
+        sleep(1)
+        pf_preset.seq_patrol_complete_gold.start()
+    else:
+        # out of time: it got away
+        pf_preset.po_event_patrol.set_failed()
+        sq_boss.activate_temperament("temper_despawn")
+        sleep(1)
+        pf_preset.seq_patrol_complete_failure.start()
+    pf_preset.seq_patrol_music1.stop()
+    sleep(3)
+    func_patrol_cleanup()
+
+def func_patrol_cleanup():
+    pf_preset.po_event_patrol.clear()
+    o_goal.delete_object()
+    of_hopon.clear()
+    ho_hopon.clear_filter()
+    of_engagement.clear()
+    ho_engagement.clear_filter()
+    sleep(5)
+    pf_preset.seq_patrol_engage.stop()
+    o_goal.delete_object()

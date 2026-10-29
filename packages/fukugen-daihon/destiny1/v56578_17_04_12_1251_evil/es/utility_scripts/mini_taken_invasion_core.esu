@@ -1,0 +1,95 @@
+# es\utility_scripts\mini_taken_invasion_core.esu
+#
+# The heart of a patrol zone's Taken invasion (The Taken King): the rift
+# opening, the four mega schisms, the invasion's time limit and its Taken
+# lieutenant. The zone's bundle calls invade() with its parties
+# (taken_invasion_party.esu) every 720 s.
+#
+# Pooled over the 2.3.1 captures of Venus' invasions (the shattered coast,
+# vex complex, fallen caldera, headlands and plaza bundles), 13 arrivals:
+# - The rift's effects come up 0.4, then 0.6 and 0.9 3 s apart, the four
+#   schisms 3 s after that, and 3.8 s later the rift's effects go, the
+#   180 s timer starts and the parties open. The schisms go 7 s on.
+# - Once the parties have lost eight squads (0.8 and 1.5 s after the
+#   eighth, Patrol Venus#2 and 2026-10-27 20-49-27#3) the lieutenant is
+#   called: the timer starts over at 180 s, the schisms come back, one party
+#   is sent on and the others retire. 7 s later the core's sequence plays,
+#   the lieutenant comes in 4 s into it and the schisms go 3 s after.
+# - The timer running out ends it: the parties phase on Patrol Venus#5
+#   (seven squads lost), the lieutenant on 20-49-27#3 (he died 6 s after,
+#   the party with him 7 s after). Killing the lieutenant ends it too
+#   (Patrol Venus#2): 2 s later the party still out retires.
+# - Its timer starts 719.4-720.4 s after the last one's on the hosts that
+#   saw two (the fallen caldera's, the shattered coast's); the invasions of
+#   one capture keep that 720 s beat across all of Venus' zones, so the
+#   beat is the destination's, not the zone's.
+
+squad lieutenant_squad
+sequence _sequence
+object taken_area_fx_object
+static_array<object, 4> mega_schism_object
+timer _timer
+
+def invade(parties):
+    taken_area_fx_object.create()
+    taken_area_fx_object.set_device_position(0.4)
+    sleep(3)
+    taken_area_fx_object.set_device_position(0.6)
+    sleep(3)
+    taken_area_fx_object.set_device_position(0.9)
+    sleep(3)
+    schisms_create()
+    sleep(4)
+    taken_area_fx_object.delete_object()
+    _timer.reset(180)
+    _timer.start()
+    for i in range(len(parties)):
+        parties[i].open()
+    sleep(7)
+    schisms_delete()
+
+    sleep_until(_timer.is_expired() or lost_squads(parties) >= 8)
+    if _timer.is_expired():
+        for i in range(len(parties)):
+            parties[i].retire()
+        return
+
+    # the lieutenant
+    _timer.reset(180)
+    _timer.start()
+    schisms_create()
+    i_on = mathlib.random_int_inclusive(0, len(parties) - 1)
+    for i in range(len(parties)):
+        if i == i_on:
+            parties[i].press_on()
+        else:
+            parties[i].retire()
+    sleep(7)
+    _sequence.start()
+    sleep(4)
+    lieutenant_squad.place()
+    sleep(3)
+    schisms_delete()
+
+    sleep_until(_timer.is_expired() or lieutenant_squad.alive_count() <= 0)
+    if _timer.is_expired():
+        parties[i_on].retire()
+        sleep(6)
+        lieutenant_squad.kill()
+    else:
+        sleep(2)
+        parties[i_on].retire()
+
+def lost_squads(parties):
+    n = 0
+    for i in range(len(parties)):
+        n = n + parties[i].wipes()
+    return n
+
+def schisms_create():
+    for schism in mega_schism_object:
+        schism.create()
+
+def schisms_delete():
+    for schism in mega_schism_object:
+        schism.delete_object()

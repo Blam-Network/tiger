@@ -1,0 +1,54 @@
+# es\utility_scripts\u_event_dropship_point.esu
+#
+# One drop point of a glimmer drop (a pf_event_dropship_multipoint_fallen's
+# pf_point): the dropship's way in and out, the troops it lands there, the
+# drill, its cover and the beacon, and the volume that counts a player as
+# engaged at the point.
+#
+# Timed off retail's dry sea glimmer drop (2.3.1, pf_event_dropship_
+# multipoint_fallen[1] on act_cosmo_m2_dome_c's public host), the same at
+# its three points: the drill went down as the dropship's entrance ended,
+# the cover and the beacon 5s later, the beacon lit a second after that.
+# When the point was won the drill and its cover went to 0.4 (0.3 at the
+# last point), the beacon went dark 2s later and was gone at 5s, the cover
+# at 6s and the drill at 8s, and both were taken down again at 10s.
+
+squad sq_event_dropship_troops
+objective obj_event_dropship_pt
+object o_event_dropship_beacon_pt
+object o_event_fiction_device_temp
+static_array<object, 7> o_dropship_cov
+trigger_volume cv_event_dropship_pt
+player_trigger pt_event_dropship bind(cv_event_dropship_pt)
+control_point_set cps_dropship_point_enter
+control_point_set cps_dropship_point_exit
+
+def create_drill():
+    o_event_fiction_device_temp.create()
+    o_event_fiction_device_temp.set_device_position(0)
+
+def create_cover():
+    for cov in o_dropship_cov:
+        cov.create()
+        cov.set_device_position(0)
+    o_event_dropship_beacon_pt.create()
+    o_event_dropship_beacon_pt.set_device_position(0)
+
+def remove_cover(position):
+    o_event_fiction_device_temp.set_device_position(position)
+    for cov in o_dropship_cov:
+        cov.set_device_position(position)
+    sleep(2)
+    o_event_dropship_beacon_pt.set_device_position(0)
+    sleep(3)
+    o_event_dropship_beacon_pt.delete_object()
+    sleep(0.5)
+    for cov in o_dropship_cov:
+        cov.delete_object()
+    sleep(2.5)
+    o_event_fiction_device_temp.delete_object()
+    sleep(2)
+    # retail took the drill and the cover down a second time
+    o_event_fiction_device_temp.delete_object()
+    for cov in o_dropship_cov:
+        cov.delete_object()

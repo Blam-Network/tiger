@@ -6,13 +6,16 @@
 # in the court and down the tubes, each group brought in as a player walks
 # past its trigger.
 #
-# The gates were out and open from world entry in all three missions that
+# The gates were out and open from world entry in all four activities that
 # loaded it (act_moon_m3_lowercitadel, act_moon_m4_uppercitadel,
-# act_moon_m5_strength, 2026-10-25). The Hive are from the one run that
-# crossed the tubes (act_moon_m5_strength, 2026-10-25 19-30-30#1), so those
-# rules are a single run's; each trigger put its squads in 0.5-1.6 s later:
+# act_moon_m5_strength, 2026-10-25, and the Moon patrol, Patrol Luna of
+# 2026-10-28). The Hive are from the two runs that crossed the tubes
+# (act_moon_m5_strength, 2026-10-25 19-30-30#1, and the patrol's second
+# crossing); each trigger put its squads in 0.5-1.6 s later in both:
 # - at load: the court's upper and first lower squads;
 # - pt_spawn_courtlow: the second lower squad;
+# - the upper squad wiped: the second upper squad, 1.5 s later (the
+#   patrol's first crossing only);
 # - pt_tube: the shuttle troopers and the first Thrall;
 # - pt_spawn_tube_mid: the front and rear troopers and the second Thrall;
 # - pt_spawn_tube_low: the upper rear troopers;
@@ -21,8 +24,9 @@
 # - pt_exit: the exit Thrall.
 # Bodies are the ones the server placed; tasks are the friendly objective's,
 # by name.
-# Left out: the hellpoint, gate and end squads and the ogre roar, never
-# placed or played in a capture.
+# Left out: the hellpoint troopers, up from the load in the patrol but
+# never in act_moon_m5_strength's run, and the gate and other end squads and
+# the ogre roar, never placed or played in a capture.
 
 @activity_bundle(0x43F9E8C3)
 
@@ -46,6 +50,8 @@ trigger_volume tv_exit
 player_trigger pt_exit bind(tv_exit)
 @member_counts({troopers: 2})
 squad sq_court_high_a
+@member_counts({troopers: 1, thrall: 2})
+squad sq_court_high_b
 @member_counts({troopers: 2, 0xFBDB79B4: 1})
 squad sq_court_low_a
 @member_counts({thrall: 2, 0xFBDB79B4: 1})
@@ -74,6 +80,13 @@ script sc_main_thread():
         gate.set_device_position(1)
     place_on_task(sq_court_high_a, "0x9D50BEEF")
     place_on_task(sq_court_low_a, "0x99B86EDB")
+
+@startup()
+script sc_court_high():
+    sleep_until(sq_court_high_a.alive_count() > 0)
+    sleep_until(sq_court_high_a.alive_count() <= 0)
+    sleep(1.5)
+    place_on_task(sq_court_high_b, "0x9D50BEEF")
 
 @startup()
 script sc_court_low():

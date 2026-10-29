@@ -1,0 +1,8 @@
+# es\utility_scripts\taken_invasion_spawn.esu
+#
+# One spot a Taken invasion party comes in at (The Taken King): the blight's
+# sequence, which plays for about 7 s, the party's squad stepping out of it
+# 4 s in. Every Venus invasion bundle gives each party five. From the 2.3.1
+# captures of Venus' Taken invasions (taken_invasion_party.esu).
+
+sequence _sequence

@@ -1,0 +1,226 @@
+# es\utility_scripts\u_event_vex_block.esu
+#
+# Vex block, the Vex public event (the pf_event_vex_block prefab): Vex
+# clouds bring in a block and its guards, and once a player takes them on
+# the players hold the block against waves for four minutes. The flyers
+# (harpies, a hydra) go for the block to give themselves to it; each that
+# gets there costs a tenth of the progress bar, and the tier is how many
+# did.
+#
+# From one retail run, the vex complex's pf_event_vex_block[1] (2.3.1,
+# Patrol Venus of 2026-10-28, on the complex's fresh public host), on TU0's
+# rows, which are the same. Seconds from the start: the objective incoming
+# with the intro behaviour and the initial guards' cloud at 0, the guards
+# out on "guards" at 1.2, the announce at 0.8; at 4.9 a 90s clock with the
+# waypoint, the intro behaviour over, the engage line, the block and its six
+# covers (device 0) put out. A player engaged at 12: the objective went
+# active with a 240s clock and a progress bar of 10 out of 10, the music
+# started and the engagement trigger was reset. The waves came by cloud from
+# a second later (below), the beacon went up 11.4s after the engagement and
+# lit 0.9s on. When the clock ran out nobody had reached the block: complete
+# at tier 3 with every squad sent to "flee", the gold ending 1s later, the
+# music stopped and the covers and block to 0.4 and 0.5 at 4s, the objective
+# cleared at 5.9s, the beacon dark at 8.2s, the covers and the beacon taken
+# down at 10.8s and the block at 11.9s, and the engage line stopped at
+# 18.9s.
+# The waves: new squads came in on the clock (with 239, 192, 173, 126, 110,
+# 71 and 65s left), each set of them while the last set was still up, and
+# a squad of the running set that was down was dropped again. That the sets
+# follow the clock and not the kills is our reading of one run, as is when
+# a squad counts as down (most of them were out of the client's sense).
+# Not seen: nobody engaging in the 90s, a flyer reaching the block, silver,
+# bronze and failure. Those are the alpha's event: the flyers seize the
+# block a second after reaching it and are killed 2.5s on, a tier for no
+# losses, half or fewer, more, and failure when all ten are lost.
+
+u_event_globals event_globals
+u_event_globals event_globals_initial_engage
+u_event_vex_block_preset pf_preset
+static_array<u_event_vex_block_point, 3> pf_point
+object o_vex_block
+static_array<object, 6> o_vex_cov
+object o_event_beacon
+objective obj_vex_block
+squad sq_initial_vex
+squad sq_goblin_double
+squad sq_goblin_triple
+squad sq_hobgoblin_goblin_double
+squad sq_minotaur_single
+squad sq_minotaur_goblin_double
+squad sq_big_wave_1st
+squad sq_big_wave_2nd
+squad sq_big_wave_3rd
+squad sq_harpies
+squad sq_hydra
+squad_group sg_guards
+squad_group sg_sacrifices
+trigger_volume tv_engagement
+player_trigger pt_engagement bind(tv_engagement)
+int i_setup_time = 90
+int i_event_time = 240
+int i_sacrifices_max = 10
+int i_sacrifices
+
+script main():
+    i_sacrifices = 0
+    func_event_start()
+    sleep_until(pf_preset.po_event_vex_block.get_engaged_player_count() > 0 or pf_preset.po_event_vex_block.timer_is_complete())
+    if pf_preset.po_event_vex_block.get_engaged_player_count() > 0:
+        func_event_engaged()
+        sleep_until(pf_preset.po_event_vex_block.timer_is_complete() or i_sacrifices >= i_sacrifices_max)
+        sc_waves.kill()
+        sc_sacrifices.kill()
+    func_event_award()
+    func_event_cleanup()
+
+def func_guards():
+    return [sq_initial_vex, sq_goblin_double, sq_goblin_triple, sq_hobgoblin_goblin_double, sq_minotaur_single, sq_minotaur_goblin_double, sq_big_wave_1st, sq_big_wave_2nd, sq_big_wave_3rd]
+
+def func_squads():
+    return [sq_initial_vex, sq_goblin_double, sq_goblin_triple, sq_hobgoblin_goblin_double, sq_minotaur_single, sq_minotaur_goblin_double, sq_big_wave_1st, sq_big_wave_2nd, sq_big_wave_3rd, sq_harpies, sq_hydra]
+
+def func_event_start():
+    po = pf_preset.po_event_vex_block
+    pt_engagement.set_handler(po.d_handle_engagement_incident)
+    event_globals.bind_squad_engagement(sq_initial_vex, po)
+    event_globals_initial_engage.bind_squad_damage_engagement(sq_initial_vex, po)
+    for sq in func_guards():
+        sg_guards.add_child(sq)
+    sg_sacrifices.add_child(sq_harpies)
+    sg_sacrifices.add_child(sq_hydra)
+
+    po.set_incoming()
+    pf_preset.seq_intro_behavior.start()
+    sc_initial_drop.restart()
+    sleep(0.8)
+    pf_preset.seq_vex_block_announce.start()
+
+    # the block comes in
+    sleep(4.1)
+    po.timer_activate(i_setup_time)
+    po.timer_start()
+    po.nav_point_activate(o_vex_block)
+    pf_preset.seq_intro_behavior.stop()
+    pf_preset.seq_vex_block_engage.start()
+    o_vex_block.create()
+    o_vex_block.set_device_position(0)
+    for cov in o_vex_cov:
+        cov.create()
+    sleep(0.5)
+    for cov in o_vex_cov:
+        cov.set_device_position(0)
+
+def func_event_engaged():
+    po = pf_preset.po_event_vex_block
+    po.set_active()
+    po.timer_activate(i_event_time)
+    po.timer_start()
+    po.progress_activate(i_sacrifices_max, i_sacrifices_max)
+    pf_preset.seq_vex_block_music1.start()
+    pt_engagement.reset()
+    sc_waves.restart()
+    sc_beacon.restart()
+    sc_sacrifices.restart()
+
+script sc_initial_drop():
+    func_drop(sq_initial_vex, "guards")
+
+script sc_beacon():
+    sleep(11.4)
+    o_event_beacon.create()
+    o_event_beacon.set_device_position(0)
+    sleep(0.9)
+    o_event_beacon.set_device_position(1)
+
+# Each set of squads holds until the clock is down to the next set's time;
+# the last set holds to the end.
+script sc_waves():
+    sleep(1)
+    func_wave([sq_goblin_double, sq_goblin_triple], [], 192)
+    func_wave([sq_big_wave_1st], [sq_harpies], 173)
+    func_wave([sq_hobgoblin_goblin_double, sq_minotaur_single, sq_goblin_double], [], 126)
+    func_wave([sq_big_wave_2nd], [sq_harpies], 110)
+    func_wave([sq_minotaur_goblin_double, sq_hobgoblin_goblin_double, sq_goblin_triple], [], 71)
+    func_wave([sq_big_wave_3rd], [], 65)
+    func_wave([sq_big_wave_3rd], [sq_hydra], 0)
+
+def func_wave(guards, sacrifices, i_until):
+    while pf_preset.po_event_vex_block.timer_get_current() > i_until and not pf_preset.po_event_vex_block.timer_is_complete():
+        for sq in guards:
+            if sq.alive_count() <= 0:
+                func_drop(sq, "guards")
+        for sq in sacrifices:
+            if sq.alive_count() <= 0:
+                func_drop(sq, "sacrifices")
+        sleep(1)
+
+def func_drop(sq, task):
+    sq.set_objective(obj_vex_block)
+    func_free_point().drop(sq, task)
+
+# a cloud picked at random from those not carrying a squad
+def func_free_point():
+    while true:
+        i = mathlib.random_int_never_highest_value(0, len(pf_point))
+        if not pf_point[i].in_use:
+            return pf_point[i]
+        sleep(0.5)
+
+# the alpha's: a flyer at the block seizes it and is spent
+script sc_sacrifices():
+    while true:
+        for sq in [sq_harpies, sq_hydra]:
+            if sq.alive_count() > 0 and sq.count_at_firing_area() > 0:
+                sleep(1)
+                sq.activate_temperament("temper_vex_seize")
+                sq.activate_temperament("temper_freeze")
+                sleep(2.5)
+                sq.kill()
+                sq.deactivate_temperament("temper_freeze")
+                sq.deactivate_temperament("temper_vex_seize")
+                i_sacrifices = i_sacrifices + 1
+                pf_preset.po_event_vex_block.progress_update(i_sacrifices_max - i_sacrifices)
+        sleep(1)
+
+def func_event_award():
+    po = pf_preset.po_event_vex_block
+    for sq in func_squads():
+        sq.set_task("flee")
+    if po.get_engaged_player_count() <= 0 or i_sacrifices >= i_sacrifices_max:
+        po.set_failed()
+        sleep(1)
+        pf_preset.seq_vex_block_complete_failure.start()
+    elif i_sacrifices == 0:
+        po.set_public_event_tier(3)
+        po.set_complete()
+        sleep(1)
+        pf_preset.seq_vex_block_complete_gold.start()
+    elif i_sacrifices <= i_sacrifices_max * 0.5:
+        po.set_public_event_tier(2)
+        po.set_complete()
+        sleep(1)
+        pf_preset.seq_vex_block_complete_silver.start()
+    else:
+        po.set_public_event_tier(1)
+        po.set_complete()
+        sleep(1)
+        pf_preset.seq_vex_block_complete_bronze.start()
+
+def func_event_cleanup():
+    sleep(3)
+    pf_preset.seq_vex_block_music1.stop()
+    for cov in o_vex_cov:
+        cov.set_device_position(0.4)
+    o_vex_block.set_device_position(0.5)
+    sleep(1.9)
+    pf_preset.po_event_vex_block.clear()
+    sleep(2.3)
+    o_event_beacon.set_device_position(0)
+    sleep(2.6)
+    for cov in o_vex_cov:
+        cov.delete_object()
+    o_event_beacon.delete_object()
+    sleep(1.1)
+    o_vex_block.delete_object()
+    sleep(7)
+    pf_preset.seq_vex_block_engage.stop()

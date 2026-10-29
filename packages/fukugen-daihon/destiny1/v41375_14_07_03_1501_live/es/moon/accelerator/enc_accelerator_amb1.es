@@ -6,22 +6,26 @@
 # the crater ridge and the way to the Hall of Wisdom. Six encounters are up
 # as soon as the bubble loads; the rest wait for room under the actor budget.
 #
-# Pooled over two 2.3.1 fresh starts of the bubble, act_moon_m3_lowercitadel's
-# public host (the player in it for 115 s) and act_moon_m4_uppercitadel's
-# (62 s):
-# - Up at load in both: accel_hco, int_back_a, loiter_stealth and
-#   north_ridge, with two more, north_dome_a and west in one run, crater_ridge
-#   and int_front in the other. Both sets came to 22 bodies. The costs here
-#   are the bodies the server placed, the order the longer run's.
-# - wisdom_bouncers went in 51 s after the load with the others still up, so
-#   the budget has room for it (24); it waits out the first placement.
-# - north_ridge was placed again 18 s after it was wiped; crater_ridge went
-#   in once wisdom_bouncers had been wiped. Both from the longer run only.
-# - int_back_b and the two loiters never went in. Their costs are TU0's
-#   default bodies.
+# Pooled over four 2.3.1 fresh starts of the bubble: act_moon_m3_lowercitadel's
+# public host (the player in it for 115 s), act_moon_m4_uppercitadel's
+# (62 s) and two of the Moon patrol's (Patrol Luna of 2026-10-28, 225 s and
+# 690 s):
+# - Six encounters up at load in every run, 22 bodies each time: int_back_a
+#   and north_ridge in all four, one of the loiters (stealth three times,
+#   right once), and three of accel_hco, crater_ridge, north_dome_a, west
+#   and int_front. The costs here are the bodies the server placed.
+# - wisdom_bouncers went in 37-142 s after the load, at 37 s with all six
+#   still up, so the budget has room for it (24); it waits out the first
+#   placement, as int_back_b (in at 50 s and 146 s) does.
+# - A wiped encounter came back on its own or another took its place:
+#   north_ridge 7.5 s, 18 s and 27 s after its wipes, loiter_right 15 s,
+#   accel_hco 43 s.
+# - loiter_left never went in. Its cost is TU0's default bodies.
 # Left out: the two wave encounters (pf_waves_int, pf_waves_dome), whose
-# respawn timers ran from the load and stopped 32-43 s later with nothing
-# placed, and the music, which never played.
+# respawn timers ran from the load and stopped 14-43 s later with nothing
+# placed (and ran again later in the long run, still with nothing), the
+# music, which never played, and the public events, which are
+# enc_accelerator_events'.
 
 @activity_bundle("enc_accelerator_amb1")
 
@@ -42,8 +46,10 @@ simple_encounter pf_simple_wisdom_bouncers
 @member_counts({_squad: [{anchor: 1, dregs: 3, 0x4B2A2736: 1}]})
 simple_encounter pf_simple_crater_ridge
 simple_encounter pf_simple_int_front
+@member_counts({_squad: [{anchor: 1, 0x3715BE01: 2, 0x4B2A2736: 1}]})
 simple_encounter pf_simple_int_back_b
 simple_encounter pf_simple_loiter_left
+@member_counts({_squad: [{anchor: 1, 0x3715BE01: 1}]})
 simple_encounter pf_simple_loiter_right
 
 @startup()
@@ -66,16 +72,16 @@ script ss_encounter_controller_thread():
     encounters.add_ambient_encounter(pf_simple_wisdom_bouncers, 2, 100, 20, 18, 30)
     encounters.add_ambient_encounter(pf_simple_crater_ridge, 5, 100, 20, 18, 0)
     encounters.add_ambient_encounter(pf_simple_int_front, 4, 100, 20, 18, 0)
+    encounters.add_ambient_encounter(pf_simple_int_back_b, 4, 100, 20, 18, 30)
+    encounters.add_ambient_encounter(pf_simple_loiter_right, 2, 100, 20, 18, 0)
     # never placed on the wire: TU0's default bodies
-    encounters.add_ambient_encounter(pf_simple_int_back_b, 3, 100, 20, 18, 30)
     encounters.add_ambient_encounter(pf_simple_loiter_left, 2, 100, 20, 18, 30)
-    encounters.add_ambient_encounter(pf_simple_loiter_right, 2, 100, 20, 18, 30)
 
 @startup()
 # TU0's squads carry no objective of their own, so each takes its encounter's
 # objective and task once the encounter has placed it: the tasks retail gave
 # them (crater_ridge's by its influencer, 2.3.1 added a task ahead of it), and
-# the first task for the three never seen up.
+# the first task for the one never seen up.
 script sc_accel_hco_tasks():
     assign_tasks(pf_simple_accel_hco, ["0xDBDAB8FE"])
 

@@ -675,6 +675,13 @@ const EVIL_STARTS: Readonly<Record<string, ExpectedStart>> = {
     spawnTransition: 0x5f_17_fa_f0,
   },
   social_landing: startsIn("reef", "hangar"),
+  // The Taken King's hangar cutscene, in the state its one phase owns.
+  cine_hangar: {
+    destination: "cinematic_trv",
+    startSlice: "military",
+    startPhase: "cine_175_hng_phase",
+    phases: [["cine_175_hng_phase", "military"]],
+  },
   strike_vampire: {
     destination: "moon",
     startSlice: "launchtubes",

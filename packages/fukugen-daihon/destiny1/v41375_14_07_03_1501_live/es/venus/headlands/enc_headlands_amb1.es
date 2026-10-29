@@ -5,27 +5,33 @@
 # hill, the cliff ruins, the overhang, the gate steps and the pillars cave,
 # most of them brought in by dropship or Vex cloud.
 #
-# From one fresh start, act_venus_m02_southern_tides' third host (2026-10-25
-# 20-15-34#3, the player in the bubble from 8 s to 108 s), so every rule
-# here is a single run's:
-# - On the ground when the player arrived: the center hill and cliff ruins
-#   Fallen and the cliff support, gate steps and middle support Vex (with no
-#   ship in sight), and the overhang hill Fallen, 25 bodies. TU0's
-#   dropship_encounter flies its squads in, so those come by ship from the
-#   start.
-# - The overhang island went in at 39 s and the pillars cave at 93 s. With
-#   the cliff support and gate steps back by then, 27 bodies were up: the
-#   budget.
-# - The cliff support and gate steps were wiped together at 50 s; their
-#   ships came in 44 and 48 s later, once the middle support had been wiped
-#   and there was room again, and dropped their squads 4 s after.
+# From two fresh starts: act_venus_m02_southern_tides' third host
+# (2026-10-25 20-15-34#3, the player in the bubble from 8 s to 108 s) and
+# the patrol's (Patrol Venus#9, 8 s to 228 s):
+# - On the ground when the player arrived, in both: the center hill and
+#   cliff ruins Fallen and the cliff support, gate steps and middle support
+#   Vex (with no ship in sight), and the overhang hill Fallen, 25 bodies.
+#   TU0's dropship_encounter flies its squads in, so those come by ship from
+#   the start.
+# - The overhang island went in 15 and 31 s after those (at 23 and 39 s),
+#   once the overhang hill Fallen had gone to the front and been lost
+#   (16-17 s, both runs). The pillars cave went in 84 s after them in both
+#   (at 92 and 93 s), so it is held back that long. 27 bodies were up then:
+#   the budget.
+# - A wiped encounter comes back after its cooldown, once no player is in
+#   its area. The ships were back 20-42 s after their squads were wiped
+#   (Patrol Venus#9, four times; 44-48 s in the first run, once the middle
+#   support had been wiped and there was room again): 20 s. A Vex cloud
+#   dropped its squad 4 s after it came in, a Fallen skiff 20-23 s. The
+#   overhang hill Fallen were placed again 29-56 s after they were lost
+#   (three times): 29 s, for the simple encounters.
 # - The costs are the bodies the server placed.
 # - Mission 2's Cyclops (act_venus_m02_southern_tides, whose loot one of
 #   its squad carries) came in by dropship 0.8 s after a player holding the
 #   mission's loot flag walked into tv_m2_trigger, and the second wave's ship
 #   4 s after that. The second wave was wiped 23 s later and no third wave
 #   came in the 34 s the player stayed, so the third and fourth waves are
-#   left out.
+#   left out. On the patrol, with no one holding the flag, no Cyclops came.
 
 @activity_bundle("enc_headlands_amb1")
 
@@ -69,14 +75,17 @@ script ss_main_thread():
 @startup()
 script ss_encounter_controller_thread():
     encounters.actor_budget = 27
-    encounters.add_ambient_encounter(dropship_fallen_center_hill, 4, 100, 20, 43, 0)
-    encounters.add_ambient_encounter(dropship_fallen_cliff_ruins, 5, 100, 20, 43, 0)
-    encounters.add_ambient_encounter(simple_fallen_overhang_hill, 3, 100, 20, 43, 0)
-    encounters.add_ambient_encounter(vex_dropship_cliff_support, 4, 100, 20, 43, 0)
-    encounters.add_ambient_encounter(vex_dropship_gate_steps, 3, 100, 20, 43, 0)
-    encounters.add_ambient_encounter(vex_dropship_middle_support, 6, 100, 20, 43, 0)
-    encounters.add_ambient_encounter(simple_fallen_overhang_island, 4, 100, 20, 43, 30)
-    encounters.add_ambient_encounter(simple_vex_pillars_cave, 4, 100, 20, 43, 30)
+    encounters.add_ambient_encounter(dropship_fallen_center_hill, 4, 100, 20, 20, 0)
+    encounters.add_ambient_encounter(dropship_fallen_cliff_ruins, 5, 100, 20, 20, 0)
+    encounters.add_ambient_encounter(simple_fallen_overhang_hill, 3, 100, 20, 29, 0)
+    encounters.add_ambient_encounter(vex_dropship_cliff_support, 4, 100, 20, 20, 0)
+    encounters.add_ambient_encounter(vex_dropship_gate_steps, 3, 100, 20, 20, 0)
+    encounters.add_ambient_encounter(vex_dropship_middle_support, 6, 100, 20, 20, 0)
+    encounters.add_ambient_encounter(simple_fallen_overhang_island, 4, 100, 20, 29, 0)
+    encounters.add_ambient_encounter(simple_vex_pillars_cave, 4, 100, 20, 29, 0)
+    encounters.suppress_encounter(simple_vex_pillars_cave, true)
+    sleep(84)
+    encounters.suppress_encounter(simple_vex_pillars_cave, false)
 
 @startup()
 # TU0's squads carry no objective of their own, so each takes its encounter's

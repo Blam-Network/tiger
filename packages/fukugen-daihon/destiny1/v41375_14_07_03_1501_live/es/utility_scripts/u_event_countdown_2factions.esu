@@ -1,0 +1,330 @@
+# es\utility_scripts\u_event_countdown_2factions.esu
+#
+# Warsat Down with two factions fighting over it (the
+# pf_event_countdown_2factions prefab): the satellite comes down, the
+# players get a minute to reach it and start the Ghost's capture, then hold
+# it while two sides' dropships bring their waves in, one ship at a time,
+# until the capture is done or the clock runs out. The tier is how much of
+# the capture they got.
+#
+# From one retail run, Mars' battleground (2.3.1, pf_event_countdown_
+# 2factions[0] on the Mars patrol's fresh battleground host, Patrol Mars#14
+# of 2026-10-29, 191 s after the host came up), so every wait below is that
+# run's. The start is u_event_countdown's to the second: the satellite down
+# 6 s after the intro with its cover and impacts, the beacon 10 s after the
+# line and lit a second later, the minute a second after that with the
+# Ghost on it. Here the line was the generic one. 7 s into the minute the
+# cover and then the satellite went to 0.1 with nothing on the wire behind
+# it. The player started the capture 25 s into the minute: the satellite to
+# 0.2, the start line stopped, the engage line and the music, the objective
+# active 0.7 s on, and 2 s after the capture began the first dropship came.
+# The second side's ship (pf_point 1 or 3) only snaps to its point and
+# drops its wave a second later; it is gone 9-10 s after it came. The first
+# side's (pf_point 0 or 2) snaps to its point with its own entrance and
+# drops 5-6 s in; it is gone 14-16 s after it came. One ship was up at a
+# time and the next came 0-17 s after the last was gone, ten trips in all.
+# Which side flew next and which wave it brought followed no rule one run
+# shows (first side 0, 0, 1, 2, 2 and 3; second side 0, 1, 1, 1, 3), so
+# here the sides take turns, the second side first, each bringing its waves
+# in order and its last one again after that. Each wave took its side's
+# first task as it landed; the move to the middle 6-30 s later is the task
+# tree's. The capture was done 190 s after the clock started: complete at
+# tier 3, the squads still up sent to their side's exit, and from there the
+# ending ran as u_event_countdown's capture does, with the satellite and
+# its cover taken down a second time 15 s after the gold line.
+# Not seen: the clock running out, silver, bronze and a failed capture, and
+# nobody coming, which are u_event_countdown's.
+
+u_event_globals event_globals
+u_event_countdown_preset pf_preset
+u_event_countdown_impact pf_impact
+dynamic_array<u_event_countdown_point> pf_point
+objective obj_event
+squad sq_dropship_a
+squad_member sq_dropship_a__pilot
+dynamic_array<squad> sq_side_a_wave
+squad sq_dropship_b
+squad_member sq_dropship_b__pilot
+dynamic_array<squad> sq_side_b_wave
+squad_group sg_countdown_total
+squad_group sg_side_a
+squad_group sg_side_b
+object o_event_countdown_beacon
+object o_event_countdown_object_spawner
+object o_event_countdown_ghost
+dynamic_array<object> o_warsat_cover
+static_array<device, 10> dev_warsat_cover
+device dev_event_countdown_beacon bind(o_event_countdown_beacon)
+device dev_event_countdown_object bind(o_event_countdown_object_spawner)
+capturable cz_event_countdown bind(o_event_countdown_object_spawner)
+interactable int_event_countdown_object bind(o_event_countdown_object_spawner)
+player_monitor pm_event_countdown_sudden_death bind(o_event_countdown_object_spawner)
+object_filter _object_filter
+trigger_volume tv_engagement_volume
+player_trigger pt_engagement_volume bind(tv_engagement_volume)
+int g_i_side_a_wave
+int g_i_side_b_wave
+
+def user_import():
+    for i, obj in o_warsat_cover:
+        dev_warsat_cover[i].import_only_bind(o_warsat_cover[i])
+
+def roll_countdown_initiate_timer():
+    for x in pick_random_count(1, 60):
+        return x
+    return 0
+
+def roll_countdown_event_timer():
+    for x in pick_random_count(1, 240):
+        return x
+    return 0
+
+script main():
+    i_setup_timer = roll_countdown_initiate_timer()
+    i_main_timer = roll_countdown_event_timer()
+
+    func_countdown_event_start(i_setup_timer)
+    sc_cover_ready.restart()
+    sc_capture_dialogue.restart()
+
+    if func_test_countdown_engaged(i_main_timer):
+        func_countdown_enemy_waves()
+        seq_ending = func_countdown_award()
+        func_countdown_waves_exit()
+        sleep(1)
+        seq_ending.start()
+        func_power_down_warsat()
+        sleep(6.5)
+        # taken down a second time
+        o_event_countdown_object_spawner.delete_object()
+        for cover in o_warsat_cover:
+            cover.delete_object()
+        sleep(5)
+        pf_preset.seq_warsat_music1.stop()
+    else:
+        # nobody came (u_event_countdown's)
+        pf_preset.po_event_countdown.nav_point_clear()
+        sleep(30)
+        cz_event_countdown.unlock()
+        sleep(1)
+        cz_event_countdown.lock()
+        func_remove_warsat()
+        sleep(5)
+
+    func_countdown_cleanup()
+
+script complete():
+    func_countdown_cleanup()
+
+def func_countdown_award():
+    if cz_event_countdown.is_captured():
+        pf_preset.po_event_countdown.set_public_event_tier(3)
+        pf_preset.po_event_countdown.set_complete()
+        return pf_preset.seq_warsat_complete_gold
+    cz_event_countdown.lock()
+    progress = cz_event_countdown.get_capture_progress()
+    if progress < 0.33:
+        pf_preset.po_event_countdown.set_failed()
+        return pf_preset.seq_warsat_complete_failure
+    if progress < 0.66:
+        pf_preset.po_event_countdown.set_public_event_tier(1)
+        pf_preset.po_event_countdown.set_complete()
+        return pf_preset.seq_warsat_complete_bronze
+    pf_preset.po_event_countdown.set_public_event_tier(2)
+    pf_preset.po_event_countdown.set_complete()
+    return pf_preset.seq_warsat_complete_silver
+
+def func_countdown_event_start(i_setup_timer):
+    pt_engagement_volume.set_handler(pf_preset.po_event_countdown.d_handle_engagement_incident)
+    event_globals.bind_squad_engagement(sq_side_b_wave[0], pf_preset.po_event_countdown)
+
+    pf_preset.po_event_countdown.clear()
+    cz_event_countdown.lock()
+
+    # the satellite comes down
+    pf_preset.seq_intro_behavior.start()
+    sleep(6)
+    pf_preset.po_event_countdown.set_incoming()
+    o_event_countdown_object_spawner.create()
+    dev_event_countdown_object.set_device_position(0)
+    for i in range(len(o_warsat_cover)):
+        o_warsat_cover[i].create()
+        dev_warsat_cover[i].set_device_position(0)
+    pf_impact.play_impacts()
+    sleep(1)
+    pf_preset.seq_warsat_announce_generic.start()
+
+    sleep(10)
+    o_event_countdown_beacon.create()
+    dev_event_countdown_beacon.set_device_position(0)
+    sleep(1)
+    dev_event_countdown_beacon.set_device_position(1)
+    sleep(1)
+
+    # a minute to get there
+    pf_preset.po_event_countdown.nav_point_activate(o_event_countdown_beacon)
+    pf_preset.po_event_countdown.timer_activate(i_setup_timer)
+    pf_preset.po_event_countdown.timer_start()
+    int_event_countdown_object.enable_all_players()
+    _object_filter.add_players_on_team(0)
+    cz_event_countdown.set_filter(_object_filter)
+    pf_preset.seq_intro_behavior.stop()
+    pf_impact.stop_impacts()
+    pf_preset.seq_warsat_start.start()
+    o_event_countdown_ghost.create()
+
+script sc_cover_ready():
+    sleep(7)
+    for i in range(len(o_warsat_cover)):
+        dev_warsat_cover[i].set_device_position(0.1)
+    sleep(1)
+    dev_event_countdown_object.set_device_position(0.1)
+
+def func_test_countdown_engaged(i_main_timer):
+    cz_event_countdown.reset()
+
+    while not int_event_countdown_object.get_active() and not pf_preset.po_event_countdown.timer_is_complete():
+        sleep(1)
+
+    if pf_preset.po_event_countdown.timer_is_complete():
+        return false
+
+    # the capture begins
+    dev_event_countdown_object.set_device_position(0.2)
+    pf_preset.seq_warsat_start.stop()
+    pf_preset.seq_warsat_engage.start()
+    pf_preset.seq_warsat_music1.start()
+
+    sleep(0.7)
+    pt_engagement_volume.reset()
+    pf_preset.po_event_countdown.set_active()
+    pf_preset.po_event_countdown.progress_bind(o_event_countdown_object_spawner)
+    cz_event_countdown.unlock()
+    sleep(1.3)
+
+    pf_preset.po_event_countdown.timer_activate(i_main_timer)
+    pf_preset.po_event_countdown.timer_start()
+    return true
+
+# one dropship up at a time, the sides taking turns, the second side first
+def func_countdown_enemy_waves():
+    g_i_side_a_wave = 0
+    g_i_side_b_wave = 0
+    side_b_next = true
+    while not func_capture_over():
+        if side_b_next:
+            func_side_b_trip(sq_side_b_wave[g_i_side_b_wave])
+            if g_i_side_b_wave < len(sq_side_b_wave) - 1:
+                g_i_side_b_wave = g_i_side_b_wave + 1
+        else:
+            func_side_a_trip(sq_side_a_wave[g_i_side_a_wave])
+            if g_i_side_a_wave < len(sq_side_a_wave) - 1:
+                g_i_side_a_wave = g_i_side_a_wave + 1
+        side_b_next = not side_b_next
+
+def func_capture_over():
+    return cz_event_countdown.is_captured() or func_get_timer_complete() and not func_in_zone()
+
+# the first side's ship: its own entrance at point 0 or 2, the wave down
+# 5-6 s in, gone 14-16 s after it came
+def func_side_a_trip(sq):
+    point = pf_point[2 * mathlib.random_int_never_highest_value(0, 2)]
+    sq_dropship_a.place()
+    sq_dropship_a__pilot.execute(cs_side_a_enter(point.cps_dropship_point_enter)); sleep_until(sq_dropship_a__pilot.get_command_script_state() != e_command_script_state.executing)
+    sleep_until_timeout(func_capture_over(), 4)
+    if not func_capture_over():
+        func_drop_wave(sq_dropship_a__pilot, sq, sg_side_a, "0xAAB66DD7")
+    sleep_until_timeout(func_capture_over(), 9)
+    sq_dropship_a.remove()
+
+# the second side's ship: it snaps to point 1 or 3, the wave is down a
+# second later and the ship gone 9-10 s after it came
+def func_side_b_trip(sq):
+    point = pf_point[2 * mathlib.random_int_never_highest_value(0, 2) + 1]
+    sq_dropship_b.place()
+    sq_dropship_b__pilot.execute(cs_side_b_enter(point.cps_dropship_point_enter))
+    sleep(1)
+    if not func_capture_over():
+        func_drop_wave(sq_dropship_b__pilot, sq, sg_side_b, "0x1DF35898")
+    sleep_until_timeout(func_capture_over(), 8.5)
+    sq_dropship_b.remove()
+
+def func_drop_wave(pilot, sq, side, task):
+    side.add_child(sq)
+    sg_countdown_total.add_child(sq)
+    sq.set_objective(obj_event)
+    sq.set_task(task)
+    pilot.drop_squad(sq)
+
+# each side's squads still up head for its exit
+def func_countdown_waves_exit():
+    for sq in sq_side_a_wave:
+        if sq.alive_count() > 0:
+            sq.set_task("0x1DF3589B")
+    for sq in sq_side_b_wave:
+        if sq.alive_count() > 0:
+            sq.set_task("0x158BC3D8")
+
+def func_in_zone():
+    return pm_event_countdown_sudden_death.test_any_inside()
+
+def func_get_timer_complete():
+    return pf_preset.po_event_countdown.timer_is_complete()
+
+# the satellite powers down and goes, at once
+def func_remove_warsat():
+    dev_event_countdown_object.set_device_position(0.3)
+    o_event_countdown_object_spawner.delete_object()
+    for i in range(len(o_warsat_cover)):
+        dev_warsat_cover[i].set_device_position(0.3)
+        o_warsat_cover[i].delete_object()
+
+# after a capture: the satellite powers down, its beacon goes dark, then
+# the beacon, the satellite and its cover go
+def func_power_down_warsat():
+    dev_event_countdown_object.set_device_position(0.3)
+    for i in range(len(o_warsat_cover)):
+        dev_warsat_cover[i].set_device_position(0.3)
+    sleep(2)
+    dev_event_countdown_beacon.set_device_position(0)
+    sleep(3)
+    o_event_countdown_beacon.delete_object()
+    sleep(2.5)
+    o_event_countdown_object_spawner.delete_object()
+    sleep(1)
+    for i in range(len(o_warsat_cover)):
+        o_warsat_cover[i].delete_object()
+
+def func_countdown_cleanup():
+    o_event_countdown_beacon.delete_object()
+    o_event_countdown_ghost.delete_object()
+    sq_dropship_a.remove()
+    sq_dropship_b.remove()
+
+    pf_preset.po_event_countdown.clear()
+    cz_event_countdown.lock()
+    pt_engagement_volume.reset()
+    int_event_countdown_object.clear()
+
+    sleep_until_timeout(sg_countdown_total.count_at_firing_area() >= sg_countdown_total.alive_count(), 8)
+
+    for sq in sq_side_a_wave:
+        sq.remove()
+    for sq in sq_side_b_wave:
+        sq.remove()
+
+script sc_capture_dialogue():
+    for step in [0.25, 0.5, 0.75]:
+        sleep_until(cz_event_countdown.get_capture_progress() >= step or pf_preset.po_event_countdown.timer_is_complete())
+        if cz_event_countdown.get_capture_progress() >= step:
+            pf_preset.seq_warsat_update_progress.start()
+
+# the dropships' orders, atom for atom as retail sent them
+command_script cs_side_a_enter(path):
+    snap_to(path, 0)
+    ability("0x07EBF654", "0x5783B69A")
+    set_channel_scalar("0x80293444", 1)
+    terminate_delay(1)
+
+command_script cs_side_b_enter(path):
+    snap_to(path, 0)

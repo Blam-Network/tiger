@@ -95,6 +95,11 @@ const MS_PER_SECOND = 1000;
 // jitter never drops one.
 const TICK_DUE_FRACTION = 0.9;
 
+// An array member's element class: static_array<u_event_vex_block_point, 3>,
+// dynamic_array<u_event_dropship_point>.
+const ARRAY_ELEMENT_CLASS =
+  /^(?:static|dynamic)_array<\s*([A-Za-z_]\w*)\s*[,>]/;
+
 // Host-synthesized on join and leave.
 const PLAYER_JOINED_HASH = fnv1("player_joined");
 const PLAYER_LEFT_HASH = fnv1("player_left");
@@ -1421,6 +1426,16 @@ export class EncounterScriptHost implements EncounterHostContext {
       for (const member of schema.members) {
         if (member.kind === "class_instance") {
           declared.add(member.type);
+        }
+        // an array's element class (u_event_vex_block's
+        // static_array<u_event_vex_block_point, 3> pf_point, beside
+        // u_event_dropship_multipoint's dynamic_array<u_event_dropship_point>)
+        const element =
+          member.kind === "static_array" || member.kind === "dynamic_array"
+            ? ARRAY_ELEMENT_CLASS.exec(member.type)?.[1]
+            : undefined;
+        if (element !== undefined) {
+          declared.add(element);
         }
       }
     }

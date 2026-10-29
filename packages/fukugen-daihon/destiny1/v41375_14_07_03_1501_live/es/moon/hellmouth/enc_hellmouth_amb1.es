@@ -6,23 +6,21 @@
 # village. Six encounters are up as soon as the bubble loads; when one is
 # wiped out another takes its place under the actor budget.
 #
-# From one fresh start, act_moon_m5_strength's public host (2026-10-25
-# 19-30-30#2, the player in the bubble for 202 s), so every rule here is a
-# single run's:
-# - Up at load: bridge, gate, maw, ridge, village_deck_a and
-#   village_sniper_rear, 25 bodies. The costs are the bodies the server
-#   placed and the budget that set.
-# - village_deck_a was wiped at 150 s and the henge dropship flew in under a
-#   second later, its four troops dropped 19 s after; the ship left 26 s
-#   after it came in.
-# - village_sniper_rear was placed again 48 s after it was wiped;
-#   village_deck_a was not back 52 s after its wipe.
+# Pooled over four fresh starts: act_moon_m5_strength's public host
+# (2026-10-25 19-30-30#2, the player in the bubble for 202 s) and three of
+# the Moon patrol's (Patrol Luna of 2026-10-28: 72 s, 252 s and 204 s):
+# - Six encounters up at load in every run, 23-25 bodies: gate and
+#   village_sniper_rear in all four, three of bridge, maw, ridge and
+#   hall_bouncers, and village_deck_a or village_anchor_a. The costs are the
+#   bodies the server placed, the budget the most up at once.
+# - A dropship never came at load; each came in under a second after an
+#   encounter was wiped (the henge ship at 91 s, 92 s and 150 s, the village
+#   ship at 180 s), its four troops dropped 8-19 s after.
+# - A wiped encounter came back on its own 19-79 s later (village_sniper_rear
+#   48 s and 72 s, hall_bouncers 19-20 s), or another took its place.
 # - The squads that dropped out of sense and came back with no new bodies
-#   placed (bridge, gate, deck_a) were the player walking out of range, not
-#   the script.
-# - hall_bouncers, village_anchor_a and the village and ledge dropships
-#   never went in (hall_bouncers was up in act_moon_m5_strength's other host,
-#   joined running). Their costs are TU0's default bodies.
+#   placed were the player walking out of range, not the script.
+# - The ledge dropship never went in. Its cost is TU0's default bodies.
 # - The fissure Ghosts and both of mission 5's objects were out from the
 #   load. act_moon_m5_strength's mission has the player use the objects.
 # - The henge wave: in act_moon_m4_uppercitadel's run (its public host,
@@ -57,8 +55,11 @@ simple_encounter pf_simple_village_deck_a
 simple_encounter pf_simple_village_sniper_rear
 @member_counts({_squad: [{anchor: 1, 0x3715BE01: 2, 0xACEB567F: 1}]})
 dropship_encounter pf_dropship_henge
+@member_counts({_squad: [{0xE8841EB1: 1, 0x3613AB3A: 1}, {0x7F40125F: 1}]})
 simple_encounter pf_simple_hall_bouncers
+@member_counts({_squad: [{anchor: 1, 0x3715BE01: 3, 0xACEB567F: 2}]})
 simple_encounter pf_simple_village_anchor_a
+@member_counts({_squad: [{anchor: 1, 0x3715BE01: 2, 0xACEB567F: 1}]})
 dropship_encounter pf_dropship_village
 dropship_encounter pf_dropship_ledge
 trigger_volume tv_hive_henge_far
@@ -85,19 +86,19 @@ script ss_encounter_controller_thread():
     encounters.add_ambient_encounter(pf_simple_ridge, 4, 100, 20, 48, 0)
     encounters.add_ambient_encounter(pf_simple_village_deck_a, 6, 100, 20, 48, 0)
     encounters.add_ambient_encounter(pf_simple_village_sniper_rear, 1, 100, 20, 48, 0)
-    encounters.add_ambient_encounter(pf_dropship_henge, 4, 100, 20, 48, 0)
-    # never placed on the wire: TU0's default bodies, costs that kept them out
-    encounters.add_ambient_encounter(pf_simple_hall_bouncers, 3, 100, 20, 48, 30)
-    encounters.add_ambient_encounter(pf_simple_village_anchor_a, 3, 100, 20, 48, 30)
-    encounters.add_ambient_encounter(pf_dropship_village, 3, 100, 20, 48, 30)
+    encounters.add_ambient_encounter(pf_simple_hall_bouncers, 3, 100, 20, 48, 0)
+    encounters.add_ambient_encounter(pf_simple_village_anchor_a, 6, 100, 20, 48, 0)
+    # the dropships wait out the first placement
+    encounters.add_ambient_encounter(pf_dropship_henge, 4, 100, 20, 48, 30)
+    encounters.add_ambient_encounter(pf_dropship_village, 4, 100, 20, 48, 30)
+    # never placed on the wire: TU0's default bodies
     encounters.add_ambient_encounter(pf_dropship_ledge, 2, 100, 20, 48, 30)
 
 @startup()
 # TU0's squads carry no objective of their own, so each takes its encounter's
 # objective and task once the encounter has placed it: the tasks retail gave
-# them (maw's by its influencer, 2.3.1 added a task ahead of it), the ones
-# the joined-running host showed for hall_bouncers and village_anchor_a, and
-# the first task for the two dropships never seen.
+# them (maw's by its influencer, 2.3.1 added a task ahead of it), and the
+# first task for the ledge dropship, never seen.
 script sc_bridge_tasks():
     assign_tasks(pf_simple_bridge, ["0x8EF8D9E0", "0x8EF8D9E0"])
 

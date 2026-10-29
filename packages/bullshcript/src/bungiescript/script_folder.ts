@@ -196,6 +196,10 @@ export interface ScriptFileSummary {
   readonly path: string;
 }
 
+// A list's element type, as written: the class a `static_array<T, N>` or
+// `dynamic_array<T>` member holds instances of.
+const LIST_ELEMENT = /^(?:static|dynamic)_array<\s*([A-Za-z_]\w*)\s*[,>]/;
+
 export function scriptLookups<T extends ScriptFileSummary>(
   files: readonly T[]
 ): ScriptLookups<T> {
@@ -224,7 +228,7 @@ export function scriptLookups<T extends ScriptFileSummary>(
   }
   const declared = (file: T) =>
     file.memberTypes.flatMap((type) => {
-      const declarer = byDecl.get(type);
+      const declarer = byDecl.get(LIST_ELEMENT.exec(type)?.[1] ?? type);
       return declarer === undefined ? [] : [declarer];
     });
   return {
@@ -271,7 +275,7 @@ function declaredShape(
         kind === "bs"
           ? []
           : (decls[0]?.members.flatMap((member) =>
-              member.kind === "field" ? [member.type.name] : []
+              member.kind === "field" ? [member.type.text] : []
             ) ?? []),
     };
   } catch {

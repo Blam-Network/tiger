@@ -7,7 +7,11 @@
 #
 # The gantry clears when the Ghost link finishes, a GhostLink row the host
 # has no native for yet: in the one run the link was done 21 s after the
-# objective went live, and that wait stands in for it.
+# objective went live, and that wait stands in for it. The row goes enabled
+# as the objective goes live; 8.9 s later a player starts the link and its
+# progress climbs from 0 to 1 in steps of 1/72 over 11.9 s; the objective
+# clears and the row goes disabled 0.2 s after it is done. The link was a
+# third player's: both captured views see it only in the host's rows.
 
 trigger_volume_objective goto_ball
 trigger_volume_objective goto_bridge

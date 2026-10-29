@@ -12,11 +12,12 @@
 #
 # One retail 2.3.1 run: every hold is its gap. No placement is on the wire:
 # the squads with a task are placed with it, the rest are left for a run
-# that shows them. The task names are the 1.33 tables'; several do not
-# match their squad's name (the hall's psions take "hall_cabal"), as the
-# tables have them. The elevator strobe's monitor counted the player and
-# it never lit; the psion ambush, the scare tactics bodies and the second
-# lure never moved.
+# that shows them. The task names are the ones the replay's table reader
+# gives the captured indices; it names a task task_names[i + 1] where the
+# name is task_names[influencer], so here most are a neighbour's (the hall's
+# psions take "hall_cabal", their own task is "playfight_psions"). The
+# elevator strobe's monitor counted the player and it never lit; the psion
+# ambush, the scare tactics bodies and the second lure never moved.
 
 @activity_bundle(0x0E747941)
 

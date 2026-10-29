@@ -111,6 +111,10 @@ export function loadScriptGraph(
   return { chunkOwners, chunks, rootTags, rowOwners };
 }
 
+const STATIC_ARRAY_OF = /^static_array<\s*([A-Za-z_]\w*)\s*,\s*(\d+)\s*>$/;
+const DYNAMIC_ARRAY_OF = /^dynamic_array<\s*([A-Za-z_]\w*)\s*>$/;
+const ROW_ELEMENT = /^\[\d+\]$/;
+
 // From the Encounter row's 8080047B lookup tag (the child's script name),
 // else childScriptSchemaMap, else the script classes a compiled schema
 // declares as members. A phase is the activity's own, never a child.
@@ -163,6 +167,15 @@ export function childScriptsFor(
       }
     }
   }
+  // every Encounter row's last name segment ("pf_point[0]")
+  const encounterSlots = new Set<string>();
+  for (const bundle of rowBundles.values()) {
+    for (const row of bundle.rows) {
+      if (row.typeId === types.Encounter && row.name !== undefined) {
+        encounterSlots.add(row.name.split(".").at(-1) ?? row.name);
+      }
+    }
+  }
   const byClass = new Map<string, HksBytecode>();
   for (const chunk of chunks) {
     const name = schemas.get(chunk.tagId.toUpperCase())?.name;
@@ -177,6 +190,39 @@ export function childScriptsFor(
         member.kind === "class_instance" ? byClass.get(member.type) : undefined;
       if (child !== undefined && !slots.has(member.name)) {
         slots.set(member.name, child);
+      }
+      // A static array of a script class (`static_array<taken_invasion_party,
+      // 4> taken_invasion_party`) is one slot per element, as the rows name
+      // them.
+      const list =
+        member.kind === "static_array"
+          ? STATIC_ARRAY_OF.exec(member.type)
+          : null;
+      const element = list ? byClass.get(list[1] ?? "") : undefined;
+      for (let i = 0; element && i < Number(list?.[2]); i++) {
+        const slot = `${member.name}[${i}]`;
+        // a declared element the bundles have no row for is not built
+        if (encounterSlots.has(slot) && !slots.has(slot)) {
+          slots.set(slot, element);
+        }
+      }
+      // A dynamic array of one (`dynamic_array<u_event_dropship_point>
+      // pf_point`) has as many elements as the bundles' Encounter rows name.
+      const dynamic =
+        member.kind === "dynamic_array"
+          ? DYNAMIC_ARRAY_OF.exec(member.type)
+          : null;
+      const each = dynamic ? byClass.get(dynamic[1] ?? "") : undefined;
+      if (each !== undefined) {
+        for (const slot of encounterSlots) {
+          if (
+            slot.startsWith(`${member.name}[`) &&
+            ROW_ELEMENT.test(slot.slice(member.name.length)) &&
+            !slots.has(slot)
+          ) {
+            slots.set(slot, each);
+          }
+        }
       }
     }
   }

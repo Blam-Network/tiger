@@ -1,6 +1,6 @@
 # es\cosmo\act_cosmo_m0_highway\unknown_3c2f5ed5.es
 #
-# Music and Ghost lines for A Guardian Rises. True name unknown.
+# Music and Ghost lines for A Guardian Rises.
 # Each line plays off a point trigger or a mission event; the music cues move
 # through their sections as the player advances.
 
@@ -14,6 +14,8 @@ sequence seq_fallen_scream_mid
 player_trigger pt_ab_2
 sequence seq_fallen_scream_close
 sequence seq_d_o1_15
+sequence seq_d_o1_20c
+sequence seq_d_o1_20d
 trigger_volume_objective obj_m0_phase00_m1
 sequence seq_d_o2_10
 sequence seq_drone_2
@@ -55,6 +57,7 @@ sequence seq_d_o4_30
 player_trigger pt_ketch
 sequence seq_d_o4_40
 sequence seq_d_o4_45
+squad sq_fallen_dropship_1
 trigger_volume_objective obj_m0_m04a
 sequence seq_d_o5_20
 squad sq_m0_fallen_2
@@ -86,6 +89,12 @@ script sc_audio_main():
         sleep_until_timeout(pt_ab_2.is_triggered(), 2)
         if not pt_ab_2.is_triggered():
             seq_d_o1_15.start()
+            # the last nag, two lines at once, 18-19 s on (two runs that
+            # stood on the highway that long)
+            sleep_until_timeout(pt_ab_2.is_triggered(), 18)
+            if not pt_ab_2.is_triggered():
+                seq_d_o1_20c.start()
+                seq_d_o1_20d.start()
 
 @startup()
 script sc_wall_entry():
@@ -195,6 +204,9 @@ script sc_ketch_lines():
     sleep_until(pt_ketch.is_triggered())
     sleep(6)
     seq_d_o4_40.start()
+    # the dropship line, 2 s after the first dropship comes in (all ten runs;
+    # in most it is already there)
+    sleep_until(sq_fallen_dropship_1.alive_count() > 0)
     sleep(2)
     seq_d_o4_45.start()
 

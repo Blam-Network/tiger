@@ -31,6 +31,12 @@
 #   up 56 s in and came down 3 s after its placement was used; the marker
 #   came up a second after the second placement became usable and went when
 #   it was done (it blinked twice first, which is left out).
+# The 2026-10-29 patrol's two fresh starts (214 s, 255 s) bear these out:
+# the crashed ship's Fallen standing at the start again, the hangar's
+# dropship in 1 s after the shack's Fallen were wiped, the south patrol back
+# 25-33 s after a wipe, the cable hive ambush going in as the player walked
+# in. The cliff shack came back 19 s and 76 s after a wipe there, so 12 s is
+# its earliest; a wipe let another encounter in 8-13 s later.
 # The comms, crashed ship, overpass and transit encounters, the road patrol,
 # the shack's dropship and the south patrol route never ran in a capture and
 # are left out.

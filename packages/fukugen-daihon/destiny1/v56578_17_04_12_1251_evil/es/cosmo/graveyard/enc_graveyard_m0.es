@@ -1,7 +1,12 @@
 # es\cosmo\graveyard\enc_graveyard_m0.es
 #
 # The graveyard in A Guardian Rises: the Ketch arrives, the Fallen dropships
-# drop their troops, then the sniper and the exit shanks come in.
+# drop their troops, then the sniper and the exit shanks come in. The
+# dropships wait for the player to come down into the graveyard: the first on
+# pt_ketch_dropship, the other three on pt_ketch_dropship_2 (nine retail
+# runs), or all four 22 s after the Ketch arrives (one run, which stayed up
+# on the ridge past both triggers). The sniper comes in on pt_drop_2, or once
+# two of the first drop's four are dead (three runs).
 
 @activity_bundle("enc_graveyard_m0")
 
@@ -36,7 +41,9 @@ squad sq_fallen_dropship_4
 squad_member sq_fallen_dropship_4__pilot
 control_point_set cp_dropship_enter_4
 control_point_set cp_dropship_exit_4
-c_command_script __cs  # true name unknown
+c_command_script __cs
+player_trigger pt_ketch_dropship
+player_trigger pt_ketch_dropship_2
 player_trigger pt_drop_2
 player_trigger pt_exit_shanks
 
@@ -71,6 +78,7 @@ script sc_signal_flare():
     o_signal_flare.delete_object()
 
 script sc_dropship_1():
+    sleep_until_timeout(pt_ketch_dropship.is_triggered(), 22)
     dropship_enter(sq_fallen_dropship_1__pilot, cp_dropship_enter_1, true)
     sleep(9)
     sq_fallen_m0_drop_1.set_task("drop_1")
@@ -78,16 +86,19 @@ script sc_dropship_1():
     sleep(5)
     dropship_leave(sq_fallen_dropship_1__pilot, cp_dropship_exit_1)
 
+# the other three come in a second apart: 3, 2, then 4
 script sc_dropship_2():
-    sleep(2)
+    sleep_until_timeout(pt_ketch_dropship_2.is_triggered(), 22)
+    sleep(1)
     dropship_enter(sq_fallen_dropship_2__pilot, cp_dropship_enter_2, false)
 
 script sc_dropship_3():
-    sleep(1)
+    sleep_until_timeout(pt_ketch_dropship_2.is_triggered(), 22)
     dropship_enter(sq_fallen_dropship_3__pilot, cp_dropship_enter_3, false)
 
 script sc_dropship_4():
-    sleep(3)
+    sleep_until_timeout(pt_ketch_dropship_2.is_triggered(), 22)
+    sleep(2)
     dropship_enter(sq_fallen_dropship_4__pilot, cp_dropship_enter_4, true)
     sleep(9)
     sq_fallen_m0_drop_2.set_task("drop_2")
@@ -117,7 +128,8 @@ def dropship_leave(pilot, path):
     pilot.execute(__cs)
 
 script sc_sniper():
-    sleep_until_timeout(pt_drop_2.is_triggered(), 20)
+    sleep_until(pt_drop_2.is_triggered() or sq_fallen_m0_drop_1.alive_count() == 4)
+    sleep_until(pt_drop_2.is_triggered() or sq_fallen_m0_drop_1.alive_count() <= 2)
     sq_fallen_m0_sniper.set_task("sniper")
     sq_fallen_m0_sniper.place()
 

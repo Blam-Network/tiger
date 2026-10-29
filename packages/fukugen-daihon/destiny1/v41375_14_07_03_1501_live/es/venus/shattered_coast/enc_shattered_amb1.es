@@ -5,21 +5,24 @@
 # sensors and their cages, and the Fallen along the street, at the academy
 # entrance, toward the headlands and at the outpost.
 #
-# From act_venus_m01_engineering's public host (2026-10-25 19-45-22#2),
-# which the player reached 160 s after it started and stayed in for 308 s,
-# with patrol_shat_com01's host (joined running) for the tasks:
-# - On the ground when the player arrived: the outpost's Fallen (with no
-#   ship in sight), the entrance, the headlands pair and both street
-#   encounters, 23 bodies. The costs are the bodies the server placed and
-#   the budget that set.
-# - The street pair and the entrance were each placed again 41 s after they
-#   were wiped. The outpost's ship came in 34 s after its Fallen were wiped,
-#   dropped them 12 s later and left 20 s after that. TU0's
-#   dropship_encounter flies its squads in, so the outpost's Fallen come by
-#   ship from the start too.
-# - The headlands pair came back 56 s after its first wipe (the player was
-#   near) and 9 s after its second, once all five had gone together; the
-#   cooldown is the other encounters' 41 s.
+# From three of its hosts: act_venus_m01_engineering's (2026-10-25
+# 19-45-22#2, reached 160 s after it started, 308 s in it) and two fresh
+# starts on the patrol (Patrol Venus#2, 785 s, and Patrol Venus#8, 186 s),
+# with patrol_shat_com01's 2026-10-25 host (joined running) for the tasks:
+# - On the ground when the player arrived, in all three: the entrance, the
+#   headlands pair and both street encounters, and the outpost's Fallen,
+#   23 bodies. The costs are the bodies the server placed and the budget
+#   that set. Where the start was on the wire (Patrol Venus#8) the outpost's
+#   ship flew in 5 s after the bubble came up and dropped its Fallen 12 s
+#   later, as TU0's dropship_encounter does.
+# - A wiped encounter comes back after its cooldown, once no player is in
+#   its area (the later returns, 47-140 s, are read as that). The
+#   street pair and the entrance came back 40.6-41.6 s after a wipe (twelve
+#   returns over the three runs): 40 s. The outpost's ship was back 22-41 s
+#   after its Fallen were wiped (five times; it then flew 11-13 s before
+#   dropping them and left 19-21 s after): 22 s. The headlands pair came
+#   back 8.5-21 s after a wipe (seven times; twice later, 56 and 310 s):
+#   8 s.
 # - Each sensor's cage went up 2 s after the player started using it, and
 #   opened 2 s after the sensor's device was all the way over (11 and 18 s
 #   of use), then was gone a second later. act_venus_m01_engineering's
@@ -55,11 +58,11 @@ script ss_main_thread():
 @startup()
 script ss_encounter_controller_thread():
     encounters.actor_budget = 23
-    encounters.add_ambient_encounter(dropship_outpost, 5, 100, 20, 41, 0)
-    encounters.add_ambient_encounter(simple_entrance, 5, 100, 20, 41, 0)
-    encounters.add_ambient_encounter(simple_headlands, 6, 100, 20, 41, 0)
-    encounters.add_ambient_encounter(simple_street01, 4, 100, 20, 41, 0)
-    encounters.add_ambient_encounter(simple_street02, 3, 100, 20, 41, 0)
+    encounters.add_ambient_encounter(dropship_outpost, 5, 100, 20, 22, 0)
+    encounters.add_ambient_encounter(simple_entrance, 5, 100, 20, 40, 0)
+    encounters.add_ambient_encounter(simple_headlands, 6, 100, 20, 8, 0)
+    encounters.add_ambient_encounter(simple_street01, 4, 100, 20, 40, 0)
+    encounters.add_ambient_encounter(simple_street02, 3, 100, 20, 40, 0)
 
 @startup()
 # TU0's squads carry no objective of their own, so each takes its encounter's

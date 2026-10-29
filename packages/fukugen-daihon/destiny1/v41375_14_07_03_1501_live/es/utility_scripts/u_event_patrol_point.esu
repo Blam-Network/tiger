@@ -1,0 +1,10 @@
+# es\utility_scripts\u_event_patrol_point.esu
+#
+# One hill on a target patrol's route (a pf_event_patrol's pf_point): the
+# firing area the target walks to, and the group the target is in while it
+# walks there, which says when it has arrived.
+
+squad_group sg_boss
+
+def has_arrived():
+    return sg_boss.alive_count() > 0 and sg_boss.count_at_firing_area() >= sg_boss.alive_count()

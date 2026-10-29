@@ -4,31 +4,40 @@
 # the centre and the command building, Hive at the front, the centre, the
 # turntable and the platform.
 #
-# From one capture, and only a glimpse: the Cosmodrome patrol's public
-# host that cosmo_portal_1 came back to (2026-10-03, 75 s), whose bubble
-# had been running before the player joined it. Seven of the eight
-# encounters were up at the first update and the command building's first
-# Fallen (amb_smpl_fallen_command01) were not, so it is held back for room
-# as the deltas and the Array hold one back; the costs are even, as
-# nothing shows them. The Hive at the centre and the turntable were topped
-# up 13-15 s in. Body counts are left at their defaults: the counts the
-# wire carried had built up over the bubble's life before the capture, so
-# they are not one placement's. When the encounters first go in, and how
-# soon a wiped one comes back, are not on the wire; the 40 s return is the
-# graveyard's and the Array's.
-# The patrol beacons were out. The music never played.
+# Pooled over the Cosmodrome patrol's three fresh starts of the bubble
+# (2026-10-29 Patrol Earth#11, #18, #20; 76 s, 37 s and 52 s) and the host
+# cosmo_portal_1 came back to (2026-10-03, joined running, 75 s).
+# - At load six of the eight were up, 22-23 bodies, and two held back for
+#   room: the command building's two and the centre's in one run, a command
+#   building one and another in each of the others, so the manager's pick
+#   varies; the Hive at the front, the platform and the turntable were up
+#   in all three. The costs below are the bodies each placed, the budget
+#   the largest set seen (23), the list order the 37 s run's.
+# - A wipe let a held one in 1-13 s later (three times), and a wiped
+#   encounter came back itself 23 s after its wipe once (the turntable's,
+#   with the command building's first still held). One run each.
+# - The body counts are the fresh starts'. The patrol beacons were out. The
+#   music never played.
 
 @activity_bundle("enc_rocketyard_amb1")
 
 static_array<object, 3> patrol_beacons
 encounter_manager encounters
+@member_counts({_squad: [{servitor: 1}, {dreg: 2}]})
 simple_encounter amb_smpl_fallen_front02
+@member_counts({_squad: [{vandal: 2}, {dreg: 2}]})
 simple_encounter amb_smpl_fallen_command01
+@member_counts({_squad: [{dreg: 3}, {servitor: 1}]})
 simple_encounter amb_smpl_fallen_command02
+@member_counts({_squad: [{trooper: 3}, {knight: 1}]})
 simple_encounter amb_smpl_hive_front01
+@member_counts({_squad: [{vandal: 1}, {dreg: 3}]})
 simple_encounter amb_smpl_fallen_center01
+@member_counts({_squad: [{trooper: 3}, {knight: 1}]})
 simple_encounter amb_smpl_hive_center01
+@member_counts({_squad: [{trooper: 2}, {knight: 2}]})
 simple_encounter amb_smpl_hive_turntable01
+@member_counts({_squad: [{trooper: 3}]})
 simple_encounter amb_smpl_hive_platform01
 
 @startup()
@@ -38,9 +47,15 @@ script ss_main_thread():
 
 @startup()
 script ss_encounter_controller_thread():
-    encounters.actor_budget = 7
-    for enc in [amb_smpl_fallen_front02, amb_smpl_fallen_command02, amb_smpl_hive_front01, amb_smpl_fallen_center01, amb_smpl_hive_center01, amb_smpl_hive_turntable01, amb_smpl_hive_platform01, amb_smpl_fallen_command01]:
-        encounters.add_ambient_encounter(enc, 1, 100, 20, 40, 0)
+    encounters.actor_budget = 23
+    encounters.add_ambient_encounter(amb_smpl_hive_front01, 4, 100, 20, 22, 0)
+    encounters.add_ambient_encounter(amb_smpl_hive_platform01, 3, 100, 20, 22, 0)
+    encounters.add_ambient_encounter(amb_smpl_hive_turntable01, 4, 100, 20, 22, 0)
+    encounters.add_ambient_encounter(amb_smpl_fallen_front02, 3, 100, 20, 22, 0)
+    encounters.add_ambient_encounter(amb_smpl_hive_center01, 4, 100, 20, 22, 0)
+    encounters.add_ambient_encounter(amb_smpl_fallen_command01, 4, 100, 20, 22, 0)
+    encounters.add_ambient_encounter(amb_smpl_fallen_center01, 4, 100, 20, 22, 0)
+    encounters.add_ambient_encounter(amb_smpl_fallen_command02, 4, 100, 20, 22, 0)
 
 @startup()
 # TU0's squads carry no objective of their own, so each takes its

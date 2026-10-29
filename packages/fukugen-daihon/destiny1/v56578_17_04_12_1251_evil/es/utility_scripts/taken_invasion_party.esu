@@ -1,0 +1,99 @@
+# es\utility_scripts\taken_invasion_party.esu
+#
+# One of the Taken parties of a patrol zone's Taken invasion (The Taken
+# King): its fodder, lieutenant and tough squads, the five spots it comes in
+# at and its area's Taken effects. mini_taken_invasion_core.esu opens the
+# parties, sends one of them on against the invasion's lieutenant and
+# retires the rest.
+#
+# Pooled over the 2.3.1 captures of Venus' invasions (the shattered coast,
+# vex complex, fallen caldera, headlands and plaza bundles; Patrol Venus#2,
+# #5 and 2026-10-27 20-49-27#3 ran a whole invasion each):
+# - A wave plays one spot's sequence; 4 s in its squad is placed, and the
+#   area's effects go up 0.4, 0.6, 0.9 over the next 3.5 s when the area
+#   was quiet. They go to 0 within a second of the area's last Taken dying.
+# - Every party's first wave is its fodder, 0.4-2.6 s after the parties
+#   open (two of the 15 parties seen opening came 18 and 30 s late).
+#   Later waves are any of the three squads, 3.6-16.8 s after the last one
+#   died.
+# - Sent on against the lieutenant, the party brings its lieutenant and tough
+#   squads in together from two spots, 8 s after the lieutenant's call and
+#   every 22-31 s after (two runs).
+# - Retired, or at the invasion's end, its effects go to 0, its squads die
+#   7 s later and the effects are gone 2 s after that (four ends).
+# Left out: the waves that came in while one still stood (lieutenant or
+# tough on top of a fodder squad, 15-30 s after it), whose call the wire
+# does not show.
+
+squad lieutenant_squad
+static_array<squad, 1> fodder_squad
+squad tough_squad
+static_array<taken_invasion_spawn, 5> taken_invasion_spawn
+object taken_area_fx_object
+int i_wipes
+
+def open():
+    i_wipes = 0
+    taken_area_fx_object.create()
+    sc_waves.restart()
+
+script sc_waves():
+    sleep(1.5)
+    sq = fodder_squad[0]
+    while true:
+        come_in(sq)
+        sleep_until(sq.alive_count() <= 0)
+        i_wipes = i_wipes + 1
+        taken_area_fx_object.set_device_position(0)
+        sleep(mathlib.random_int_inclusive(4, 16))
+        sq = pick_squad()
+
+def pick_squad():
+    squads = [fodder_squad[0], lieutenant_squad, tough_squad]
+    return squads[mathlib.random_int_inclusive(0, len(squads) - 1)]
+
+def come_in(sq):
+    play_spawn()
+    sleep(4)
+    sq.place()
+    sleep(0.5)
+    taken_area_fx_object.set_device_position(0.4)
+    sleep(1.5)
+    taken_area_fx_object.set_device_position(0.6)
+    sleep(1.5)
+    taken_area_fx_object.set_device_position(0.9)
+
+def play_spawn():
+    taken_invasion_spawn[mathlib.random_int_inclusive(0, len(taken_invasion_spawn) - 1)]._sequence.start()
+
+def wipes():
+    return i_wipes
+
+# against the invasion's lieutenant
+def press_on():
+    sc_waves.kill()
+    sc_reinforcements.restart()
+
+script sc_reinforcements():
+    sleep(8)
+    while true:
+        play_spawn()
+        play_spawn()
+        sleep(4)
+        lieutenant_squad.place()
+        tough_squad.place()
+        sleep(25)
+
+def retire():
+    sc_waves.kill()
+    sc_reinforcements.kill()
+    sc_retire.restart()
+
+script sc_retire():
+    taken_area_fx_object.set_device_position(0)
+    sleep(7)
+    lieutenant_squad.kill()
+    fodder_squad[0].kill()
+    tough_squad.kill()
+    sleep(2)
+    taken_area_fx_object.delete_object()

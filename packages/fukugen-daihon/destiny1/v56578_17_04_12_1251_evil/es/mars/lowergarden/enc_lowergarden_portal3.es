@@ -7,9 +7,12 @@
 # the hydra's clouds and the two snipers, and two last harpy clouds. The
 # garden is clear once every wave is dead.
 #
-# One 2.3.1 run. Its waves came 48, 108 and 151 s after the gate, the
-# snipers 10 s and the harpies 15 s after the third; what set those times
-# (the waves before going down, a timer) is not on the wire.
+# One 2.3.1 run, seen by both players (the second held the garden's AI, so
+# only its capture has the waves' squads). Its waves came 48, 108 and 151 s
+# after the gate, the snipers 10 s and the harpies 15 s after the third. Each
+# wave also came a few seconds after the one before was dead (wave 2 3.3 s,
+# wave 3 5.4 s, the harpies 0.4 s after the hydra's clouds); the clock from
+# the gate fits all four to within a second, so the hold runs on it.
 
 @activity_bundle("enc_lowergarden_portal3")
 

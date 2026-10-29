@@ -1,0 +1,261 @@
+# es\utility_scripts\u_event_dropship_multipoint.esu
+#
+# Glimmer drop, the Fallen dropship public event (the
+# pf_event_dropship_multipoint_fallen prefab): a Fallen ketch comes over
+# with a screen of skiffs, then a dropship sets a drill down at one of the
+# event's points and lands a squad to guard it. Clearing the squad sends
+# the dropship on to the next point; the clock runs on each point, and the
+# tier is how many points were cleared.
+#
+# From two retail runs, both the dry sea's and both gold (2.3.1, on TU0's
+# rows, which are the same): pf_event_dropship_multipoint_fallen[1] on
+# act_cosmo_m2_dome_c's public host (2026-10-29 Patrol Earth#22) and [0] on
+# the patrol's (2026-10-27_16-44-49#7); timings agreed within a second.
+# Seconds from the start: the intro behaviour and the music at 0, the
+# announce at 1, the objective incoming at 4 (wire state 1), the ketch's
+# device to 0.1 at 17-18, four or five of the seven skiffs over at 19-21,
+# the intro behaviour over and the dropship coming in at 22-23. The points
+# went in a random order (0, 1, 2 in one run, 1, 0, 2 in the other) and the
+# n-th wave was always the n-th point's troop squad, sent to the point
+# visited. At each point the dropship's entrance ended 10-11s after it
+# began; the drill went down then, the cover, the beacon (the waypoint) and
+# the troops' objective 5-5.7s later, and a second after that the beacon
+# lit and the dropship dropped the troops on "task". The drill went to 0.2
+# 3-3.5s after the drop and the dropship shut its doors and left 5-6s after
+# it. At the first point the objective went active 1.5-2s after the drill's
+# 0.2 with a 60s clock and the engage line; the first engagement 4s later
+# loaded a 90s clock and a progress bar of three. At each later point a 60s
+# clock was loaded a second after the previous point was won, with the wave
+# update line, and started 1-1.5s after the drill's 0.2. The next dropship
+# came as a new actor only once the last one was out of sight, about 20s
+# after it left. With 30s left the ending time line played. The last point
+# won, the objective went complete at tier 3 3-3.5s later, the gold ending
+# at 4-5s, the objective, the ketch and the point triggers were cleared at
+# 5s, the music stopped at 16s.
+# Not seen: a clock running out (failed, bronze or silver), nobody engaging,
+# the troops at the end of a lost point. Those branches are the Walker
+# drop's and the alpha's port: a point not won by its clock ends the event,
+# the tier is the points won, and what is left of the troops despawns.
+
+u_event_globals event_globals
+u_event_dropship_multipoint_preset pf_preset
+dynamic_array<u_event_dropship_point> pf_point
+static_array<u_event_dropship_skiff, 7> pf_skiffs
+object o_ketch_intro
+squad sq_event_dropship_pilot
+squad_member sq_event_dropship_pilot__pilot
+squad_group sg_event_dropship_exit
+int i_first_point_time = 60
+int i_engaged_time = 90
+int i_point_time = 60
+int i_ending_time = 30
+int i_points_won
+int i_point
+bool b_dropship_away
+
+script main():
+    i_points_won = 0
+    i_point = 0
+    b_dropship_away = true
+    func_event_setup()
+    func_dropship_intro()
+
+    # the points in a random order; the n-th wave is the n-th point's troops
+    i_wave = 0
+    order = func_point_order()
+    for i in order:
+        i_point = i
+        troops = pf_point[i_wave].sq_event_dropship_troops
+        func_dropship_to_point(pf_point[i], troops)
+        if i_wave == 0:
+            if not func_first_point_engaged():
+                break
+        else:
+            pf_preset.po_event_dropship_multipoint.timer_start()
+        if not func_point_won(troops):
+            break
+        i_points_won = i_points_won + 1
+        i_wave = i_wave + 1
+        pf_preset.po_event_dropship_multipoint.progress_update(i_points_won)
+        if i_points_won < len(pf_point):
+            pf_point[i].pt_event_dropship.disable()
+            pf_preset.po_event_dropship_multipoint.nav_point_clear()
+            sc_point_cleanup.restart()
+            sleep(1)
+            pf_preset.po_event_dropship_multipoint.timer_activate(i_point_time)
+            pf_preset.seq_glimmer_update_wave_generic.start()
+            sleep_until(b_dropship_away, 0.1)
+
+    func_event_award()
+    func_combatant_cleanup()
+
+script complete():
+    func_event_remove()
+
+# TU0's glimmer drops have three points, the south delta's third two
+def func_point_order():
+    n = 0
+    if len(pf_point) == 2:
+        order = [0, 1]
+        for i in pick_random_count(2, 0, 1):
+            order[n] = i
+            n = n + 1
+        return order
+    order = [0, 1, 2]
+    for i in pick_random_count(3, 0, 1, 2):
+        order[n] = i
+        n = n + 1
+    return order
+
+def func_event_setup():
+    for point in pf_point:
+        event_globals.bind_squad_engagement(point.sq_event_dropship_troops, pf_preset.po_event_dropship_multipoint)
+        point.pt_event_dropship.set_handler(pf_preset.po_event_dropship_multipoint.d_handle_engagement_incident)
+        point.pt_event_dropship.disable()
+
+def func_dropship_intro():
+    pf_preset.seq_intro_behavior.start()
+    pf_preset.seq_glimmer_music1.start()
+    o_ketch_intro.create()
+    sleep(1)
+    pf_preset.seq_glimmer_announce.start()
+    sleep(3)
+    pf_preset.po_event_dropship_multipoint.set_incoming()
+    sleep(13.5)
+    o_ketch_intro.set_device_position(0.1)
+    sleep(1.5)
+    for i in pick_random_count(5, 0, 1, 2, 3, 4, 5, 6):
+        pf_skiffs[i].fly_past()
+    sleep(4)
+    pf_preset.seq_intro_behavior.stop()
+
+# the dropship flies in, the drill goes down and the troops land beside it
+def func_dropship_to_point(point, troops):
+    b_dropship_away = false
+    sq_event_dropship_pilot__pilot.place()
+    sq_event_dropship_pilot__pilot.execute(cs_dropship_enter(point.cps_dropship_point_enter)); sleep_until(sq_event_dropship_pilot__pilot.get_command_script_state() != e_command_script_state.executing)
+    point.create_drill()
+    point.pt_event_dropship.reset()
+    sleep(5)
+    point.create_cover()
+    troops.set_objective(point.obj_event_dropship_pt)
+    pf_preset.po_event_dropship_multipoint.nav_point_activate(point.o_event_dropship_beacon_pt)
+    sleep(1)
+    point.o_event_dropship_beacon_pt.set_device_position(1)
+    troops.set_task("task")
+    sq_event_dropship_pilot__pilot.drop_squad(troops)
+    sc_dropship_leave.restart()
+    sleep(3.5)
+    point.o_event_fiction_device_temp.set_device_position(0.2)
+    sleep(1.5)
+
+# a minute to engage the first point; engaging it puts the event on its
+# real clock with the progress bar
+def func_first_point_engaged():
+    po = pf_preset.po_event_dropship_multipoint
+    po.set_active()
+    po.timer_activate(i_first_point_time)
+    po.timer_start()
+    pf_preset.seq_glimmer_engage.start()
+    sleep_until(po.get_engaged_player_count() > 0 or po.timer_is_complete(), 0.1)
+    if po.timer_is_complete():
+        return false
+    po.timer_activate(i_engaged_time)
+    po.progress_activate(0, len(pf_point))
+    po.timer_start()
+    return true
+
+# the point is won when its troops are dead before the clock runs out
+def func_point_won(troops):
+    po = pf_preset.po_event_dropship_multipoint
+    sleep_until(troops.alive_count() <= 0 or po.timer_get_current() <= i_ending_time, 0.1)
+    if troops.alive_count() > 0:
+        pf_preset.seq_glimmer_ending_time_generic.start()
+        sleep_until(troops.alive_count() <= 0 or po.timer_is_complete(), 0.1)
+    po.timer_pause()
+    return troops.alive_count() <= 0
+
+script sc_point_cleanup():
+    pf_point[i_point].remove_cover(0.4)
+
+script sc_dropship_leave():
+    i_leaving = i_point
+    sleep(5.5)
+    sq_event_dropship_pilot__pilot.execute(cs_dropship_exit(pf_point[i_leaving].cps_dropship_point_exit)); sleep_until(sq_event_dropship_pilot__pilot.get_command_script_state() != e_command_script_state.executing)
+    b_dropship_away = true
+
+def func_event_award():
+    po = pf_preset.po_event_dropship_multipoint
+    total = len(pf_point)
+    pf_point[i_point].pt_event_dropship.disable()
+    po.nav_point_clear()
+    if i_points_won == total:
+        sc_last_point_cleanup.restart()
+    else:
+        sc_lost_point_cleanup.restart()
+    sleep(3)
+    seq_ending = pf_preset.seq_glimmer_complete_failure
+    if i_points_won == total:
+        po.set_public_event_tier(3)
+        po.set_complete()
+        seq_ending = pf_preset.seq_glimmer_complete_gold
+    elif i_points_won == total - 1:
+        po.set_public_event_tier(2)
+        po.set_complete()
+        seq_ending = pf_preset.seq_glimmer_complete_silver
+    elif i_points_won > 0:
+        po.set_public_event_tier(1)
+        po.set_complete()
+        seq_ending = pf_preset.seq_glimmer_complete_bronze
+    else:
+        po.set_failed()
+    sleep(1)
+    seq_ending.start()
+    sleep(1)
+    func_event_remove()
+    sleep(11)
+    pf_preset.seq_glimmer_music1.stop()
+    for point in pf_point:
+        point.o_event_dropship_beacon_pt.delete_object()
+
+script sc_last_point_cleanup():
+    pf_point[i_point].remove_cover(0.3)
+
+script sc_lost_point_cleanup():
+    pf_point[i_point].remove_cover(0.4)
+
+def func_event_remove():
+    pf_preset.po_event_dropship_multipoint.clear()
+    for point in pf_point:
+        point.pt_event_dropship.disable()
+    o_ketch_intro.delete_object()
+
+# what is left of the troops despawns (the Walker drop's despawn temperament)
+def func_combatant_cleanup():
+    for point in pf_point:
+        sg_event_dropship_exit.add_child(point.sq_event_dropship_troops)
+    sg_event_dropship_exit.activate_temperament("0x6567A386")
+    sleep(5)
+    sg_event_dropship_exit.deactivate_temperament("0x6567A386")
+    sg_event_dropship_exit.remove()
+
+# The dropship's orders, atom for atom as retail sent them at each of the
+# three points: in on the entry path's two points with enter_25_long, the
+# doors opening for a second on arrival; out on the exit path's six
+# points with exit_45, doors shut first.
+command_script cs_dropship_enter(path):
+    snap_to(path, 0)
+    ability("dropship", "enter_25_long")
+    move_to(path, 1, true)
+    set_channel_scalar("doors", 1)
+    terminate_delay(1)
+
+command_script cs_dropship_exit(path):
+    set_channel_scalar("doors", 0)
+    move_to(path, 0, false)
+    move_to(path, 1, false)
+    move_to(path, 2, false)
+    move_to(path, 3, false)
+    move_to(path, 4, false)
+    move_to(path, 5, false)
+    ability("dropship", "exit_45")

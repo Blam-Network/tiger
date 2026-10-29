@@ -5,10 +5,10 @@
 # the climb's lines; the ball's squads are unknown_9d6d5f70's. From one retail
 # capture.
 #
-# The objective clears as the player reaches the boss's floor. In the one run
-# it cleared 10 s before its trigger fired, just after an item pickup the
-# replay does not feed (BD1FB418, loot_pickup_item at 489 s): a second run
-# settles which.
+# The objective clears as a player reaches the boss's floor. The one run had
+# three players, and both captured players entered the trigger after it had
+# cleared (3.5 s and 10 s after); the third, not captured, was most likely
+# first.
 
 object o_gantry_arm
 trigger_volume_objective goto_boss_trigger_volume_objective

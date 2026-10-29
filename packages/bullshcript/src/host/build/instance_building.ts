@@ -987,6 +987,9 @@ function chunkByClassName(
   return self.chunksByClassName.get(name);
 }
 
+const ARRAY_ELEMENT_FIELD = /^(.+)\[\d+\]$/;
+const ARRAY_ELEMENT_TYPE = /^(?:static|dynamic)_array<\s*([A-Za-z_]\w*)\s*[,>]/;
+
 // The script class a member is declared with, as Bungie's instance tree
 // embedded it: from the declaring script's schema, else the per-parent
 // member-type map the package data gives (childScriptSchemaMap).
@@ -1001,9 +1004,22 @@ function declaredChildChunk(
   const schema = schemaOf(self, parent);
   if (schema !== undefined) {
     const member = schema.members.find((m) => m.name === field);
-    return member?.kind === "class_instance"
-      ? chunkByClassName(self, member.type)
-      : undefined;
+    if (member?.kind === "class_instance") {
+      return chunkByClassName(self, member.type);
+    }
+    // An element of a list of a script class (`static_array<u_event_tank_drop,
+    // 3> pf_event_tank_drop`, `dynamic_array<u_event_dropship_point> pf_point`)
+    // is that class's instance, as a class_instance member is.
+    const element = ARRAY_ELEMENT_FIELD.exec(field);
+    const list =
+      element === null
+        ? undefined
+        : schema.members.find((m) => m.name === element[1]);
+    const type =
+      list?.kind === "static_array" || list?.kind === "dynamic_array"
+        ? ARRAY_ELEMENT_TYPE.exec(list.type)?.[1]
+        : undefined;
+    return type === undefined ? undefined : chunkByClassName(self, type);
   }
   const tag =
     self.options.childScriptSchemaMap?.[parent.tagId.toUpperCase()]?.[field];

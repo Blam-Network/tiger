@@ -1,0 +1,18 @@
+# es\cinematic_trv\cine_hangar\cine_hangar_mission1.esp
+#
+# Mission 1, the hangar cinematic. The activity is complete before the
+# cinematic plays: retail sent activity_complete 1.8 s after pregame and
+# started the cinematic 0.5 s later, as cine_reveal's Tower phase does. The
+# end came 1.7 s after the client's cinematic_finished.
+
+cinematic_midmission cine_175_hng
+
+script init(): pass
+
+script complete():
+    c_lifetime_script_utilities.get_lifetime_sensor().end_game()
+
+script main():
+    set_activity_complete()
+    cine_175_hng.start()
+    sleep_until(cine_175_hng.is_complete())

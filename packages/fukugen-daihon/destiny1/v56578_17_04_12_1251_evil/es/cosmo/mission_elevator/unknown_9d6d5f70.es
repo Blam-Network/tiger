@@ -8,12 +8,15 @@
 # (mission 4) spawns the boss in: it teleports between its points, and the
 # boss trigger starts the fight and sends its psions.
 #
-# From one retail capture. The client never sensed the ball's squads, so no
-# death shows in it and every wait here is a trigger or that run's timer.
+# From one retail run of three players, two of them captured. Neither
+# captured client sensed the ball's squads (the third player held their AI),
+# so no death shows and every wait here is a trigger or that run's timer.
 # What the boss did after its psions came (two more teleports, a second
 # channel phase, the snipers) followed its health, which nothing shows: it is
-# left out. The objectives' task names after their first few look shifted
-# against the squads that take them, so tasks are written as their hashes.
+# left out. Tasks are written as the hashes the replay's table reader gives
+# their indices. That reader names a task task_names[i + 1] where the name is
+# task_names[influencer], so from the ball objective's fifth task on, and in
+# the whole boss objective, the hashes are a neighbour's name.
 
 @activity_bundle(0x9D6D5F70)
 

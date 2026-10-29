@@ -6,14 +6,15 @@
 #
 # Each node shows up on its own 55-178 s after the bubble starts, and is
 # cleaned up within a second of being harvested. Pooled over every 2.3.1
-# materials bundle on the wire (the deltas, the Array, the dry sea and the
-# graveyard): 48 nodes in ten fresh starts, all in that window. No
-# harvested node came back (three in the south delta, the longest 193 s
-# on), so none does here.
-# Here: only cosmo_portal_1's public host, joined while it was running:
-# every node was already out, none harvested in the 75 s seen. The timing
-# is the other Cosmodrome nodes'. TU0 has three nodes where 2.3.1 has
-# five.
+# materials bundle on the wire (the Cosmodrome, the Moon, Venus and Mars,
+# captures to 2026-10-29): nodes out at 55-178 s in every fresh start.
+# Harvested nodes came back 86 s (the graveyard), 158, 187 and 296 s (the
+# fallen caldera) after their harvest; others were not back 118-281 s on.
+# So a node comes back after a wide random wait around those, 80-400 s.
+# Here: the patrol's fresh start (2026-10-29 Patrol Earth#11), one node out
+# at 69 s when the player left at 76 s. Before that, cosmo_portal_1's
+# public host, joined running, had every node out and none harvested in
+# the 75 s seen. TU0 has three nodes where 2.3.1 has five.
 
 @activity_bundle("rocketyard_materials")
 
@@ -35,8 +36,10 @@ script sc_thorium_center():
 
 def spawn_node(node):
     sleep(mathlib.random_int_inclusive(55, 178))
-    node.create()
-    sleep_until(node.is_alive())
-    # harvested
-    sleep_until(not node.is_alive())
-    node.delete_object()
+    while true:
+        node.create()
+        sleep_until(node.is_alive())
+        # harvested
+        sleep_until(not node.is_alive())
+        node.delete_object()
+        sleep(mathlib.random_int_inclusive(80, 400))

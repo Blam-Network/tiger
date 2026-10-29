@@ -4,12 +4,18 @@
 # beacons, the loose and explosive candy, and the Fallen at the thieves'
 # den, its hold, the bottom ramp, the pocket, the tank and the entrance.
 #
-# From one capture, act_venus_m07_northern_tides' public host (2026-10-01
-# 21-06-51#4, the player in the bubble from 4 s to 32 s), so every rule here
-# is a single run's: all six encounters were on the ground when the player
-# arrived, 24 bodies. The costs are the bodies the server placed and the
-# budget that set. Nothing was wiped; the cooldown is the shattered coast's
-# 41 s.
+# From two fresh starts, act_venus_m07_northern_tides' public host
+# (2026-10-01 21-06-51#4, the player in the bubble from 4 s to 32 s) and
+# the patrol's (Patrol Venus#4, 744 s), with a second patrol host joined
+# running (Patrol Venus#6) for the tasks:
+# - All six encounters were on the ground when the player arrived, 24
+#   bodies, in both. The costs are the bodies the server placed and the
+#   budget that set.
+# - A wiped encounter comes back after its cooldown, once no player is in
+#   its area (the later returns, 107-139 s, are read as that).
+#   From Patrol Venus#4 alone: the bottom ramp, the entrance, the pocket,
+#   the tank's infantry and the hold came back 30.7-42.6 s after a wipe
+#   (nineteen returns): 30 s; the thieves 41.1-43.8 s after (four): 40 s.
 
 @activity_bundle("enc_fallen_caldera_amb1")
 
@@ -42,12 +48,12 @@ script ss_main_thread():
 @startup()
 script ss_encounter_controller_thread():
     encounters.actor_budget = 24
-    encounters.add_ambient_encounter(simple_thieves, 5, 100, 20, 41, 0)
-    encounters.add_ambient_encounter(simple_thieves_hold, 5, 100, 20, 41, 0)
-    encounters.add_ambient_encounter(simple_btm_ramp, 4, 100, 20, 41, 0)
-    encounters.add_ambient_encounter(simple_pocket, 3, 100, 20, 41, 0)
-    encounters.add_ambient_encounter(simple_tank_inf, 4, 100, 20, 41, 0)
-    encounters.add_ambient_encounter(simple_entrance, 3, 100, 20, 41, 0)
+    encounters.add_ambient_encounter(simple_thieves, 5, 100, 20, 40, 0)
+    encounters.add_ambient_encounter(simple_thieves_hold, 5, 100, 20, 30, 0)
+    encounters.add_ambient_encounter(simple_btm_ramp, 4, 100, 20, 30, 0)
+    encounters.add_ambient_encounter(simple_pocket, 3, 100, 20, 30, 0)
+    encounters.add_ambient_encounter(simple_tank_inf, 4, 100, 20, 30, 0)
+    encounters.add_ambient_encounter(simple_entrance, 3, 100, 20, 30, 0)
 
 @startup()
 # TU0's squads carry no objective of their own, so each takes its encounter's

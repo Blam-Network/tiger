@@ -4,22 +4,22 @@
 # loaded by the Moon patrol and the Moon story missions that cross it. Puts
 # out the patrol beacons and the base's dynamic props, mission 1's terminal,
 # and the Fallen around the crossroads, the habitat, the comm towers and the
-# landing zone. Nine encounters are up as soon as the bubble loads; when one
-# is wiped out another takes its place, and each brings its squad back on its
-# own respawn timer (the objective reset every 31-32 s on the wire).
-# From one capture, act_moon_m1_launchtubes' public host (the player in the
-# bubble for 107 s), so every rule here is a single run's:
-# - up at the first apply: crossroads_big, crossroads_small, commtower_main,
-#   defense_small, hab_2f, hab_support, dome, loot_hab and dropship_tower's
-#   troops. Their bodies are that run's.
-# - crossroads_small wiped at 20 s, hab_outer in 2 s later; crossroads_big
-#   wiped at 28 s, loot_tower and tower_sniper in at 30 s; dome wiped at 46 s,
-#   crossroads_small back at 47 s; hab_outer wiped at 71 s, edge in at 72 s;
-#   hab_support wiped at 77 s, tower_hill and lz_lurkers in at 80 s.
-#   defense_large, tower_large, tower_small and hab_1f never went in.
-#   Costs (each its bodies), budget, order and the 20 s cooldown are fit to
-#   that run; a wiped encounter that was never seen back is listed after the
-#   ones that took its place.
+# landing zone. Nine to eleven encounters are up as soon as the bubble
+# loads; when one is wiped out another takes its place, and each brings its
+# squad back on its own respawn timer (the objective reset every 31-32 s on
+# the wire).
+# Pooled over five fresh starts: act_moon_m1_launchtubes' public host (the
+# player in the bubble for 107 s) and four of the Moon patrol's (Patrol
+# Luna of 2026-10-28: 420 s, 188 s, 60 s and 33 s):
+# - up at the first apply, 24-25 bodies each time: crossroads_small, dome
+#   and hab_2f in all five, and a different draw of the rest each run
+#   (loot_tower and tower_sniper in the four patrol runs, tower_large in
+#   three, dropship_tower's troops in the first only). The costs are the
+#   bodies the server placed.
+# - a wiped encounter came back 8-65 s later or another took its place;
+#   the 20 s cooldown is fit to the first run.
+# - lz_lurkers was never up at load (in at 71-131 s), so it waits out the
+#   first placement; defense_large never went in.
 # - the cage went up 1.4 s after the player used the terminal, opened 11 s
 #   later and was gone a second after that.
 # The mission's objective on the terminal is act_moon_m1_launchtubes'
@@ -58,10 +58,13 @@ simple_encounter sp_simple_crossroads_big
 simple_encounter sp_simple_dome
 @member_counts({_squad: [{cell_captain: 1, 0xA2D60243: 2}]})
 simple_encounter sp_simple_hab_support
-simple_encounter sp_simple_defense_large
+@member_counts({_squad: [{captain: 1, 0xA2D60243: 3}]})
 simple_encounter sp_simple_tower_large
+@member_counts({_squad: [{vandal: 1, shank: 1}]})
 simple_encounter sp_simple_tower_small
+@member_counts({_squad: [{cell_dreg: 4}]})
 simple_encounter sp_simple_hab_1f
+simple_encounter sp_simple_defense_large
 
 @startup()
 script sc_moonbase_props():
@@ -79,26 +82,26 @@ script ss_encounter_controller_thread():
     encounters.add_ambient_encounter(sp_simple_hab_2f, 4, 100, 20, 20, 0)
     encounters.add_ambient_encounter(sp_simple_loot_hab, 2, 100, 20, 20, 0)
     encounters.add_ambient_encounter(sp_dropship_tower, 4, 100, 20, 20, 0)
-    # the ones that came in later wait out the first placement
-    encounters.add_ambient_encounter(sp_simple_hab_outer, 2, 100, 20, 20, 10)
-    encounters.add_ambient_encounter(sp_simple_loot_tower, 1, 100, 20, 20, 10)
-    encounters.add_ambient_encounter(sp_simple_tower_sniper, 1, 100, 20, 20, 10)
-    encounters.add_ambient_encounter(sp_simple_edge, 2, 100, 20, 20, 10)
-    encounters.add_ambient_encounter(sp_simple_tower_hill, 2, 100, 20, 20, 10)
-    encounters.add_ambient_encounter(sp_simple_lz_lurkers, 2, 100, 20, 20, 10)
+    encounters.add_ambient_encounter(sp_simple_hab_outer, 2, 100, 20, 20, 0)
+    encounters.add_ambient_encounter(sp_simple_loot_tower, 1, 100, 20, 20, 0)
+    encounters.add_ambient_encounter(sp_simple_tower_sniper, 1, 100, 20, 20, 0)
+    encounters.add_ambient_encounter(sp_simple_edge, 2, 100, 20, 20, 0)
+    encounters.add_ambient_encounter(sp_simple_tower_hill, 2, 100, 20, 20, 0)
     encounters.add_ambient_encounter(sp_simple_crossroads_big, 3, 100, 20, 20, 0)
     encounters.add_ambient_encounter(sp_simple_dome, 2, 100, 20, 20, 0)
     encounters.add_ambient_encounter(sp_simple_hab_support, 3, 100, 20, 20, 0)
-    # never placed on the wire: TU0's default bodies, costs that kept them out
+    encounters.add_ambient_encounter(sp_simple_tower_large, 4, 100, 20, 20, 0)
+    encounters.add_ambient_encounter(sp_simple_tower_small, 2, 100, 20, 20, 0)
+    encounters.add_ambient_encounter(sp_simple_hab_1f, 4, 100, 20, 20, 0)
+    # never up at load: waits out the first placement
+    encounters.add_ambient_encounter(sp_simple_lz_lurkers, 2, 100, 20, 20, 10)
+    # never placed on the wire: TU0's default bodies
     encounters.add_ambient_encounter(sp_simple_defense_large, 2, 100, 20, 20, 10)
-    encounters.add_ambient_encounter(sp_simple_tower_large, 2, 100, 20, 20, 10)
-    encounters.add_ambient_encounter(sp_simple_tower_small, 2, 100, 20, 20, 10)
-    encounters.add_ambient_encounter(sp_simple_hab_1f, 2, 100, 20, 20, 10)
 
 @startup()
 # TU0's squads carry no objective of their own, so each takes its encounter's
 # objective and task once the encounter has placed it: the tasks retail gave
-# them, and the first task for the four never seen up.
+# them, and the first task for the one never seen up.
 script sc_crossroads_small_tasks():
     assign_tasks(sp_simple_crossroads_small, ["fallback"])
 

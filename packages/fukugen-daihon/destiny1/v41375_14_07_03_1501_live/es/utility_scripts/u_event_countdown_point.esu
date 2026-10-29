@@ -1,0 +1,9 @@
+# es\utility_scripts\u_event_countdown_point.esu
+#
+# One drop point of a two-faction Warsat (a pf_event_countdown_2factions'
+# pf_point): the paths a side's dropship takes in and out. Points 0 and 2
+# are the first side's, 1 and 3 the second's (retail's dropships only ever
+# snapped to their own side's two).
+
+control_point_set cps_dropship_point_enter
+control_point_set cps_dropship_point_exit

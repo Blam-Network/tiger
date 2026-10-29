@@ -8,7 +8,8 @@
 # (act_venus_m07_northern_tides, act_venus_m01_engineering,
 # act_venus_m02_southern_tides): the beacon was out from the snapshot, and
 # all twenty pieces of candy went in together with the player's first spawn,
-# when the activity's scripts start.
+# when the activity's scripts start. The patrol's run (Patrol Venus#1) had
+# beacon and candy out from its snapshot, the player's spawn.
 
 @activity_bundle("enc_baby_shat_amb")
 

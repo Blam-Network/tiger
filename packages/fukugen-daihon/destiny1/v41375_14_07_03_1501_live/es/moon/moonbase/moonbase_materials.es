@@ -6,18 +6,17 @@
 #
 # Each node shows up on its own 55-178 s after the bubble starts, and is
 # cleaned up within a second of being harvested. Pooled over every 2.3.1
-# materials bundle on the wire: 48 Cosmodrome nodes in ten fresh starts, 12
-# Moon coils in two (73-177 s) and 6 Venus blooms in two (80-175 s), all in
-# that window. A harvested node comes back: one hellmouth coil, harvested
-# before the capture joined its bubble, was back 25 s after the player
-# arrived. No node was back within 193 s of its harvest (the Cosmodrome's
-# south delta) or 118 s (a shattered coast bloom), so the wait is a guess
-# above those.
+# materials bundle on the wire (the Cosmodrome, the Moon, Venus and Mars,
+# captures to 2026-10-29): nodes out at 55-178 s in every fresh start.
+# Harvested nodes came back 86 s (the graveyard), 158, 187 and 296 s (the
+# fallen caldera) after their harvest; others were not back 118-281 s on.
+# So a node comes back after a wide random wait around those, 80-400 s.
 #
-# Here: two starts on the wire (act_moon_m1_launchtubes' public host, 107 s
-# in the bubble, and act_moon_m5_strength's, 34 s), no coil out in either.
-# None out by 107 s is the late end of the window for all seven 2.3.1 coils,
-# so the timing is the other Moon coils'.
+# Here: four starts on the wire. act_moon_m1_launchtubes' public host (107 s
+# in the bubble) and act_moon_m5_strength's (34 s) had no coil out; the
+# Moon patrol's two (Patrol Luna of 2026-10-28) had all seven out at
+# 65-145 s, two and five of them by 107 s. TU0 has four coils where 2.3.1
+# has seven.
 
 @activity_bundle("moonbase_materials")
 
@@ -50,4 +49,4 @@ def spawn_node(node):
         # harvested
         sleep_until(not node.is_alive())
         node.delete_object()
-        sleep(mathlib.random_int_inclusive(200, 400))
+        sleep(mathlib.random_int_inclusive(80, 400))
