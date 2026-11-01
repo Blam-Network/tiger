@@ -5,20 +5,21 @@
 # the pipe room, the last three each a wave of two encounters. Loaded by
 # the patrol, the strikes and the story missions.
 #
-# Pooled over two fresh starts on the patrol's public hosts (Patrol Mars#4,
-# 335 s, and #6, 407 s; the chests came out 64-88 s in both):
-# - Up as the bubble loaded in both: the lobby bouncers, both plaza
+# Pooled over three fresh starts: the patrol's public hosts (Patrol Mars#4,
+# 335 s, and #6, 407 s; the chests came out 64-88 s in both) and
+# act_mars_m06_subway's (2026-11-01 01-07-32#5, 239 s, chests out 59-86 s):
+# - Up as the bubble loaded in all three: the lobby bouncers, both plaza
 #   encounters and the second corner encounter, and one of the office and
-#   the pipe room waves (the pipe room in #4, the office in #6), 15 and 14
-#   bodies: the budget is 15, and which of the two waves waits for room is
-#   picked at random. The first corner encounter went in once there was
-#   room (102 s in #4) and the bus never did. Later counts (18 in #6 at
-#   219 s) include an office squad that had dropped out of sense at 131 s
-#   and was not killed, so they do not set the budget.
+#   the pipe room waves (the pipe room in #4, the office in #6 and m06's),
+#   15, 14 and 14 bodies: the budget is 15, and which of the two waves
+#   waits for room is picked at random. The first corner encounter went in
+#   once there was room (102 s in #4) and the bus never did. Later counts
+#   (18 in #6 at 219 s) include an office squad that had dropped out of
+#   sense at 131 s and was not killed, so they do not set the budget.
 # - The waves: the pipe room's second wave went in the moment the first was
 #   wiped (#4, 29 s); the lobby's and the office's as the first was down to
-#   one (#4 at 102 s, #6 at 12 s and 54 s). One run of each.
-# - Wiped encounters came back 26-117 s later, when there was room: the
+#   one (#4 and m06's at 102 s, #6 at 12 s and 54 s).
+# - Wiped encounters came back 26-130 s later, when there was room: the
 #   cooldown is the shortest return.
 # - The costs are the bodies the server placed (the squads' cell counts); a
 #   wave costs its larger wave. The lobby's second encounter put down three

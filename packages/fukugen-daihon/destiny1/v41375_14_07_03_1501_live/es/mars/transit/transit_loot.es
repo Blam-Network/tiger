@@ -14,8 +14,9 @@
 # others were not back 104, 159 and 191 s on. So a chest comes back
 # 100-300 s after it was opened.
 #
-# Here: two fresh starts of the patrol's transit host (Patrol Mars#4 and #6),
-# the five chests out at 64-88 s. On #6 the terminal chest was opened at 186 s
+# Here: three fresh starts, the patrol's transit host (Patrol Mars#4 and #6),
+# the five chests out at 64-88 s, and act_mars_m06_subway's (2026-11-01
+# 01-07-32#5), out at 59-86 s. On #6 the terminal chest was opened at 186 s
 # and back at 354 s (168 s later); the south chest, opened at 248 s, was not
 # back 159 s later.
 

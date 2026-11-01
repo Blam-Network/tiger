@@ -3,12 +3,19 @@
 # The Garden's Spire's gatehouse. The gatehouse's dynamics and doors are made
 # as the bubble loads. Mission 5 wakes the ambush when the player reaches
 # the wall: the alarm sounds, the side doors close the player in and three
-# waves of Cabal come through, each announced, the next one a few seconds
-# after the last of the one before is dead. A wave's first squad falls back
+# waves of Cabal come through, each announced, the next one 4 s after the
+# last of the one before is dead. A wave's first squad falls back
 # to its second task once the wave's other squad is down and it has lost
 # one. Once the door button is used mission 5 wakes the miniboss, which
 # comes out of the ambush door with its backup and falls back 13 s later.
-# From one retail capture (2.3.1): every wait is that run's.
+#
+# Two retail captures (2.3.1, 2026-10-26 and 2026-11-01). Both agree on the
+# waves: each came about 4 s after the last of the one before died (3.8 and
+# 4.2 s, then 4.6 and 4.4 s), the alarm stopped 1.5 s after the last death
+# and each wave's first squad fell back as above. The miniboss and its
+# backup fell back 13.3 / 13.8 s after they came out in the first run and
+# 11.6 / 11.1 s in the second; in both, the first of the two squads to be
+# wiped was put back on 0xFC4BFE9B, which no rule here reproduces.
 
 @activity_bundle("enc_gatehouse_m05")
 
@@ -61,7 +68,7 @@ script sc_waves():
     sleep_until(sq_wave_1_a.alive_count() <= 1)
     sq_wave_1_a.set_task("0xFD3EEAFD")
     sleep_until(sq_wave_1_a.alive_count() + sq_wave_1_b.alive_count() == 0)
-    sleep(5)
+    sleep(4)
 
     # the second wave: the side doors open again
     place_on_task(sq_wave_2_a, "0xFD3EEAFE")

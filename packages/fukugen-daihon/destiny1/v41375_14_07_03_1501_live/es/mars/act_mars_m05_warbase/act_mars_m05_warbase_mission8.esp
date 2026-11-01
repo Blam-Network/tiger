@@ -9,9 +9,9 @@
 # key is taken, and the mission is complete. The second climax trigger
 # group is up for the phase.
 #
-# One run: the waits are the gaps on the wire. Both buttons sink in
-# whichever one is used, the used one first; B's come back up as its
-# objective clears, C's stay down.
+# Two runs: the waits are the gaps on the wire and agree within half a
+# second. Both buttons sink in whichever one is used, the used one first;
+# B's come back up as its objective clears, C's stay down.
 
 @hard_wipe()
 trigger_group tg_mars_m5_climax_2_so

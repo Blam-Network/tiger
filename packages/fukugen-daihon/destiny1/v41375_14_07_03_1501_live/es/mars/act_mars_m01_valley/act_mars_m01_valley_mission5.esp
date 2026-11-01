@@ -4,8 +4,9 @@
 # (enc_checkpoint_m01); the objective comes up when the boss is dropped and
 # clears when the player picks up what he drops.
 #
-# One run (2026-10-26): the objective cleared 0.6 s after the pickup, five
-# seconds after the boss died. The 3 s after is the gap to the next phase.
+# Two runs (2026-10-26, 2026-11-01): the objective cleared 0.6 / 0.5 s
+# after the pickup, not with the boss's death. The 3 s after is the gap to
+# the next phase (3.2 s in the second).
 
 @hard_wipe()
 collect_loot_objective sp_objective_loot bind("0x0CD4D5F7", 1)

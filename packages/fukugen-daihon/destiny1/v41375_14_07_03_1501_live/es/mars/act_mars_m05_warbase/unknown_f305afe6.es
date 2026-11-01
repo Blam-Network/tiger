@@ -8,12 +8,19 @@
 # sc_key when button B opens the Minotaur eye's cage: the eye is taken, the
 # laser comes up, the Vex pillar rises with the Garden key and the cable is
 # cut; the boss comes out when the pillar has gone, roaring, with its intro
-# squad, and two dropships fly in on the boss paths, each dropping a squad
-# and leaving. Mission 8 wakes sc_key_taken once button C is used: the laser
-# goes off, the key and the laser go, and the eye last. From one retail
-# capture (2.3.1): every wait is that run's. The ships' command scripts are
-# retail's atom for atom; each ship leaves the world 7 s after its exit
-# script starts.
+# squad. The fight runs on his health: the first boss ship comes at three
+# quarters, the second at 40%, and at 20% he changes task. His
+# reinforcements come 15 s after the intro squad is down. Each ship drops a
+# squad on the boss's task and leaves. Mission 8 wakes sc_key_taken once
+# button C is used: the laser goes off, the key and the laser go, and the eye
+# last.
+#
+# Two retail captures (2.3.1, 2026-10-26 and 2026-11-01): the key's waits
+# and the ships' drop and exit times match in both. The health thresholds
+# hold for a fast kill (44 s) and a slow one (143 s), each step 0.8-1.4 s
+# after the client's report; the reinforcements came 16.0 and 15.4 s after
+# the intro squad's last death. The ships' command scripts are retail's atom
+# for atom; each ship leaves the world 7 s after its exit script starts.
 
 @activity_bundle(0xF305AFE6)
 
@@ -28,6 +35,7 @@ squad sq_lastline_top_a
 squad sq_preboss1
 squad sq_preboss2
 squad sq_boss
+squad_member sq_boss__boss
 squad sq_boss_intro
 squad sq_boss_reinforce
 squad sq_boss_wave_a
@@ -131,16 +139,20 @@ script sc_key():
     place_on_task(sq_boss_intro, "boss")
     of_ultra.add(sq_boss)
     ho_ultra_invuln.set_filter(of_ultra)
+    sc_boss_reinforce.wake()
     sleep(5)
     place_on_task(sq_boss, "0xBD61B2C5")
     seq_ogreroar_close.start()
-    sleep(15)
+    sleep_until(sq_boss__boss.get_health_fraction() <= 0.75)
     sc_boss_ship_a.wake()
-    sleep(23)
+    sleep_until(sq_boss__boss.get_health_fraction() <= 0.4)
     sc_boss_ship_b.wake()
-    sleep(2)
+    sleep_until(sq_boss__boss.get_health_fraction() <= 0.2)
     sq_boss.set_task("0x927FEBE4")
-    sleep(1.5)
+
+script sc_boss_reinforce():
+    sleep_until(sq_boss_intro.alive_count() == 0)
+    sleep(15)
     place_on_task(sq_boss_reinforce, "boss")
 
 # the first boss ship drops its squad on the boss's task and leaves

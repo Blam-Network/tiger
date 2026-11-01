@@ -12,9 +12,10 @@
 # fallen caldera) after their harvest; others were not back 118-281 s on.
 # So a node comes back after a wide random wait around those, 80-400 s.
 #
-# Here: the same two fresh starts, the five 2.3.1 nodes out at 67-174 s in
-# both. Two harvested on #8 were not back 136 and 151 s later, when the capture
-# left. TU0 has three nodes where 2.3.1 has five, and only iron_road is named
+# Here: the same four fresh starts, the five 2.3.1 nodes out at 67-174 s on
+# the patrol's two, two by 121 s (84 and 113 s) on m05's and three by 104 s
+# (71-97 s) on m06's. Two harvested on #8 were not back 136 and 151 s later,
+# when the capture left. TU0 has three nodes where 2.3.1 has five, and only iron_road is named
 # in both.
 
 @activity_bundle("battleground_materials")

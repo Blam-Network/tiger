@@ -6,8 +6,9 @@
 # starts on pt_checkpoint_music_start (unknown_11b7a83e) and moves on with
 # the objectives. The road and bunker Cabal belong to enc_checkpoint_m01.
 #
-# One run (2026-10-26): the objective cleared 1.5 s after the console was
-# used; the 2 s after is the gap to the next phase.
+# Two runs (2026-10-26, 2026-11-01): the objective cleared 1.5 / 1.9 s
+# after the console was used; the 2 s after is the gap to the next phase
+# (1.9 s in the second).
 
 @hard_wipe()
 trigger_volume_objective sp_objective_goto

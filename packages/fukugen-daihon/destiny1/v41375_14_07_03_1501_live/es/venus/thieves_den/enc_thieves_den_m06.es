@@ -9,11 +9,13 @@
 # gone. Mission 1 waits on the den's load (the bubble entry) and on the
 # majors.
 #
-# From one retail 2.3.1 capture: the squads' bodies (@member_counts) are the
-# kill tallies, the bottom reserve's split is not known (it left alive), and
-# never placed in that run were sq_vandal_shank_support, sq_ledge_sniper02
+# From two retail 2.3.1 runs: the squads' bodies (@member_counts) are the
+# kill tallies, the bottom reserve's split is not known (it left alive in
+# the first run), and never placed in either were sq_vandal_shank_support, sq_ledge_sniper02
 # and sq_den_top01. The second ledge squad's fall-back task is past the end
-# of TU0's list, so it keeps its post.
+# of TU0's list, so it keeps its post. The fall-back is the first run's
+# (0.6 s after the second ledge was gone); the second run's came 3.6 s
+# after that, as the first ledge was wiped too.
 
 @activity_bundle("enc_thieves_den_m06")
 

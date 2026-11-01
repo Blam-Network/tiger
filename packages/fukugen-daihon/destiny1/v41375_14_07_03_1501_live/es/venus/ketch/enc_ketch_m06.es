@@ -7,13 +7,20 @@
 # front once the room is lost. Mission 3 wakes the control deck;
 # the hall's vandals push on the hall trigger and the right-hand deck squad
 # comes on its own. The second spawn trigger brings the throne's guard out
-# (and the root opens the throne room's door on it). When a player reaches
-# the front of the throne the captain taunts and comes down behind his
-# guard; he moves up as the front and then the back guard fall, and his
-# shanks come when a player is at the throne itself.
+# (and the root opens the throne room's door on it). On the throne trigger
+# (mission 3 wakes sc_captain) the captain taunts and two seconds later
+# comes down; his front guard falls back to the throne once a player is at
+# its front. The back guard moves up as the front one falls, and he moves
+# up once the back guard falls or a player reaches the throne (the first
+# run's back guard died 0.8 s before his move; the second's still had one
+# vandal standing, and he moved 0.8 s after the throne trigger). His
+# shanks come once a player is at the throne itself and he is down to three
+# quarters of his health: the first run was at the throne with him at about
+# half (0.7 s), the second stood there 30 s and they came as he went from
+# 0.82 to 0.75.
 #
-# From one retail 2.3.1 capture: the squads' bodies (@member_counts) are the
-# kill tallies, and never placed in that run were sq_control_left_mc, both
+# From two retail 2.3.1 runs: the squads' bodies (@member_counts) are the
+# kill tallies, and never placed in either were sq_control_left_mc, both
 # dreg squads and the vandals of the captain's guard. The halls' first task,
 # the throne's back guard's and the captain's first post are past the end
 # of TU0's task list, so those squads are placed with no task. Some task
@@ -126,24 +133,27 @@ script sc_throne_guard():
     sq_throne_back.place()
     throne_alerted = true
 
-@startup()
-# the captain taunts from the throne and comes down behind his guard
+# the captain taunts from the throne and comes down behind his guard: woken
+# by mission 3 on the throne trigger (2.1 and 2.6 s from the taunt to his
+# move); the front guard's move waits for a player at the front of the
+# throne (0.8 s after it in the second run, with the captain in the first)
 script sc_captain():
-    sleep_until(pt_front_throne.is_triggered())
     __cs.clear()
     __cs.scripted_sequence("ultra_taunt")
     sq_throne_captain__captain.execute(__cs)
     sleep(2)
     sq_throne_captain.set_task("0x430FE3D2")
+    sleep_until(pt_front_throne.is_triggered())
     sq_throne_front.set_task("throne_back")
     sleep_until(sq_throne_front.alive_count() == 0)
     sq_throne_back.set_task("0xA5B8C907")
-    sleep_until(sq_throne_back.alive_count() == 0)
+    sleep_until(sq_throne_back.alive_count() == 0 or pt_throne.is_triggered())
     sq_throne_captain.set_task("control_servitor")
 
 @startup()
 script sc_captain_shanks():
     sleep_until(pt_throne.is_triggered())
+    sleep_until(sq_throne_captain__captain.get_health_fraction() <= 0.75)
     place_on_task(sq_captain_shanks01, "front")
     place_on_task(sq_captain_shanks02, "front")
 

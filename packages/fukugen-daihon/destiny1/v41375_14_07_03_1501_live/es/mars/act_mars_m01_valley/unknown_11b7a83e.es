@@ -1,13 +1,13 @@
 # es\mars\act_mars_m01_valley\unknown_11b7a83e.es
 #
-# Music and the Ghost's lines for Exclusion Zone. True name unknown.
-# The lines tied to objectives and phases are started by the missions; this
-# script plays the ones on the spawn and the point triggers. The volumes
-# this bundle holds have no sensors of their own: the sequences play off
-# them on the client once started.
+# Music and the Ghost's lines for Exclusion Zone. The lines tied to
+# objectives and phases are started by the missions; this script plays the
+# ones on the spawn and the point triggers. The volumes this bundle holds
+# have no sensors of their own: the sequences play off them on the client
+# once started.
 #
-# One run: the 3 s between the tunnel line and the intro line is as
-# captured.
+# Two runs: the 3 s between the tunnel line and the intro line is as
+# captured (3.0 / 2.8 s).
 
 @activity_bundle(0x11B7A83E)
 

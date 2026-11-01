@@ -1,0 +1,27 @@
+# es\mars\act_mars_m03_penthouse\act_mars_m03_penthouse_mission5.esp
+#
+# Mission 5, to the penthouse. The sound cue comes up with the objective and
+# the Ghost's line follows; the objective clears as the first player enters
+# the penthouse's bubble, and both stop with it.
+#
+# One run: the line started 2.7 s after the cue.
+
+@hard_wipe()
+location penthouse
+trigger_bubble_objective pf_objective_penthouse_goto bind(penthouse)
+sequence seq_d_atrium_to_penthouse_sfx01
+sequence seq_d_atrium_to_penthouse_s01
+
+script init(): pass
+
+script complete(): pass
+
+script main():
+    pf_objective_penthouse_goto.objective_begin()
+    seq_d_atrium_to_penthouse_sfx01.start()
+    sleep(2.7)
+    seq_d_atrium_to_penthouse_s01.start()
+    sleep_until(pf_objective_penthouse_goto.is_complete())
+    pf_objective_penthouse_goto.objective_end_silent()
+    seq_d_atrium_to_penthouse_s01.stop()
+    seq_d_atrium_to_penthouse_sfx01.stop()

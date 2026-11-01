@@ -6,13 +6,16 @@
 # placements the player uses. The vent opens as it is used and the garage
 # control comes up; using the control raises the terminal cage, and once it
 # is gone the garage opens, the alarm sounds and the first dropship comes
-# in. The second ship comes after a player reaches the middle of the base.
-# The dropships fly their own command scripts.
+# in. The second ship comes when a player gets past the middle of the base
+# to the door. The dropships fly their own command scripts.
 #
-# One run (2026-10-26): the device steps after each use, the drop timings,
-# the second ship 4 s after the middle of the base, the first ship leaving
-# on the base's deaths, the second on a timer, and the sand squads' change
-# of task on the centurion's death are single-run facts.
+# Two runs (2026-10-26, 2026-11-01), and they agree on every wait here: the
+# device steps after each use, the drop timings, both ships leaving on
+# timers (the first 23.0 s after its last drop with troops still up in
+# both), the second ship 0.6 / 0.9 s after the door trigger (the middle of
+# the base came 3.6 / 0.8 s before it), the phalanx falling back when it
+# was halved (0.3 / 0.8 s after) and the sand squads' change of task on the
+# centurion's death.
 
 @activity_bundle("enc_plains_m01")
 
@@ -98,14 +101,13 @@ script sc_garage():
     sp_placement_control._object.set_device_position(1)
     o_sparrow_terminal_cage.delete_object()
     sleep_until(pt_base_mid.is_triggered())
-    sleep(4)
+    sleep_until(pt_door.is_triggered())
     sc_dropship_sand.wake()
     sleep_until(sq_sand_legionary_a.alive_count() + sq_sand_legionary_b.alive_count() + sq_sand_legionary_c.alive_count() > 0)
     sleep_until(base_alive_count() == 0)
     seq_alarm.stop()
 
-# the first ship lands in the garage and leaves once its troops are dead, or
-# 23 s after its last drop (this run's, with a backup legionary still up)
+# the first ship lands in the garage and leaves 23 s after its last drop
 script sc_dropship_base():
     dropship_enter(sq_dropship_base__pilot, cs_dropship_land(cps_dropship_base_entry))
     sleep(5)
@@ -113,11 +115,17 @@ script sc_dropship_base():
         drop_on_task(sq_dropship_base__pilot, sq, "base_phalanx_fight")
     sleep(3)
     drop_on_task(sq_dropship_base__pilot, sq_base_phalanx, "base_phalanx")
+    sc_base_phalanx.wake()
     sleep(3)
     drop_on_task(sq_dropship_base__pilot, sq_backup_legionary_a, "backup")
     drop_on_task(sq_dropship_base__pilot, sq_backup_legionary_b, "backup")
-    sleep_until_timeout(sq_base_phalanx.alive_count() + sq_base_legionary_a.alive_count() + sq_base_legionary_b.alive_count() + sq_base_legionary_c.alive_count() + sq_backup_legionary_a.alive_count() + sq_backup_legionary_b.alive_count() == 0, 23)
+    sleep(23)
     dropship_leave(sq_dropship_base__pilot, cps_dropship_base_exit)
+
+# the phalanx squad falls back once it is down to half strength
+script sc_base_phalanx():
+    sleep_until(sq_base_phalanx.alive_count() * 2 <= sq_base_phalanx.max_count())
+    sq_base_phalanx.set_task("0xDB0F0E2D")
 
 # the second ship hovers over the sand: the centurion first, then his
 # legionaries, who go on the attack when he falls

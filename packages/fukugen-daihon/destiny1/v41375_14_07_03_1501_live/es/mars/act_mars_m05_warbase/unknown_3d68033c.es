@@ -1,10 +1,10 @@
 # es\mars\act_mars_m05_warbase\unknown_3d68033c.es
 #
-# Music and Ghost lines for The Garden's Spire. True name unknown. The
-# intro music and the first lines play once the players are in; the rest of
-# the lines and the warbase and ascent music belong to the phases that play
-# them (the lines follow the objectives, not the trigger volumes beside
-# them, in the one run captured).
+# Music and Ghost lines for The Garden's Spire. The intro music and the
+# first lines play once the players are in; the rest of the lines and the
+# warbase and ascent music belong to the phases that play them (the lines
+# follow the objectives, not the trigger volumes beside them, in both runs
+# captured).
 
 @activity_bundle(0x3D68033C)
 

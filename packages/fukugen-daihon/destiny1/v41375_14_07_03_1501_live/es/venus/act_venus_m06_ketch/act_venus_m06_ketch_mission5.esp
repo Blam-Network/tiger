@@ -2,7 +2,7 @@
 #
 # Mission 5, the outro. In the same frame the ketch music stops, the
 # Ghost's last line and the ascent music start and the activity completes;
-# the results come up 30 seconds on. One run: unconfirmed.
+# the results come up 30 seconds on (30.2 and 30.3 s in the two runs).
 
 sequence venus_m06_music_cue2
 sequence md_vn06_020_60

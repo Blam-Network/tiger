@@ -7,12 +7,13 @@
 # the triggers are in unknown_11b7a83e. The vent and control animations, the
 # base's doors and alarm belong to enc_plains_m01.
 #
-# One run (2026-10-26): the vent came up 15.7 s after the spawn, long
-# before the player reached the dunes, so the dunes trigger is the line's
-# and not the objective's. Retail showed the vent objective in a state TU0
-# has no verb for (wire 1) from the spawn until then. Each objective cleared
-# a few seconds after its use (3.9 s, 1.8 s); the 3 s hold after the control
-# is the gap to the next phase.
+# Two runs (2026-10-26, 2026-11-01) agree on every wait: the vent came up
+# 15.7 / 15.5 s after the spawn, once long before the player reached the
+# dunes and once 2.5 s after, so the dunes trigger is the line's and not the
+# objective's. Retail showed the vent objective in a state TU0 has no verb
+# for (wire 1) from the spawn until then. Each objective cleared a few
+# seconds after its use (3.9 / 3.9 s, 1.8 / 1.6 s); the 3 s hold after the
+# control is the gap to the next phase (2.8 / 3.0 s).
 
 @hard_wipe()
 interactable_objective sp_objective_vent bind("0x5F62CC37")

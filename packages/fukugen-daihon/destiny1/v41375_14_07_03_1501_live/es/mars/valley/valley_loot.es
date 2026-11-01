@@ -14,11 +14,15 @@
 # others were not back 104, 159 and 191 s on. So a chest comes back
 # 100-300 s after it was opened.
 #
-# Here: two fresh starts, act_mars_m01_valley's valley host
-# (2026-10-26_23-24-32#4) with the eight chests out at 60-85 s and the patrol's
-# (Patrol Mars#12) at 62-87 s. act_mars_m07_lowergarden's valley host was
-# joined running (2026-10-26_23-57-02#5): seven chests out from its first
-# snapshot and the vex ruin chest, on its fourth incarnation, back 91 s in.
+# Here: three fresh starts, act_mars_m01_valley's valley host
+# (2026-10-26_23-24-32#4) with the eight chests out at 60-85 s, the patrol's
+# (Patrol Mars#12) at 62-87 s and act_mars_m07_lowergarden's
+# (2026-11-01_01-41-19#5) at 64-87 s. act_mars_m07_lowergarden's 2026-10-26
+# valley host was joined running (2026-10-26_23-57-02#5): seven chests out
+# from its first snapshot and the vex ruin chest, on its fourth incarnation,
+# back 91 s in. act_mars_m01_valley's 2026-11-01 one (00-12-41#4) already had
+# another player in it when joined, its chests out 47-69 s after the join:
+# its start is not known.
 
 @activity_bundle("valley_loot")
 

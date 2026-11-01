@@ -1,0 +1,38 @@
+# es\mars\act_mars_m03_penthouse\act_mars_m03_penthouse_mission2.esp
+#
+# Mission 2, downtown: get to the console, then use it. The Ghost's travel
+# lines come up with the first objective and stop when the player reaches
+# the console; using it plays the Ghost's next line, and the next phase
+# follows seven seconds into it. The line at the console itself plays off
+# its own trigger (unknown_c588d132). The console is enc_downtown_amb1's
+# placement (pf_placement_m03_button, the same identifier). Downtown is a
+# public bubble: its triggers and the use are on the public host's wire.
+#
+# One run: the console's line started 1.3 s after its objective cleared,
+# the next phase 7 s after the line. The overlook trigger fired with no
+# response, so nothing here waits on it.
+
+trigger_volume_objective pf_objective_downtown_trigger
+interactable_objective pf_objective_downtown_interact bind("0x092E8C15")
+sequence seq_d_downtown_travel_s01
+sequence seq_d_downtown_travel_s02
+sequence seq_d_downtown_obj_s02
+
+script init(): pass
+
+script complete(): pass
+
+script main():
+    pf_objective_downtown_trigger.objective_begin()
+    seq_d_downtown_travel_s01.start()
+    seq_d_downtown_travel_s02.start()
+    sleep_until(pf_objective_downtown_trigger.is_complete())
+    pf_objective_downtown_trigger.objective_end_silent()
+    seq_d_downtown_travel_s01.stop()
+    seq_d_downtown_travel_s02.stop()
+    pf_objective_downtown_interact.objective_begin()
+    sleep_until(pf_objective_downtown_interact.is_complete())
+    pf_objective_downtown_interact.objective_end_silent()
+    sleep(1.25)
+    seq_d_downtown_obj_s02.start()
+    sleep(7)

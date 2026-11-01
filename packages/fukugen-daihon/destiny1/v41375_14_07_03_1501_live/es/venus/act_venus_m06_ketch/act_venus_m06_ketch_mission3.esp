@@ -1,10 +1,13 @@
 # es\venus\act_venus_m06_ketch\act_venus_m06_ketch_mission3.esp
 #
 # Mission 3, "go to the throne": through the ketch. The ketch's control
-# deck squads come on with the phase (enc_ketch_m06's sc_control); the
-# objective clears on the throne trigger and the ketch music moves to its
-# next section as it does. The throne room's door and the respawn swap are
-# the root's sc_throne_door. One run: unconfirmed.
+# deck squads come on with the phase (enc_ketch_m06's sc_control). At the
+# throne trigger the captain taunts (enc_ketch_m06's sc_captain, 0.7 and
+# 0.8 s on), the waypoint goes and the Ghost's dock line gives way to his
+# throne line a second on (1.1 and 1.4 s), and the objective clears two
+# seconds after that (2.9 and 3.7 s after the trigger) as the ketch music
+# moves to its next section. The throne room's door and the respawn swap
+# are the root's sc_throne_door.
 
 @hard_wipe()
 generic_objective pf_goto_throne
@@ -13,6 +16,8 @@ trigger_volume tv_goto_throne
 player_trigger pt_goto_throne bind(tv_goto_throne)
 encounter_handle enc_ketch_m06
 sequence venus_m06_music_cue2
+sequence md_vn06_020_20
+sequence md_vn06_020_40
 
 script init(): pass
 
@@ -22,6 +27,11 @@ script main():
     enc_ketch_m06.sc_control.wake()
     pf_goto_throne.objective_begin(ap_throne)
     sleep_until(pt_goto_throne.is_triggered())
+    enc_ketch_m06.sc_captain.wake()
+    sleep(1)
+    pf_goto_throne._player_objective.nav_point_clear()
+    md_vn06_020_20.stop()
+    md_vn06_020_40.start()
     sleep(2)
     pf_goto_throne.objective_end_silent()
     venus_m06_music_cue2.set_switch_mask(7)

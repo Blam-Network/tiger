@@ -2,17 +2,26 @@
 #
 # The Cabal checkpoint in Exclusion Zone. Its scenery cans are up from the
 # start. The road squads come up when a player reaches the road, the
-# bunker's when they reach it; using the console calls the boss's dropship,
-# which drops its phalanxes, then its psions, then the boss himself, and
-# leaves. The dropship flies its own command scripts.
+# bunker's when they reach it; each pulls back to the overlook once it is
+# down to half strength (the road's also as a player comes up the front).
+# Using the console calls the boss's dropship, which drops its phalanxes,
+# then its psions, then the boss himself, and leaves. The dropship flies its
+# own command scripts.
 #
-# One run (2026-10-26): the console's device steps, the drop waits and the
-# squads' tasks are as captured (the road squads pulling back on the front
-# trigger, the first bunker squad when the second is down); the rest of
-# their moves are the task tree's, not this script's. The first run sent each wave once the last was down; this
-# one sent the psions and the boss on time with the earlier waves still up
-# (13 s, then 16 s), and the ship left 13 s after the boss's drop with him
-# alive, putting his two legionaries down as it went.
+# Two runs (2026-10-26, 2026-11-01). Both agree on the road's placements,
+# the console's device steps and the drop waits: the psions came 13.3 s
+# after the phalanxes and the boss 15.7 / 16.0 s after the psions with the
+# earlier waves still up, and the ship left 13 s after the boss's drop with
+# him alive, putting his two legionaries down as it went (the first,
+# unindexed run sent each wave once the last was down). The half-strength
+# pull-backs are the second run's: three road squads and all four bunker
+# squads moved 0.4-0.8 s after the death that halved them; in the first run
+# the front trigger came before any loss. The first bunker squad moving up
+# when the overlook's squad goes down is the first run's (366.8 s); in that
+# run the third moved when the overlook's squad died a second time, which
+# no rule here reproduces. The second run placed the last legionary squad
+# and the phalanx on the bunker trigger as the first unindexed run did; the
+# 2026-10-26 run placed only the first.
 
 @activity_bundle("enc_checkpoint_m01")
 
@@ -62,7 +71,6 @@ script sc_checkpoint_main():
     for sq in [sq_road_front_legionary, sq_road_front_phalanx, sq_road_overlook_legionary, sq_road_overlook_phalanx, sq_bunker_legionary_a, sq_bunker_legionary_b, sq_bunker_legionary_c, sq_bunker_legionary_d, sq_bunker_phalanx, sq_boss_phalanx_a, sq_boss_phalanx_b, sq_boss_phalanx_c, sq_boss_psion_a, sq_boss_psion_b, sq_boss_psion_c, sq_boss_legionary_a, sq_boss_legionary_b, sq_boss]:
         sq.set_objective(obj_checkpoint_m01)
     sc_road.wake()
-    sc_front.wake()
     sc_bunker.wake()
     sc_console.wake()
 
@@ -74,24 +82,55 @@ script sc_road():
     place_on_task(sq_road_overlook_legionary, "road_legionaries")
     place_on_task(sq_bunker_legionary_a, "road_main")
     place_on_task(sq_bunker_legionary_b, "road_overlook_legionary")
-    sleep_until(sq_bunker_legionary_b.alive_count() == 0)
-    sq_bunker_legionary_a.set_task("road_overlook_legionary")
+    sc_road_front_legionary.wake()
+    sc_road_front_phalanx.wake()
+    sc_road_overlook_phalanx.wake()
+    sc_road_overlook_legionary.wake()
+    sc_bunker_legionary_a.wake()
 
-# the road squads pull back to the overlook as a player comes up the front
-script sc_front():
-    sleep_until(pt_front.is_triggered())
+# each road squad pulls back to the overlook once it is down to half
+# strength, or as a player comes up the front
+script sc_road_front_legionary():
+    sleep_until(pt_front.is_triggered() or at_half_strength(sq_road_front_legionary))
     sq_road_front_legionary.set_task("0xC2BCBF22")
+
+script sc_road_front_phalanx():
+    sleep_until(pt_front.is_triggered() or at_half_strength(sq_road_front_phalanx))
     sq_road_front_phalanx.set_task("road_overlook_phalanx")
+
+script sc_road_overlook_phalanx():
+    sleep_until(pt_front.is_triggered() or at_half_strength(sq_road_overlook_phalanx))
     sq_road_overlook_phalanx.set_task("road_overlook_phalanx")
+
+script sc_road_overlook_legionary():
+    sleep_until(pt_front.is_triggered() or at_half_strength(sq_road_overlook_legionary))
     sq_road_overlook_legionary.set_task("0xC2BCBF22")
+
+# the bunker's squads move up to the overlook once they are down to half
+# strength; the first also when the overlook's own squad goes down
+script sc_bunker_legionary_a():
+    sleep_until(at_half_strength(sq_bunker_legionary_a) or sq_bunker_legionary_b.alive_count() == 0)
+    sq_bunker_legionary_a.set_task("road_overlook_legionary")
 
 script sc_bunker():
     sleep_until(pt_bunker.is_triggered())
     place_on_task(sq_bunker_legionary_c, "road_main")
     place_on_task(sq_bunker_legionary_d, "road_main")
     seq_cabal_announce.start()
+    sc_bunker_legionary_c.wake()
+    sc_bunker_legionary_d.wake()
     sleep(2)
     place_on_task(sq_bunker_phalanx, "road_main")
+    sleep_until(at_half_strength(sq_bunker_phalanx))
+    sq_bunker_phalanx.set_task("road_overlook_legionary")
+
+script sc_bunker_legionary_c():
+    sleep_until(at_half_strength(sq_bunker_legionary_c))
+    sq_bunker_legionary_c.set_task("road_overlook_legionary")
+
+script sc_bunker_legionary_d():
+    sleep_until(at_half_strength(sq_bunker_legionary_d))
+    sq_bunker_legionary_d.set_task("road_overlook_legionary")
 
 # using the console raises the Ghost's cage and calls the boss's ship
 script sc_console():
@@ -127,6 +166,9 @@ script sc_dropship_boss():
     sq_dropship_boss__pilot.remove()
     place_on_task(sq_boss_legionary_a, "0x9DC7DA06")
     place_on_task(sq_boss_legionary_b, "0x9DC7DA06")
+
+def at_half_strength(sq):
+    return sq.alive_count() * 2 <= sq.max_count()
 
 def place_on_task(sq, task):
     sq.set_task(task)

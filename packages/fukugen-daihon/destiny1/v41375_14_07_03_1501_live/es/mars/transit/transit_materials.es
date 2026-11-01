@@ -12,7 +12,8 @@
 # fallen caldera) after their harvest; others were not back 118-281 s on.
 # So a node comes back after a wide random wait around those, 80-400 s.
 #
-# Here: the same two fresh starts, the six 2.3.1 nodes out at 70-169 s in both.
+# Here: the same three fresh starts, the six 2.3.1 nodes out at 70-169 s on the
+# patrol's two and at 68-149 s on m06's.
 # Two harvested on #6 were not back 144 and 158 s later. TU0 has four nodes
 # where 2.3.1 has six, and only iron_road is named in both.
 

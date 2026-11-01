@@ -2,8 +2,9 @@
 #
 # The Garden's Spire, the Mars story mission to the Cabal warbase. The root
 # starts nothing; the phases are the missions beside it, run in order.
-# Mission file names are ours (true names unknown); the phase names are the
-# bundle's. From one retail capture (2.3.1): every wait is that run's.
+# Mission file names are ours; the phase names are the bundle's. From two
+# retail captures (2.3.1, 2026-10-26 and 2026-11-01): the phases' waits
+# agree within a second in both.
 #
 #   act_mars_m05_warbase_mission1.esp  phase_1_rubicon_goto: to the Rubicon
 #   act_mars_m05_warbase_mission2.esp  phase_3_mesa_goto: to the mesa
@@ -21,7 +22,7 @@
 
 @activity_bundle("act_mars_m05_warbase")
 # The Mars landing zone (18, spawn point landing_zone); the first phase is
-# already the rubicon's (20). One 2.3.1 capture.
+# already the rubicon's (20). Both 2.3.1 captures.
 @activity("act_mars_m05_warbase")
 @start_slice("plains")
 @phase("phase_1_rubicon_goto", "rubicon")

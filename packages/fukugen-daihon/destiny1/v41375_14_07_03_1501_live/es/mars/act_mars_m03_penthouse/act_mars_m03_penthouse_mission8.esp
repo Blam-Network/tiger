@@ -1,0 +1,62 @@
+# es\mars\act_mars_m03_penthouse\act_mars_m03_penthouse_mission8.esp
+#
+# Mission 8, the node: the Rasputin node's dummy comes up with the phase and
+# rooms 2 and 3 stop listening; using the node opens it, the Ghost's cages
+# come up one after the other, the ascent music and the Ghost's last lines
+# play, the cages open and go, and the activity completes. The results come
+# half a minute later.
+#
+# One run, the gaps on the wire: the node's device steps 0.8 s after the
+# use and the dummy and bottom cage 0.9 s on, the top cage 6 s after the
+# bottom, the lines 3 s after that, the cages open 0.8 s into the lines and
+# go a second later, the completion 3.4 s after.
+
+object o_penthouse_ai_dummy
+object o_ghost_bottom_cage
+object o_ghost_top_cage
+interactable_objective pf_objective_penthouse_interact bind("0x77AC10E6")
+interactable_placement pf_placement_penthouse_interact bind("0x77AC10E6")
+encounter_handle enc_penthouse_m03
+sequence seq_m_ascent_s01
+sequence seq_d_penthouse_obj_s02
+sequence seq_d_penthouse_obj_s03
+sequence seq_d_penthouse_sfx01
+
+script init(): pass
+
+script complete():
+    c_lifetime_script_utilities.get_lifetime_sensor().end_game(30)
+
+script main():
+    enc = enc_penthouse_m03
+    node = pf_placement_penthouse_interact._object
+    o_penthouse_ai_dummy.create()
+    enc.pt_room2and3.disable()
+    enc.pt_room2_exit.disable()
+    enc.pt_room3_whole.disable()
+    pf_objective_penthouse_interact.objective_begin()
+    sleep_until(pf_objective_penthouse_interact.is_complete())
+    sleep(0.8)
+    node.set_device_position(0.89)
+    sleep(0.9)
+    o_penthouse_ai_dummy.set_device_position(1)
+    o_ghost_bottom_cage.create()
+    o_ghost_bottom_cage.set_device_position(0)
+    sleep(6)
+    o_ghost_top_cage.create()
+    o_ghost_top_cage.set_device_position(0)
+    sleep(3)
+    seq_m_ascent_s01.start()
+    seq_d_penthouse_obj_s02.start()
+    seq_d_penthouse_obj_s03.start()
+    seq_d_penthouse_sfx01.start()
+    sleep(0.8)
+    o_ghost_bottom_cage.set_device_position(1)
+    o_ghost_top_cage.set_device_position(1)
+    node.set_device_position(1)
+    sleep(1)
+    o_ghost_bottom_cage.delete_object()
+    o_ghost_top_cage.delete_object()
+    sleep(3.4)
+    pf_objective_penthouse_interact.objective_end_silent()
+    set_activity_complete()

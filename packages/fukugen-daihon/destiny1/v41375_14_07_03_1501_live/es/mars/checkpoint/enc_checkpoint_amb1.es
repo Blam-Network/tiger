@@ -5,21 +5,23 @@
 # legionaries and phalanx, the bunker's legionaries, and its psions once a
 # player reaches the bunker.
 #
-# Pooled over three sessions that had the bundle on the wire from their
-# start: act_mars_m05_warbase's (2026-10-26 23-39-22#1, never in the
-# bubble), act_mars_m07_lowergarden's (23-57-02#1, in it 101-132 s) and
-# the Mars patrol's (2026-10-29 Patrol Mars#1, in it 2151-2186 s):
+# Pooled over five sessions that had the bundle on the wire from their
+# start: act_mars_m05_warbase's two (2026-10-26 23-39-22#1 and 2026-11-01
+# 00-28-50#1, never in the bubble), act_mars_m07_lowergarden's two
+# (2026-10-26 23-57-02#1, in it 101-132 s, and 2026-11-01 01-41-19#1, from
+# 106 s) and the Mars patrol's (2026-10-29 Patrol Mars#1, in it
+# 2151-2186 s):
 # - The road and bunker squads are placed as the activity loads, the same
-#   cells in all three, whether or not a player comes.
+#   cells in all five, whether or not a player comes.
 # - The ten props come out with the bubble: m07 created them 1.6 s before
-#   its client reached it, m05 (never there) did not, and the patrol had
-#   them out from its first snapshot. Here they go out as the bundle
-#   starts, which a host that brings the bubble up for a player does as
-#   the player arrives.
+#   its client reached it and 0.5 s after, m05 (never there) did not, and
+#   the patrol had them out from its first snapshot. Here they go out as
+#   the bundle starts, which a host that brings the bubble up for a player
+#   does as the player arrives.
 # - Every squad is on the checkpoint objective from the first snapshot,
-#   placed or not (all three).
-# - pt_bunker puts the bunker's two psion squads in 0.7 s later (m07 and
-#   the patrol).
+#   placed or not (all five).
+# - pt_bunker puts the bunker's two psion squads in 0.7 s later (m07's two
+#   and the patrol).
 # - Bodies are the cells the server placed; tasks are the checkpoint
 #   objective's, by index (TU0's list matches 2.3.1's influencers).
 # act_mars_m01_valley's checkpoint is its own bundle (enc_checkpoint_m01).

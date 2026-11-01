@@ -1,0 +1,18 @@
+# es\mars\act_mars_m03_penthouse\act_mars_m03_penthouse_mission4.esp
+#
+# Mission 4, the office and the atrium: fight through to the atrium's far
+# side. The objective clears on its volume; the fights are enc_atrium_m03's
+# and run off its own triggers. A wipe puts the players back at the phase's
+# start (hard_wipe_globals [0] is up from this phase to the node's).
+
+@hard_wipe()
+trigger_volume_objective pf_objective_atrium_trigger
+
+script init(): pass
+
+script complete(): pass
+
+script main():
+    pf_objective_atrium_trigger.objective_begin()
+    sleep_until(pf_objective_atrium_trigger.is_complete())
+    pf_objective_atrium_trigger.objective_end_silent()

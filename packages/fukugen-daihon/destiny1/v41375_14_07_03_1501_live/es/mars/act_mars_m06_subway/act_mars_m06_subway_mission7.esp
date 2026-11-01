@@ -4,8 +4,10 @@
 # and their squads belong to enc_subway_m06; the kill objective counts the
 # gates, and the clear waits for the last Vex on the tracks. The clear's
 # trigger volumes are declared for their rows; nothing on the wire used them.
-# From one retail capture: the three seconds after the last kill are that
-# run's.
+#
+# One run (2026-11-01): every Vex was down when the last gate fell, so the
+# clear went active and cleared in the same tick. The Ghost's line follows
+# a second later, and the scan phase starts five seconds after the clear.
 
 @hard_wipe()
 trigger_volume tv_warpgate_destroy
@@ -13,6 +15,7 @@ trigger_volume tv_vex_clear
 nav_point ap_subway_conflux
 kill_squad_objective pf_objective_kill_warp_gates bind("0xF93FFC2A", 5)
 generic_objective pf_objective_generic_clear
+sequence seq_d_subway_clear_s01
 squad sq_plat_wide_support1
 squad sq_plat_wide_support2
 squad sq_plat_wide_support3
@@ -46,10 +49,11 @@ script main():
     sleep_until(pf_objective_kill_warp_gates.is_complete())
     pf_objective_kill_warp_gates.objective_end_silent()
     pf_objective_generic_clear.objective_begin(ap_subway_conflux)
-    sleep_until(subway_alive_count() > 0)
     sleep_until(subway_alive_count() == 0)
-    sleep(3)
     pf_objective_generic_clear.objective_end_silent()
+    sleep(1)
+    seq_d_subway_clear_s01.start()
+    sleep(4)
 
 def subway_alive_count():
     count = 0

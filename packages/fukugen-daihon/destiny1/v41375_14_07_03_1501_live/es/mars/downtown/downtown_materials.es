@@ -12,7 +12,8 @@
 # fallen caldera) after their harvest; others were not back 118-281 s on.
 # So a node comes back after a wide random wait around those, 80-400 s.
 #
-# Here: one fresh start (Patrol Mars#3), the six 2.3.1 nodes out at 122-166 s.
+# Here: two fresh starts, the six 2.3.1 nodes out at 122-166 s (Patrol Mars#3)
+# and at 82-154 s (act_mars_m03_penthouse's 2026-11-01 00-52-56#3).
 # TU0 has four nodes where 2.3.1 has six, and only iron_road is named in both.
 
 @activity_bundle("downtown_materials")

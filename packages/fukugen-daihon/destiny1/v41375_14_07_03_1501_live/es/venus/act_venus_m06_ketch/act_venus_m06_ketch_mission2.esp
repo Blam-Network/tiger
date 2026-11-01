@@ -10,8 +10,9 @@
 # closed six times while the player fought along the dock, each a moment
 # after the client's report on the door, so it reads as the door following
 # the players; this phase opens it once the dock is clear (the last opening,
-# four seconds on) and shuts it behind them at the hatch. One run:
-# unconfirmed.
+# four seconds on) and shuts it behind them at the hatch. Both runs show
+# the same door traffic and the same objective steps (0.7-0.8 s after the
+# dock trigger, 2.8-2.9 s after the ketch's).
 
 @hard_wipe()
 object o_door

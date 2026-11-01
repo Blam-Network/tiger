@@ -5,43 +5,53 @@
 # props, the Cabal at the strike line and the outpost, and the Vex at the
 # sunken gate.
 #
-# From five public host sessions: The Black Garden #5 and Exclusion Zone #4
-# (earlier drops), act_mars_m01_valley's valley host (2026-10-26 23-24-32#4,
-# fresh, chests out 60-85 s, 129 s), the patrol's (Patrol Mars#12, fresh,
-# chests 62-87 s, 203 s) and act_mars_m07_lowergarden's (2026-10-26
-# 23-57-02#5, joined running).
-# - Props, in all five: the sunken warp gate and the cable at rest, the
+# From seven public host sessions: The Black Garden #5 and Exclusion Zone #4
+# (earlier drops), act_mars_m01_valley's valley hosts (2026-10-26
+# 23-24-32#4, fresh, chests out 60-85 s, 129 s, and 2026-11-01 00-12-41#4,
+# joined with another player in it, 130 s), the patrol's (Patrol Mars#12,
+# fresh, chests 62-87 s, 203 s) and act_mars_m07_lowergarden's (2026-10-26
+# 23-57-02#5, joined running, and 2026-11-01 01-41-19#5, fresh, chests out
+# 64-87 s, 137 s).
+# - Props, in all seven: the sunken warp gate and the cable at rest, the
 #   placement monitor's console and the patrol beacons out at bubble entry.
 # - The gate's Vex stand from the start, under their own encounter, and
 #   came back on its respawn timer; their cloud (the dropship rows) never
 #   flew.
-# - The Cabal: up at load in both fresh starts, the strike line's left,
-#   anchor, mid and back squads, the outpost's front and left, and one more
-#   (the strike line's right in the patrol's, the outpost's back2 in
-#   m01's), 17-18 bodies; the strike line's right went in 1.6 s after
-#   back2 was wiped, so the budget is 18. The outpost's back and back2 were
-#   never up together (back alone in m07's joined host): kept apart, and
-#   back2 goes in ahead of the strike line's right, as in m01's run. The
-#   costs are the bodies the server placed.
+# - The Cabal: up at load in all three fresh starts, the strike line's
+#   left, anchor, mid and back squads, the outpost's front and left, and one
+#   more (the strike line's right in the patrol's and m07's, the outpost's
+#   back2 in m01's two), 17-18 bodies; the strike line's right went in
+#   1.6 s after back2 was wiped, so the budget is 18. The outpost's back and
+#   back2 were never up together (back alone in m07's joined host): kept
+#   apart, and back2 goes in ahead of the strike line's right, as in m01's
+#   runs. The costs are the bodies the server placed.
+# - act_mars_m01_valley's monitor (both its runs, the console's use on the
+#   valley host's wire): as a player starts using the console (its device
+#   to 0.1), the cage goes up over it 0.2-0.5 s later and the cable is
+#   powered 1 s after that; 4.5 s in the warp gate's failure plays and the
+#   cage drops and is gone 0.5-1 s later, and the cable rests again
+#   10.5-10.8 s in. The console's own device run (1 at 14.5-14.8 s) is the
+#   countdown_placement archetype's. Its placement unlocks on the mission's
+#   monitor objective, bound by the same identifier.
 # - A wiped Cabal encounter came back 10-11 s after its wipe when nothing
 #   held it (the strike anchor, the outpost's left), the cooldown; the
 #   strike line's left and back took 42 s.
 # - The gate does not wake on its Vex alone: on the patrol's host all six
 #   were dead by 94 s and the gate stayed at rest to the end, 109 s later.
-#   It woke in The Black Garden's run (2.5 s after the last kill) and was
-#   up in m07's joined host, so the wake is that mission's
+#   In The Black Garden's runs the gate was set 1 s after the valley
+#   loaded, and woke 1.5-2.5 s after the last kill where its Vex still
+#   stood, so the wake is that mission's
 #   (act_mars_m07_lowergarden_mission2), not this script's.
 # Those captures are 2.3.1: TU0's bundle has one gate teleport and no large
 # teleport or Taken haze.
-# Not here: the Taken blight, act_mars_m01_valley's monitor cage and cable
-# run as the monitor is used (one run), and Exclusion Zone's cage, cable and
-# warp gate failure beats, which that mission drives.
+# Not here: the Taken blight.
 
 @activity_bundle("enc_valley_amb1")
 
 static_array<object, 3> patrol_beacons
 object o_gate_teleport_start
-countdown_placement scp_placement_monitor
+object o_m01_monitor_cage
+countdown_placement scp_placement_monitor bind("0xBD366786")
 encounter_handle scp_specops_gate
 encounter_handle scp_specops_overload
 @member_counts({_squad: [{hydra: 1}, {hobgoblin: 1}, {minotaur: 1}, {minotaur: 1}, {minotaur: 1}, {minotaur: 1}]})
@@ -73,6 +83,22 @@ script sc_valley_props():
     for o in [scp_specops_gate.o_sunken_warpgate, scp_specops_overload.o_valley_cable]:
         o.create()
         o.set_device_position(0)
+
+@startup()
+# act_mars_m01_valley's monitor: the cage and the cable run as a player
+# starts using it.
+script sc_monitor():
+    sleep_until(scp_placement_monitor._object.is_active())
+    o_m01_monitor_cage.create()
+    sleep(1)
+    scp_specops_overload.o_valley_cable.set_device_position(1)
+    sleep(3.3)
+    scp_specops_overload.seq_warpgate_failure.start()
+    o_m01_monitor_cage.set_device_position(1)
+    sleep(0.5)
+    o_m01_monitor_cage.delete_object()
+    sleep(5.5)
+    scp_specops_overload.o_valley_cable.set_device_position(0)
 
 @startup()
 script sc_vexcloud_gate():

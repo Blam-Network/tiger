@@ -4,8 +4,12 @@
 # Cabal come in by dropship (enc_plains_m01); the objective clears once the
 # second ship's troops are down too. The Ghost's base lines play here.
 #
-# One run: the 6 s after the last kill is the gap to the next phase on the
-# wire (a host incident we cannot name sits in the middle of it).
+# Two runs (2026-10-26, 2026-11-01): the 6 s after the last kill is the gap
+# to the next phase on the wire in both (5.7, 6.1 s; a host incident we
+# cannot name sits in the middle of it). The base arrival line came 20.3
+# and 20.1 s after the phase started, with different squads down (the
+# phalanx's first casualty came after it in one run, a legionary's just
+# before it in the other): a timer, not a death.
 
 @hard_wipe()
 generic_objective sp_objective_kill
@@ -42,10 +46,9 @@ script main():
     seq_music_cabal_intro.stop()
     sleep(6)
 
-# the Ghost on the base's first casualty (one run: the phalanx died first)
+# the Ghost's line 20 s into the fight
 script sc_base_arrive():
-    sleep_until(sq_base_phalanx.alive_count() > 0)
-    sleep_until(sq_base_phalanx.alive_count() == 0)
+    sleep(20)
     seq_dialog_plains_base_arrive.start()
 
 def base_alive_count():

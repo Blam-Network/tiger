@@ -1,8 +1,10 @@
 # es\mars\act_mars_m06_subway\act_mars_m06_subway.es
 #
 # A Rising Tide, the Mars story mission into the subway. The root only
-# readies the lifetime; the phases are the missions beside it, run in order. Mission file names are ours
-# (true names unknown). From one retail capture: every timing is that run's.
+# readies the lifetime; the phases are the missions beside it, run in order.
+# Mission file names are ours. First authored from an earlier run, checked
+# and fixed against the 2026-11-01 run (docs/missions/act_mars_m06_subway.md
+# in tiger-packet-analysis): one run each, so every timing is unconfirmed.
 #
 #   act_mars_m06_subway_mission1.esp  go to the battleground
 #   act_mars_m06_subway_mission2.esp  scan the battleground
@@ -14,11 +16,13 @@
 #   act_mars_m06_subway_mission8.esp  scan the conflux, the mission ends
 #
 # The lobby and subway encounters are scripts of their own (enc_lobby_m06,
-# enc_subway_m06); unknown_04e6ac69 holds the music and Ghost lines.
+# enc_subway_m06); unknown_04e6ac69 holds the music and the Ghost lines that
+# follow the fights; the lines tied to an objective are its mission's.
+# 890B869A (one firing area, never on the wire) has no script.
 
 @activity_bundle("act_mars_m06_subway")
 # The same landing zone, the battleground (1), the lobby (12) and the subway
-# (22). One 2.3.1 capture.
+# (22), as the 2.3.1 run's lifetime phase index went.
 @activity("act_mars_m06_subway")
 @start_slice("plains")
 @phase("phase_m06_battleground_goto", "battleground")

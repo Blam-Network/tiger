@@ -1,0 +1,17 @@
+# es\mars\act_mars_m03_penthouse\act_mars_m03_penthouse_mission6.esp
+#
+# Mission 6, the penthouse: through rooms 0 and 1 to room 2. The objective
+# clears on its volume at room 2's door; rooms 0 and 1 are enc_penthouse_m03's
+# and run off its own triggers.
+
+@hard_wipe()
+trigger_volume_objective pf_objective_penthouse_trigger
+
+script init(): pass
+
+script complete(): pass
+
+script main():
+    pf_objective_penthouse_trigger.objective_begin()
+    sleep_until(pf_objective_penthouse_trigger.is_complete())
+    pf_objective_penthouse_trigger.objective_end_silent()

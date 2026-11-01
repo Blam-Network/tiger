@@ -19,9 +19,8 @@
 # es\venus\ketch\enc_ketch_m06.es; unknown_9ed3bc2b beside this file holds
 # the music and the Ghost's lines. The throne room's door is the kill
 # phase's, but it works while the goto phase runs, so the root drives it.
-# Authored from one retail 2.3.1 capture (tiger-packet-analysis
-# docs/missions/act_venus_m06_ketch.md): every wait is that run's,
-# unconfirmed.
+# Authored from two retail 2.3.1 runs (tiger-packet-analysis
+# docs/missions/act_venus_m06_ketch.md); a wait only one run shows says so.
 
 @activity_bundle("act_venus_m06_ketch")
 # The player spawns in baby_shat (24, bubble 3 state 0) at the GAS's spawn
@@ -49,8 +48,6 @@ act_venus_m06_ketch_mission3 phase_ketch_goto_throne
 act_venus_m06_ketch_mission4 phase_ketch_kill_captain
 act_venus_m06_ketch_mission5 phase_ketch_outro
 encounter_handle enc_ketch_m06
-sequence md_vn06_020_20
-sequence md_vn06_020_40
 
 @startup()
 script ss_venus_m06_ketch():
@@ -61,8 +58,10 @@ script ss_venus_m06_ketch():
 # The throne room's door stands from the ketch's load and opens once the
 # throne guard comes out (on the wire six seconds after them, a moment after
 # the client's report on the door, so it follows the players). When a
-# player is through it shuts behind them, the respawn moves into the throne
-# room and the Ghost's dock line gives way to his throne line.
+# player is through it shuts behind them and the respawn moves into the
+# throne room (0.5 and 0.8 s after the lock counts a player). The Ghost's
+# throne line is mission 3's: the second run had it on pt_goto_throne, six
+# seconds before the lock.
 script sc_throne_door():
     throne = phase_ketch_kill_captain
     sleep_until(enc_ketch_m06.ketch_entered)
@@ -73,5 +72,3 @@ script sc_throne_door():
     sleep_until(throne.pm_lock_door.test_any_inside())
     throne.o_door.set_device_position(0)
     throne.tg_boss_fight_respawn.activate()
-    md_vn06_020_20.stop()
-    md_vn06_020_40.start()

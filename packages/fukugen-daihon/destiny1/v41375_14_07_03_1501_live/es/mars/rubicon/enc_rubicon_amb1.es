@@ -6,26 +6,33 @@
 # building's floors, the psions brought up to the second floor, the
 # assault ship's countdown squads and the ship that flies over the base.
 #
-# Pooled over two runs through the bubble: act_mars_m05_warbase's
-# (2026-10-26 23-39-22#1, in the bubble 132-248 s) and the Mars patrol's
-# (2026-10-29 Patrol Mars#1, 1648-1714 s):
-# - Up as the bubble loads (both runs, the same cells): no man's land, both
+# Pooled over three runs through the bubble: act_mars_m05_warbase's two
+# (2026-10-26 23-39-22#1, in the bubble 132-248 s, and 2026-11-01
+# 00-28-50#1, 190-434 s) and the Mars patrol's (2026-10-29 Patrol Mars#1,
+# 1648-1714 s):
+# - Up as the bubble loads (all three, the same cells): no man's land, both
 #   bunkers, the wall's three squads, the courtyard, the first floor and
 #   the second floor's front, 27 bodies. None came back once wiped (m05:
-#   both bunkers and the wall down by 228 s, nothing back by 248 s).
+#   both bunkers and the wall down by 228 s, nothing back by 248 s; and
+#   everything down by 373 s, nothing back by 434 s).
 # - pt_psions puts the second floor's rear psion and its four cover psions
-#   in 0.8-1.3 s later (both runs).
+#   in 0.8-1.3 s later (all three).
 # - pt_countdown brought the assault ship in once the second floor was clear
 #   (the patrol: the last cover psion died 0.5 s before the ship, 24 s
-#   after the trigger; m05 left 16 s after its trigger with the cover psions
-#   still up). The ship dropped the three countdown squads 5.5 s after it
-#   came in and was gone 15.7 s after. Single run.
-# - The flyover ship passes over and leaves 13.3-13.6 s later, nothing on
-#   board, 40.0 and 42.7 s between passes (m05's three; the patrol's one
-#   pass, 15 s into its visit, fits the same spacing). The pass's path is
-#   one of its five; which one was not decoded, so it is picked at random.
+#   after the trigger; m05's 2026-11-01 run: the rear psion died 0.3 s
+#   before it; its 2026-10-26 run left 16 s after the trigger with the
+#   cover psions still up). The ship dropped the three countdown squads
+#   5.3-5.5 s after it came in and was gone 15.2-15.7 s after (two runs).
+# - The flyover ship passes over and leaves 12.7-19.5 s later, nothing on
+#   board, and the next comes 25.9-42.7 s after it left (m05's eight passes
+#   in two runs; the patrol's one pass, 15 s into its visit, fits the same
+#   spacing). The pass's path is one of its five; which one was not
+#   decoded, so it is picked at random, and so is how long the pass takes.
+#   The first pass came 0-32 s after the bubble loaded (in flight at the
+#   load, 15 s and 32 s in): the flyover keeps its own round, whenever the
+#   player arrives.
 # - Every squad, the ships too, is on the Rubicon objective from the
-#   bubble's first snapshot, placed or not (both runs).
+#   bubble's first snapshot, placed or not (all three).
 # - Bodies are the cells the server placed; tasks are the Rubicon
 #   objective's, by index (TU0's list matches 2.3.1's influencers).
 # Not here: the second countdown wave and sq_nomansland_b (never placed),
@@ -120,12 +127,13 @@ script sc_countdown():
 @startup()
 script sc_flyover():
     paths = [cps_flyover1, cps_flyover2, cps_flyover3, cps_flyover4, cps_flyover5]
+    sleep(mathlib.random_int_inclusive(0, 32))
     while true:
         sq_drop_flyover.place()
         sq_drop_flyover__pilot.execute(paths[mathlib.random_int_inclusive(0, 4)])
-        sleep(13.5)
+        sleep(mathlib.random_int_inclusive(13, 19))
         sq_drop_flyover.remove()
-        sleep(mathlib.random_int_inclusive(40, 43))
+        sleep(mathlib.random_int_inclusive(26, 43))
 
 def second_floor_alive_count():
     return sq_second_floor_front.alive_count() + sq_second_floor_rear.alive_count() + sq_second_floor_cover.alive_count()

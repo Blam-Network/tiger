@@ -1,0 +1,31 @@
+# es\mars\act_mars_m03_penthouse\act_mars_m03_penthouse_mission1.esp
+#
+# Mission 1, to downtown. The mission starts once the players are in, with
+# the intro music; the Ghost's landing zone line follows, and the objective
+# comes up a moment after it ends. It clears as the first player enters
+# downtown's bubble (a public bubble: the trigger fires on the public
+# host's session).
+#
+# One run: the objective showed a state TU0 has no verb for (wire 1) from
+# 1.6 s after the spawn until it went active, 1.4 s after the line's 8.4 s.
+
+location downtown
+trigger_bubble_objective pf_objective_downtown_goto bind(downtown)
+sequence seq_m_intro_s01
+sequence seq_d_plains_lz_s01
+
+script init(): pass
+
+script complete(): pass
+
+script main():
+    sleep_until(c_player_script_utilities.all_players_are_ready())
+    c_lifetime_script_utilities.get_lifetime_sensor().set_state(e_activity_lifetime_state.active)
+    seq_m_intro_s01.start()
+    sleep(2.5)
+    seq_d_plains_lz_s01.start()
+    sleep_until(seq_d_plains_lz_s01.is_done())
+    sleep(1.4)
+    pf_objective_downtown_goto.objective_begin_immediate()
+    sleep_until(pf_objective_downtown_goto.is_complete())
+    pf_objective_downtown_goto.objective_end_silent()

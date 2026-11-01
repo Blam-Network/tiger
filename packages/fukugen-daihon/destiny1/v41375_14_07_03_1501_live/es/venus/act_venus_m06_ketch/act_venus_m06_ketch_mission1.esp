@@ -3,12 +3,13 @@
 # Mission 1, the Thieves' Den. The activity goes active once the players are
 # in and "go to the Thieves' Den" comes up four seconds later, straight to
 # active (the wire shows a state 1 at two seconds first, which has no verb on
-# TU0). It clears seven seconds after a player reaches the den (the den
-# encounter's load) and "kill the majors" comes up in its place: the
-# phase's own volume, tv_kill_kell, has no trigger row, so the host's test of
-# it is what the seven seconds stand for. The kill objective clears once the
-# den's three major vandals are dead, with the Ghost's line, and the phase
-# moves on three seconds later. One run: unconfirmed.
+# TU0). It clears six seconds after a player reaches the den (the den
+# encounter's load; 6.8 and 5.9 s in the two runs) and "kill the majors"
+# comes up in its place: the phase's own volume, tv_kill_kell, has no
+# trigger row, so the host's test of it is what the six seconds stand for.
+# The kill objective clears three seconds after the den's three major
+# vandals are dead (3.6 and 2.7 s), with the Ghost's line, and the phase
+# moves on three seconds later (2.8 s in both).
 
 generic_objective pf_goto_thieves_den
 nav_point ap_thieves_den
@@ -26,7 +27,7 @@ script main():
     sleep(4)
     pf_goto_thieves_den.objective_begin_immediate(ap_thieves_den)
     sleep_until(enc_thieves_den_m06.den_entered)
-    sleep(7)
+    sleep(6)
     pf_goto_thieves_den.objective_end_silent()
     pf_kill_kell.objective_begin(nil)
     sleep_until(enc_thieves_den_m06.majors_dead)

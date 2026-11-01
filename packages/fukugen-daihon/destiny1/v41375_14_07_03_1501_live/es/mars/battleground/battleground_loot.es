@@ -14,8 +14,11 @@
 # others were not back 104, 159 and 191 s on. So a chest comes back
 # 100-300 s after it was opened.
 #
-# Here: two fresh starts of the patrol's battleground host (Patrol Mars#8 and
-# #14), the six chests out at 58-89 s in both.
+# Here: four fresh starts: the patrol's battleground host (Patrol Mars#8 and
+# #14), the six chests out at 58-89 s in both, and act_mars_m05_warbase's and
+# act_mars_m06_subway's (2026-11-01 00-28-50#3 and 01-07-32#3), all six out at
+# 62-81 s and 60-88 s. Two more fresh hosts (2026-11-01 00-12-41#2 and
+# 01-41-19#3) had none out when the player left the bubble at 37-59 s.
 
 @activity_bundle("battleground_loot")
 

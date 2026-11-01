@@ -14,11 +14,11 @@
 # others were not back 104, 159 and 191 s on. So a chest comes back
 # 100-300 s after it was opened.
 #
-# Here: two fresh starts: act_mars_m05_warbase's mesa host
-# (2026-10-26_23-39-22#5), the six chests out at 59-83 s, and the patrol's
-# (Patrol Mars#10), where only two came out (64 and 72 s) and the other four
-# were still not out when the player left at 117 s, the one fresh start that
-# broke the window.
+# Here: three fresh starts: act_mars_m05_warbase's mesa hosts
+# (2026-10-26_23-39-22#5 and 2026-11-01_00-28-50#7), the six chests out at
+# 59-83 s and 61-87 s, and the patrol's (Patrol Mars#10), where only two came
+# out (64 and 72 s) and the other four were still not out when the player
+# left at 117 s, the one fresh start that broke the window.
 
 @activity_bundle("mesa_loot")
 

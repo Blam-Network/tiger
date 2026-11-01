@@ -312,7 +312,9 @@ describe("TU0 act_venus_m06_ketch scripts", () => {
     expect(said("venus_m06_music_cue2 t5#2 sequence play")).toBe(true);
 
     // The ketch: the control deck with the phase, the throne guard and
-    // the door on the second spawn trigger, the lock behind the player.
+    // the door on the second spawn trigger; on the throne trigger the
+    // captain's taunt and the Ghost's throne line, the lock behind the
+    // player.
     ticks(2);
     expect(taskOf("KETCH", "sq_control02")).toBe(4);
     fire("KETCH", "pt_spawn01");
@@ -322,6 +324,12 @@ describe("TU0 act_venus_m06_ketch scripts", () => {
     ticks(8);
     expect(taskOf("KETCH", "sq_throne_front")).toBe(14);
     expect(deviceOf("ROOT", "phase_ketch_kill_captain.o_door")).toBe(1);
+    fire("ROOT", "phase_ketch_goto_throne.pt_goto_throne");
+    ticks(2);
+    expect(
+      said("sq_throne_captain__captain t2#16 command script cookie #1")
+    ).toBe(true);
+    expect(said("md_vn06_020_40")).toBe(true);
     runtime.reportPlayerMonitor(
       rowOf("ROOT", "phase_ketch_kill_captain.pm_lock_door"),
       1
@@ -332,12 +340,8 @@ describe("TU0 act_venus_m06_ketch scripts", () => {
     expect(said("tg_boss_fight_respawn t30#25 trigger group activate()")).toBe(
       true
     );
-    expect(said("md_vn06_020_40")).toBe(true);
-    expect(
-      said("sq_throne_captain__captain t2#16 command script cookie #1")
-    ).toBe(true);
-    fire("ROOT", "phase_ketch_goto_throne.pt_goto_throne");
-    ticks(5);
+    expect(taskOf("KETCH", "sq_throne_front")).toBe(13);
+    ticks(3);
     expect(said("mission act_venus_m06_ketch_mission4 starting")).toBe(true);
 
     // The captain: the objective clears a second after he dies, the outro

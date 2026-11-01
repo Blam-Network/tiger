@@ -117,6 +117,21 @@ const TU0_STARTS: Readonly<Record<string, ExpectedStart>> = {
       ["phase_valley", "valley"],
     ],
   },
+  act_mars_m03_penthouse: {
+    destination: "mars",
+    startSlice: "plains",
+    phases: [
+      ["phase_m03_downtown_goto", "downtown"],
+      ["phase_m03_downtown", "downtown"],
+      ["phase_m03_atrium_goto", "atrium"],
+      ["phase_m03_atrium", "atrium"],
+      ["phase_m03_penthouse_goto", "penthouse"],
+      ["phase_m03_penthouse", "penthouse"],
+      ["phase_m03_penthouse_darkness", "penthouse"],
+      ["phase_m03_penthouse_close", "penthouse"],
+    ],
+    spawnPoint: "landing_zone",
+  },
   act_mars_m05_warbase: {
     destination: "mars",
     startSlice: "plains",
@@ -355,7 +370,6 @@ const TU0_STARTS: Readonly<Record<string, ExpectedStart>> = {
   mars_portal_1: startsIn("mars", "atrium"),
   mars_portal_2: startsIn("mars", "atrium"),
   mars_patrols_1: startsIn("mars", "atrium"),
-  act_mars_m03_penthouse: startsIn("mars", "atrium"),
   venus_portal_2: startsIn("venus", "archive"),
   venus_raid_1: startsIn("venus", "archive"),
   venus_patrols_1: startsIn("venus", "archive"),
@@ -471,6 +485,12 @@ const TU0_REGION_SPAWN_TRANSITIONS: Readonly<
     136: 0x0c_de_83_b1,
     144: 0x8d_1b_57_00,
   },
+  act_mars_m03_penthouse: {
+    0: 0xe0_f8_5f_4c,
+    48: 0xf7_45_9a_b9,
+    136: 0x0b_1e_e1_25,
+    144: 0x43_98_aa_d3,
+  },
   mars_portal_3: {
     88: 0x14_d6_e8_21,
     104: 0xfb_76_ec_c4,
@@ -551,6 +571,7 @@ const EVIL_STARTS: Readonly<Record<string, ExpectedStart>> = {
   },
   // TU0's start from its capture is not carried to 1.33 yet.
   cine_speaker: startsIn("cinematic_trv", "boulevard"),
+  act_mars_m03_penthouse: startsIn("mars", "atrium"),
   cine_end: startsIn("cinematic_trv", "boulevard"),
   act_cinematic_queen_101: startsIn("cinematic_queen", "queens_chamber"),
   act_venus_m02_southern_tides: startsIn("venus", "archive"),

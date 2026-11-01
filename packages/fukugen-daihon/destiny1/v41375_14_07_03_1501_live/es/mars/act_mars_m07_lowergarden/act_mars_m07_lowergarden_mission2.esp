@@ -1,34 +1,49 @@
 # es\mars\act_mars_m07_lowergarden\act_mars_m07_lowergarden_mission2.esp
 #
 # Mission 2, the valley: reach it, clear the Vex at the gate, then step
-# through the gate. The kill objective is the gate volume's (retail's
-# objective names tv_gate), but the Vex at the gate are the valley's ambient
-# ones and never show on the wire, so it ends on a timeout: one run took
-# twenty-eight seconds, three after the last kill. Stepping into the gate
-# ends the phase. The valley is a public bubble, so its triggers fire on
-# the public host's session.
+# through the gate. The valley is a public bubble, so its triggers fire on
+# the public host's session. The gate and its Vex are the valley ambient's
+# (enc_valley_amb1), but only this mission wakes the gate: on the patrol's
+# host its Vex died and it stayed at rest.
+#
+# The gate, from the public hosts of two runs:
+# - A second after the valley loads the mission sets the gate to its Vex.
+#   With them standing (2026-11-01, a fresh public host) the gate is put to
+#   rest and its teleport taken down; with them already dead (2026-10-26, a
+#   public host joined running) it wakes there and then.
+# - Standing, it wakes two seconds after the last of them dies: 1.5 s on
+#   2026-11-01, 2.5 s in an earlier drop's run.
+# The kill objective clears once the gate is awake: 0.4 s after it woke with
+# the player fighting at the gate (2026-11-01). On 2026-10-26 the gate was
+# awake before the objective began and the objective cleared as the player
+# got to the gate, 1.3 s after its volume's trigger: retail's objective has
+# tv_gate as its volume, which has no trigger row, so that half of the wait
+# is not here. Stepping into the gate ends the phase.
 
 trigger_volume_objective sp_objective_goto
 generic_objective sp_objective_kill
 trigger_volume tv_gate  # WARNING: unused - the kill objective's volume, which no native here takes
 nav_point np_gate
 trigger_volume_objective sp_objective_gate
+encounter_handle enc_valley_amb1
 sequence seq_music_garden
 sequence seq_dialog_valley_gate
 sequence seq_dialog_valley_teleport
+bool gate_awake = false
 
 script init(): pass
 
 script complete(): pass
 
 script main():
+    sc_valley_gate.wake()
     sp_objective_goto.objective_begin()
     sleep_until(sp_objective_goto.is_complete())
     sp_objective_goto.objective_end_silent()
     seq_music_garden.start()
     seq_music_garden.set_switch_mask(1)
     sp_objective_kill.objective_begin(np_gate)
-    sleep(28)
+    sleep_until(gate_awake)
     sp_objective_kill.objective_end_silent()
     seq_dialog_valley_teleport.start()
     sp_objective_gate.objective_begin()
@@ -37,3 +52,18 @@ script main():
     seq_dialog_valley_teleport.stop()
     seq_music_garden.set_switch_mask(3)
     sp_objective_gate.objective_end_silent()
+
+script sc_valley_gate():
+    gate = enc_valley_amb1.scp_specops_gate.o_sunken_warpgate
+    vex = enc_valley_amb1.scp_vexcloud_gate._squad_group
+    # the ambient puts the gate out as the valley loads
+    sleep_until(gate.is_alive())
+    sleep(1)
+    if vex.alive_count() > 0:
+        gate.set_device_position(0)
+        enc_valley_amb1.o_gate_teleport_start.delete_object()
+        sleep_until(vex.alive_count() == 0)
+        sleep(2)
+    gate.set_device_position(1)
+    enc_valley_amb1.o_gate_teleport_start.create()
+    gate_awake = true

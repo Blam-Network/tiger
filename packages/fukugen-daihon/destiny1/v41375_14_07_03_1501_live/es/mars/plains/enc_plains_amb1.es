@@ -5,11 +5,13 @@
 # Cabal at the base and on the crater outpost and the Vex in the lower
 # crater.
 #
-# From three of the plains' public hosts: the patrol's (Patrol Mars#2, a
+# From seven of the plains' public hosts: the patrol's (Patrol Mars#2, a
 # fresh start, chests out 68-86 s, the player in the bubble for 216 s),
 # act_mars_m05_warbase's (2026-10-26 23-39-22#2, fresh, 88 s) and
-# act_mars_m07_lowergarden's (2026-10-26 23-57-02#2, 54 s):
-# - Up at load in all three: the base's rear and trench, the crater outpost
+# act_mars_m07_lowergarden's (2026-10-26 23-57-02#2, 54 s), and the four
+# 2026-11-01 story missions' (m03, m05, m06 and m07, each fresh and left
+# for the battleground 43-54 s in):
+# - Up at load in all seven: the base's rear and trench, the crater outpost
 #   and the lower crater's Vex, 17 bodies, the budget. The costs are the
 #   bodies the server placed.
 # - The central, crater flat and dune squads and the south bunker's waves
@@ -20,8 +22,8 @@
 #   after, the base's rear 41 and 57 s after and its trench 41 and 48 s
 #   after. Single run; each takes the shortest wait it showed.
 # - The base door was open (device 1) and both of mission 2's placements
-#   were out from the load, in all three hosts and with no mission running
-#   in two, so they are the ambient's.
+#   were out from the load, in all seven hosts and with no mission 2
+#   running in any, so they are the ambient's.
 # Left out: the music, the bubble monitor, and the squads' moves to "outer"
 # as they were wiped (the task tree's own).
 

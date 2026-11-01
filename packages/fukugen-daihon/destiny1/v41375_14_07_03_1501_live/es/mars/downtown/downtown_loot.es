@@ -14,8 +14,9 @@
 # others were not back 104, 159 and 191 s on. So a chest comes back
 # 100-300 s after it was opened.
 #
-# Here: one fresh start, the patrol's downtown host (Patrol Mars#3), the six
-# chests out at 62-87 s.
+# Here: two fresh starts, the patrol's downtown host (Patrol Mars#3), the six
+# chests out at 62-87 s, and act_mars_m03_penthouse's (2026-11-01
+# 00-52-56#3), out at 71-85 s.
 
 @activity_bundle("downtown_loot")
 

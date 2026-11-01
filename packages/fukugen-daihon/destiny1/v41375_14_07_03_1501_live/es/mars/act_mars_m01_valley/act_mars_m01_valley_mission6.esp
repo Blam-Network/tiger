@@ -4,9 +4,11 @@
 # the outro. The gate and overlook lines are started together and play off
 # their own volumes; the valley music comes in near the overlook.
 #
-# One run (2026-10-26). The capture changed hosts on the way into the
-# valley: the monitor's use is on the public host's wire. The waits after
-# the monitor are the gaps on the wire.
+# Two runs (2026-10-26, 2026-11-01). Both captures changed hosts on the
+# way into the valley: the monitor's use is on the public host's wire in
+# the first and missing from the second's (its objective still cleared,
+# 1.3 s after an unnamed change to its row, as in the first). The waits
+# after the monitor are the gaps on the wire, within a second in both.
 
 interactable_objective sp_objective_monitor bind("0xBD366786")
 trigger_volume tv_overlook_near

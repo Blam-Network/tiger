@@ -12,9 +12,10 @@
 # fallen caldera) after their harvest; others were not back 118-281 s on.
 # So a node comes back after a wide random wait around those, 80-400 s.
 #
-# Here: the same two fresh starts: four of the five 2.3.1 nodes out at 72-147 s
-# on act_mars_m05_warbase's host, two at 62 and 64 s on the patrol's before the
-# player left at 117 s. TU0 has three nodes where 2.3.1 has five, and only
+# Here: the same three fresh starts: four of the five 2.3.1 nodes out at
+# 72-147 s on act_mars_m05_warbase's 2026-10-26 host and all five at 63-122 s
+# on its 2026-11-01 host, two at 62 and 64 s on the patrol's before the player
+# left at 117 s. TU0 has three nodes where 2.3.1 has five, and only
 # iron_road is named in both.
 
 @activity_bundle("mesa_materials")

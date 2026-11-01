@@ -15,7 +15,8 @@
 # (enc_plains_m01, enc_checkpoint_m01). unknown_11b7a83e holds the music
 # and the Ghost's lines that play off the triggers.
 #
-# From one capture run: every timing here is a single-run fact.
+# Two capture runs (2026-10-26, 2026-11-01): the headers say which waits
+# both agree on and which are still one run's.
 
 @activity_bundle("act_mars_m01_valley")
 # The plains' cinematic state (18.1), an empty spawn transition; the checkpoint

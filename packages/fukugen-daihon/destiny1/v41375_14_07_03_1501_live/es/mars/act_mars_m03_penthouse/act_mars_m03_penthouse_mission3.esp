@@ -1,0 +1,23 @@
+# es\mars\act_mars_m03_penthouse\act_mars_m03_penthouse_mission3.esp
+#
+# Mission 3, to the atrium. The Ghost's line comes up with the objective,
+# which clears as the first player enters the atrium's bubble; the line is
+# stopped as the phase ends.
+#
+# One run: the phase ended 2.9 s after the objective cleared.
+
+location atrium
+trigger_bubble_objective pf_objective_atrium_goto bind(atrium)
+sequence seq_d_downtown_to_atrium_s01
+
+script init(): pass
+
+script complete(): pass
+
+script main():
+    pf_objective_atrium_goto.objective_begin()
+    seq_d_downtown_to_atrium_s01.start()
+    sleep_until(pf_objective_atrium_goto.is_complete())
+    pf_objective_atrium_goto.objective_end_silent()
+    sleep(2.9)
+    seq_d_downtown_to_atrium_s01.stop()

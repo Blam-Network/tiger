@@ -39,7 +39,8 @@ script main():
 
 script sc_stair():
     enc = enc_lowergarden_m07
-    sleep(9)
+    sleep_until(stair_alive_count() == 4)
+    sleep_until(stair_alive_count() < 4)
     enc.sq_minions_init_goblin_b.set_task("0x4E0EFB16")
     sleep_until(enc.sq_minions_init_goblin_f.alive_count() == 0 or enc.sq_minions_init_goblin_g.alive_count() == 0)
     sleep(4)
@@ -47,6 +48,10 @@ script sc_stair():
     sleep_until(enc.sq_minions_init_goblin_f.alive_count() + enc.sq_minions_init_goblin_g.alive_count() == 0)
     for sq in [enc.sq_minions_init_goblin_b, enc.sq_minions_init_goblin_e]:
         sq.set_task("0x07AA50F5")
+
+def stair_alive_count():
+    enc = enc_lowergarden_m07
+    return enc.sq_minions_init_goblin_f.alive_count() + enc.sq_minions_init_goblin_g.alive_count()
 
 def init_goblins_alive_count():
     enc = enc_lowergarden_m07

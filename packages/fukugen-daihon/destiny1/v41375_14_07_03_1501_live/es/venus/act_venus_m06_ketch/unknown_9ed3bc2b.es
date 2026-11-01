@@ -7,7 +7,7 @@
 # their mission's. The first dock cue's own start trigger is off from the
 # start; the dock music builds on the next three triggers and the dock's
 # clear, and fades three seconds after it. md_vn06_020_10, 020_30, 020_35
-# and 020_50 never played in the one run, though the triggers named after
+# and 020_50 never played in either run, though the triggers named after
 # 020_10, 020_35 and 020_50 fired.
 
 @activity_bundle(0x9ED3BC2B)
@@ -52,8 +52,10 @@ script sc_caldera():
     md_vn06_010_30.start()
 
 @startup()
-# inside the den: the line came 13 s after the trigger in the one run, on
-# something the wire does not show
+# inside the den: the line came 12.8 s after the trigger in the first run
+# and 21.0 s after it in the second (with the majors' first wound and
+# their wake, which the first run had 5.9 s before the line), so the wait
+# is the first run's and the rule is not known
 script sc_den():
     sleep_until(pt_vn06_010_34.is_triggered())
     sleep(13)

@@ -9,10 +9,10 @@
 # and its captain a second apart. The dock is clear once everything placed
 # is dead: the music and mission 2 wait on it.
 #
-# From one retail 2.3.1 capture: the squads' bodies (@member_counts) are the
+# From two retail 2.3.1 runs: the squads' bodies (@member_counts) are the
 # kill tallies, the skiff's paths are its command scripts atom for atom (its
 # third script came in undecoded, so the skiff is left to leave by itself),
-# and never placed in that run were sq_dock03 and sq_bay02. Two task names
+# and never placed in either were sq_dock03 and sq_bay02. Two task names
 # are uncracked (hashes).
 
 @activity_bundle("enc_fallen_dock_m06")

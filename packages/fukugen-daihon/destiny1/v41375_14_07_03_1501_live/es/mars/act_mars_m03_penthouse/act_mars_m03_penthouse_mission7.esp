@@ -1,0 +1,42 @@
+# es\mars\act_mars_m03_penthouse\act_mars_m03_penthouse_mission7.esp
+#
+# Mission 7, the darkness: clear rooms 2 and 3. The climax music starts with
+# the phase and enc_penthouse_m03 arms rooms 2 and 3; the room 3 waves start
+# as a player reaches the major's spawn trigger, and the music steps up with
+# them (the encounter's). Two seconds after the last of them dies the
+# objective clears; the clean room's trigger is armed again then and the
+# Ghost's line plays as a player stands in it, and the node's phase follows.
+#
+# One run: the clean room's trigger had fired once before (with no line),
+# so the line waits on its re-arming. The node's phase came 3 s into the
+# line.
+
+@hard_wipe()
+generic_objective pf_objective_penthouse_generic
+nav_point ap_penthouse_major
+trigger_volume tv_penthouse_major_spawn
+player_trigger pt_penthouse_major_spawn bind(tv_penthouse_major_spawn)
+player_trigger pt_penthouse_cleanroom
+encounter_handle enc_penthouse_m03
+sequence seq_m_climax_s01
+sequence seq_d_penthouse_travel_s01
+
+script init(): pass
+
+script complete(): pass
+
+script main():
+    enc = enc_penthouse_m03
+    seq_m_climax_s01.start()
+    seq_m_climax_s01.set_switch_mask(1)
+    enc.sc_rooms_2_and_3.wake()
+    pf_objective_penthouse_generic.objective_begin(ap_penthouse_major)
+    sleep_until(pt_penthouse_major_spawn.is_triggered())
+    enc.sc_room3.wake()
+    sleep_until(enc.rooms_clear)
+    sleep(2)
+    pf_objective_penthouse_generic.objective_end_silent()
+    pt_penthouse_cleanroom.reset()
+    sleep_until(pt_penthouse_cleanroom.is_triggered())
+    seq_d_penthouse_travel_s01.start()
+    sleep(3)
