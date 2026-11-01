@@ -38,33 +38,36 @@ function build_package(blocks: Buffer[]): Buffer {
   );
   const view = new DataView(out.buffer, out.byteOffset, out.byteLength);
   const no_hash = Array.from({ length: 20 }, () => 0);
-  c.write(
-    s_package_header,
-    {
-      version: k_package_version,
-      platform: 3,
-      pkg_id: 0x2d4,
-      patch: 0,
-      unknown08: 0n,
-      build_time: 0n,
-      unknown18: 0,
-      unknown1c: 0,
-      language: 0,
-      tool_string: "alpha tool test",
-      entry2_table_size: 0,
-      entry2_table_offset: 0,
-      named_tag_table_size: 1,
-      named_tag_table_offset: named_offset,
-      entry2_table_hash: no_hash,
-      entry_table_size: 2,
-      entry_table_offset: entry_offset,
-      entry_table_hash: no_hash,
-      block_table_size: blocks.length,
-      block_table_offset: block_offset,
-      block_table_hash: no_hash,
-    } as s_package_header,
-    "big"
-  ).copy(out, 0);
+  out.set(
+    c.write(
+      s_package_header,
+      {
+        version: k_package_version,
+        platform: 3,
+        pkg_id: 0x2d4,
+        patch: 0,
+        unknown08: 0n,
+        build_time: 0n,
+        unknown18: 0,
+        unknown1c: 0,
+        language: 0,
+        tool_string: "alpha tool test",
+        entry2_table_size: 0,
+        entry2_table_offset: 0,
+        named_tag_table_size: 1,
+        named_tag_table_offset: named_offset,
+        entry2_table_hash: no_hash,
+        entry_table_size: 2,
+        entry_table_offset: entry_offset,
+        entry_table_hash: no_hash,
+        block_table_size: blocks.length,
+        block_table_offset: block_offset,
+        block_table_hash: no_hash,
+      } as s_package_header,
+      "big"
+    ),
+    0
+  );
   write_entry(view, entry_offset, {
     class_hash: 0x80800533,
     block: 0,
@@ -78,29 +81,35 @@ function build_package(blocks: Buffer[]): Buffer {
     size: 0x30,
   });
   blocks.forEach((block, i) => {
-    c.write(
-      s_package_block,
-      {
-        offset: data_offset,
-        size: block.byteLength,
-        flags: 0,
-        patch_id: 0,
-        hash: no_hash,
-      } as s_package_block,
-      "big"
-    ).copy(out, block_offset + i * k_package_block_size);
+    out.set(
+      c.write(
+        s_package_block,
+        {
+          offset: data_offset,
+          size: block.byteLength,
+          flags: 0,
+          patch_id: 0,
+          hash: no_hash,
+        } as s_package_block,
+        "big"
+      ),
+      block_offset + i * k_package_block_size
+    );
     block.copy(out, data_offset);
     data_offset += block.byteLength;
   });
-  c.write(
-    s_package_named_tag,
-    {
-      hash: make_tag_hash(0x2d4, 1),
-      class_hash: 0x80800b48,
-      name: "action_mock_script",
-    },
-    "big"
-  ).copy(out, named_offset);
+  out.set(
+    c.write(
+      s_package_named_tag,
+      {
+        hash: make_tag_hash(0x2d4, 1),
+        class_hash: 0x80800b48,
+        name: "action_mock_script",
+      },
+      "big"
+    ),
+    named_offset
+  );
   return out;
 }
 

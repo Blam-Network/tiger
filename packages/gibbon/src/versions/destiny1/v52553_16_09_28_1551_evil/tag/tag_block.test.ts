@@ -75,10 +75,16 @@ describe("PS4 tag blocks", () => {
   it("refuses a block without its marker or of another class", () => {
     const unmarked = holder();
     unmarked.writeUInt32LE(0, 0x2c);
-    expect(() => read_definition(unmarked, s_holder)).toThrow(tag_format_error);
+    // cstruct wraps errors from inside a field; the tag error is the cause.
+    expect(() => read_definition(unmarked, s_holder)).toThrow(
+      expect.objectContaining({ cause: expect.any(tag_format_error) })
+    );
     const other = holder();
     other.writeUInt32LE(0x80809999, 0x38);
-    expect(() => read_definition(other, s_holder)).toThrow(tag_format_error);
+    // cstruct wraps errors from inside a field; the tag error is the cause.
+    expect(() => read_definition(other, s_holder)).toThrow(
+      expect.objectContaining({ cause: expect.any(tag_format_error) })
+    );
   });
 
   it("finds blocks by marker and class", () => {

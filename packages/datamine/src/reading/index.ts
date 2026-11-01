@@ -47,7 +47,6 @@ export {
   e_datamine_parameter_type,
   k_datamine_parameter_type_names,
 } from "../blam/data_mining/data_mining.ts";
-export type { t_byte_order } from "../byte_writer.ts";
 export type {
   s_datamine_file,
   s_datamine_file_definition,
@@ -67,6 +66,7 @@ export type {
   s_events_server_parameter,
   s_events_server_session,
 } from "../server/events_server_protocol.ts";
+export type { t_byte_order } from "../struct_io.ts";
 export {
   datamine_record_format_text,
   log_entries_from_datamine,

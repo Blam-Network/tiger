@@ -10,7 +10,6 @@ import {
   type s_datamine_parameter,
   type s_datamine_record,
 } from "../../src/blam/data_mining/data_mining.ts";
-import type { t_byte_order } from "../../src/byte_writer.ts";
 import {
   encode_datamine_file,
   read_datamine_file,
@@ -23,6 +22,7 @@ import {
   log_header_from_datamine,
 } from "../../src/reading/log_datamine.ts";
 import type { s_log_entry } from "../../src/reading/log_entry.ts";
+import type { t_byte_order } from "../../src/struct_io.ts";
 import { zip_create_single_entry } from "../../src/transport/zip_writer.ts";
 
 // The first row is always the file's session; the rest are its events.

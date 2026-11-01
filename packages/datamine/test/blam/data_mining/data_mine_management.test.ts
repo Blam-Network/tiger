@@ -9,10 +9,6 @@ import {
 import { createServer as http_server } from "node:http";
 import { createServer as net_server } from "node:net";
 import { join } from "node:path";
-import {
-  read_datamine_file as blf_read_datamine_file,
-  get_formatted_event_string,
-} from "@blamnetwork/blf";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   filetime_from_date,
@@ -50,6 +46,7 @@ import {
   type s_datamine_file,
 } from "../../../src/data_mine_reader.ts";
 import { DatamineError } from "../../../src/datamine_error.ts";
+import { datamine_record_format_text } from "../../../src/reading/log_datamine.ts";
 import type {
   s_http_endpoint,
   s_http_request,
@@ -466,28 +463,29 @@ describe("data_mine_insert", () => {
   });
 });
 
-describe("blf compatibility", () => {
-  it("reads a 3.1 file the way the game tools do", () => {
+describe("reading back what the game tools read", () => {
+  it("reads a 3.1 file with definitions and occurrences", () => {
     start(k_layout_3_1);
     emit("networking:first", 5, ["networking", "first"]);
     emit("networking:first", 6, ["networking", "first"]);
     data_mine_dispose();
 
-    const parsed = blf_read_datamine_file(
-      readFileSync(files_in(k_layout_3_1)[0])
-    );
-    expect(parsed?.header).toMatchObject({
-      version: 3,
+    const parsed = read_datamine_file(readFileSync(files_in(k_layout_3_1)[0]));
+    expect(parsed.header).toMatchObject({
+      layout: "3.1",
       version_minor: 1,
-      application_name: "datamine",
+      title: "datamine",
       build_number: k_tracked_build.build_number,
     });
-    expect(parsed?.events).toHaveLength(2);
-    const [first, second] = parsed?.events ?? [];
-    expect(first.header.event_name).toBe("networking:first");
+    const events = parsed.records.flatMap((entry) =>
+      entry.kind === "definition" ? [] : [entry.record]
+    );
+    expect(events).toHaveLength(2);
+    const [first, second] = events;
+    expect(first.event_name).toBe("networking:first");
     expect(first.categories).toEqual(["networking", "first"]);
-    expect(second.header.event_index).toBe(1);
-    expect(get_formatted_event_string(second)).toContain("networking:first");
+    expect(second.event_index).toBe(1);
+    expect(datamine_record_format_text(second)).toContain("networking:first");
   });
 });
 

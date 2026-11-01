@@ -29,7 +29,12 @@ export class c_tag_relative_string extends CFieldType<string | undefined> {
     return 8;
   }
 
-  read(buffer: Buffer, offset: number): string | undefined {
+  read(bytes: Uint8Array, offset: number): string | undefined {
+    const buffer = Buffer.from(
+      bytes.buffer,
+      bytes.byteOffset,
+      bytes.byteLength
+    );
     const relative = Number(buffer.readBigInt64LE(offset));
     if (relative === 0) {
       return;

@@ -33,10 +33,10 @@ function dist_externals(entry: string): {
 
 // Needs `npm run build -w packages/datamine` first.
 describe.skipIf(!existsSync(dist_entry))("built reading entry", () => {
-  it("imports no node modules, only fflate", () => {
+  it("imports no node modules, only cstruct and fflate", () => {
     const { files, externals } = dist_externals(dist_entry);
     expect(files.length).toBeGreaterThan(5);
     expect(externals.filter((name) => name.startsWith("node:"))).toEqual([]);
-    expect(externals).toEqual(["fflate"]);
+    expect(externals).toEqual(["@craftycodie/cstruct", "fflate"]);
   });
 });

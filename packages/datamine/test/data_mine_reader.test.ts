@@ -14,7 +14,6 @@ import {
   e_datamine_parameter_type,
   type s_datamine_record,
 } from "../src/blam/data_mining/data_mining.ts";
-import type { t_byte_order } from "../src/byte_writer.ts";
 import {
   data_mine_layout_detect,
   encode_datamine_file,
@@ -23,6 +22,7 @@ import {
   type s_datamine_file,
 } from "../src/data_mine_reader.ts";
 import { DatamineError } from "../src/datamine_error.ts";
+import type { t_byte_order } from "../src/struct_io.ts";
 import {
   zip_create_single_entry,
   zip_read_single_entry,

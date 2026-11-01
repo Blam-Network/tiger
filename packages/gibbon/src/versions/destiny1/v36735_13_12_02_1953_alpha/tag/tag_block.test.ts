@@ -71,7 +71,10 @@ describe("tag blocks", () => {
       tag_format_error
     );
     buffer.writeUInt32BE(0, 0x10);
-    expect(() => read_definition(buffer, s_holder)).toThrow(tag_format_error);
+    // cstruct wraps errors from inside a field; the tag error is the cause.
+    expect(() => read_definition(buffer, s_holder)).toThrow(
+      expect.objectContaining({ cause: expect.any(tag_format_error) })
+    );
   });
 
   it("reads an empty block and a missing struct without following them", () => {

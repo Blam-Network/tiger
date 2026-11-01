@@ -9,7 +9,7 @@ import {
 
 // Anything c.read can read: a struct, in practice.
 interface struct_reader<T = unknown> {
-  read(buffer: Buffer, offset?: number, endian?: c.Endian): T;
+  read(bytes: Uint8Array, offset?: number, endian?: c.Endian): T;
 }
 
 type read_value<R> = R extends struct_reader<infer T> ? T : never;
@@ -41,10 +41,15 @@ export class c_tag_variant<T> extends CFieldType<
   }
 
   read(
-    buffer: Buffer,
+    bytes: Uint8Array,
     offset: number,
     endian: c.Endian
   ): tag_variant_value<T> | undefined {
+    const buffer = Buffer.from(
+      bytes.buffer,
+      bytes.byteOffset,
+      bytes.byteLength
+    );
     const relative = Number(buffer.readBigInt64LE(offset));
     if (relative === 0) {
       return;

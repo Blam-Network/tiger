@@ -1,40 +1,37 @@
+import { CStructError } from "@craftycodie/cstruct";
 import type { t_text_encoding } from "./blam/cseries/cseries_strings.ts";
 import {
   data_mine_byte_order_from_marker,
-  data_mine_header_layout_has_minor,
-  data_mine_header_layout_has_source_flag,
+  data_mine_schemas,
   e_datamine_record_kind_v3,
   encode_data_mine_header,
   encode_datamine_definition_v3,
   encode_datamine_event_record,
   encode_datamine_occurrence_v3,
-  k_data_mine_build_string_length,
-  k_data_mine_build_string_v3_length,
   k_data_mine_header_layout_sizes,
-  k_data_mine_sessionid_length,
-  k_data_mine_systemid_length,
-  k_data_mine_title_length,
-  k_data_mine_v3_alignment_padding,
-  k_data_mine_v3_tail_padding,
   k_datamine_occurrence_v3_prefix_size,
   type s_data_mine_header,
+  s_data_mine_header_prefix,
+  s_datamine_count_i32,
+  s_datamine_count_u32,
   type s_datamine_definition_parameter,
   type s_datamine_definition_v3,
+  s_datamine_occurrence_v3_prefix,
+  s_datamine_record_size,
+  s_datamine_value_float,
+  s_datamine_value_int64,
+  s_datamine_value_long,
+  s_datamine_value_string_length,
   type t_data_mine_header_layout,
 } from "./blam/data_mining/data_mine_formats.ts";
 import {
   e_datamine_parameter_type,
   k_datamine_categories_maximum_count,
-  k_datamine_category_name_length,
-  k_datamine_event_name_length,
-  k_datamine_map_name_length,
-  k_datamine_parameter_name_length,
-  k_datamine_parameter_signature_length,
   type s_datamine_parameter,
   type s_datamine_record,
 } from "./blam/data_mining/data_mining.ts";
-import { c_byte_reader, type t_byte_order } from "./byte_writer.ts";
 import { DatamineError } from "./datamine_error.ts";
+import { c_struct_reader, type t_byte_order } from "./struct_io.ts";
 import { zip_read_single_entry } from "./transport/zip_writer.ts";
 
 export interface s_datamine_file_event {
@@ -93,10 +90,10 @@ export function data_mine_layout_detect(buffer: Uint8Array): {
       `datamine file has no byte order marker (starts ${buffer[0].toString(16)} ${buffer[1].toString(16)})`
     );
   }
-  const little = byte_order === "little";
-  const view = Buffer.from(buffer.buffer, buffer.byteOffset, buffer.byteLength);
-  const major = little ? view.readUInt16LE(2) : view.readUInt16BE(2);
-  const word = little ? view.readUInt16LE(4) : view.readUInt16BE(4);
+  const { version_major: major, word } = s_data_mine_header_prefix.read(
+    buffer,
+    byte_order
+  );
 
   if (major === 3) {
     return { byte_order, layout: "3.1" };
@@ -130,68 +127,16 @@ function read_header(
       `datamine file is ${buffer.length} bytes, shorter than the ${size} byte ${layout} header`
     );
   }
-  const reader = new c_byte_reader(buffer, byte_order);
-  reader.u16();
-  const version_major = reader.u16();
-  const version_minor = data_mine_header_layout_has_minor(layout)
-    ? reader.u16()
-    : 0;
-  const sessionid = reader.fixed_string(k_data_mine_sessionid_length, encoding);
-
-  if (layout === "3.1") {
-    const build_string = reader.fixed_string(
-      k_data_mine_build_string_v3_length,
-      encoding
-    );
-    reader.skip(k_data_mine_v3_alignment_padding);
-    const session_start_date = reader.u64();
-    const build_number = reader.i32();
-    const systemid = reader.fixed_string(k_data_mine_systemid_length, encoding);
-    const title = reader.fixed_string(k_data_mine_title_length, encoding);
-    reader.skip(k_data_mine_v3_tail_padding);
-    return {
-      layout,
-      byte_order,
-      version_major,
-      version_minor,
-      sessionid,
-      build_string,
-      session_start_date,
-      build_number,
-      systemid,
-      title,
-    };
-  }
-
-  const build_string = reader.fixed_string(
-    k_data_mine_build_string_length,
-    encoding
-  );
-
-  const build_number = reader.i32();
-  const systemid = reader.fixed_string(k_data_mine_systemid_length, encoding);
-  const title = reader.fixed_string(k_data_mine_title_length, encoding);
-  const session_start_date = reader.u64();
-  const header: s_data_mine_header = {
-    layout,
-    byte_order,
-    version_major,
-    version_minor,
-    sessionid,
-    build_string,
-    build_number,
-    systemid,
-    title,
-    session_start_date,
-  };
-  if (data_mine_header_layout_has_source_flag(layout)) {
-    header.source_flag = reader.u8();
-  }
-  return header;
+  // Layouts without a minor version word read it as 0; only 2.x has a source flag.
+  const {
+    marker: _marker,
+    ...fields
+  }: { marker: number } & Omit<s_data_mine_header, "layout" | "byte_order"> =
+    data_mine_schemas(encoding).headers[layout].read(buffer, byte_order);
+  return { layout, byte_order, version_minor: 0, ...fields };
 }
 
-function read_parameter_type(reader: c_byte_reader): e_datamine_parameter_type {
-  const type = reader.u32();
+function check_parameter_type(type: number): e_datamine_parameter_type {
   if (
     type !== e_datamine_parameter_type.long &&
     type !== e_datamine_parameter_type.int64 &&
@@ -204,37 +149,36 @@ function read_parameter_type(reader: c_byte_reader): e_datamine_parameter_type {
 }
 
 function read_parameter_value(
-  reader: c_byte_reader,
+  reader: c_struct_reader,
   type: e_datamine_parameter_type,
   encoding: t_text_encoding
 ): number | bigint | string {
   switch (type) {
     case e_datamine_parameter_type.long:
-      return reader.i32();
+      return reader.read(s_datamine_value_long).value;
     case e_datamine_parameter_type.int64:
-      return reader.i64();
+      return reader.read(s_datamine_value_int64).value;
     case e_datamine_parameter_type.float:
-      return reader.f32();
+      return reader.read(s_datamine_value_float).value;
     default: {
-      const length = reader.u32();
+      const { length } = reader.read(s_datamine_value_string_length);
       return reader.bytes(length).toString(encoding);
     }
   }
 }
 
 function read_categories(
-  reader: c_byte_reader,
+  reader: c_struct_reader,
   count: number,
   encoding: t_text_encoding
 ): string[] {
   if (count > k_datamine_categories_maximum_count) {
     throw new DatamineError(`datamine record has ${count} categories`);
   }
+  const schema = data_mine_schemas(encoding).category;
   const categories: string[] = [];
   for (let index = 0; index < count; index++) {
-    categories.push(
-      reader.fixed_string(k_datamine_category_name_length, encoding)
-    );
+    categories.push(reader.read(schema).name);
   }
   return categories;
 }
@@ -244,44 +188,34 @@ function read_event_record(
   byte_order: t_byte_order,
   encoding: t_text_encoding
 ): s_datamine_record {
-  const reader = new c_byte_reader(record, byte_order, 4);
-  const event_name = reader.fixed_string(
-    k_datamine_event_name_length,
+  const schemas = data_mine_schemas(encoding);
+  const reader = new c_struct_reader(record, byte_order);
+  const head = reader.read(schemas.event_record);
+  const categories = read_categories(
+    reader,
+    reader.read(s_datamine_count_i32).count,
     encoding
   );
-  const parameter_signature = reader.fixed_string(
-    k_datamine_parameter_signature_length,
-    encoding
-  );
-  const priority = reader.i32();
-  const event_index = reader.i32();
-  const game_instance = reader.u64();
-  const map = reader.fixed_string(k_datamine_map_name_length, encoding);
-  const event_date = reader.u64();
-  const categories = read_categories(reader, reader.i32(), encoding);
 
-  const parameter_count = reader.i32();
+  const parameter_count = reader.read(s_datamine_count_i32).count;
   const parameters: s_datamine_parameter[] = [];
   for (let index = 0; index < parameter_count; index++) {
-    const name = reader.fixed_string(
-      k_datamine_parameter_name_length,
-      encoding
-    );
-    const type = read_parameter_type(reader);
+    const parameter = reader.read(schemas.parameter);
+    const type = check_parameter_type(parameter.type);
     parameters.push({
-      name,
+      name: parameter.name,
       type,
       value: read_parameter_value(reader, type, encoding),
     });
   }
 
   return {
-    priority,
-    event_name,
-    parameter_signature,
-    event_index,
-    game_info: { game_instance, map },
-    event_date,
+    priority: head.priority,
+    event_name: head.event_name,
+    parameter_signature: head.parameter_signature,
+    event_index: head.event_index,
+    game_info: { game_instance: head.game_instance, map: head.map },
+    event_date: head.event_date,
     categories,
     parameters,
   };
@@ -292,34 +226,30 @@ function read_definition_record(
   byte_order: t_byte_order,
   encoding: t_text_encoding
 ): s_datamine_definition_v3 {
-  const reader = new c_byte_reader(record, byte_order, 5);
-  const priority = reader.u8();
-  const event_name = reader.fixed_string(
-    k_datamine_event_name_length,
+  const schemas = data_mine_schemas(encoding);
+  const reader = new c_struct_reader(record, byte_order);
+  const head = reader.read(schemas.definition_record);
+  const categories = read_categories(
+    reader,
+    reader.read(s_datamine_count_u32).count,
     encoding
   );
-  const parameter_signature = reader.fixed_string(
-    k_datamine_parameter_signature_length,
-    encoding
-  );
-  const definition_id = reader.u32();
-  const categories = read_categories(reader, reader.u32(), encoding);
 
-  const parameter_count = reader.u32();
+  const parameter_count = reader.read(s_datamine_count_u32).count;
   const parameters: s_datamine_definition_parameter[] = [];
   for (let index = 0; index < parameter_count; index++) {
-    const name = reader.fixed_string(
-      k_datamine_parameter_name_length,
-      encoding
-    );
-    parameters.push({ name, type: read_parameter_type(reader) });
+    const parameter = reader.read(schemas.parameter);
+    parameters.push({
+      name: parameter.name,
+      type: check_parameter_type(parameter.type),
+    });
   }
 
   return {
-    priority,
-    event_name,
-    parameter_signature,
-    definition_id,
+    priority: head.priority,
+    event_name: head.event_name,
+    parameter_signature: head.parameter_signature,
+    definition_id: head.definition_id,
     categories,
     parameters,
   };
@@ -331,10 +261,10 @@ function read_occurrence_record(
   encoding: t_text_encoding,
   definitions: Map<number, s_datamine_definition_v3>
 ): s_datamine_file_occurrence {
-  const reader = new c_byte_reader(record, byte_order, 5);
-  const event_index = reader.u32();
-  const definition_id = reader.u32();
-  const event_date = reader.u64();
+  const reader = new c_struct_reader(record, byte_order);
+  const { event_index, definition_id, event_date } = reader.read(
+    s_datamine_occurrence_v3_prefix
+  );
 
   const definition = definitions.get(definition_id);
   if (!definition) {
@@ -389,7 +319,6 @@ export function read_datamine_file(
   const byte_order = detected.byte_order;
   const header = read_header(view, layout, byte_order, encoding);
 
-  const little = byte_order === "little";
   const is_v3 = layout === "3.1";
   const minimum_size = is_v3
     ? k_definition_record_minimum_size
@@ -405,9 +334,10 @@ export function read_datamine_file(
       truncated_at = offset;
       break;
     }
-    const total_size = little
-      ? view.readUInt32LE(offset)
-      : view.readUInt32BE(offset);
+    const total_size = s_datamine_record_size.read(view, {
+      offset,
+      endian: byte_order,
+    }).size;
     const kind = is_v3
       ? view[offset + 4]
       : e_datamine_record_kind_v3.definition;
@@ -441,7 +371,7 @@ export function read_datamine_file(
         break;
       }
     } catch (error) {
-      if (!(error instanceof DatamineError)) {
+      if (!(error instanceof DatamineError || error instanceof CStructError)) {
         throw error;
       }
       truncated_at = offset;
@@ -462,7 +392,7 @@ function encode_occurrence(
   byte_order: t_byte_order,
   encoding: t_text_encoding
 ): Buffer {
-  const encoded = encode_datamine_occurrence_v3(
+  return encode_datamine_occurrence_v3(
     {
       event_index: entry.record.event_index,
       definition_id: entry.definition_id,
@@ -470,18 +400,9 @@ function encode_occurrence(
       values: entry.unresolved_values ? [] : entry.record.parameters,
     },
     byte_order,
-    encoding
+    encoding,
+    entry.unresolved_values
   );
-  if (!entry.unresolved_values) {
-    return encoded;
-  }
-  const result = Buffer.concat([encoded, entry.unresolved_values]);
-  if (byte_order === "little") {
-    result.writeUInt32LE(result.length, 0);
-  } else {
-    result.writeUInt32BE(result.length, 0);
-  }
-  return result;
 }
 
 // Header plus records in their original order. Anything past truncated_at is not written.

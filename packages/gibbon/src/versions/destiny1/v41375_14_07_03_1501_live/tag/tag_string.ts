@@ -60,7 +60,12 @@ export class c_tag_relative_string extends CFieldType<string | undefined> {
     return 4;
   }
 
-  read(buffer: Buffer, offset: number): string | undefined {
+  read(bytes: Uint8Array, offset: number): string | undefined {
+    const buffer = Buffer.from(
+      bytes.buffer,
+      bytes.byteOffset,
+      bytes.byteLength
+    );
     const relative = buffer.readInt32BE(offset);
     if (relative === 0) {
       return;

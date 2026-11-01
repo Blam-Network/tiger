@@ -97,7 +97,12 @@ export class c_tag_block<
     return 8;
   }
 
-  read(buffer: Buffer, offset: number, endian: c.Endian): struct_value<F>[] {
+  read(bytes: Uint8Array, offset: number, endian: c.Endian): struct_value<F>[] {
+    const buffer = Buffer.from(
+      bytes.buffer,
+      bytes.byteOffset,
+      bytes.byteLength
+    );
     const header = tag_block_header(buffer, offset, endian);
     if (header === undefined) {
       return [];
@@ -153,10 +158,15 @@ export class c_tag_struct<F extends fields> extends CFieldType<
   }
 
   read(
-    buffer: Buffer,
+    bytes: Uint8Array,
     offset: number,
     endian: c.Endian
   ): struct_value<F> | undefined {
+    const buffer = Buffer.from(
+      bytes.buffer,
+      bytes.byteOffset,
+      bytes.byteLength
+    );
     const relative = read_i32(buffer, offset, endian);
     if (relative === 0) {
       return;
@@ -188,7 +198,7 @@ export function tag_struct<F extends fields>(
 
 // Anything c.read can read: a struct, in practice.
 interface struct_reader<T = unknown> {
-  read(buffer: Buffer, offset?: number, endian?: c.Endian): T;
+  read(bytes: Uint8Array, offset?: number, endian?: c.Endian): T;
 }
 
 type read_value<R> = R extends struct_reader<infer T> ? T : never;
@@ -220,10 +230,15 @@ export class c_tag_variant<T> extends CFieldType<
   }
 
   read(
-    buffer: Buffer,
+    bytes: Uint8Array,
     offset: number,
     endian: c.Endian
   ): tag_variant_value<T> | undefined {
+    const buffer = Buffer.from(
+      bytes.buffer,
+      bytes.byteOffset,
+      bytes.byteLength
+    );
     const relative = read_i32(buffer, offset, endian);
     if (relative === 0) {
       return;
@@ -284,7 +299,12 @@ export class c_tag_bytes extends CFieldType<tag_span> {
     return 8;
   }
 
-  read(buffer: Buffer, offset: number, endian: c.Endian): tag_span {
+  read(bytes: Uint8Array, offset: number, endian: c.Endian): tag_span {
+    const buffer = Buffer.from(
+      bytes.buffer,
+      bytes.byteOffset,
+      bytes.byteLength
+    );
     const header = tag_block_header(buffer, offset, endian);
     if (header === undefined) {
       return { offset: 0, length: 0 };

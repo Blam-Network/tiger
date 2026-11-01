@@ -2,13 +2,13 @@ import { describe, expect, it } from "vitest";
 import { e_event_level } from "../../src/blam/cseries/event_levels.ts";
 import { build_networking_buffer_for_log } from "../../src/blam/cseries/event_log_format.ts";
 import type { t_data_mine_header_layout } from "../../src/blam/data_mining/data_mine_formats.ts";
-import type { t_byte_order } from "../../src/byte_writer.ts";
 import { encode_datamine_file } from "../../src/data_mine_reader.ts";
 import {
   c_log_text_parser,
   log_detect_format,
   log_detect_text_format,
 } from "../../src/reading/log_text_parser.ts";
+import type { t_byte_order } from "../../src/struct_io.ts";
 import { zip_create_single_entry } from "../../src/transport/zip_writer.ts";
 import {
   destiny_style_banner,

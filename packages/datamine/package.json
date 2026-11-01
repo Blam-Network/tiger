@@ -61,10 +61,8 @@
       ]
     }
   },
-  "devDependencies": {
-    "@blamnetwork/blf": "^1.1.0-beta.17"
-  },
   "dependencies": {
+    "@craftycodie/cstruct": "^2.0.0-alpha.5",
     "fflate": "^0.8.3"
   }
 }

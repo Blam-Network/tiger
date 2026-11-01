@@ -4,7 +4,7 @@ import {
   type s_datamine_definition_v3,
 } from "./blam/data_mining/data_mine_formats.ts";
 import type { s_datamine_record } from "./blam/data_mining/data_mining.ts";
-import type { t_byte_order } from "./byte_writer.ts";
+import type { t_byte_order } from "./struct_io.ts";
 
 export const k_maximum_registered_events = 0x20_00;
 

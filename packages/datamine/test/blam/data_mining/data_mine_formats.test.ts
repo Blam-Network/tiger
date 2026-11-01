@@ -1,7 +1,3 @@
-import {
-  read_datamine_file as blf_read_datamine_file,
-  get_formatted_event_string,
-} from "@blamnetwork/blf";
 import { describe, expect, it } from "vitest";
 import {
   encode_data_mine_header,
@@ -17,7 +13,6 @@ import {
   e_datamine_parameter_type,
   type s_datamine_record,
 } from "../../../src/blam/data_mining/data_mining.ts";
-import type { t_byte_order } from "../../../src/byte_writer.ts";
 import {
   c_datamine_definition_file_state,
   c_datamine_definition_registry,
@@ -25,7 +20,10 @@ import {
 import {
   encode_datamine_file,
   read_datamine_file,
+  type s_datamine_file,
 } from "../../../src/data_mine_reader.ts";
+import { datamine_record_format_text } from "../../../src/reading/log_datamine.ts";
+import type { t_byte_order } from "../../../src/struct_io.ts";
 
 const k_orders = ["little", "big"] as const;
 
@@ -205,6 +203,13 @@ describe("encode_data_mine_header", () => {
   });
 });
 
+// The event and occurrence records of a parsed file, in order.
+function file_records(file: s_datamine_file): s_datamine_record[] {
+  return file.records.flatMap((entry) =>
+    entry.kind === "definition" ? [] : [entry.record]
+  );
+}
+
 function make_record(): s_datamine_record {
   return {
     priority: 3,
@@ -319,7 +324,7 @@ describe("v3 records", () => {
   }
 });
 
-describe("blf compatibility", () => {
+describe("reading back what the game tools read", () => {
   it.each(k_orders)("reads 1.0 files (%s endian)", (order) => {
     const header = make_header("1.0", order);
     // The formatter only uses unnamed parameters, like the ones add_args produces.
@@ -329,10 +334,9 @@ describe("blf compatibility", () => {
       encode_data_mine_header(header),
       encode_datamine_event_record(record, order),
     ]);
-    const parsed = blf_read_datamine_file(file);
-    expect(parsed).toBeDefined();
-    expect(parsed?.header).toMatchObject({
-      version: 1,
+    const parsed = read_datamine_file(file);
+    expect(parsed.header).toMatchObject({
+      layout: "1.0",
       version_major: 1,
       sessionid: "session_a",
       build_string: "build_b",
@@ -341,17 +345,18 @@ describe("blf compatibility", () => {
       title: "title_d",
       session_start_date: header.session_start_date,
     });
-    expect(parsed?.events).toHaveLength(1);
-    const [event] = parsed?.events ?? [];
+    const events = file_records(parsed);
+    expect(events).toHaveLength(1);
+    const [event] = events;
     expect(event.categories).toEqual(["networking", "hello"]);
-    expect(event.header.event_index).toBe(77);
-    expect(event.header.game_info.map).toBe("maps\\test");
+    expect(event.event_index).toBe(77);
+    expect(event.game_info.map).toBe("maps\\test");
     expect(event.parameters.map((p) => p.name)).toEqual(["", "", "", ""]);
-    expect(event.parameters[0].value_string?.string).toBe("bob");
-    expect(event.parameters[2].value_int64).toBe(2n ** 40n);
-    expect(event.parameters[3].value_float).toBe(1.5);
-    expect(get_formatted_event_string(event)).toBe(
-      "networking:hello bob 4294967294 1099511627776 1.5"
+    expect(event.parameters[0].value).toBe("bob");
+    expect(event.parameters[2].value).toBe(2n ** 40n);
+    expect(event.parameters[3].value).toBe(1.5);
+    expect(datamine_record_format_text(event)).toBe(
+      "networking:hello bob -2 1099511627776 1.500000"
     );
   });
 
@@ -361,14 +366,14 @@ describe("blf compatibility", () => {
       encode_data_mine_header(make_header("2.0", order)),
       encode_datamine_event_record(make_record(), order),
     ]);
-    const parsed = blf_read_datamine_file(file);
-    expect(parsed?.header).toMatchObject({
-      version: 2,
+    const parsed = read_datamine_file(file);
+    expect(parsed.header).toMatchObject({
+      layout: "2.0",
       version_major: 2,
       source_flag: 1,
       sessionid: "session_a",
     });
-    expect(parsed?.events).toHaveLength(1);
+    expect(file_records(parsed)).toHaveLength(1);
   });
 
   it("reads 3.1 files with definitions and occurrences", () => {
@@ -388,25 +393,24 @@ describe("blf compatibility", () => {
         order
       ),
     ]);
-    const parsed = blf_read_datamine_file(file);
-    expect(parsed?.header).toMatchObject({
-      version: 3,
+    const parsed = read_datamine_file(file);
+    expect(parsed.header).toMatchObject({
+      layout: "3.1",
       version_major: 3,
       version_minor: 1,
       sessionid: "session_a",
       build_number: -1,
-      application_name: "app_name",
+      title: "app_name",
     });
-    expect(parsed?.events).toHaveLength(2);
-    const [first, second] = parsed?.events ?? [];
+    const events = file_records(parsed);
+    expect(events).toHaveLength(2);
+    const [first, second] = events;
     expect(first.categories).toEqual(["networking", "hello"]);
-    expect(first.header.event_name).toBe(record.event_name);
-    expect(first.header.priority).toBe(3);
-    expect([first.header.event_index, second.header.event_index]).toEqual([
-      77, 78,
-    ]);
-    expect(first.parameters[0].value_string?.string).toBe("bob");
-    expect(get_formatted_event_string(second)).toContain("bob");
+    expect(first.event_name).toBe(record.event_name);
+    expect(first.priority).toBe(3);
+    expect([first.event_index, second.event_index]).toEqual([77, 78]);
+    expect(first.parameters[0].value).toBe("bob");
+    expect(datamine_record_format_text(second)).toContain("bob");
   });
 });
 

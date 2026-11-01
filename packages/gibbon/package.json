@@ -24,7 +24,7 @@
   },
   "dependencies": {
     "@blamnetwork/poodle": "^0.1.0",
-    "@craftycodie/cstruct": "^2.0.0-alpha.3"
+    "@craftycodie/cstruct": "^2.0.0-alpha.5"
   },
   "exports": {
     "./destiny1/*": {

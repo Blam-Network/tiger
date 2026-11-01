@@ -7,7 +7,7 @@ import type {
   s_http_header,
   t_http_header_quoting,
 } from "../blam/networking/tools/http_stream.ts";
-import type { t_byte_order } from "../byte_writer.ts";
+import type { t_byte_order } from "../struct_io.ts";
 import type {
   s_http_response,
   t_http_version,

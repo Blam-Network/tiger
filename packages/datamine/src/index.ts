@@ -151,7 +151,6 @@ export {
   netdebug_build_system_id,
   netdebug_default_system_id,
 } from "./blam/networking/tools/network_debug_dump.ts";
-export type { t_byte_order } from "./byte_writer.ts";
 export type {
   s_data_mine_config_options,
   s_data_mine_header_extra,
@@ -229,6 +228,7 @@ export type {
   s_events_server_parameter,
   s_events_server_session,
 } from "./server/events_server_protocol.ts";
+export type { t_byte_order } from "./struct_io.ts";
 export type {
   s_http_endpoint,
   s_http_request,

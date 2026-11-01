@@ -7,7 +7,7 @@ import {
 } from "../blam/cseries/event_levels.ts";
 import type { t_data_mine_header_layout } from "../blam/data_mining/data_mine_formats.ts";
 import type { e_datamine_parameter_type } from "../blam/data_mining/data_mining.ts";
-import type { t_byte_order } from "../byte_writer.ts";
+import type { t_byte_order } from "../struct_io.ts";
 
 // halo_style_log and destiny_style_log are the two line styles of the report files, the ones
 // this package writes and the games' own.

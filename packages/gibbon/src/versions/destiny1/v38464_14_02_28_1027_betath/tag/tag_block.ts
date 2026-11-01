@@ -105,7 +105,12 @@ export class c_tag_block<
     return k_tag_block_field_size;
   }
 
-  read(buffer: Buffer, offset: number, endian: c.Endian): struct_value<F>[] {
+  read(bytes: Uint8Array, offset: number, endian: c.Endian): struct_value<F>[] {
+    const buffer = Buffer.from(
+      bytes.buffer,
+      bytes.byteOffset,
+      bytes.byteLength
+    );
     const header = tag_block_header(buffer, offset, endian);
     if (header === undefined) {
       return [];
@@ -161,10 +166,15 @@ export class c_tag_struct<F extends fields> extends CFieldType<
   }
 
   read(
-    buffer: Buffer,
+    bytes: Uint8Array,
     offset: number,
     endian: c.Endian
   ): struct_value<F> | undefined {
+    const buffer = Buffer.from(
+      bytes.buffer,
+      bytes.byteOffset,
+      bytes.byteLength
+    );
     const relative = read_i64(buffer, offset, endian);
     if (relative === 0) {
       return;

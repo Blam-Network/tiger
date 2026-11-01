@@ -1,6 +1,6 @@
-import { CFieldType, c } from "@craftycodie/cstruct";
+import { c } from "@craftycodie/cstruct";
 import type { c_package_set } from "../pkg/package_set.ts";
-import { read_definition, tag_format_error } from "../tag/tag_block.ts";
+import { read_definition } from "../tag/tag_block.ts";
 import {
   e_investment_client_global,
   investment_client_global_tag,
@@ -9,21 +9,6 @@ import {
 // The investment globals (client globals slot 0): the server tables, by slot.
 // The engine hands them out through virtual getters.
 export const k_investment_globals_class = 0x80801b2d;
-
-// A u32 the file stores little-endian inside the big-endian tag.
-class c_u32_le extends CFieldType<number> {
-  getSize(): number {
-    return 4;
-  }
-
-  read(buffer: Buffer, offset: number): number {
-    return buffer.readUInt32LE(offset);
-  }
-
-  write(): void {
-    throw new tag_format_error("tag fields are read-only");
-  }
-}
 
 export const s_investment_global = c.struct({
   unknown00: c.u32(),
@@ -40,9 +25,10 @@ export const s_investment_globals = c.struct({
   // fnv1("alpha"), the build's name; a string list holds the same hash.
   unknown04: c.u32(),
   globals: c.array(s_investment_global, k_investment_global_count),
-  // The rsat schema and content checksums the server states at sign-in.
-  schema_checksum: new c_u32_le(),
-  content_checksum: new c_u32_le(),
+  // The rsat schema and content checksums the server states at sign-in,
+  // stored little-endian inside the big-endian tag.
+  schema_checksum: c.u32().le(),
+  content_checksum: c.u32().le(),
 });
 
 export type s_investment_globals = c.infer<typeof s_investment_globals>;

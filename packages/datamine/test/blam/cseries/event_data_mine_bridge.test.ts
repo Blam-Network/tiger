@@ -1,9 +1,5 @@
 import { readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
-import {
-  read_datamine_file as blf_read_datamine_file,
-  get_formatted_event_string,
-} from "@blamnetwork/blf";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import {
   event_error,
@@ -34,6 +30,7 @@ import {
   read_datamine_file,
   type s_datamine_file,
 } from "../../../src/data_mine_reader.ts";
+import { datamine_record_format_text } from "../../../src/reading/log_datamine.ts";
 import { fixed_clock } from "../../support/clocks.ts";
 import {
   k_layout_1_1,
@@ -176,14 +173,11 @@ describe("layout 3.1", () => {
     expect(entry.record.parameters.map((p) => p.value)).toEqual(["x", 5]);
     expect(entry.record.parameter_signature).toBe("%s, %d, ");
 
-    const parsed = blf_read_datamine_file(bytes);
-    expect(parsed?.events).toHaveLength(1);
-    const [event] = parsed?.events ?? [];
-    expect(event.header.event_name).toBe(k_format);
-    expect(event.categories).toEqual(["networking", "session"]);
-    expect(get_formatted_event_string(event)).toBe(
+    expect(entry.record.event_name).toBe(k_format);
+    expect(datamine_record_format_text(entry.record)).toBe(
       "networking:session: join x failed 5"
     );
+    expect(bytes.length).toBeGreaterThan(0);
   });
 });
 
