@@ -8,6 +8,7 @@ import {
   c_datamine_definition_registry,
   k_datamine_registration_full_message,
 } from "../src/data_mine_definitions.ts";
+import { buffer_of } from "./support/buffers.ts";
 
 function make_record(
   event_name: string,
@@ -123,9 +124,9 @@ describe("c_datamine_definition_file_state", () => {
     state.reset();
     const after = state.encode_record_v3(make_record("one"), registry, "big");
     expect(after).toHaveLength(2);
-    expect(after[0].equals(before[0])).toBe(true);
+    expect(after[0]).toEqual(before[0]);
     // Definition id sits after the two strings.
-    expect(after[0].readUInt32BE(0x406)).toBe(50);
+    expect(buffer_of(after[0]).readUInt32BE(0x406)).toBe(50);
   });
 
   it("writes nothing when the registry is full", () => {

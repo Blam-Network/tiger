@@ -24,6 +24,7 @@ import {
 } from "../../../src/data_mine_reader.ts";
 import { datamine_record_format_text } from "../../../src/reading/log_datamine.ts";
 import type { t_byte_order } from "../../../src/struct_io.ts";
+import { buffer_of } from "../../support/buffers.ts";
 
 const k_orders = ["little", "big"] as const;
 
@@ -150,7 +151,9 @@ describe("encode_data_mine_header", () => {
   for (const layout of k_data_mine_header_layouts) {
     for (const order of k_orders) {
       it(`puts every ${layout} field at its offset (${order} endian)`, () => {
-        const buffer = encode_data_mine_header(make_header(layout, order));
+        const buffer = buffer_of(
+          encode_data_mine_header(make_header(layout, order))
+        );
         const offsets = k_header_offsets[layout];
 
         expect(buffer).toHaveLength(k_data_mine_header_layout_sizes[layout]);
@@ -191,10 +194,12 @@ describe("encode_data_mine_header", () => {
 
   it("writes a 128 byte 3.1 build string and zero padding", () => {
     const long_build = "b".repeat(100);
-    const buffer = encode_data_mine_header({
-      ...make_header("3.1", "big"),
-      build_string: long_build,
-    });
+    const buffer = buffer_of(
+      encode_data_mine_header({
+        ...make_header("3.1", "big"),
+        build_string: long_build,
+      })
+    );
     expect(read_text(buffer, 0x86)).toBe(long_build);
     expect(
       buffer.subarray(0x86 + long_build.length, 0x108).every((b) => b === 0)
@@ -231,7 +236,9 @@ function make_record(): s_datamine_record {
 describe("encode_datamine_event_record", () => {
   for (const order of k_orders) {
     it(`uses the 1.x record offsets (${order} endian)`, () => {
-      const buffer = encode_datamine_event_record(make_record(), order);
+      const buffer = buffer_of(
+        encode_datamine_event_record(make_record(), order)
+      );
 
       expect(read_u32(buffer, 0, order)).toBe(buffer.length);
       expect(read_text(buffer, 4)).toBe("networking:hello %s %d %I64d %f");
@@ -286,7 +293,9 @@ describe("v3 records", () => {
 
   for (const order of k_orders) {
     it(`uses the definition and occurrence offsets (${order} endian)`, () => {
-      const encoded = encode_datamine_definition_v3(definition, order);
+      const encoded = buffer_of(
+        encode_datamine_definition_v3(definition, order)
+      );
       expect(read_u32(encoded, 0, order)).toBe(encoded.length);
       expect(encoded[4]).toBe(1);
       expect(encoded[5]).toBe(4);
@@ -300,17 +309,19 @@ describe("v3 records", () => {
       expect(read_u32(encoded, 0x432 + 32, order)).toBe(0);
       expect(encoded).toHaveLength(0x432 + 36);
 
-      const occurrence = encode_datamine_occurrence_v3(
-        {
-          event_index: 9,
-          definition_id: 51,
-          event_date: 0x01_dd_00_00_aa_bb_cc_ddn,
-          values: [
-            { type: e_datamine_parameter_type.long, value: 12 },
-            { type: e_datamine_parameter_type.string, value: "hi" },
-          ],
-        },
-        order
+      const occurrence = buffer_of(
+        encode_datamine_occurrence_v3(
+          {
+            event_index: 9,
+            definition_id: 51,
+            event_date: 0x01_dd_00_00_aa_bb_cc_ddn,
+            values: [
+              { type: e_datamine_parameter_type.long, value: 12 },
+              { type: e_datamine_parameter_type.string, value: "hi" },
+            ],
+          },
+          order
+        )
       );
       expect(read_u32(occurrence, 0, order)).toBe(occurrence.length);
       expect(occurrence[4]).toBe(2);
@@ -421,7 +432,7 @@ describe("own reader round trip", () => {
     for (const order of k_orders) {
       it(`reads back and re-encodes ${layout} (${order} endian)`, () => {
         const header = make_header(layout, order);
-        const parts: Buffer[] = [encode_data_mine_header(header)];
+        const parts: Uint8Array[] = [encode_data_mine_header(header)];
         if (layout === "3.1") {
           const registry = new c_datamine_definition_registry({
             first_definition_id: 50,
@@ -459,7 +470,7 @@ describe("own reader round trip", () => {
         );
         expect(events).toHaveLength(2);
         expect(events[0].record.event_name).toBe(registry_record.event_name);
-        expect(encode_datamine_file(file).equals(bytes)).toBe(true);
+        expect(buffer_of(encode_datamine_file(file)).equals(bytes)).toBe(true);
       });
     }
   }

@@ -76,7 +76,7 @@ export class c_network_webstats {
 
     this.m_state = e_webstats_state.file_submitted;
     try {
-      let zip: Buffer;
+      let zip: Uint8Array;
       try {
         const data = await readFile(path);
         this.m_state = e_webstats_state.file_compressing;
@@ -96,7 +96,7 @@ export class c_network_webstats {
   }
 
   private async upload(
-    zip: Buffer,
+    zip: Uint8Array,
     path: string,
     options: s_webstats_submit_options,
     clock: s_clock,
@@ -142,7 +142,7 @@ export class c_network_webstats {
 
   // One request. A transport that ignores its timeout is cut off here.
   private async attempt(
-    zip: Buffer,
+    zip: Uint8Array,
     timeout_ms: number,
     options: s_webstats_submit_options
   ): Promise<{ accepted: boolean; reason: string }> {

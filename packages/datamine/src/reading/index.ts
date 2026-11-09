@@ -1,6 +1,5 @@
-// The part of the package that runs in a browser: it reads log text and datamine files, writes
-// log lines and touches neither the file system nor the network. Datamine files are read with
-// Buffer, which a browser build has to provide.
+// The part of the package that reads log text and datamine files and writes log lines. It
+// touches neither the file system nor the network and runs in a browser.
 
 export type { t_printf_argument } from "../blam/cseries/cseries_printf.ts";
 export { csnzprintf } from "../blam/cseries/cseries_printf.ts";
@@ -12,6 +11,12 @@ export {
 } from "../blam/cseries/cseries_time.ts";
 export type { t_event_level_threshold } from "../blam/cseries/event_levels.ts";
 export {
+  _event_critical,
+  _event_error,
+  _event_message,
+  _event_status,
+  _event_verbose,
+  _event_warning,
   e_event_level,
   event_level_from_name,
   event_level_name,

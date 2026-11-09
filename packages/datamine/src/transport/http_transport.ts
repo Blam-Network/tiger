@@ -121,8 +121,8 @@ export async function http_transport_fetch(
 }
 
 const k_status_line_regex = /^HTTP\/1\.[01] (\d{3})/;
-const k_header_terminator = Buffer.from("\r\n\r\n");
-const k_header_terminator_bare = Buffer.from("\n\n");
+const k_header_terminator = "\r\n\r\n";
+const k_header_terminator_bare = "\n\n";
 
 interface s_parsed_head {
   body_offset: number;

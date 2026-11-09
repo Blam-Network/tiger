@@ -11,7 +11,7 @@ export function zip_create_single_entry(
   name: string,
   data: Uint8Array,
   options?: { level?: number }
-): Promise<Buffer> {
+): Promise<Uint8Array> {
   const level = (options?.level ?? k_zip_default_level) as
     | 0
     | 1
@@ -31,7 +31,7 @@ export function zip_create_single_entry(
           reject(new DatamineError(`zip failed: ${error.message}`));
           return;
         }
-        resolve(Buffer.from(result.buffer, result.byteOffset, result.length));
+        resolve(result);
       }
     );
   });
@@ -39,7 +39,7 @@ export function zip_create_single_entry(
 
 export function zip_read_single_entry(buffer: Uint8Array): {
   name: string;
-  data: Buffer;
+  data: Uint8Array;
 } {
   let entries: Record<string, Uint8Array>;
   try {
@@ -57,6 +57,6 @@ export function zip_read_single_entry(buffer: Uint8Array): {
   const data = entries[name] as Uint8Array;
   return {
     name,
-    data: Buffer.from(data.buffer, data.byteOffset, data.length),
+    data,
   };
 }

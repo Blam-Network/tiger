@@ -19,6 +19,7 @@ import type {
   t_http_transport,
 } from "../../../../src/transport/http_transport.ts";
 import { zip_read_single_entry } from "../../../../src/transport/zip_writer.ts";
+import { buffer_of } from "../../../support/buffers.ts";
 import { temp_dirs } from "../../../support/temp_dirs.ts";
 
 // Upload settings of a 3.1 file, and of a 1.1 file which also wants DONE in the body.
@@ -112,7 +113,9 @@ describe("c_network_webstats", () => {
     expect(request.endpoint).toBe(k_endpoint);
     const entry = zip_read_single_entry(request.body);
     expect(entry.name).toBe("compressed.dat");
-    expect(entry.data.toString()).toBe("datamine file contents ".repeat(50));
+    expect(buffer_of(entry.data).toString()).toBe(
+      "datamine file contents ".repeat(50)
+    );
     expect(events.map((event) => event.text)).toContain(
       "networking:webstats: upload successful."
     );

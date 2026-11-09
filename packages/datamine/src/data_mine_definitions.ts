@@ -111,13 +111,13 @@ export class c_datamine_definition_file_state {
     record: s_datamine_record,
     registry: c_datamine_definition_registry,
     byte_order: t_byte_order
-  ): Buffer[] {
+  ): Uint8Array[] {
     const definition = registry.register(record);
     if (!definition) {
       return [];
     }
 
-    const buffers: Buffer[] = [];
+    const buffers: Uint8Array[] = [];
     if (!this.m_emitted.has(definition.definition_id)) {
       this.m_emitted.add(definition.definition_id);
       buffers.push(encode_datamine_definition_v3(definition, byte_order));

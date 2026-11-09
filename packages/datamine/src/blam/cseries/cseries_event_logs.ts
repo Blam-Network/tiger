@@ -1,20 +1,7 @@
 // Event log files. Each log is opened on demand, kept open, recreated or trimmed on its first
 // open of the process, and gets the banner before its first line. Logs that resolve to one
-// file are one log, so a line is never written to a file twice.
-import {
-  appendFileSync,
-  closeSync,
-  copyFileSync,
-  existsSync,
-  mkdirSync,
-  openSync,
-  readSync,
-  rmSync,
-  statSync,
-  writeFileSync,
-  writeSync,
-} from "node:fs";
-import { basename, dirname, join, resolve } from "node:path";
+// file are one log, so a line is never written to a file twice. The files need node:fs; with
+// write_files off nothing here touches it, so the set also runs in a browser.
 import {
   event_log_definitions,
   event_log_directory,
@@ -22,6 +9,8 @@ import {
   type s_event_log_file,
   type s_events_config,
 } from "../../config/event_options.ts";
+import { node_builtin_required } from "../../platform/node_builtins.ts";
+import { text_encode } from "../../platform/text.ts";
 import type { s_clock } from "./cseries_time.ts";
 import { build_banner } from "./event_log_format.ts";
 
@@ -42,6 +31,11 @@ export interface s_event_log_set_options {
   write_mode: t_event_log_write_mode;
 }
 
+interface s_event_log_io {
+  fs: typeof import("node:fs");
+  path: typeof import("node:path");
+}
+
 interface s_event_log_state {
   banner_written: boolean;
   failed: boolean;
@@ -53,23 +47,29 @@ interface s_event_log_state {
 }
 
 // file_trim: keep the last `bytes` bytes. It cuts wherever the byte falls.
-function file_trim_to_tail(path: string, bytes: number): void {
-  const size = statSync(path).size;
+function file_trim_to_tail(
+  fs: typeof import("node:fs"),
+  path: string,
+  bytes: number
+): void {
+  const size = fs.statSync(path).size;
   if (size <= bytes) {
     return;
   }
-  const tail = Buffer.alloc(bytes);
-  const fd = openSync(path, "r");
+  const tail = new Uint8Array(bytes);
+  const fd = fs.openSync(path, "r");
   try {
-    readSync(fd, tail, 0, bytes, size - bytes);
+    fs.readSync(fd, tail, 0, bytes, size - bytes);
   } finally {
-    closeSync(fd);
+    fs.closeSync(fd);
   }
-  writeFileSync(path, tail);
+  fs.writeFileSync(path, tail);
 }
 
 export class c_event_log_set {
   private readonly m_options: s_event_log_set_options;
+  // Undefined when write_files is off.
+  private readonly m_io: s_event_log_io | undefined;
   private readonly m_session_started: Date;
   private readonly m_banner: string;
   private readonly m_logs = new Map<string, s_event_log_state>();
@@ -79,6 +79,12 @@ export class c_event_log_set {
 
   constructor(options: s_event_log_set_options) {
     this.m_options = options;
+    if (options.config.write_files) {
+      this.m_io = {
+        fs: node_builtin_required("node:fs", "write_files"),
+        path: node_builtin_required("node:path", "write_files"),
+      };
+    }
     this.m_session_started = options.clock.now();
     this.m_banner = build_banner(options.config.version_string);
     // Register the primary logs in order, so the first one to reach a file decides how it is
@@ -97,6 +103,9 @@ export class c_event_log_set {
     const key = [file.name, file.place_in_root ? 1 : 0].join("\0");
     let path = this.m_paths.get(key);
     if (path === undefined) {
+      const { join, resolve } = node_builtin_required<
+        typeof import("node:path")
+      >("node:path", "event log paths");
       path = resolve(
         join(
           event_log_directory(
@@ -115,7 +124,7 @@ export class c_event_log_set {
   // Writes text to every file once, however many of them resolve to one path.
   write(files: readonly s_event_log_file[], text: string): void {
     const written = new Set<string>();
-    if (!this.m_options.config.write_files) {
+    if (!this.m_io) {
       return;
     }
     for (const file of files) {
@@ -130,18 +139,19 @@ export class c_event_log_set {
 
   // thrown_away_events.txt sits in the root. True when the line was written.
   write_thrown_away(text: string): boolean {
-    if (!this.m_options.config.write_files) {
+    const io = this.m_io;
+    if (!io) {
       return false;
     }
     try {
-      const path = join(
+      const path = io.path.join(
         this.m_options.config.root,
         k_thrown_away_events_log_file_name
       );
-      mkdirSync(dirname(path), { recursive: true });
-      appendFileSync(
+      io.fs.mkdirSync(io.path.dirname(path), { recursive: true });
+      io.fs.appendFileSync(
         path,
-        Buffer.from(
+        text_encode(
           text.endsWith(k_line_ending) ? text : text + k_line_ending,
           this.m_options.config.text_encoding
         )
@@ -165,7 +175,7 @@ export class c_event_log_set {
     for (const state of this.m_logs.values()) {
       if (state.fd !== undefined) {
         try {
-          closeSync(state.fd);
+          this.m_io?.fs.closeSync(state.fd);
         } catch {
           // Nothing left to do for a handle that will not close.
         }
@@ -182,38 +192,40 @@ export class c_event_log_set {
   // it first. Returns the copies.
   snapshot(): string[] {
     this.close();
-    if (!this.m_options.config.write_files) {
+    const io = this.m_io;
+    if (!io) {
       return [];
     }
+    const { fs, path } = io;
     const snapshot_directory = event_log_snapshot_directory(
       this.m_options.config
     );
     const copies: string[] = [];
     try {
-      rmSync(snapshot_directory, { recursive: true, force: true });
-      mkdirSync(snapshot_directory, { recursive: true });
+      fs.rmSync(snapshot_directory, { recursive: true, force: true });
+      fs.mkdirSync(snapshot_directory, { recursive: true });
     } catch {
       return copies;
     }
 
     const sources = [...this.m_logs.keys()];
     sources.push(
-      join(this.m_options.config.root, k_thrown_away_events_log_file_name)
+      path.join(this.m_options.config.root, k_thrown_away_events_log_file_name)
     );
     const used_names = new Set<string>();
     for (const source of sources) {
-      if (!existsSync(source)) {
+      if (!fs.existsSync(source)) {
         continue;
       }
       // Logs from different folders can share a name, so a clash gets its folder prefixed.
-      let name = basename(source);
+      let name = path.basename(source);
       if (used_names.has(name)) {
-        name = `${basename(dirname(source))}_${name}`;
+        name = `${path.basename(path.dirname(source))}_${name}`;
       }
       used_names.add(name);
-      const destination = join(snapshot_directory, name);
+      const destination = path.join(snapshot_directory, name);
       try {
-        copyFileSync(source, destination);
+        fs.copyFileSync(source, destination);
         copies.push(destination);
       } catch {
         // A file that cannot be copied is skipped, like the original.
@@ -246,21 +258,25 @@ export class c_event_log_set {
     if (state.fd !== undefined) {
       return true;
     }
-    if (state.failed) {
+    const io = this.m_io;
+    if (state.failed || !io) {
       return false;
     }
+    const { fs } = io;
     try {
-      mkdirSync(dirname(state.path), { recursive: true });
+      fs.mkdirSync(io.path.dirname(state.path), { recursive: true });
       let flags = "a";
       if (!state.opened_at_least_once) {
-        const recreate = !(existsSync(state.path) && state.file.append_to_file);
+        const recreate = !(
+          fs.existsSync(state.path) && state.file.append_to_file
+        );
         if (recreate) {
           flags = "w";
         } else if (this.m_options.config.trim_bytes > 0) {
-          file_trim_to_tail(state.path, this.m_options.config.trim_bytes);
+          file_trim_to_tail(fs, state.path, this.m_options.config.trim_bytes);
         }
       }
-      state.fd = openSync(state.path, flags);
+      state.fd = fs.openSync(state.path, flags);
       state.opened_at_least_once = true;
       return true;
     } catch {
@@ -306,13 +322,13 @@ export class c_event_log_set {
   }
 
   private write_data(state: s_event_log_state, data: string): void {
-    if (state.fd === undefined) {
+    if (state.fd === undefined || !this.m_io) {
       return;
     }
     try {
-      writeSync(
+      this.m_io.fs.writeSync(
         state.fd,
-        Buffer.from(data, this.m_options.config.text_encoding)
+        text_encode(data, this.m_options.config.text_encoding)
       );
     } catch {
       state.failed = true;

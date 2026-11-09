@@ -581,6 +581,39 @@ describe("spam", () => {
     expect(events_get()).not.toContain("distinct 5");
   });
 
+  it("console_spam_limit: false leaves the console limiter off", () => {
+    const root = make_root();
+    const displayed: string[] = [];
+    init(root, {
+      spam_mode: "disabled",
+      console_spam_limit: false,
+      sinks: { display: (line) => displayed.push(line) },
+    });
+    for (let i = 0; i < 8; i++) {
+      event_error("limiter: distinct %d", i);
+    }
+    expect(displayed).not.toContain(k_console_spam_notice);
+    expect(displayed.filter((line) => line.includes("distinct")).length).toBe(
+      8
+    );
+  });
+
+  it("leaves out the limiter notice when there is no debug.txt", () => {
+    const displayed: string[] = [];
+    init("", {
+      write_files: false,
+      spam_mode: "disabled",
+      sinks: { display: (line) => displayed.push(line) },
+    });
+    for (let i = 0; i < 8; i++) {
+      event_error("limiter: distinct %d", i);
+    }
+    expect(displayed).not.toContain(k_console_spam_notice);
+    expect(displayed.filter((line) => line.includes("distinct")).length).toBe(
+      5
+    );
+  });
+
   it("critical events skip both filters", () => {
     const root = make_root();
     const displayed: string[] = [];
@@ -589,6 +622,36 @@ describe("spam", () => {
       event_critical("crit: same");
     }
     expect(displayed.length).toBe(10);
+  });
+});
+
+describe("command echo", () => {
+  function run_setters(): void {
+    events_spam_suppression_enable(false);
+    event_set_log_level_global(e_event_level.warning);
+    event_set_display_level_by_name("zz:", e_event_level.status);
+  }
+
+  it("prints what each setter did", () => {
+    const displayed: string[] = [];
+    init(make_root(), { sinks: { display: (line) => displayed.push(line) } });
+    run_setters();
+    expect(displayed).toEqual([
+      "event spam suppression now disabled",
+      "global log level set to warning",
+      "set category: 'zz'",
+    ]);
+  });
+
+  it("command_echo: false keeps the setters quiet", () => {
+    const displayed: string[] = [];
+    init(make_root(), {
+      command_echo: false,
+      sinks: { display: (line) => displayed.push(line) },
+    });
+    run_setters();
+    event_set_log_level_global(99);
+    expect(displayed).toEqual(["invalid log_level (99)"]);
   });
 });
 

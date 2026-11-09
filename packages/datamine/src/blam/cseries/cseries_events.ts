@@ -1,11 +1,11 @@
 // The public events API: one event system per process, configured once with
 // events_initialize and raised with event(level, "category:sub: format %d", ...args). Before
 // initialization every call is a silent no-op.
-import { threadId } from "node:worker_threads";
 import {
   event_log_definitions,
   event_log_route_matches,
   events_config_resolve,
+  k_debug_log_file_name,
   type s_event_log_definition,
   type s_event_log_file,
   type s_events_config,
@@ -14,6 +14,10 @@ import {
 } from "../../config/event_options.ts";
 import { DatamineError } from "../../datamine_error.ts";
 import { datamine_globals_get } from "../../datamine_globals.ts";
+import {
+  node_thread_id,
+  process_exit_listener_add,
+} from "../../platform/node_builtins.ts";
 import { c_event_log_set } from "./cseries_event_logs.ts";
 import { csnzprintf, type t_printf_argument } from "./cseries_printf.ts";
 import { k_system_clock, type s_clock } from "./cseries_time.ts";
@@ -86,7 +90,7 @@ export interface s_events_providers {
   game_time?: () => number | undefined;
   // Per-session clocks in milliseconds for the netbuf columns.
   network_session_clocks?: () => readonly (number | undefined)[];
-  // Worker thread id by default.
+  // The worker thread id on Node, 0 elsewhere, by default.
   thread_id?: () => number;
 }
 
@@ -148,15 +152,18 @@ export type t_events_session_listener = (
 interface s_events_state {
   category_cache: Map<string, number>;
   clock: s_clock;
+  command_echo: boolean;
   config: s_events_config;
-  console_limiter: c_console_spam_limiter;
+  // Undefined when the limiter is off.
+  console_limiter: c_console_spam_limiter | undefined;
   debugger_break_level: t_event_level_threshold;
   disable_event_suppression: boolean;
   display_level: t_event_level_threshold;
   enable_events: boolean;
   enable_spam_suppression: boolean;
   event_index: number;
-  exit_handler: (() => void) | undefined;
+  // Removes the exit flush.
+  exit_flush_remove: (() => void) | undefined;
   listeners: ({ categories: string; listener: t_event_listener } | undefined)[];
   log_definitions: readonly s_event_log_definition[];
   log_level: t_event_level_threshold;
@@ -225,7 +232,11 @@ export function events_initialize(options: s_events_initialize_options): void {
     logs,
     log_definitions: event_log_definitions(config),
     spam: new c_event_spam_filter(config.spam_mode),
-    console_limiter: new c_console_spam_limiter(),
+    console_limiter:
+      (options.console_spam_limit ?? true)
+        ? new c_console_spam_limiter()
+        : undefined,
+    command_echo: options.command_echo ?? true,
     enable_events: true,
     enable_spam_suppression: true,
     disable_event_suppression: false,
@@ -239,12 +250,11 @@ export function events_initialize(options: s_events_initialize_options): void {
     category_cache: new Map(),
     once_formats: new Set(),
     listeners: new Array(k_maximum_event_listeners).fill(undefined),
-    exit_handler: undefined,
+    exit_flush_remove: undefined,
   };
 
   if (options.install_exit_flush ?? true) {
-    state.exit_handler = () => logs.flush();
-    process.on("exit", state.exit_handler);
+    state.exit_flush_remove = process_exit_listener_add(() => logs.flush());
   }
   if (options.remote_log) {
     globals.remote_log_handler = options.remote_log;
@@ -273,9 +283,7 @@ export function events_dispose(): void {
     return;
   }
   state.logs.close();
-  if (state.exit_handler) {
-    process.off("exit", state.exit_handler);
-  }
+  state.exit_flush_remove?.();
   if (
     state.options.remote_log &&
     globals.remote_log_handler === state.options.remote_log
@@ -333,7 +341,7 @@ export function events_enabled(enable: boolean): void {
     return;
   }
   state.enable_events = enable;
-  console_printf(state, `events now ${enable ? "enabled" : "disabled"}`);
+  command_echo(state, `events now ${enable ? "enabled" : "disabled"}`);
 }
 
 export function events_disable_suppression(enable: boolean): void {
@@ -343,7 +351,7 @@ export function events_disable_suppression(enable: boolean): void {
   }
   state.disable_event_suppression = enable;
   // The wording is the original's, which reads backwards.
-  console_printf(
+  command_echo(
     state,
     `event suppression now ${enable ? "enabled" : "disabled"}`
   );
@@ -355,7 +363,7 @@ export function events_spam_suppression_enable(enable: boolean): void {
     return;
   }
   state.enable_spam_suppression = enable;
-  console_printf(
+  command_echo(
     state,
     `event spam suppression now ${enable ? "enabled" : "disabled"}`
   );
@@ -423,7 +431,7 @@ function event_set_level_global(
     return;
   }
   state[key] = resolved;
-  console_printf(state, `global ${label} set to ${event_level_name(resolved)}`);
+  command_echo(state, `global ${label} set to ${event_level_name(resolved)}`);
 }
 
 export function event_set_display_level_global(level: number): void {
@@ -468,7 +476,7 @@ function event_set_level_by_name(
     const start_index = state.table.find_category(corrected);
     if (start_index !== k_event_category_none) {
       for (const index of state.table.walk(start_index)) {
-        console_printf(
+        command_echo(
           state,
           `set category: '${state.table.category_path(index)}'`
         );
@@ -748,6 +756,13 @@ function console_printf(state: s_events_state, text: string): void {
   state.sinks.display?.(text, e_event_level.message, k_color_white);
 }
 
+// What a setter did, unless command_echo is off.
+function command_echo(state: s_events_state, text: string): void {
+  if (state.command_echo) {
+    console_printf(state, text);
+  }
+}
+
 function call_sink(
   state: s_events_state,
   name: string,
@@ -882,7 +897,7 @@ function event_generated_handle_captures(
     text,
     context: event_context_get("log"),
     time_ms: state.clock.now().getTime(),
-    thread_id: state.providers.thread_id?.() ?? threadId,
+    thread_id: event_thread_id(state),
     game_time: state.providers.game_time?.(),
     frame_index: state.providers.frame_index?.(),
     session: session?.number ?? 0,
@@ -890,6 +905,10 @@ function event_generated_handle_captures(
   for (const capture of captures) {
     call_sink(state, "event capture", () => capture(record));
   }
+}
+
+function event_thread_id(state: s_events_state): number {
+  return state.providers.thread_id?.() ?? node_thread_id() ?? 0;
 }
 
 function event_category_path(
@@ -928,10 +947,20 @@ function write_to_console(
   line: string
 ): void {
   let suppress_console = false;
-  if (state.enable_spam_suppression && level !== e_event_level.critical) {
+  if (
+    state.console_limiter &&
+    state.enable_spam_suppression &&
+    level !== e_event_level.critical
+  ) {
     const result = state.console_limiter.update(state.clock.milliseconds());
     suppress_console = !result.print;
-    if (result.notice !== undefined) {
+    // The notice points at debug.txt, so it is left out when there is none.
+    if (
+      result.notice !== undefined &&
+      state.log_definitions.some(
+        (definition) => definition.name === k_debug_log_file_name
+      )
+    ) {
       state.sinks.display?.(
         result.notice,
         e_event_level.message,
@@ -1002,7 +1031,7 @@ function event_log_line(
     context: event_context_get("log"),
     game_time: state.providers.game_time?.(),
     frame_index: state.providers.frame_index?.(),
-    thread_id: state.providers.thread_id?.() ?? threadId,
+    thread_id: event_thread_id(state),
   };
 }
 

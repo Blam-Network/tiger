@@ -27,6 +27,7 @@ import {
   zip_create_single_entry,
   zip_read_single_entry,
 } from "../src/transport/zip_writer.ts";
+import { buffer_of } from "./support/buffers.ts";
 
 const halo_data_dir = process.env.TIGER_HALO_DATA_DIR;
 const reach_dir = process.env.TIGER_REACH_DATAMINE_DIR;
@@ -63,7 +64,7 @@ function make_record(event_index: number): s_datamine_record {
 
 // Reading must stop at the first record that isn't whole and re-encoding the rest must be exact.
 function expect_exact_prefix(file: s_datamine_file, bytes: Buffer): void {
-  const encoded = encode_datamine_file(file);
+  const encoded = buffer_of(encode_datamine_file(file));
   expect(
     encoded.equals(bytes.subarray(0, file.truncated_at ?? bytes.length))
   ).toBe(true);
@@ -88,7 +89,9 @@ describe("data_mine_layout_detect", () => {
     expect(() => data_mine_layout_detect(Buffer.alloc(16))).toThrow(
       DatamineError
     );
-    const header = encode_data_mine_header(make_header("1.0", "big"));
+    const header = buffer_of(
+      encode_data_mine_header(make_header("1.0", "big"))
+    );
     header.writeUInt16BE(9, 2);
     expect(() => data_mine_layout_detect(header)).toThrow(DatamineError);
   });
@@ -222,7 +225,7 @@ describe("read_datamine_upload", () => {
     });
     const file = read_datamine_upload(zip);
     expect(file.records).toHaveLength(1);
-    expect(encode_datamine_file(file).equals(bytes)).toBe(true);
+    expect(buffer_of(encode_datamine_file(file)).equals(bytes)).toBe(true);
   });
 });
 
@@ -240,7 +243,7 @@ describe.skipIf(!halo_data_dir)("halo golden files", () => {
       entry.kind === "event" ? entry.record.event_index : -1
     );
     expect(indexes).toEqual(Array.from({ length: 65 }, (_, i) => i + 1));
-    expect(encode_datamine_file(file).equals(bytes)).toBe(true);
+    expect(buffer_of(encode_datamine_file(file)).equals(bytes)).toBe(true);
   });
 
   it("decodes a datamine file and re-encodes it byte for byte", () => {
@@ -252,7 +255,7 @@ describe.skipIf(!halo_data_dir)("halo golden files", () => {
     expect(file.truncated_at).toBeUndefined();
     const first = file.records[0];
     expect(first.kind === "event" && first.record.event_index).toBe(66);
-    expect(encode_datamine_file(file).equals(bytes)).toBe(true);
+    expect(buffer_of(encode_datamine_file(file)).equals(bytes)).toBe(true);
   });
 });
 
@@ -305,7 +308,7 @@ describe.skipIf(!destiny_dir)("destiny golden files", () => {
           expect(entry.unresolved_values).toBeUndefined();
         }
       }
-      expect(encode_datamine_file(file).equals(bytes)).toBe(true);
+      expect(buffer_of(encode_datamine_file(file)).equals(bytes)).toBe(true);
     }
   });
 });

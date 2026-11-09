@@ -199,7 +199,7 @@ function buffer_flush(state: s_data_mine_globals): void {
   }
 }
 
-function buffer_write(state: s_data_mine_globals, bytes: Buffer): void {
+function buffer_write(state: s_data_mine_globals, bytes: Uint8Array): void {
   state.file_bytes += bytes.length;
   if (bytes.length > state.buffer.length - state.buffer_length) {
     buffer_flush(state);
@@ -214,7 +214,7 @@ function buffer_write(state: s_data_mine_globals, bytes: Buffer): void {
     }
     return;
   }
-  bytes.copy(state.buffer, state.buffer_length);
+  state.buffer.set(bytes, state.buffer_length);
   state.buffer_length += bytes.length;
 }
 

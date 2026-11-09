@@ -1,8 +1,9 @@
 // Event context stack, ported from c_event_context / event_context_get in
 // cseries events. The original keeps a thread_local stack and pops in a destructor; here the
 // stack lives in AsyncLocalStorage, so concurrent async flows stay apart and the pop is
-// implicit when the callback returns.
-import { AsyncLocalStorage } from "node:async_hooks";
+// implicit when the callback returns. Without AsyncLocalStorage (browsers) it is a plain
+// stack: a context covers the synchronous part of its callback and does not follow an await.
+import { node_async_local_storage } from "../../platform/node_builtins.ts";
 
 export interface s_event_context {
   description: string;
@@ -26,9 +27,41 @@ export interface s_event_context_options {
   display_to_console?: boolean;
 }
 
-const g_event_context_storage = new AsyncLocalStorage<
-  readonly s_event_context[]
->();
+// The part of AsyncLocalStorage the stack uses.
+interface s_event_context_storage {
+  getStore(): readonly s_event_context[] | undefined;
+  run<T>(store: readonly s_event_context[], fn: () => T): T;
+}
+
+class c_event_context_synchronous_storage implements s_event_context_storage {
+  private m_store: readonly s_event_context[] | undefined;
+
+  getStore(): readonly s_event_context[] | undefined {
+    return this.m_store;
+  }
+
+  run<T>(store: readonly s_event_context[], fn: () => T): T {
+    const previous = this.m_store;
+    this.m_store = store;
+    try {
+      return fn();
+    } finally {
+      this.m_store = previous;
+    }
+  }
+}
+
+let g_event_context_storage: s_event_context_storage | undefined;
+
+function event_context_storage(): s_event_context_storage {
+  if (g_event_context_storage === undefined) {
+    const async_local_storage = node_async_local_storage();
+    g_event_context_storage = async_local_storage
+      ? new async_local_storage<readonly s_event_context[]>()
+      : new c_event_context_synchronous_storage();
+  }
+  return g_event_context_storage;
+}
 
 let g_event_context_overflow_handler: (() => void) | undefined;
 
@@ -54,7 +87,8 @@ export function event_context_run<T>(
   fn: () => T,
   options?: s_event_context_options
 ): T {
-  const stack = g_event_context_storage.getStore() ?? [];
+  const storage = event_context_storage();
+  const stack = storage.getStore() ?? [];
   if (stack.length >= k_event_context_stack_maximum_depth) {
     g_event_context_overflow_handler?.();
     return fn();
@@ -67,11 +101,11 @@ export function event_context_run<T>(
     ),
     display_to_console: options?.display_to_console ?? false,
   };
-  return g_event_context_storage.run([...stack, context], fn);
+  return storage.run([...stack, context], fn);
 }
 
 export function event_context_depth(): number {
-  return g_event_context_storage.getStore()?.length ?? 0;
+  return event_context_storage().getStore()?.length ?? 0;
 }
 
 // csstrnzcat: appends, then cuts to size - 1.
@@ -91,7 +125,7 @@ function append_text(
 export function event_context_get(
   destination: t_event_context_destination
 ): string {
-  const stack = g_event_context_storage.getStore() ?? [];
+  const stack = event_context_storage().getStore() ?? [];
   let buffer = "";
 
   if (destination === "console") {

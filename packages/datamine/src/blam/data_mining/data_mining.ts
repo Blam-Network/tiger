@@ -1,4 +1,5 @@
 import { datamine_globals_get } from "../../datamine_globals.ts";
+import { text_encode } from "../../platform/text.ts";
 import type { t_printf_argument } from "../cseries/cseries_printf.ts";
 import { csstrnzcpy } from "../cseries/cseries_strings.ts";
 import {
@@ -344,7 +345,7 @@ export class c_datamine {
     this.add_parameter(
       name,
       e_datamine_parameter_type.string,
-      k_datamine_string_length_size + Buffer.byteLength(text),
+      k_datamine_string_length_size + text_encode(text, "utf8").length,
       text
     );
   }

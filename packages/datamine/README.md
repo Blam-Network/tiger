@@ -17,6 +17,8 @@ The package does four things:
 - [Streaming events live](#streaming-events-live) to Datamine Explorer.
 - [Reading reports and datamine files](#reading-reports-and-datamine-files), in Node or a browser.
 
+The event system and the reader also [run in a browser](#running-in-a-browser).
+
 There is one event system and one datamine system per process. Both live on `globalThis`, so the ESM and CJS builds, and duplicate installs, share them. Calling `event()` before `events_initialize` does nothing. Initializing twice throws `DatamineError`. Each system flushes and closes in its `*_dispose`, and flushes on process exit unless `install_exit_flush: false` is passed.
 
 Everything is a plain option with a default. There are no presets: each option below can be set on its own, and the [defaults tables](#defaults) list what you get when you leave it out.
@@ -224,9 +226,45 @@ Options:
 - `client_buffer_limit`: a viewer that falls this far behind is dropped rather than slowing the server
 - `heartbeat_ms`
 
+### Running in a browser
+
+Bundlers that use the `browser` export condition (Vite, esbuild, webpack, a Tauri webview) get the browser entry from `@blamnetwork/datamine`. `@blamnetwork/datamine/events` is the same entry for tools that ignore conditions. It needs no polyfills: it imports no `node:` module and never reads the `Buffer` or `process` globals.
+
+The browser entry has the event API, levels, categories, listeners, event contexts, the line formatters, datamine records and everything in the [reader](#reading-reports-and-datamine-files). What needs Node stays in the Node entry: `data_mine_initialize` and the rest of datamine file writing and upload, the netdebug ids, the live server and the HTTP transport.
+
+```ts
+import {
+  e_event_level,
+  event_warning,
+  events_initialize,
+} from "@blamnetwork/datamine";
+
+events_initialize({
+  root: "",
+  write_files: false,
+  console_spam_limit: false,
+  command_echo: false,
+  initial_levels: { display: e_event_level.status },
+  sinks: {
+    display: (line, level) =>
+      level >= e_event_level.error ? console.error(line) : console.info(line),
+  },
+});
+
+event_warning("ide:files: %s is missing", "a.txt");
+```
+
+Differences from Node:
+- `write_files` must be `false`. With it on, `events_initialize` throws `DatamineError`, as there is no file system.
+- Event contexts only cover the synchronous part of their callback. On Node they live in `AsyncLocalStorage` and follow awaits; in a browser `event_context_run(..., async () => { await x; event_error(...) })` raises the event after the await without the context.
+- The thread id is `providers.thread_id()`, or 0 when there is none.
+- Nothing is flushed on exit.
+
+The shared code loads the Node built-ins it uses (`node:fs`, `node:path`, `node:async_hooks`, `node:worker_threads`) through `process.getBuiltinModule`, so Node 20.16 or later is needed. Byte arrays it returns, such as `encode_datamine_file`'s, are plain `Uint8Array`s in Node too; wrap one in `Buffer.from(bytes.buffer, bytes.byteOffset, bytes.length)` for Buffer's methods.
+
 ### Reading reports and datamine files
 
-`@blamnetwork/datamine/reading` parses what the other three features write. It has no node imports, so it runs in a browser; Datamine Explorer uses it. Datamine files are read with `Buffer`, which a browser build has to provide.
+`@blamnetwork/datamine/reading` parses what the other three features write. It imports no `node:` module and reads neither `Buffer` nor `process`, so it runs in a browser; Datamine Explorer uses it.
 
 ```ts
 import {
@@ -266,11 +304,13 @@ Formats:
 
 This implementation doesn't use HaloScript. The script commands the games use to drive events and datamine are plain functions you call.
 
+Each setter prints what it did on the display sink, as the console commands do. `command_echo: false` turns that off.
+
 | Function | What it does |
 | --- | --- |
 | `events_enabled(enable)` | Turns all events on or off. |
 | `events_disable_suppression(enable)` | Ignores per-event console suppression. |
-| `events_spam_suppression_enable(enable)` | Turns spam suppression on or off. |
+| `events_spam_suppression_enable(enable)` | Turns spam suppression on or off: both the per-category filter (`spam_mode`) and the console limiter. |
 | `event_set_display_level_global(level)` | Lowest level shown on the console for categories without their own. |
 | `event_set_log_level_global(level)` | Lowest level written to the log files for categories without their own. |
 | `event_set_remote_log_level_global(level)` | Lowest level sent to the datamine for categories without their own. |
@@ -291,7 +331,7 @@ This implementation doesn't use HaloScript. The script commands the games use to
 | `data_mine_set_endpoint(endpoint)` | Sets the datamine server, or turns uploading off. |
 
 Levels:
-- Levels are `e_event_level` (0 to 5), and `k_event_level_none` turns a level off.
+- Levels are `e_event_level` (0 to 5), also exported under Bungie's names `_event_verbose`, `_event_status`, `_event_message`, `_event_warning`, `_event_error` and `_event_critical`. `k_event_level_none` turns a level off.
 - `event_level_from_name("warning" | "none" | "disable" | "3")` turns a script's level name into one.
 
 Categories:
@@ -310,12 +350,14 @@ Categories:
 | `version_string` | `"blamnet events"` | the banner's version line |
 | `categories` | `[]` | the category table |
 | `initial_levels` | `{ display: error, log: error, remote_log: error }` | global levels at start |
-| `spam_mode` | `"console_only"` | `"console_only"`, `"faithful"` or `"disabled"` |
+| `spam_mode` | `"console_only"` | the per-category filter: `"console_only"`, `"faithful"` or `"disabled"` |
+| `console_spam_limit` | `true` | past 5 console lines in about 10 seconds, lines below critical only go to debug output; separate from `spam_mode`. The notice it shows points at `debug.txt`, so it is left out without one |
+| `command_echo` | `true` | setters print what they did on the display sink |
 | `text_encoding` | `"utf8"` | `"utf8"` or `"latin1"` |
 | `write_mode` | `"immediate"` | `"immediate"` or `"cached"` |
 | `layout` | `"3.1"` | Destiny's lines for `"3.1"`, Halo's for the others, see [Line format](#line-format) |
 | `date_utc` | `false` | local time |
-| `write_files` | `true` | |
+| `write_files` | `true` | `false` writes nothing and ignores `root` |
 | `separate_session_reports` | `false` | everything in `<root>/reports/` |
 | `session_suffix` | none | |
 | `debug_log_includes_unfiled` | `false` | level alone decides `debug.txt` |

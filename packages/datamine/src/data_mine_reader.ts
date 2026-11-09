@@ -31,6 +31,7 @@ import {
   type s_datamine_record,
 } from "./blam/data_mining/data_mining.ts";
 import { DatamineError } from "./datamine_error.ts";
+import { text_decode } from "./platform/text.ts";
 import { c_struct_reader, type t_byte_order } from "./struct_io.ts";
 import { zip_read_single_entry } from "./transport/zip_writer.ts";
 
@@ -50,7 +51,7 @@ export interface s_datamine_file_occurrence {
   // Resolved through the definition. Name, signature and categories come from it.
   record: s_datamine_record;
   // The raw value bytes when the definition never appeared in the file.
-  unresolved_values?: Buffer;
+  unresolved_values?: Uint8Array;
 }
 
 export type s_datamine_file_record =
@@ -116,7 +117,7 @@ export function data_mine_layout_detect(buffer: Uint8Array): {
 }
 
 function read_header(
-  buffer: Buffer,
+  buffer: Uint8Array,
   layout: t_data_mine_header_layout,
   byte_order: t_byte_order,
   encoding: t_text_encoding
@@ -162,7 +163,7 @@ function read_parameter_value(
       return reader.read(s_datamine_value_float).value;
     default: {
       const { length } = reader.read(s_datamine_value_string_length);
-      return reader.bytes(length).toString(encoding);
+      return text_decode(reader.bytes(length), encoding);
     }
   }
 }
@@ -184,7 +185,7 @@ function read_categories(
 }
 
 function read_event_record(
-  record: Buffer,
+  record: Uint8Array,
   byte_order: t_byte_order,
   encoding: t_text_encoding
 ): s_datamine_record {
@@ -222,7 +223,7 @@ function read_event_record(
 }
 
 function read_definition_record(
-  record: Buffer,
+  record: Uint8Array,
   byte_order: t_byte_order,
   encoding: t_text_encoding
 ): s_datamine_definition_v3 {
@@ -256,7 +257,7 @@ function read_definition_record(
 }
 
 function read_occurrence_record(
-  record: Buffer,
+  record: Uint8Array,
   byte_order: t_byte_order,
   encoding: t_text_encoding,
   definitions: Map<number, s_datamine_definition_v3>
@@ -313,11 +314,10 @@ export function read_datamine_file(
   options: s_datamine_read_options = {}
 ): s_datamine_file {
   const encoding = options.encoding ?? "utf8";
-  const view = Buffer.from(buffer.buffer, buffer.byteOffset, buffer.byteLength);
-  const detected = data_mine_layout_detect(view);
+  const detected = data_mine_layout_detect(buffer);
   const layout = options.layout ?? detected.layout;
   const byte_order = detected.byte_order;
-  const header = read_header(view, layout, byte_order, encoding);
+  const header = read_header(buffer, layout, byte_order, encoding);
 
   const is_v3 = layout === "3.1";
   const minimum_size = is_v3
@@ -328,30 +328,33 @@ export function read_datamine_file(
   let offset = k_data_mine_header_layout_sizes[layout];
   let truncated_at: number | undefined;
 
-  while (offset < view.length) {
+  while (offset < buffer.length) {
     // A short tail, a size that runs past the end, or a record that doesn't parse all stop the walk here.
-    if (offset + 4 > view.length) {
+    if (offset + 4 > buffer.length) {
       truncated_at = offset;
       break;
     }
-    const total_size = s_datamine_record_size.read(view, {
+    const total_size = s_datamine_record_size.read(buffer, {
       offset,
       endian: byte_order,
     }).size;
     const kind = is_v3
-      ? view[offset + 4]
+      ? buffer[offset + 4]
       : e_datamine_record_kind_v3.definition;
     const is_occurrence =
       is_v3 && kind === e_datamine_record_kind_v3.occurrence;
     const record_minimum_size = is_occurrence
       ? k_datamine_occurrence_v3_prefix_size
       : minimum_size;
-    if (total_size < record_minimum_size || offset + total_size > view.length) {
+    if (
+      total_size < record_minimum_size ||
+      offset + total_size > buffer.length
+    ) {
       truncated_at = offset;
       break;
     }
 
-    const record = view.subarray(offset, offset + total_size);
+    const record = buffer.subarray(offset, offset + total_size);
     try {
       if (!is_v3) {
         records.push({
@@ -391,7 +394,7 @@ function encode_occurrence(
   entry: s_datamine_file_occurrence,
   byte_order: t_byte_order,
   encoding: t_text_encoding
-): Buffer {
+): Uint8Array {
   return encode_datamine_occurrence_v3(
     {
       event_index: entry.record.event_index,
@@ -406,9 +409,11 @@ function encode_occurrence(
 }
 
 // Header plus records in their original order. Anything past truncated_at is not written.
-export function encode_datamine_file(file: s_datamine_file): Buffer {
+export function encode_datamine_file(file: s_datamine_file): Uint8Array {
   const byte_order = file.header.byte_order;
-  const parts: Buffer[] = [encode_data_mine_header(file.header, file.encoding)];
+  const parts: Uint8Array[] = [
+    encode_data_mine_header(file.header, file.encoding),
+  ];
   for (const entry of file.records) {
     switch (entry.kind) {
       case "event":
@@ -429,7 +434,15 @@ export function encode_datamine_file(file: s_datamine_file): Buffer {
         parts.push(encode_occurrence(entry, byte_order, file.encoding));
     }
   }
-  return Buffer.concat(parts);
+  const file_bytes = new Uint8Array(
+    parts.reduce((size, part) => size + part.length, 0)
+  );
+  let at = 0;
+  for (const part of parts) {
+    file_bytes.set(part, at);
+    at += part.length;
+  }
+  return file_bytes;
 }
 
 // The upload is a zip with a single entry holding the datamine file.

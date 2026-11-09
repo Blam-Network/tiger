@@ -1,6 +1,5 @@
 // The options events_initialize takes, with their defaults, and what they decide: which report
 // files exist, which events each one takes and where it goes.
-import { join } from "node:path";
 import type { t_event_log_write_mode } from "../blam/cseries/cseries_event_logs.ts";
 import type {
   s_events_providers,
@@ -21,9 +20,11 @@ import {
 } from "../blam/cseries/event_response.ts";
 import type { t_event_spam_mode } from "../blam/cseries/event_spam.ts";
 import type { t_data_mine_header_layout } from "../blam/data_mining/data_mine_formats.ts";
+import { node_builtin_required } from "../platform/node_builtins.ts";
 
 export const k_event_reports_directory = "reports";
 export const k_event_error_snapshot_directory = "error_snapshot";
+export const k_debug_log_file_name = "debug.txt";
 
 export interface s_event_initial_levels {
   display: t_event_level_threshold;
@@ -37,6 +38,12 @@ export interface s_events_initialize_options {
   append?: boolean;
   // Category table, applied in order. Default none.
   categories?: readonly s_event_category_default_configuration[];
+  // The setters (events_enabled, event_set_*_level*, events_spam_suppression_enable and the
+  // rest) print what they did on the display sink, as the console commands do. Default true.
+  command_echo?: boolean;
+  // The console line limiter: past 5 lines in about 10 seconds, lines below critical only go to
+  // debug output until the console has been quiet. It is separate from spam_mode. Default true.
+  console_spam_limit?: boolean;
   // debug_datamine.txt, the events that are sent to the datamine. Default false.
   datamine_log?: boolean;
   // Show local time when false. Default false.
@@ -209,10 +216,14 @@ export function event_log_definitions(
     : "primary";
   const definitions: s_event_log_definition[] = [];
   if (config.root_debug_log) {
-    definitions.push({ name: "debug.txt", place_in_root: true, route });
+    definitions.push({
+      name: k_debug_log_file_name,
+      place_in_root: true,
+      route,
+    });
   }
   definitions.push({
-    name: "debug.txt",
+    name: k_debug_log_file_name,
     append_to_file: config.append,
     route,
   });
@@ -251,6 +262,14 @@ export function event_log_session_folder_name(
     : timestamp;
 }
 
+// The report folders are joined by node:path, so they only exist where log files can.
+function event_log_path_join(...parts: string[]): string {
+  return node_builtin_required<typeof import("node:path")>(
+    "node:path",
+    "event log paths"
+  ).join(...parts);
+}
+
 export function event_log_directory(
   config: s_events_config,
   file: s_event_log_file,
@@ -259,12 +278,15 @@ export function event_log_directory(
   if (file.place_in_root) {
     return config.root;
   }
-  const reports = join(config.root, k_event_reports_directory);
+  const reports = event_log_path_join(config.root, k_event_reports_directory);
   return config.separate_session_reports
-    ? join(reports, event_log_session_folder_name(config, session_started))
+    ? event_log_path_join(
+        reports,
+        event_log_session_folder_name(config, session_started)
+      )
     : reports;
 }
 
 export function event_log_snapshot_directory(config: s_events_config): string {
-  return join(config.root, k_event_error_snapshot_directory);
+  return event_log_path_join(config.root, k_event_error_snapshot_directory);
 }

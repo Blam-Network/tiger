@@ -18,6 +18,7 @@ import {
   datamine_record_format_text,
   log_entries_from_datamine,
 } from "../../src/reading/log_datamine.ts";
+import { buffer_of } from "../support/buffers.ts";
 
 const k_fixture_dir = join(import.meta.dirname, "../fixtures/ares");
 
@@ -204,7 +205,7 @@ describe("real ares uploads", () => {
       });
 
       it("re-encodes to the same bytes", () => {
-        const encoded = encode_datamine_file(file);
+        const encoded = buffer_of(encode_datamine_file(file));
         const end = fixture.truncated_at ?? bytes.length;
         expect(encoded.length).toBe(end);
         expect(encoded.equals(bytes.subarray(0, end))).toBe(true);
@@ -277,6 +278,6 @@ describe("real ares uploads", () => {
     );
     expect(upload.records).toHaveLength(58);
     expect(upload.truncated_at).toBeUndefined();
-    expect(encode_datamine_file(upload).equals(raw)).toBe(true);
+    expect(buffer_of(encode_datamine_file(upload)).equals(raw)).toBe(true);
   });
 });

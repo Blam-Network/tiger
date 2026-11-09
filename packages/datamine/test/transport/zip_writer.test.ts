@@ -6,12 +6,15 @@ import {
   zip_create_single_entry,
   zip_read_single_entry,
 } from "../../src/transport/zip_writer.ts";
+import { buffer_of } from "../support/buffers.ts";
 
 describe("zip_create_single_entry", () => {
   const data = Buffer.from("datamine ".repeat(500));
 
   it("writes one deflated entry", async () => {
-    const zip = await zip_create_single_entry("compressed.dat", data);
+    const zip = buffer_of(
+      await zip_create_single_entry("compressed.dat", data)
+    );
     expect(zip.readUInt32LE(0)).toBe(0x04_03_4b_50);
     expect(zip.readUInt16LE(8)).toBe(8);
     expect(zip.length).toBeLessThan(data.length);
@@ -21,7 +24,7 @@ describe("zip_create_single_entry", () => {
     const zip = await zip_create_single_entry("compressed.dat", data);
     const entry = zip_read_single_entry(zip);
     expect(entry.name).toBe("compressed.dat");
-    expect(entry.data.equals(data)).toBe(true);
+    expect(buffer_of(entry.data).equals(data)).toBe(true);
   });
 
   it("handles empty data", async () => {
@@ -41,9 +44,9 @@ describe("zip_read_single_entry", () => {
     const payload = Buffer.from("view ".repeat(30));
     const zip = await zip_create_single_entry("v", payload);
     const padded = Buffer.concat([Buffer.from([1, 2, 3]), zip]);
-    expect(zip_read_single_entry(padded.subarray(3)).data.equals(payload)).toBe(
-      true
-    );
+    expect(
+      buffer_of(zip_read_single_entry(padded.subarray(3)).data).equals(payload)
+    ).toBe(true);
   });
 });
 
@@ -61,6 +64,6 @@ describe.skipIf(!halo_data_dir)("upload_temp.zip golden", () => {
     const rebuilt = zip_read_single_entry(
       await zip_create_single_entry(entry.name, entry.data)
     );
-    expect(rebuilt.data.equals(entry.data)).toBe(true);
+    expect(buffer_of(rebuilt.data).equals(entry.data)).toBe(true);
   });
 });

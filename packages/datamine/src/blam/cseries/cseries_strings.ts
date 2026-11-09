@@ -1,3 +1,5 @@
+import { text_decode, text_encode } from "../../platform/text.ts";
+
 export type t_text_encoding = "utf8" | "latin1";
 
 const k_ascii_upper_regex = /[A-Z]/g;
@@ -13,13 +15,13 @@ export function csstrnzcpy_bytes(
   value: string,
   size: number,
   encoding: t_text_encoding = "utf8"
-): Buffer {
-  const result = Buffer.alloc(Math.max(size, 0));
+): Uint8Array {
+  const result = new Uint8Array(Math.max(size, 0));
   if (size <= 0) {
     return result;
   }
 
-  const encoded = Buffer.from(value, encoding);
+  const encoded = text_encode(value, encoding);
   // strcpy semantics: an embedded NUL ends the string.
   const nul_index = encoded.indexOf(0);
   let length = nul_index < 0 ? encoded.length : nul_index;
@@ -38,7 +40,7 @@ export function csstrnzcpy_bytes(
     }
   }
 
-  encoded.copy(result, 0, 0, length);
+  result.set(encoded.subarray(0, length));
   return result;
 }
 
@@ -51,7 +53,7 @@ export function string_from_fixed_bytes(
   if (length < 0) {
     length = bytes.length;
   }
-  return Buffer.from(bytes.buffer, bytes.byteOffset, length).toString(encoding);
+  return text_decode(bytes.subarray(0, length), encoding);
 }
 
 // csstrnzcpy into a char[size] and straight back: the text that fits, as a string.

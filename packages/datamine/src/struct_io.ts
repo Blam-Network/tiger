@@ -33,7 +33,7 @@ export class c_struct_reader {
     return value;
   }
 
-  bytes(count: number): Buffer {
+  bytes(count: number): Uint8Array {
     if (count < 0 || this.m_offset + count > this.m_bytes.length) {
       throw new DatamineError(
         `read of ${count} bytes at offset ${this.m_offset} overruns the ${this.m_bytes.length} byte buffer`
@@ -41,7 +41,7 @@ export class c_struct_reader {
     }
     const start = this.m_offset;
     this.m_offset += count;
-    return Buffer.from(this.m_bytes.subarray(start, this.m_offset));
+    return this.m_bytes.slice(start, this.m_offset);
   }
 }
 
@@ -74,8 +74,8 @@ export class c_struct_writer {
     this.m_size += data.length;
   }
 
-  finish(): Buffer {
-    const out = Buffer.alloc(this.m_size);
+  finish(): Uint8Array {
+    const out = new Uint8Array(this.m_size);
     let at = 0;
     for (const part of this.m_parts) {
       out.set(part, at);

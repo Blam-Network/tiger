@@ -7,6 +7,7 @@
     "dist",
     "dist-cjs"
   ],
+  "sideEffects": false,
   "scripts": {
     "build": "node ../../scripts/clean-dist.mjs && tsc -p tsconfig.build.json && tsc -p tsconfig.build.cjs.json && node ../../scripts/write-cjs-package-json.mjs",
     "typecheck": "tsc -p tsconfig.json --noEmit",
@@ -25,6 +26,9 @@
     "events"
   ],
   "license": "MIT",
+  "engines": {
+    "node": ">=20.16"
+  },
   "publishConfig": {
     "access": "public"
   },
@@ -32,6 +36,17 @@
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
+      "browser": {
+        "import": {
+          "types": "./dist/events.d.ts",
+          "default": "./dist/events.js"
+        },
+        "require": {
+          "types": "./dist-cjs/events.d.ts",
+          "default": "./dist-cjs/events.js"
+        },
+        "default": "./dist/events.js"
+      },
       "import": {
         "types": "./dist/index.d.ts",
         "default": "./dist/index.js"
@@ -41,6 +56,17 @@
         "default": "./dist-cjs/index.js"
       },
       "default": "./dist/index.js"
+    },
+    "./events": {
+      "import": {
+        "types": "./dist/events.d.ts",
+        "default": "./dist/events.js"
+      },
+      "require": {
+        "types": "./dist-cjs/events.d.ts",
+        "default": "./dist-cjs/events.js"
+      },
+      "default": "./dist/events.js"
     },
     "./reading": {
       "import": {
@@ -52,10 +78,14 @@
         "default": "./dist-cjs/reading/index.js"
       },
       "default": "./dist/reading/index.js"
-    }
+    },
+    "./package.json": "./package.json"
   },
   "typesVersions": {
     "*": {
+      "events": [
+        "./dist/events.d.ts"
+      ],
       "reading": [
         "./dist/reading/index.d.ts"
       ]

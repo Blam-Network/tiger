@@ -9,6 +9,14 @@ export const e_event_level = {
 } as const;
 export type e_event_level = (typeof e_event_level)[keyof typeof e_event_level];
 
+// The enum's members under Bungie's names.
+export const _event_verbose = e_event_level.verbose;
+export const _event_status = e_event_level.status;
+export const _event_message = e_event_level.message;
+export const _event_warning = e_event_level.warning;
+export const _event_error = e_event_level.error;
+export const _event_critical = e_event_level.critical;
+
 // A threshold of none never fires.
 export const k_event_level_none = -1;
 export type t_event_level_threshold = e_event_level | typeof k_event_level_none;

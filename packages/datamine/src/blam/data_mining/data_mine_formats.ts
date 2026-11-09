@@ -1,5 +1,6 @@
 import { c } from "@craftycodie/cstruct";
 import { DatamineError } from "../../datamine_error.ts";
+import { text_encode } from "../../platform/text.ts";
 import { c_struct_writer, type t_byte_order } from "../../struct_io.ts";
 import type { t_text_encoding } from "../cseries/cseries_strings.ts";
 import {
@@ -261,7 +262,7 @@ export const s_datamine_value_string_length = c.struct({ length: c.u32() });
 export function encode_data_mine_header(
   header: s_data_mine_header,
   encoding: t_text_encoding = "utf8"
-): Buffer {
+): Uint8Array {
   const layout = header.layout;
   const versions = k_layout_versions[layout];
   // Each layout's schema takes the fields it has and ignores the rest.
@@ -293,7 +294,7 @@ function encode_datamine_parameter_value(
       writer.write(s_datamine_value_float, { value: Number(value) });
       break;
     case e_datamine_parameter_type.string: {
-      const bytes = Buffer.from(String(value), encoding);
+      const bytes = text_encode(String(value), encoding);
       writer.write(s_datamine_value_string_length, { length: bytes.length });
       writer.bytes(bytes);
       break;
@@ -307,7 +308,7 @@ function encode_datamine_parameter_value(
 function finish_record(
   writer: c_struct_writer,
   byte_order: t_byte_order
-): Buffer {
+): Uint8Array {
   const record = writer.finish();
   s_datamine_record_size.write(
     { size: record.length },
@@ -321,7 +322,7 @@ export function encode_datamine_event_record(
   record: s_datamine_record,
   byte_order: t_byte_order,
   encoding: t_text_encoding = "utf8"
-): Buffer {
+): Uint8Array {
   const schemas = data_mine_schemas(encoding);
   const writer = new c_struct_writer(byte_order);
   writer.write(schemas.event_record, {
@@ -358,7 +359,7 @@ export function encode_datamine_definition_v3(
   definition: s_datamine_definition_v3,
   byte_order: t_byte_order,
   encoding: t_text_encoding = "utf8"
-): Buffer {
+): Uint8Array {
   const schemas = data_mine_schemas(encoding);
   const writer = new c_struct_writer(byte_order);
   writer.write(schemas.definition_record, {
@@ -389,7 +390,7 @@ export function encode_datamine_occurrence_v3(
   encoding: t_text_encoding = "utf8",
   // Value bytes copied as they are, after any encoded values.
   raw_values?: Uint8Array
-): Buffer {
+): Uint8Array {
   const writer = new c_struct_writer(byte_order);
   writer.write(s_datamine_occurrence_v3_prefix, {
     size: 0,
