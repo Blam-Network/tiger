@@ -331,6 +331,16 @@ Each setter prints what it did on the display sink, as the console commands do. 
 | `data_mine_set_endpoint(endpoint)` | Sets the datamine server, or turns uploading off. |
 
 Levels:
+
+| Level | Name | Use it for |
+| --- | --- | --- |
+| 0 | `verbose` | Everything about how a system works, in as much detail as you like. |
+| 1 | `status` | Notable events that, read together, let someone follow what a system is doing. |
+| 2 | `message` | A significant change in a system's state. |
+| 3 | `warning` | Something unusual that was expected to happen sometimes and was handled safely. It can happen in a shipping build, but it is still worth knowing about. Content cleaned up or fixed during import also belongs here. |
+| 4 | `error` | A failure that was handled safely but should never happen in a shipping build. Content that cannot load, loads at a high performance cost, or stops a tool from finishing also belongs here. |
+| 5 | `critical` | A massive failure that does not crash, but can only be recovered from with drastic measures and should never happen in a shipping build. |
+
 - Levels are `e_event_level` (0 to 5), also exported under Bungie's names `_event_verbose`, `_event_status`, `_event_message`, `_event_warning`, `_event_error` and `_event_critical`. `k_event_level_none` turns a level off.
 - `event_level_from_name("warning" | "none" | "disable" | "3")` turns a script's level name into one.
 
